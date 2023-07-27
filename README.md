@@ -4,7 +4,8 @@ Repo for the processing part of FERMO (fermo_core)
 Download, Installation, and Curation Strategy
 ============
 
-TBA
+- Create a virtual environment (e.g. with `conda`)
+- Install `python 3.11.4`
 
 Usage
 =====
