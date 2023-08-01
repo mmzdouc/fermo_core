@@ -41,6 +41,9 @@ def main(params: ParamsHandler) -> None:
     Args:
         params (ParamsHandler) : Handling input file names and params
 
+    Returns:
+        A data object with methods to export data to a JSON file.
+
     Notes:
         MMZ 28.08.23
         Should return a session object for use in the dashboard or for file export once
@@ -50,7 +53,7 @@ def main(params: ParamsHandler) -> None:
     #  define abstractbaseclass for input file types (csv
     #  define implementations of mzmine
 
-    print(params)
+    print("Arrives at end.")
     pass
 
 

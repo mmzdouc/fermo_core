@@ -30,6 +30,7 @@ SOFTWARE.
 """
 
 import argparse
+from pathlib import Path
 from typing import Self, Any, Callable, Dict
 from fermo_core.input_output.class_params_handler import ParamsHandler
 
@@ -348,95 +349,73 @@ class CommLineHandler:
     ) -> Dict:
         """Create dict for command line argument validation.
 
-        Create a dict that delivers arguments to check in abstract method
-        validate_input_arg().
+        Create a dict that delivers arguments to check in validate_input_arg().
 
         Args:
             params: object instance, provides methods for validation
             args: object instance holding user input/command line args and parameters
 
         Returns:
-            A dict of tuples: [1] is always the method to validate with, [2] is always
-            the value to test for.
+            A dict of tuples: For each entry, [0] is always the method to validate with,
+            [1] is always the value to test for.
 
         Notes:
             Additional command line parameter need to be introduced here, else they
             will not be added to the ParamsHandler instance.
         """
-        return {
-            "peaktable_mzmine3": (
-                getattr(params, "validate_string"),
-                getattr(args, "peaktable_mzmine3"),
-            ),
-            "msms_mgf": (
-                getattr(params, "validate_string"),
-                getattr(args, "msms_mgf"),
-            ),
-            "phenotype_fermo": (
-                getattr(params, "validate_string"),
-                getattr(args, "phenotype_fermo"),
-            ),
-            "group_fermo": (
-                getattr(params, "validate_string"),
-                getattr(args, "group_fermo"),
-            ),
-            "speclib_mgf": (
-                getattr(params, "validate_string"),
-                getattr(args, "speclib_mgf"),
-            ),
-            "mass_dev_ppm": (
-                getattr(params, "validate_mass_dev_ppm"),
-                getattr(args, "mass_dev_ppm"),
-            ),
-            "msms_frag_min": (
-                getattr(params, "validate_pos_int"),
-                getattr(args, "msms_frag_min"),
-            ),
-            "phenotype_fold": (
-                getattr(params, "validate_pos_int"),
-                getattr(args, "phenotype_fold"),
-            ),
-            "column_ret_fold": (
-                getattr(params, "validate_pos_int"),
-                getattr(args, "column_ret_fold"),
-            ),
-            "fragment_tol": (
-                getattr(params, "validate_float_zero_one"),
-                getattr(args, "fragment_tol"),
-            ),
-            "spectral_sim_score_cutoff": (
-                getattr(params, "validate_float_zero_one"),
-                getattr(args, "spectral_sim_score_cutoff"),
-            ),
-            "max_nr_links_spec_sim": (
-                getattr(params, "validate_pos_int"),
-                getattr(args, "max_nr_links_spec_sim"),
-            ),
-            "min_nr_matched_peaks": (
-                getattr(params, "validate_pos_int"),
-                getattr(args, "min_nr_matched_peaks"),
-            ),
-            "spectral_sim_network_alg": (
-                getattr(params, "validate_spectral_sim_network_alg"),
-                getattr(args, "spectral_sim_network_alg"),
-            ),
-            "flag_ms2query": (
-                getattr(params, "validate_bool"),
-                getattr(args, "flag_ms2query"),
-            ),
-            "flag_ms2query_blank": (
-                getattr(params, "validate_bool"),
-                getattr(args, "flag_ms2query_blank"),
-            ),
-            "ms2query_filter_range": (
-                getattr(params, "validate_range_zero_one"),
-                tuple(getattr(args, "ms2query_filter_range")),
-            ),
-            "rel_int_range": (
-                getattr(params, "validate_range_zero_one"),
-                tuple(getattr(args, "rel_int_range")),
-            ),
+        output = dict()
+
+        argument_validation_files = {
+            "peaktable_mzmine3": "validate_peaktable_mzmine3",
+            "msms_mgf": "validate_mgf",
+            "phenotype_fermo": "validate_phenotype_fermo",
+            "group_fermo": "validate_group_fermo",
+            "speclib_mgf": "validate_mgf",
         }
+
+        for val in argument_validation_files:
+            if getattr(args, val) is not None:
+                output[val] = (
+                    getattr(params, argument_validation_files[val]),
+                    Path(
+                        getattr(args, val)
+                    ),  # Prevent Error when casting None with Path.
+                )
+
+        argument_validation_generics = {
+            "mass_dev_ppm": "validate_mass_dev_ppm",
+            "msms_frag_min": "validate_pos_int",
+            "phenotype_fold": "validate_pos_int",
+            "column_ret_fold": "validate_pos_int",
+            "fragment_tol": "validate_float_zero_one",
+            "spectral_sim_score_cutoff": "validate_float_zero_one",
+            "max_nr_links_spec_sim": "validate_pos_int",
+            "min_nr_matched_peaks": "validate_pos_int",
+            "spectral_sim_network_alg": "validate_spectral_sim_network_alg",
+            "flag_ms2query": "validate_bool",
+            "flag_ms2query_blank": "validate_bool",
+        }
+
+        for val in argument_validation_generics:
+            if getattr(args, val) is not None:
+                output[val] = (
+                    getattr(params, argument_validation_generics[val]),
+                    getattr(args, val),  # Does not need to be cast.
+                )
+
+        argument_validation_ranges = {
+            "ms2query_filter_range": "validate_range_zero_one",
+            "rel_int_range": "validate_range_zero_one",
+        }
+
+        for val in argument_validation_ranges:
+            if getattr(args, val) is not None:
+                output[val] = (
+                    getattr(params, argument_validation_ranges[val]),
+                    tuple(getattr(args, val)),  # Prevent Error when List instead Tuple.
+                )
+
+        return output
 
     def run_argparse(self: Self, params: ParamsHandler) -> ParamsHandler:
         """Run argparse comm line interface and assign input to ParamsHandler attributes.
@@ -457,10 +436,9 @@ class CommLineHandler:
         arg_validation = self.create_input_validation_dict(params, args)
 
         for arg in arg_validation:
-            if arg_validation[arg][1] is not None:
-                if self.validate_input_arg(
-                    arg_validation[arg][0], arg_validation[arg][1], arg
-                ):
-                    setattr(params, arg, arg_validation[arg][1])
+            if self.validate_input_arg(
+                arg_validation[arg][0], arg_validation[arg][1], arg
+            ):
+                setattr(params, arg, arg_validation[arg][1])
 
         return params

@@ -1,4 +1,6 @@
 from pathlib import Path
+
+import pandas as pd
 import pytest
 from fermo_core.input_output.class_params_handler import ParamsHandler
 
@@ -143,8 +145,8 @@ def test_fail_validate_pos_int(i):
         1,
     ],
 )
-def test_success_validate_mass_dev_ppm(mass_dev_ppm):
-    assert ParamsHandler.validate_mass_dev_ppm(mass_dev_ppm)[0]
+def test_success_validate_mass_dev_ppm(params_handler, mass_dev_ppm):
+    assert params_handler.validate_mass_dev_ppm(mass_dev_ppm)[0]
 
 
 @pytest.mark.parametrize(
@@ -156,8 +158,8 @@ def test_success_validate_mass_dev_ppm(mass_dev_ppm):
         150,
     ],
 )
-def test_fail_validate_mass_dev_ppm(mass_dev_ppm):
-    assert not ParamsHandler.validate_mass_dev_ppm(mass_dev_ppm)[0]
+def test_fail_validate_mass_dev_ppm(params_handler, mass_dev_ppm):
+    assert not params_handler.validate_mass_dev_ppm(mass_dev_ppm)[0]
 
 
 @pytest.mark.parametrize(
@@ -191,8 +193,8 @@ def test_fail_validate_float_zero_one(f):
         "ms2deepscore",
     ],
 )
-def test_success_validate_spectral_sim_network_alg(alg):
-    assert ParamsHandler.validate_spectral_sim_network_alg(alg)[0]
+def test_success_validate_spectral_sim_network_alg(params_handler, alg):
+    assert params_handler.validate_spectral_sim_network_alg(alg)[0]
 
 
 @pytest.mark.parametrize(
@@ -205,8 +207,8 @@ def test_success_validate_spectral_sim_network_alg(alg):
         ["all"],
     ],
 )
-def test_fail_validate_spectral_sim_network_alg(alg):
-    assert not ParamsHandler.validate_spectral_sim_network_alg(alg)[0]
+def test_fail_validate_spectral_sim_network_alg(params_handler, alg):
+    assert not params_handler.validate_spectral_sim_network_alg(alg)[0]
 
 
 @pytest.mark.parametrize(
@@ -234,3 +236,61 @@ def test_success_validate_range_zero_one(r):
 )
 def test_fail_validate_range_zero_one(r):
     assert not ParamsHandler.validate_range_zero_one(r)[0]
+
+
+def test_success_validate_file_exists():
+    assert ParamsHandler.validate_file_exists(
+        Path("tests/example_files/example_peaktable_mzmine3.csv")
+    )[0]
+
+
+def test_fail_validate_file_exists():
+    assert not ParamsHandler.validate_file_exists(Path("file/which/does/not/exist"))[0]
+
+
+def test_success_validate_csv_file():
+    assert ParamsHandler.validate_csv_file(
+        Path("tests/example_files/example_peaktable_mzmine3.csv")
+    )[0]
+
+
+def test_fail_validate_csv_file():
+    assert not ParamsHandler.validate_csv_file(
+        Path("tests/example_files/example_invalid_csv.md")
+    )[0]
+
+
+def test_success_validate_csv_duplicate_col_entries():
+    assert ParamsHandler.validate_csv_duplicate_col_entries(
+        pd.DataFrame({"id": [1, 2]}), "id"
+    )[0]
+
+
+def test_fail_validate_csv_duplicate_col_entries():
+    assert not ParamsHandler.validate_csv_duplicate_col_entries(
+        pd.DataFrame({"id": [1, 1]}), "id"
+    )[0]
+
+
+def test_success_validate_peaktable_mzmine3(params_handler):
+    assert params_handler.validate_peaktable_mzmine3(
+        Path("tests/example_files/example_peaktable_mzmine3.csv")
+    )[0]
+
+
+def test_fail_validate_peaktable_mzmine3(params_handler):
+    assert not params_handler.validate_peaktable_mzmine3(
+        Path("tests/example_files/example_group_fermo.csv")
+    )[0]
+
+
+def test_success_validate_mgf(params_handler):
+    assert params_handler.validate_mgf(
+        Path("tests/example_files/example_msms_mgf.mgf")
+    )[0]
+
+
+def test_fail_validate_mgf(params_handler):
+    assert not params_handler.validate_mgf(
+        Path("tests/example_files/example_invalid_csv.md")
+    )[0]

@@ -1,9 +1,9 @@
 """Hold parameters and methods to validate user input.
 
 Interface to collect and hold user input from both command line and GUI.
-Validation methods cover generic types as well as some plausibility testing
-of specific parameters (e.g. mass_dev_ppm etc). Input files are validated more
-thoroughly in their specific classes.
+Validation methods consist of static methods for validation of generic values and class
+methods for testing of more specialized input values/parameters. Where possible,
+class methods should be constructed using static methods to keep it DRY.
 
 Copyright (c) 2022-2023 Mitja Maximilian Zdouc, PhD
 
@@ -26,7 +26,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
+import pandas as pd
 from pathlib import Path
+from pyteomics import mgf
 from typing import Self, Tuple
 
 
@@ -76,12 +78,12 @@ class ParamsHandler:
     def __init__(self: Self, version: str, root: Path):
         self.version: str = version
         self.root: Path = root
-        self.session: str | None = None
-        self.peaktable_mzmine3: str | None = None
-        self.msms_mgf: str | None = None
-        self.phenotype_fermo: str | None = None
-        self.group_fermo: str | None = None
-        self.speclib_mgf: str | None = None
+        self.session: Path | None = None
+        self.peaktable_mzmine3: Path | None = None
+        self.msms_mgf: Path | None = None
+        self.phenotype_fermo: Path | None = None
+        self.group_fermo: Path | None = None
+        self.speclib_mgf: Path | None = None
         self.mass_dev_ppm: int = 20
         self.msms_frag_min: int = 5
         self.phenotype_fold: int = 10
@@ -113,7 +115,7 @@ class ParamsHandler:
 
     @staticmethod
     def validate_string(s: str) -> Tuple[bool, str]:
-        """Validate input string, return outcome and message.
+        """Validate that input is a string.
 
         Args:
             s: input-value for validation.
@@ -128,7 +130,7 @@ class ParamsHandler:
 
     @staticmethod
     def validate_pos_int(i: int) -> Tuple[bool, str]:
-        """Validate input integer, return outcome and message.
+        """Validate that input is a positive integer greater than zero.
 
         Args:
             i: input-value for validation.
@@ -145,7 +147,7 @@ class ParamsHandler:
 
     @staticmethod
     def validate_pos_int_or_zero(i: int) -> Tuple[bool, str]:
-        """Validate input integer, return outcome and message.
+        """Validate that input is a positive integer greater than or equal to zero.
 
         Args:
             i: input-value for validation.
@@ -162,7 +164,7 @@ class ParamsHandler:
 
     @staticmethod
     def validate_float_zero_one(f: float) -> Tuple[bool, str]:
-        """Validate input float, return outcome and message.
+        """Validate that input is a float between or equal to zero and one.
 
         Args:
             f: input-value for validation.
@@ -177,9 +179,8 @@ class ParamsHandler:
         else:
             return True, ""
 
-    @staticmethod
-    def validate_mass_dev_ppm(ppm: int) -> Tuple[bool, str]:
-        """Validate input for mass_dev_ppm for type and validity.
+    def validate_mass_dev_ppm(self: Self, ppm: int) -> Tuple[bool, str]:
+        """Validate that input is a valid and sensible mass deviation value.
 
         Args:
            ppm: mass deviation in ppm, determines mass accuracy.
@@ -187,17 +188,14 @@ class ParamsHandler:
         Returns:
            Tuple with outcome and (error) message
         """
-        if not isinstance(ppm, int):
-            return False, "Not an integer value."
-        elif not ppm > 0:
-            return False, "No value < 1 allowed."
+        if not (response := self.validate_pos_int(ppm))[0]:
+            return response
         elif not ppm <= 100:
             return False, "Value unreasonable high (> 100 ppm)."
         else:
             return True, ""
 
-    @staticmethod
-    def validate_spectral_sim_network_alg(alg: str) -> Tuple[bool, str]:
+    def validate_spectral_sim_network_alg(self: Self, alg: str) -> Tuple[bool, str]:
         """Validate input string for spectral_sim_network_alg for type and validity.
 
         Args:
@@ -206,8 +204,8 @@ class ParamsHandler:
         Returns:
            Tuple with outcome and (error) message
         """
-        if not isinstance(alg, str):
-            return False, "Not a string."
+        if not (response := self.validate_string(alg))[0]:
+            return response
         elif not any(
             alg == item for item in ["all", "modified_cosine", "ms2deepscore"]
         ):
@@ -223,7 +221,7 @@ class ParamsHandler:
            r: tuple with two floats between and including 0-1.
 
         Returns:
-           Tuple with outcome and (error) message
+           Tuple with outcome and (error) message.
         """
         if not len(r) == 2:
             return False, f"Only two values allowed. Nr of provided values: {len(r)}."
@@ -239,3 +237,140 @@ class ParamsHandler:
             )
         else:
             return True, ""
+
+    @staticmethod
+    def validate_file_exists(f: Path) -> Tuple[bool, str]:
+        """Validate that input file exists.
+
+        Args:
+           f: A pathlib.Path instance that points towards a file.
+
+        Returns:
+           Tuple with outcome and (error) message
+        """
+        if Path.exists(f):
+            return True, ""
+        else:
+            return False, "File does not exist."
+
+    @staticmethod
+    def validate_csv_file(f: Path) -> Tuple[bool, str]:
+        """Validate that input file is a comma separated values file (csv).
+
+        Args:
+           f: A pathlib.Path instance that points towards a file.
+
+        Returns:
+           Tuple with outcome and (error) message.
+        """
+        try:
+            pd.read_csv(f, sep=",")
+            return True, ""
+        except pd.errors.ParserError:
+            return False, "Does not appear to be a .csv file."
+
+    @staticmethod
+    def validate_csv_duplicate_col_entries(
+        df: pd.DataFrame, column: str
+    ) -> Tuple[bool, str]:
+        """Validate that there are no duplicate entries in a column.
+
+        Args:
+           df: A pd.DataFrame instance containing input csv file.
+           column: The column to check for duplicate entries.
+
+        Returns:
+           Tuple with outcome and (error) message.
+        """
+        if df.duplicated(subset=[column]).any():
+            return False, f"Duplicate entries in column '{column}'."
+        else:
+            return True, ""
+
+    def validate_peaktable_mzmine3(self: Self, f: Path):
+        """Validate that input file is a mzmine3-style peaktable
+
+        Args:
+           f: A pathlib.Path instance that points towards a mzmine3-style peaktable.
+
+        Returns:
+           Tuple with outcome and (error) message
+        """
+        if not (response := self.validate_file_exists(f))[0]:
+            return response
+        elif not (response := self.validate_csv_file(f))[0]:
+            return response
+
+        df = pd.read_csv(f)
+
+        if df.filter(regex="^id$").columns.empty:
+            return False, "Column 'id' missing."
+        elif df.filter(regex="^mz$").columns.empty:
+            return False, "Column 'mz' missing."
+        elif df.filter(regex="^rt$").columns.empty:
+            return False, "Column 'rt' missing."
+        elif df.filter(regex="^datafile:").columns.empty:
+            return False, "Column 'datafile: ...' missing."
+        elif df.filter(regex=":intensity_range:max$").columns.empty:
+            return False, "Column '... :intensity_range:max' missing."
+        elif df.filter(regex=":feature_state$").columns.empty:
+            return False, "Column '... :feature_state' missing."
+        elif df.filter(regex=":fwhm$").columns.empty:
+            return False, "Column '... :fwhm' missing."
+        elif df.filter(regex=":rt$").columns.empty:
+            return False, "Column '... :rt' missing."
+        elif df.filter(regex=":rt_range:min$").columns.empty:
+            return False, "Column '... :rt_range:min' missing."
+        elif df.filter(regex=":rt_range:max$").columns.empty:
+            return False, "Column '... :rt_range:max' missing."
+
+        if (response := self.validate_csv_duplicate_col_entries(df, "id"))[0]:
+            return response
+
+        return True, ""
+
+    def validate_mgf(self: Self, f: Path):
+        """Validate that input file is a .mfg-file containing MS/MS spectra.
+
+        Args:
+           f: A pathlib.Path instance that points towards a .mgf-file.
+
+        Returns:
+           Tuple with outcome and (error) message
+        """
+        if not (response := self.validate_file_exists(f))[0]:
+            return response
+
+        with open(f) as infile:
+            try:
+                next(mgf.read(infile))
+            except StopIteration:
+                return False, "Is not an .mgf-file or is empty."
+
+        return True, ""
+
+    def validate_phenotype_fermo(self: Self, f: Path):
+        """Validate that input file is a fermo-style phenotype data table.
+
+        Args:
+           f: A pathlib.Path instance that points towards a fermo-style phenotype data
+           table.
+
+        Returns:
+           Tuple with outcome and (error) message
+        """
+        return False, "Not implemented yet"
+
+        # TODO(MMZ): Implement testing for rest of files
+
+    def validate_group_fermo(self: Self, f: Path):
+        """Validate that input file is a fermo-style group data table.
+
+        Args:
+           f: A pathlib.Path instance that points towards a fermo-style group data
+           table.
+
+        Returns:
+           Tuple with outcome and (error) message
+        """
+        return False, "Not implemented yet"
