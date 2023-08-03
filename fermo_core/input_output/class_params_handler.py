@@ -51,8 +51,8 @@ class ParamsHandler:
         peaktable_mzmine3: Mzmine3-style peaktable.
         msms_mgf: Mgf-style msms file.
         phenotype_fermo: Fermo-style phenotypic data file.
-        phenotype_fermo_mode: Specifies mode of file phenotype_fermo: the higher the
-            better or the lower the better.
+        phenotype_fermo_mode: Specifies mode of file phenotype_fermo (concentration or
+            percent)
         group_fermo: Fermo-style group data file.
         speclib_mgf: Mgf-style spectral library file.
         mass_dev_ppm: Expected mass deviation tolerance in ppm.
@@ -217,7 +217,7 @@ class ParamsHandler:
             return True, ""
 
     @staticmethod
-    def validate_range_zero_one(r: Tuple[float, float]) -> Tuple[bool, str]:
+    def validate_range_zero_one(r: Tuple[float, ...]) -> Tuple[bool, str]:
         """Validate input range.
 
         Args:

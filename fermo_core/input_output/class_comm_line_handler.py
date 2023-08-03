@@ -31,7 +31,7 @@ SOFTWARE.
 
 import argparse
 from pathlib import Path
-from typing import Self, Any, Callable, Dict
+from typing import Self, Any, Tuple, List
 from fermo_core.input_output.class_params_handler import ParamsHandler
 
 
@@ -72,9 +72,9 @@ class CommLineHandler:
             formatter_class=argparse.RawTextHelpFormatter,
         )
 
-        group_peaktable = parser.add_mutually_exclusive_group(required=True)
+        # group_peaktable = parser.add_mutually_exclusive_group(required=True)
 
-        group_peaktable.add_argument(
+        parser.add_argument(
             "--peaktable_mzmine3",
             type=str,
             help=(
@@ -374,7 +374,7 @@ class CommLineHandler:
 
         Args:
             name: A command line parameter name
-            mgf: A string pointing toward a MS/MS mgf file
+            mgf: A string pointing toward an MS/MS mgf file
             ref: Instance of ParamsHandler
 
         Returns:
@@ -437,6 +437,106 @@ class CommLineHandler:
         else:
             return None
 
+    def assign_mass_dev_ppm(self: Self, name: str, ppm: int, ref: ParamsHandler) -> int:
+        """Validate mass_dev_ppm and prepare for assignment.
+
+        Args:
+            name: The command line parameter name.
+            ppm: The expected mass deviation in ppm.
+            ref: Instance of ParamsHandler
+
+        Returns:
+            An integer.
+        """
+        if not (response := ref.validate_mass_dev_ppm(ppm))[0]:
+            self.raise_value_error(f"--{name}", ppm, response[1])
+        else:
+            return ppm
+
+    def assign_pos_int(self: Self, name: str, in_val: int, ref: ParamsHandler) -> int:
+        """Validate a positive integer and prepare for assignment.
+
+        Args:
+            name: The command line parameter name.
+            in_val: The integer value
+            ref: Instance of ParamsHandler
+
+        Returns:
+            An integer.
+        """
+        if not (response := ref.validate_pos_int(in_val))[0]:
+            self.raise_value_error(f"--{name}", in_val, response[1])
+        else:
+            return in_val
+
+    def assign_float_zero_one(
+        self: Self, name: str, fl_val: float, ref: ParamsHandler
+    ) -> float:
+        """Validate a positive float between 0 and 1 and prepare for assignment.
+
+        Args:
+            name: The command line parameter name.
+            fl_val: The float value
+            ref: Instance of ParamsHandler
+
+        Returns:
+            An integer.
+        """
+        if not (response := ref.validate_float_zero_one(fl_val))[0]:
+            self.raise_value_error(f"--{name}", fl_val, response[1])
+        else:
+            return fl_val
+
+    def assign_bool(self: Self, name: str, b: bool, ref: ParamsHandler) -> bool:
+        """Validate a bool value and prepare for assignment.
+
+        Args:
+            name: The command line parameter name.
+            b: The bool value
+            ref: Instance of ParamsHandler
+
+        Returns:
+            A bool indicating a flag.
+        """
+        if not (response := ref.validate_bool(b))[0]:
+            self.raise_value_error(f"--{name}", b, response[1])
+        else:
+            return b
+
+    def assign_range_zero_one(
+        self: Self, name: str, r: List[float], ref: ParamsHandler
+    ) -> Tuple[float]:
+        """Validate a range, cast into tuple, and prepare for assignment.
+
+        Args:
+            name: The command line parameter name.
+            r: The range, a list of two values (or more, depending on user input).
+            ref: Instance of ParamsHandler.
+
+        Returns:
+            A tuple indicating a range between 0 and 1.
+        """
+        if not (response := ref.validate_range_zero_one(tuple(r)))[0]:
+            self.raise_value_error(f"--{name}", r, response[1])
+        else:
+            return tuple(r)
+
+    def assign_network_alg(self: Self, name: str, alg: str, ref: ParamsHandler) -> str:
+        """Validate the validity of the chosen network algorithm, prepare for assignment.
+
+        Args:
+            name: The command line parameter name.
+            alg: The chosen network algorithm.
+            ref: Instance of ParamsHandler.
+
+        Returns:
+            A str indicating the network algorithm.
+        """
+        if not (response := ref.validate_spectral_sim_network_alg(alg))[0]:
+            self.raise_value_error(f"--{name}", alg, response[1])
+        else:
+            return alg
+
     def run_argparse(self: Self, params: ParamsHandler) -> ParamsHandler:
         """Run argparse comm line interface and assign input to ParamsHandler attributes.
 
@@ -486,61 +586,54 @@ class CommLineHandler:
                 )
             elif arg == "speclib_mgf":
                 setattr(params, arg, self.assign_mgf(arg, getattr(args, arg), params))
-
-            # TODO(MMZ): Add additional assignments, their functions + tests
+            elif arg == "mass_dev_ppm":
+                setattr(
+                    params,
+                    arg,
+                    self.assign_mass_dev_ppm(arg, getattr(args, arg), params),
+                )
+            elif any(
+                arg == i
+                for i in [
+                    "phenotype_fold",
+                    "column_ret_fold",
+                    "max_nr_links_spec_sim",
+                    "min_nr_matched_peaks",
+                ]
+            ):
+                setattr(
+                    params, arg, self.assign_pos_int(arg, getattr(args, arg), params)
+                )
+            elif any(arg == i for i in ["fragment_tol", "spectral_sim_score_cutoff"]):
+                setattr(
+                    params,
+                    arg,
+                    self.assign_float_zero_one(arg, getattr(args, arg), params),
+                )
+            elif any(arg == i for i in ["flag_ms2query", "flag_ms2query_blank"]):
+                setattr(
+                    params,
+                    arg,
+                    self.assign_bool(arg, getattr(args, arg, params), params),
+                )
+            elif any(arg == i for i in ["rel_int_range", "ms2query_filter_range"]):
+                setattr(
+                    params,
+                    arg,
+                    self.assign_range_zero_one(
+                        arg,
+                        getattr(
+                            args,
+                            arg,
+                        ),
+                        params,
+                    ),
+                )
+            elif arg == "spectral_sim_network_alg":
+                setattr(
+                    params,
+                    arg,
+                    self.assign_network_alg(arg, getattr(args, arg), params),
+                )
 
         return params
-
-    #         "mass_dev_ppm": (
-    #             getattr(args, "mass_dev_ppm"),
-    #             getattr(params, "validate_mass_dev_ppm"),
-    #         ),
-    #         "msms_frag_min": (
-    #             getattr(args, "msms_frag_min"),
-    #             getattr(params, "validate_pos_int"),
-    #         ),
-    #         "phenotype_fold": (
-    #             getattr(args, "phenotype_fold"),
-    #             getattr(params, "validate_pos_int"),
-    #         ),
-    #         "column_ret_fold": (
-    #             getattr(args, "column_ret_fold"),
-    #             getattr(params, "validate_pos_int"),
-    #         ),
-    #         "fragment_tol": (
-    #             getattr(args, "fragment_tol"),
-    #             getattr(params, "validate_float_zero_one"),
-    #         ),
-    #         "spectral_sim_score_cutoff": (
-    #             getattr(args, "spectral_sim_score_cutoff"),
-    #             getattr(params, "validate_float_zero_one"),
-    #         ),
-    #         "max_nr_links_spec_sim": (
-    #             getattr(args, "max_nr_links_spec_sim"),
-    #             getattr(params, "validate_pos_int"),
-    #         ),
-    #         "min_nr_matched_peaks": (
-    #             getattr(args, "min_nr_matched_peaks"),
-    #             getattr(params, "validate_pos_int"),
-    #         ),
-    #         "spectral_sim_network_alg": (
-    #             getattr(args, "spectral_sim_network_alg"),
-    #             getattr(params, "validate_spectral_sim_network_alg"),
-    #         ),
-    #         "flag_ms2query": (
-    #             getattr(args, "flag_ms2query"),
-    #             getattr(params, "validate_bool"),
-    #         ),
-    #         "flag_ms2query_blank": (
-    #             getattr(args, "flag_ms2query_blank"),
-    #             getattr(params, "validate_bool"),
-    #         ),
-    #         "ms2query_filter_range": (
-    #             tuple(getattr(args, "ms2query_filter_range")),
-    #             getattr(params, "validate_range_zero_one"),
-    #         ),
-    #         "rel_int_range": (
-    #             tuple(getattr(args, "rel_int_range")),
-    #             getattr(params, "validate_range_zero_one"),
-    #         ),
-    #     }
