@@ -72,15 +72,24 @@ class CommLineHandler:
             formatter_class=argparse.RawTextHelpFormatter,
         )
 
-        parser.add_argument(
+        group_peaktable = parser.add_mutually_exclusive_group(required=True)
+
+        group_peaktable.add_argument(
             "--peaktable_mzmine3",
             type=str,
-            required=True,
             help=(
                 "Provide a peaktable in the MZmine3 'quant_full' .csv-format.\n"
                 "For more information, see the docs.\n"
             ),
         )
+        # group_peaktable.add_argument(
+        #     "--peaktable_fermo",
+        #     type=str,
+        #     help=(
+        #         "Provide a peaktable in the FERMO .csv-format.\n"
+        #         "For more information, see the docs.\n"
+        #     ),
+        # )
 
         parser.add_argument(
             "--msms_mgf",
@@ -100,6 +109,22 @@ class CommLineHandler:
             required=False,
             help=(
                 "Provide a file with phenotype information in the fermo-format.\n"
+                "In this case, the parameter '--phenotype_fermo_mode must also be \n"
+                "given.'\n"
+                "For more information, see the docs.\n"
+            ),
+        )
+
+        parser.add_argument(
+            "--phenotype_fermo_mode",
+            type=str,
+            default=params.phenotype_fermo_mode,
+            required=False,
+            choices=["percentage", "concentration"],
+            help=(
+                "Specifies the data mode of the phenotype information.\n"
+                "All data must be of the same type of experiment (e.g. MIC).\n"
+                f"(default: {params.spectral_sim_network_alg}).\n"
                 "For more information, see the docs.\n"
             ),
         )
@@ -321,101 +346,96 @@ class CommLineHandler:
         """
         raise ValueError(f"Parameter {param}: {val} is invalid. Reason: {message}")
 
-    def validate_input_arg(
-        self: Self,
-        func: Callable,
-        user_input: Any,
-        param_name: str,
-    ) -> bool:
-        """Validate input value and return it
-
-        func: Function required to test the input value.
-        user_input: The user input
-        param_name: Name of the parameter in case an error is raised.
-
-        Returns:
-            A bool indicating success or failure
-        """
-        if (response := func(user_input))[0]:
-            return True
-        else:
-            self.raise_value_error(f"--{param_name}", user_input, response[1])
-            return False
-
-    @staticmethod
-    def create_input_validation_dict(
-        params: ParamsHandler,
-        args: argparse.Namespace,
-    ) -> Dict:
-        """Create dict for command line argument validation.
-
-        Create a dict that delivers arguments to check in validate_input_arg().
+    def assign_peaktable_mzmine3(
+        self: Self, name: str, peaktable: str, ref: ParamsHandler
+    ) -> Path | None:
+        """Validate peaktable and prepare for assignment.
 
         Args:
-            params: object instance, provides methods for validation
-            args: object instance holding user input/command line args and parameters
+            name: A command line parameter name
+            peaktable: A string pointing toward a mzmine3 style peaktable
+            ref: Instance of ParamsHandler
 
         Returns:
-            A dict of tuples: For each entry, [0] is always the method to validate with,
-            [1] is always the value to test for.
-
-        Notes:
-            Additional command line parameter need to be introduced here, else they
-            will not be added to the ParamsHandler instance.
+            A Path instance or None.
         """
-        output = dict()
+        if peaktable is not None:
+            if not (response := ref.validate_path(peaktable))[0]:
+                self.raise_value_error(f"--{name}", peaktable, response[1])
+            elif not (response := ref.validate_peaktable_mzmine3(Path(peaktable)))[0]:
+                self.raise_value_error(f"--{name}", peaktable, response[1])
+            else:
+                return Path(peaktable)
+        else:
+            return None
 
-        argument_validation_files = {
-            "peaktable_mzmine3": "validate_peaktable_mzmine3",
-            "msms_mgf": "validate_mgf",
-            "phenotype_fermo": "validate_phenotype_fermo",
-            "group_fermo": "validate_group_fermo",
-            "speclib_mgf": "validate_mgf",
-        }
+    def assign_mgf(self: Self, name: str, mgf: str, ref: ParamsHandler) -> Path | None:
+        """Validate mgf file and prepare for assignment.
 
-        for val in argument_validation_files:
-            if getattr(args, val) is not None:
-                output[val] = (
-                    getattr(params, argument_validation_files[val]),
-                    Path(
-                        getattr(args, val)
-                    ),  # Prevent Error when casting None with Path.
-                )
+        Args:
+            name: A command line parameter name
+            mgf: A string pointing toward a MS/MS mgf file
+            ref: Instance of ParamsHandler
 
-        argument_validation_generics = {
-            "mass_dev_ppm": "validate_mass_dev_ppm",
-            "msms_frag_min": "validate_pos_int",
-            "phenotype_fold": "validate_pos_int",
-            "column_ret_fold": "validate_pos_int",
-            "fragment_tol": "validate_float_zero_one",
-            "spectral_sim_score_cutoff": "validate_float_zero_one",
-            "max_nr_links_spec_sim": "validate_pos_int",
-            "min_nr_matched_peaks": "validate_pos_int",
-            "spectral_sim_network_alg": "validate_spectral_sim_network_alg",
-            "flag_ms2query": "validate_bool",
-            "flag_ms2query_blank": "validate_bool",
-        }
+        Returns:
+            A Path instance or None.
+        """
+        if mgf is not None:
+            if not (response := ref.validate_path(mgf))[0]:
+                self.raise_value_error(f"--{name}", mgf, response[1])
+            elif not (response := ref.validate_mgf(Path(mgf)))[0]:
+                self.raise_value_error(f"--{name}", mgf, response[1])
+            else:
+                return Path(mgf)
+        else:
+            return None
 
-        for val in argument_validation_generics:
-            if getattr(args, val) is not None:
-                output[val] = (
-                    getattr(params, argument_validation_generics[val]),
-                    getattr(args, val),  # Does not need to be cast.
-                )
+    def assign_phenotype_fermo(
+        self: Self, name: str, table: str, mode: str, ref: ParamsHandler
+    ) -> Path | None:
+        """Validate phenotype_fermo file and prepare for assignment.
 
-        argument_validation_ranges = {
-            "ms2query_filter_range": "validate_range_zero_one",
-            "rel_int_range": "validate_range_zero_one",
-        }
+        Args:
+            name: A command line parameter name.
+            table: A string pointing toward a phenotype fermo type file.
+            mode: A string describing the formatting mode
+            ref: Instance of ParamsHandler
 
-        for val in argument_validation_ranges:
-            if getattr(args, val) is not None:
-                output[val] = (
-                    getattr(params, argument_validation_ranges[val]),
-                    tuple(getattr(args, val)),  # Prevent Error when List instead Tuple.
-                )
+        Returns:
+            A Path instance or None.
+        """
+        if table is not None:
+            if not (response := ref.validate_path(table))[0]:
+                self.raise_value_error(f"--{name}", table, response[1])
+            elif not (response := ref.validate_phenotype_fermo(Path(table), mode))[0]:
+                self.raise_value_error(f"--{name}", table, response[1])
+            else:
+                return Path(table)
+        else:
+            return None
 
-        return output
+    def assign_group_fermo(
+        self: Self, name: str, table: str, ref: ParamsHandler
+    ) -> Path | None:
+        """Validate group_fermo file and prepare for assignment.
+
+        Args:
+            name: A command line parameter name.
+            table: A string pointing toward a fermo-style group file.
+            ref: Instance of ParamsHandler
+
+        Returns:
+            A Path instance or None.
+        """
+        if table is not None:
+            if not (response := ref.validate_path(table))[0]:
+                self.raise_value_error(f"--{name}", table, response[1])
+            elif not (response := ref.validate_group_fermo(Path(table)))[0]:
+                self.raise_value_error(f"--{name}", table, response[1])
+            else:
+                return Path(table)
+        else:
+            return None
 
     def run_argparse(self: Self, params: ParamsHandler) -> ParamsHandler:
         """Run argparse comm line interface and assign input to ParamsHandler attributes.
@@ -433,12 +453,94 @@ class CommLineHandler:
         parser = self.define_argparse_args(params)
         args = parser.parse_args()
 
-        arg_validation = self.create_input_validation_dict(params, args)
+        for arg in vars(args):
+            if arg == "peaktable_mzmine3":
+                setattr(
+                    params,
+                    arg,
+                    self.assign_peaktable_mzmine3(arg, getattr(args, arg), params),
+                )
+            elif arg == "msms_mgf":
+                setattr(params, arg, self.assign_mgf(arg, getattr(args, arg), params))
+            elif arg == "phenotype_fermo":
+                setattr(
+                    params,
+                    arg,
+                    self.assign_phenotype_fermo(
+                        arg,
+                        getattr(args, arg),
+                        getattr(args, "phenotype_fermo_mode"),
+                        params,
+                    ),
+                ),
+                setattr(
+                    params,
+                    "phenotype_fermo_mode",
+                    getattr(args, "phenotype_fermo_mode"),
+                )
+            elif arg == "group_fermo":
+                setattr(
+                    params,
+                    arg,
+                    self.assign_group_fermo(arg, getattr(args, arg), params),
+                )
+            elif arg == "speclib_mgf":
+                setattr(params, arg, self.assign_mgf(arg, getattr(args, arg), params))
 
-        for arg in arg_validation:
-            if self.validate_input_arg(
-                arg_validation[arg][0], arg_validation[arg][1], arg
-            ):
-                setattr(params, arg, arg_validation[arg][1])
+            # TODO(MMZ): Add additional assignments, their functions + tests
 
         return params
+
+    #         "mass_dev_ppm": (
+    #             getattr(args, "mass_dev_ppm"),
+    #             getattr(params, "validate_mass_dev_ppm"),
+    #         ),
+    #         "msms_frag_min": (
+    #             getattr(args, "msms_frag_min"),
+    #             getattr(params, "validate_pos_int"),
+    #         ),
+    #         "phenotype_fold": (
+    #             getattr(args, "phenotype_fold"),
+    #             getattr(params, "validate_pos_int"),
+    #         ),
+    #         "column_ret_fold": (
+    #             getattr(args, "column_ret_fold"),
+    #             getattr(params, "validate_pos_int"),
+    #         ),
+    #         "fragment_tol": (
+    #             getattr(args, "fragment_tol"),
+    #             getattr(params, "validate_float_zero_one"),
+    #         ),
+    #         "spectral_sim_score_cutoff": (
+    #             getattr(args, "spectral_sim_score_cutoff"),
+    #             getattr(params, "validate_float_zero_one"),
+    #         ),
+    #         "max_nr_links_spec_sim": (
+    #             getattr(args, "max_nr_links_spec_sim"),
+    #             getattr(params, "validate_pos_int"),
+    #         ),
+    #         "min_nr_matched_peaks": (
+    #             getattr(args, "min_nr_matched_peaks"),
+    #             getattr(params, "validate_pos_int"),
+    #         ),
+    #         "spectral_sim_network_alg": (
+    #             getattr(args, "spectral_sim_network_alg"),
+    #             getattr(params, "validate_spectral_sim_network_alg"),
+    #         ),
+    #         "flag_ms2query": (
+    #             getattr(args, "flag_ms2query"),
+    #             getattr(params, "validate_bool"),
+    #         ),
+    #         "flag_ms2query_blank": (
+    #             getattr(args, "flag_ms2query_blank"),
+    #             getattr(params, "validate_bool"),
+    #         ),
+    #         "ms2query_filter_range": (
+    #             tuple(getattr(args, "ms2query_filter_range")),
+    #             getattr(params, "validate_range_zero_one"),
+    #         ),
+    #         "rel_int_range": (
+    #             tuple(getattr(args, "rel_int_range")),
+    #             getattr(params, "validate_range_zero_one"),
+    #         ),
+    #     }

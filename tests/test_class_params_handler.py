@@ -24,6 +24,8 @@ def test_default_values_class_params_handler(params_handler):
             assert getattr(params_handler, a) is None
         elif a == "peaktable_mzmine3":
             assert getattr(params_handler, a) is None
+        elif a == "phenotype_fermo_mode":
+            assert getattr(params_handler, a) is None
         elif a == "msms_mgf":
             assert getattr(params_handler, a) is None
         elif a == "phenotype_fermo":
@@ -70,7 +72,8 @@ def test_default_values_class_params_handler(params_handler):
     ],
 )
 def test_success_validate_bool(b):
-    assert ParamsHandler.validate_bool(b)[0]
+    result = ParamsHandler.validate_bool(b)
+    assert result[0], result[1]
 
 
 @pytest.mark.parametrize(
@@ -84,15 +87,18 @@ def test_success_validate_bool(b):
     ],
 )
 def test_fail_validate_bool(b):
-    assert not ParamsHandler.validate_bool(b)[0]
+    result = ParamsHandler.validate_bool(b)
+    assert not result[0], result[1]
 
 
 def test_success_validate_string():
-    assert ParamsHandler.validate_string("fermo_core/main.py")[0]
+    result = ParamsHandler.validate_string("fermo_core/main.py")
+    assert result[0], result[1]
 
 
 def test_fail_validate_string():
-    assert not ParamsHandler.validate_string(1)[0]
+    result = ParamsHandler.validate_string(1)
+    assert not result[0], result[1]
 
 
 @pytest.mark.parametrize(
@@ -103,7 +109,8 @@ def test_fail_validate_string():
     ],
 )
 def test_success_validate_pos_int_or_zero(i):
-    assert ParamsHandler.validate_pos_int_or_zero(i)[0]
+    result = ParamsHandler.validate_pos_int_or_zero(i)
+    assert result[0], result[1]
 
 
 @pytest.mark.parametrize(
@@ -118,7 +125,8 @@ def test_success_validate_pos_int_or_zero(i):
     ],
 )
 def test_fail_validate_pos_int_or_zero(i):
-    assert not ParamsHandler.validate_pos_int_or_zero(i)[0]
+    result = ParamsHandler.validate_pos_int_or_zero(i)
+    assert not result[0], result[1]
 
 
 @pytest.mark.parametrize(
@@ -129,12 +137,14 @@ def test_fail_validate_pos_int_or_zero(i):
     ],
 )
 def test_success_validate_pos_int(i):
-    assert ParamsHandler.validate_pos_int(i)[0]
+    result = ParamsHandler.validate_pos_int(i)
+    assert result[0], result[1]
 
 
 @pytest.mark.parametrize("i", [-1, 0, 1.0, -1.0, "string"])
 def test_fail_validate_pos_int(i):
-    assert not ParamsHandler.validate_pos_int(i)[0]
+    result = ParamsHandler.validate_pos_int(i)
+    assert not result[0], result[1]
 
 
 @pytest.mark.parametrize(
@@ -146,7 +156,8 @@ def test_fail_validate_pos_int(i):
     ],
 )
 def test_success_validate_mass_dev_ppm(params_handler, mass_dev_ppm):
-    assert params_handler.validate_mass_dev_ppm(mass_dev_ppm)[0]
+    result = params_handler.validate_mass_dev_ppm(mass_dev_ppm)
+    assert result[0], result[1]
 
 
 @pytest.mark.parametrize(
@@ -159,7 +170,8 @@ def test_success_validate_mass_dev_ppm(params_handler, mass_dev_ppm):
     ],
 )
 def test_fail_validate_mass_dev_ppm(params_handler, mass_dev_ppm):
-    assert not params_handler.validate_mass_dev_ppm(mass_dev_ppm)[0]
+    result = params_handler.validate_mass_dev_ppm(mass_dev_ppm)
+    assert not result[0], result[1]
 
 
 @pytest.mark.parametrize(
@@ -171,7 +183,8 @@ def test_fail_validate_mass_dev_ppm(params_handler, mass_dev_ppm):
     ],
 )
 def test_success_validate_float_zero_one(f):
-    assert ParamsHandler.validate_float_zero_one(f)[0]
+    result = ParamsHandler.validate_float_zero_one(f)
+    assert result[0], result[1]
 
 
 @pytest.mark.parametrize(
@@ -182,7 +195,8 @@ def test_success_validate_float_zero_one(f):
     ],
 )
 def test_fail_validate_float_zero_one(f):
-    assert not ParamsHandler.validate_float_zero_one(f)[0]
+    result = ParamsHandler.validate_float_zero_one(f)
+    assert not result[0], result[1]
 
 
 @pytest.mark.parametrize(
@@ -194,7 +208,8 @@ def test_fail_validate_float_zero_one(f):
     ],
 )
 def test_success_validate_spectral_sim_network_alg(params_handler, alg):
-    assert params_handler.validate_spectral_sim_network_alg(alg)[0]
+    result = params_handler.validate_spectral_sim_network_alg(alg)
+    assert result[0], result[1]
 
 
 @pytest.mark.parametrize(
@@ -208,7 +223,8 @@ def test_success_validate_spectral_sim_network_alg(params_handler, alg):
     ],
 )
 def test_fail_validate_spectral_sim_network_alg(params_handler, alg):
-    assert not params_handler.validate_spectral_sim_network_alg(alg)[0]
+    result = params_handler.validate_spectral_sim_network_alg(alg)
+    assert not result[0], result[1]
 
 
 @pytest.mark.parametrize(
@@ -220,7 +236,8 @@ def test_fail_validate_spectral_sim_network_alg(params_handler, alg):
     ],
 )
 def test_success_validate_range_zero_one(r):
-    assert ParamsHandler.validate_range_zero_one(r)[0]
+    result = ParamsHandler.validate_range_zero_one(r)
+    assert result[0], result[1]
 
 
 @pytest.mark.parametrize(
@@ -235,62 +252,128 @@ def test_success_validate_range_zero_one(r):
     ],
 )
 def test_fail_validate_range_zero_one(r):
-    assert not ParamsHandler.validate_range_zero_one(r)[0]
+    result = ParamsHandler.validate_range_zero_one(r)
+    assert not result[0], result[1]
 
 
 def test_success_validate_file_exists():
-    assert ParamsHandler.validate_file_exists(
+    result = ParamsHandler.validate_file_exists(
         Path("tests/example_files/example_peaktable_mzmine3.csv")
-    )[0]
+    )
+    assert result[0], result[1]
 
 
 def test_fail_validate_file_exists():
-    assert not ParamsHandler.validate_file_exists(Path("file/which/does/not/exist"))[0]
+    result = ParamsHandler.validate_file_exists(Path("file/which/does/not/exist"))
+    assert not result[0], result[1]
 
 
-def test_success_validate_csv_file():
-    assert ParamsHandler.validate_csv_file(
+def test_success_validate_csv_file(params_handler):
+    result = params_handler.validate_csv_file(
         Path("tests/example_files/example_peaktable_mzmine3.csv")
-    )[0]
+    )
+    assert result[0], result[1]
 
 
-def test_fail_validate_csv_file():
-    assert not ParamsHandler.validate_csv_file(
+def test_fail_validate_csv_file(params_handler):
+    result = params_handler.validate_csv_file(
         Path("tests/example_files/example_invalid_csv.md")
-    )[0]
+    )
+    assert not result[0], result[1]
 
 
 def test_success_validate_csv_duplicate_col_entries():
-    assert ParamsHandler.validate_csv_duplicate_col_entries(
+    result = ParamsHandler.validate_csv_duplicate_col_entries(
         pd.DataFrame({"id": [1, 2]}), "id"
-    )[0]
+    )
+    assert result[0], result[1]
 
 
 def test_fail_validate_csv_duplicate_col_entries():
-    assert not ParamsHandler.validate_csv_duplicate_col_entries(
+    result = ParamsHandler.validate_csv_duplicate_col_entries(
         pd.DataFrame({"id": [1, 1]}), "id"
-    )[0]
+    )
+    assert not result[0], result[1]
 
 
 def test_success_validate_peaktable_mzmine3(params_handler):
-    assert params_handler.validate_peaktable_mzmine3(
+    result = params_handler.validate_peaktable_mzmine3(
         Path("tests/example_files/example_peaktable_mzmine3.csv")
-    )[0]
+    )
+    assert result[0], result[1]
 
 
 def test_fail_validate_peaktable_mzmine3(params_handler):
-    assert not params_handler.validate_peaktable_mzmine3(
+    result = params_handler.validate_peaktable_mzmine3(
         Path("tests/example_files/example_group_fermo.csv")
-    )[0]
+    )
+    assert not result[0], result[1]
 
 
 def test_success_validate_mgf(params_handler):
-    assert params_handler.validate_mgf(
+    result = params_handler.validate_mgf(
         Path("tests/example_files/example_msms_mgf.mgf")
-    )[0]
+    )
+    assert result[0], result[1]
 
 
 def test_fail_validate_mgf(params_handler):
-    assert not params_handler.validate_mgf(
+    result = params_handler.validate_mgf(
         Path("tests/example_files/example_invalid_csv.md")
-    )[0]
+    )
+    assert not result[0], result[1]
+
+
+def test_success_validate_file_ending():
+    result = ParamsHandler.validate_file_ending(
+        Path("example_files/example_phenotype_fermo.csv"), ".csv"
+    )
+    assert result[0], result[1]
+
+
+def test_fail_validate_file_ending():
+    result = ParamsHandler.validate_file_ending(
+        Path("example_files/example_phenotype_fermo.csv"), ".mgf"
+    )
+    assert not result[0], result[1]
+
+
+def test_success_validate_path():
+    result = ParamsHandler.validate_path("example_files/example_phenotype_fermo.csv")
+    assert result[0], result[1]
+
+
+@pytest.mark.parametrize("s", [None, 22, ["percentage", "concentration"]])
+def test_fail_validate_path(s):
+    result = ParamsHandler.validate_path(s)
+    assert not result[0], result[1]
+
+
+def test_success_validate_phenotype_fermo(params_handler):
+    result = params_handler.validate_phenotype_fermo(
+        Path("tests/example_files/example_phenotype_fermo.csv"),
+        "percentage",
+    )
+    assert result[0], result[1]
+
+
+def test_fail_validate_phenotype_fermo(params_handler):
+    result = params_handler.validate_phenotype_fermo(
+        Path("tests/example_files/example_msms_mgf.mgf"),
+        "percentage",
+    )
+    assert not result[0], result[1]
+
+
+def test_success_validate_group_fermo(params_handler):
+    result = params_handler.validate_group_fermo(
+        Path("tests/example_files/example_group_fermo.csv")
+    )
+    assert result[0], result[1]
+
+
+def test_fail_validate_group_fermo(params_handler):
+    result = params_handler.validate_group_fermo(
+        Path("tests/example_files/example_msms_mgf.mgf")
+    )
+    assert not result[0], result[1]

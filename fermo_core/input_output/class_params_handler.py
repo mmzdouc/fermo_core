@@ -51,6 +51,8 @@ class ParamsHandler:
         peaktable_mzmine3: Mzmine3-style peaktable.
         msms_mgf: Mgf-style msms file.
         phenotype_fermo: Fermo-style phenotypic data file.
+        phenotype_fermo_mode: Specifies mode of file phenotype_fermo: the higher the
+            better or the lower the better.
         group_fermo: Fermo-style group data file.
         speclib_mgf: Mgf-style spectral library file.
         mass_dev_ppm: Expected mass deviation tolerance in ppm.
@@ -82,6 +84,7 @@ class ParamsHandler:
         self.peaktable_mzmine3: Path | None = None
         self.msms_mgf: Path | None = None
         self.phenotype_fermo: Path | None = None
+        self.phenotype_fermo_mode: str | None = None
         self.group_fermo: Path | None = None
         self.speclib_mgf: Path | None = None
         self.mass_dev_ppm: int = 20
@@ -121,7 +124,7 @@ class ParamsHandler:
             s: input-value for validation.
 
         Returns:
-            Tuple with outcome and (error) message.
+            Tuple with [0] validation outcome and [1] (error) message.
         """
         if not isinstance(s, str):
             return False, "Not a valid string."
@@ -136,7 +139,7 @@ class ParamsHandler:
             i: input-value for validation.
 
         Returns:
-            Tuple with outcome and (error) message.
+            Tuple with [0] validation outcome and [1] (error) message.
         """
         if not isinstance(i, int):
             return False, "Not an integer value."
@@ -153,7 +156,7 @@ class ParamsHandler:
             i: input-value for validation.
 
         Returns:
-            Tuple with outcome and (error) message.
+            Tuple with [0] validation outcome and [1] (error) message.
         """
         if not isinstance(i, int):
             return False, "Not an integer value."
@@ -170,7 +173,7 @@ class ParamsHandler:
             f: input-value for validation.
 
         Returns:
-            Tuple with outcome and (error) message.
+            Tuple with [0] validation outcome and [1] (error) message.
         """
         if not isinstance(f, float):
             return False, "Not a float (comma) number."
@@ -186,7 +189,7 @@ class ParamsHandler:
            ppm: mass deviation in ppm, determines mass accuracy.
 
         Returns:
-           Tuple with outcome and (error) message
+           Tuple with [0] validation outcome and [1] (error) message.
         """
         if not (response := self.validate_pos_int(ppm))[0]:
             return response
@@ -202,14 +205,14 @@ class ParamsHandler:
            alg: choice of spectral similarity networking algorithm.
 
         Returns:
-           Tuple with outcome and (error) message
+           Tuple with [0] validation outcome and [1] (error) message.
         """
         if not (response := self.validate_string(alg))[0]:
             return response
         elif not any(
             alg == item for item in ["all", "modified_cosine", "ms2deepscore"]
         ):
-            return False, "Not a valid algorithm choice"
+            return False, "Not a valid algorithm choice."
         else:
             return True, ""
 
@@ -221,7 +224,7 @@ class ParamsHandler:
            r: tuple with two floats between and including 0-1.
 
         Returns:
-           Tuple with outcome and (error) message.
+           Tuple with [0] validation outcome and [1] (error) message.
         """
         if not len(r) == 2:
             return False, f"Only two values allowed. Nr of provided values: {len(r)}."
@@ -239,6 +242,22 @@ class ParamsHandler:
             return True, ""
 
     @staticmethod
+    def validate_path(s: str) -> Tuple[bool, str]:
+        """Validate that Path can be called on input.
+
+        Args:
+           s: A string pointing toward a file.
+
+        Returns:
+           Tuple with [0] validation outcome and [1] (error) message.
+        """
+        try:
+            Path(s)
+            return True, ""
+        except TypeError:
+            return False, "Does not appear to be a file."
+
+    @staticmethod
     def validate_file_exists(f: Path) -> Tuple[bool, str]:
         """Validate that input file exists.
 
@@ -246,23 +265,44 @@ class ParamsHandler:
            f: A pathlib.Path instance that points towards a file.
 
         Returns:
-           Tuple with outcome and (error) message
+           Tuple with [0] validation outcome and [1] (error) message.
         """
-        if Path.exists(f):
-            return True, ""
-        else:
+        if not Path.exists(f):
             return False, "File does not exist."
+        else:
+            return True, ""
 
     @staticmethod
-    def validate_csv_file(f: Path) -> Tuple[bool, str]:
+    def validate_file_ending(f: Path, ending: str) -> Tuple[bool, str]:
+        """Validate that input file has the correct ending.
+
+        Args:
+           f: A pathlib.Path instance that points towards a file.
+           ending: The required file ending
+
+        Returns:
+           Tuple with [0] validation outcome and [1] (error) message.
+        """
+        if f.suffix != ending:
+            return False, f"File ending should be {ending}, is {f.suffix}."
+        else:
+            return True, ""
+
+    def validate_csv_file(self: Self, f: Path) -> Tuple[bool, str]:
         """Validate that input file is a comma separated values file (csv).
 
         Args:
            f: A pathlib.Path instance that points towards a file.
 
         Returns:
-           Tuple with outcome and (error) message.
+           Tuple with [0] validation outcome and [1] (error) message.
         """
+
+        if not (response := self.validate_file_exists(f))[0]:
+            return response
+        elif not (response := self.validate_file_ending(f, ".csv"))[0]:
+            return response
+
         try:
             pd.read_csv(f, sep=",")
             return True, ""
@@ -280,25 +320,23 @@ class ParamsHandler:
            column: The column to check for duplicate entries.
 
         Returns:
-           Tuple with outcome and (error) message.
+           Tuple with [0] validation outcome and [1] (error) message.
         """
         if df.duplicated(subset=[column]).any():
             return False, f"Duplicate entries in column '{column}'."
         else:
             return True, ""
 
-    def validate_peaktable_mzmine3(self: Self, f: Path):
+    def validate_peaktable_mzmine3(self: Self, f: Path) -> Tuple[bool, str]:
         """Validate that input file is a mzmine3-style peaktable
 
         Args:
            f: A pathlib.Path instance that points towards a mzmine3-style peaktable.
 
         Returns:
-           Tuple with outcome and (error) message
+           Tuple with [0] validation outcome and [1] (error) message.
         """
-        if not (response := self.validate_file_exists(f))[0]:
-            return response
-        elif not (response := self.validate_csv_file(f))[0]:
+        if not (response := self.validate_csv_file(f))[0]:
             return response
 
         df = pd.read_csv(f)
@@ -329,16 +367,18 @@ class ParamsHandler:
 
         return True, ""
 
-    def validate_mgf(self: Self, f: Path):
+    def validate_mgf(self: Self, f: Path) -> Tuple[bool, str]:
         """Validate that input file is a .mfg-file containing MS/MS spectra.
 
         Args:
            f: A pathlib.Path instance that points towards a .mgf-file.
 
         Returns:
-           Tuple with outcome and (error) message
+           Tuple with [0] validation outcome and [1] (error) message.
         """
         if not (response := self.validate_file_exists(f))[0]:
+            return response
+        elif not (response := self.validate_file_ending(f, ".mgf"))[0]:
             return response
 
         with open(f) as infile:
@@ -349,28 +389,98 @@ class ParamsHandler:
 
         return True, ""
 
-    def validate_phenotype_fermo(self: Self, f: Path):
+    def validate_phenotype_fermo(self: Self, f: Path, mode: str) -> Tuple[bool, str]:
         """Validate that input file is a fermo-style phenotype data table.
+
+        A fermo-style phenotype data file is a .csv-file with the layout:
+
+        sample_name,phenotype_col_1,phenotype_col_2,...,phenotype_col_n \n
+        sample1,1,0.1 \n
+        sample2,10,0.01 \n
+        sample3,100,0.001 \n
+
+        Ad columns: "sample_name" mandatory, one or more further columns
+        Ad values: One experiment per column. All experiments must be of the same type
+        (e.g. concentration, percentage inhibition). This is indicated by the "mode"
+        of the file: percentage-like (the higher the better), concentration-like (the
+        lower the better)
 
         Args:
            f: A pathlib.Path instance that points towards a fermo-style phenotype data
            table.
+           mode: Specifying the formatting mode of the phenotype data table.
 
         Returns:
-           Tuple with outcome and (error) message
+           Tuple with [0] validation outcome and [1] (error) message.
         """
-        return False, "Not implemented yet"
+        if mode is None:
+            return False, "'--phenotype_fermo_mode' must be specified, was left empty."
+        elif not any(mode == item for item in ["percentage", "concentration"]):
+            return (
+                False,
+                "'--phenotype_fermo_mode' not 'percentage' or 'concentration'.",
+            )
+        elif not (response := self.validate_csv_file(f))[0]:
+            return response
 
-        # TODO(MMZ): Implement testing for rest of files
+        df = pd.read_csv(f)
 
-    def validate_group_fermo(self: Self, f: Path):
+        if df.filter(regex="^sample_name$").columns.empty:
+            return False, "No column labelled 'sample_name' detected."
+        elif not len(df.columns) > 1:
+            return False, "No data column(s) detected."
+        elif df.isnull().any().any():
+            return False, "Empty fields in 'sample_name' or data column(s) detected."
+        elif df.applymap(lambda x: str(x).isspace()).any().any():
+            return False, "Fields containing only (white)space detected."
+        elif (
+            df.loc[:, df.columns != "sample_name"]
+            .select_dtypes(include="object")
+            .any()
+            .any()
+        ):
+            return False, "Data column(s) include non-numeric values."
+        elif not (
+            response := self.validate_csv_duplicate_col_entries(df, "sample_name")
+        )[0]:
+            return response
+
+        return True, ""
+
+    def validate_group_fermo(self: Self, f: Path) -> Tuple[bool, str]:
         """Validate that input file is a fermo-style group data table.
+
+        A fermo-style group data file is a .csv-file with the layout:
+
+        sample_name,group_col_1,group_col_2,...,group_col_n \n
+        sample1,medium_A,condition_A \n
+        sample2,medium_B,condition_A\n
+        sample3,medium_C,condition_A \n
+
+        Ad values: The only prohibited value is 'GENERAL' which is reserved for
+        internal use.
 
         Args:
            f: A pathlib.Path instance that points towards a fermo-style group data
            table.
 
         Returns:
-           Tuple with outcome and (error) message
+           Tuple with [0] validation outcome and [1] (error) message.
         """
-        return False, "Not implemented yet"
+        if not (response := self.validate_csv_file(f))[0]:
+            return response
+
+        df = pd.read_csv(f)
+
+        if df.filter(regex="^sample_name$").columns.empty:
+            return False, "No column labeled 'sample_name' detected."
+        elif not len(df.columns) > 1:
+            return False, "No data column(s) detected."
+        elif df.isnull().any().any():
+            return False, "Empty fields in 'sample_name' or data column(s) detected."
+        elif df.applymap(lambda x: str(x).isspace()).any().any():
+            return False, "Fields containing only (white)space detected."
+        elif df.applymap(lambda x: x == "GENERAL").any().any():
+            return False, "Fields with prohibited value 'GENERAL' detected."
+
+        return True, ""

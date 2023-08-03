@@ -54,6 +54,7 @@ def main(params: ParamsHandler) -> None:
     #  define implementations of mzmine
 
     print("Arrives at end.")
+    print(params.phenotype_fermo_mode)
     pass
 
 
