@@ -49,13 +49,12 @@ def main(params: ParamsHandler) -> None:
         Should return a session object for use in the dashboard or for file export once
         this part is done.
     """
+    # features, samples = Builder(params)
+    # returns feature and sample repositories
+    # also has methods to call the Factory to parse data and to process data so that
+    # feature and sample entries can be added
 
-    #  define abstractbaseclass for input file types (csv
-    #  define implementations of mzmine
-
-    print("Arrives at end.")
-    print(params)
-    pass
+    # proceed with annotations, bioactivity etc.
 
 
 if __name__ == "__main__":

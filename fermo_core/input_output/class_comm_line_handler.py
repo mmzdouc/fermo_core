@@ -37,7 +37,15 @@ from fermo_core.input_output.class_validation_handler import ValidationHandler
 
 
 class CommLineHandler:
-    """Call argparse and validate user input."""
+    """Call argparse and validate user input.
+
+    If new command line argument options should be specified, they need to be:
+    - added to self.define_argparse_args()
+    - specified for assignment in self.assign_comm_line_input(), with a suitable
+        assignment method
+    - defaults specified in ParamsHandler class attributes
+    - validation methods specified in ValidationHandler class
+    """
 
     @staticmethod
     def define_argparse_args(
@@ -670,14 +678,14 @@ class CommLineHandler:
                         arg, getattr(args_handler, arg), val_handler
                     ),
                 )
-            else:
+            elif arg not in vars(par_handler):
                 self.raise_value_error(
                     f"--{arg}",
                     getattr(args_handler, arg),
                     "Param not yet assignable to ParamsHandler. Contact fermo developers.",
                 )
 
-            return par_handler
+        return par_handler
 
     def run_argparse(self: Self, params: ParamsHandler) -> ParamsHandler:
         """Run argparse comm line interface and assign input to ParamsHandler attributes.

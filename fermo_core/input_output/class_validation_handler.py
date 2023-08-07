@@ -277,28 +277,26 @@ class ValidationHandler:
 
         df = pd.read_csv(f)
 
-        #  TODO(MMZ): create a for loop to reduce code lines
+        def _is_col_name(exp: str, msg: str) -> Tuple[bool, str]:
+            if df.filter(regex=exp).columns.empty:
+                return False, f"Column '{msg}' is missing."
+            else:
+                return True, ""
 
-        if df.filter(regex="^id$").columns.empty:
-            return False, "Column 'id' missing."
-        elif df.filter(regex="^mz$").columns.empty:
-            return False, "Column 'mz' missing."
-        elif df.filter(regex="^rt$").columns.empty:
-            return False, "Column 'rt' missing."
-        elif df.filter(regex="^datafile:").columns.empty:
-            return False, "Column 'datafile: ...' missing."
-        elif df.filter(regex=":intensity_range:max$").columns.empty:
-            return False, "Column '... :intensity_range:max' missing."
-        elif df.filter(regex=":feature_state$").columns.empty:
-            return False, "Column '... :feature_state' missing."
-        elif df.filter(regex=":fwhm$").columns.empty:
-            return False, "Column '... :fwhm' missing."
-        elif df.filter(regex=":rt$").columns.empty:
-            return False, "Column '... :rt' missing."
-        elif df.filter(regex=":rt_range:min$").columns.empty:
-            return False, "Column '... :rt_range:min' missing."
-        elif df.filter(regex=":rt_range:max$").columns.empty:
-            return False, "Column '... :rt_range:max' missing."
+        for arg in [
+            ("^id$", "id"),
+            ("^mz$", "mz"),
+            ("^rt$", "rt"),
+            ("^datafile:", "datafile: ..."),
+            (":intensity_range:max$", "... :intensity_range:max"),
+            (":feature_state$", "... :feature_state"),
+            (":fwhm$", "... :fwhm"),
+            (":rt$", "... :rt"),
+            (":rt_range:min$", "... :rt_range:min"),
+            (":rt_range:max$", "... :rt_range:max"),
+        ]:
+            if not (outcome := _is_col_name(arg[0], arg[1]))[0]:
+                return outcome
 
         if (response := self.validate_csv_duplicate_col_entries(df, "id"))[0]:
             return response
