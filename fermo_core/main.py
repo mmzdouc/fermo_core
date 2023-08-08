@@ -28,8 +28,12 @@ from importlib import metadata
 from pathlib import Path
 
 #  Internal
-from fermo_core.input_output.class_params_handler import ParamsHandler
+from fermo_core.input_output.dataclass_params_handler import ParamsHandler
 from fermo_core.input_output.class_comm_line_handler import CommLineHandler
+from fermo_core.data_processing.class_repository import Repository
+from fermo_core.data_processing.builder.class_general_feature_director import (
+    GeneralFeatureDirector,
+)
 
 VERSION = metadata.version("fermo_core")
 ROOT = Path(__file__).resolve().parent
@@ -49,11 +53,12 @@ def main(params: ParamsHandler) -> None:
         Should return a session object for use in the dashboard or for file export once
         this part is done.
     """
-    # features, samples = Builder(params)
-    # returns feature and sample repositories
-    # also has methods to call the Factory to parse data and to process data so that
-    # feature and sample entries can be added
+    features = GeneralFeatureDirector.construct(params)
+    feature_repo = Repository()
+    for identifier in features:
+        feature_repo.add(identifier, features[identifier])
 
+    print(feature_repo.get(1).mz)
     # proceed with annotations, bioactivity etc.
 
 

@@ -32,7 +32,7 @@ SOFTWARE.
 import argparse
 from pathlib import Path
 from typing import Self, Any, Tuple, List
-from fermo_core.input_output.class_params_handler import ParamsHandler
+from fermo_core.input_output.dataclass_params_handler import ParamsHandler
 from fermo_core.input_output.class_validation_handler import ValidationHandler
 
 

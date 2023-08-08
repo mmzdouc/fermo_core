@@ -1,7 +1,7 @@
 from pathlib import Path
 
 import pytest
-from fermo_core.input_output.class_params_handler import ParamsHandler
+from fermo_core.input_output.dataclass_params_handler import ParamsHandler
 
 
 @pytest.fixture
