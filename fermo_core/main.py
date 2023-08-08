@@ -26,14 +26,13 @@ SOFTWARE.
 #  External
 from importlib import metadata
 from pathlib import Path
+from typing import Tuple
 
 #  Internal
 from fermo_core.input_output.dataclass_params_handler import ParamsHandler
 from fermo_core.input_output.class_comm_line_handler import CommLineHandler
-from fermo_core.data_processing.class_repository import Repository
-from fermo_core.data_processing.builder.class_general_feature_director import (
-    GeneralFeatureDirector,
-)
+from fermo_core.data_processing.class_parser import Parser
+
 
 VERSION = metadata.version("fermo_core")
 ROOT = Path(__file__).resolve().parent
@@ -53,13 +52,13 @@ def main(params: ParamsHandler) -> None:
         Should return a session object for use in the dashboard or for file export once
         this part is done.
     """
-    features = GeneralFeatureDirector.construct(params)
-    feature_repo = Repository()
-    for identifier in features:
-        feature_repo.add(identifier, features[identifier])
+    features = Parser.parse_peaktable(params)
 
-    print(feature_repo.get(1).mz)
-    # proceed with annotations, bioactivity etc.
+    # TODO: return stats too
+
+    print(features)
+
+    # TODO(MMZ): proceed with annotations, bioactivity etc.
 
 
 if __name__ == "__main__":

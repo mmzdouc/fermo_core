@@ -1,0 +1,139 @@
+"""Storage and handling of general stats of analysis run
+
+TODO(MMZ): Improve description of class
+
+
+Copyright (c) 2022-2023 Mitja Maximilian Zdouc, PhD
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+"""
+
+from typing import Self, Tuple, Optional
+from pathlib import Path
+
+import pandas
+import pandas as pd
+
+from fermo_core.input_output.dataclass_params_handler import ParamsHandler
+
+
+class Stats:
+    """Extract analysis run stats and organize them.
+
+
+    Attributes:
+        rt_min: overall lowest retention time start across all samples, in minutes
+        rt_max: overall highest retention time stop across all samples, in minutes
+        rt_range: range in minutes between min and max rt.
+        samples: all sample ids in analysis run
+        features: all feature ids in analysis run
+        groups: all group ids in analysis run
+        cliques: all similarity cliques in analysis run
+        phenotypes: all phenotype classifications in analysis run
+        blank: all blank-associated features in analysis run
+        int_removed: all features that were removed due to intensity range
+        annot_removed: all features that were removed due to annotation range
+    """
+
+    def __init__(self: Self):
+        self.rt_min: Optional[float] = None
+        self.rt_max: Optional[float] = None
+        self.rt_range: Optional[float] = None
+        self.samples: Optional[Tuple] = None
+        self.features: Optional[Tuple] = None
+        self.groups: Optional[Tuple] = None
+        self.cliques: Optional[Tuple] = None
+        self.phenotypes: Optional[Tuple] = None
+        self.blank: Optional[Tuple] = None
+        self.int_removed: Optional[Tuple] = None
+        self.annot_removed: Optional[Tuple] = None
+
+    # TODO(MMZ): write one method per type of peaktable that is parsed and call them
+    #  after the type of peaktable
+
+    def _get_features_in_range_mzmine3(
+        self: Self, df: pandas.DataFrame, r: Tuple[float, float]
+    ) -> Tuple[Tuple, Tuple]:
+        """Separate features into two sets based on range.
+
+        Only exclude features that are below the relative intensity in all samples in
+        which they are detected.
+
+        Args:
+            df: pandas DataFrame resulting from mzmine3 style peaktable
+            r: user-provided range
+
+        Returns:
+            Two tuples: one "included" (features inside of range), one "excluded" (
+            features outside of range)
+        """
+        incl = set()
+        excl = set()
+        samples_max = dict()
+
+        # Extract maximum intensity values for each sample as reference points
+        for s in self.samples:
+            samples_max[s] = df.loc[:, f"datafile:{s}:intensity_range:max"].max()
+
+        # Use dropna() method with filter to get series of sample intensity
+        for _, row in df.iterrows():
+            sample_values = row.dropna().filter(regex=":intensity_range:max")
+
+            feature_int = dict()
+            for index, value in sample_values.items():
+                sample = index.split(":")[1]
+                feature_int[sample] = value
+
+            if any(
+                (samples_max[s] * r[0]) <= feature_int[s] <= (samples_max[s] * r[1])
+                for s in feature_int
+            ):
+                incl.add(row["id"])
+            else:
+                excl.add(row["id"])
+
+            # TODO(MMZ): Write tests to verify results, then do the same for ms2query
+            #  range
+
+        return tuple(incl), tuple(excl)
+
+    def parse_mzmine3(self, params: ParamsHandler):
+        """Parse a mzmine3 peaktable for general stats on analysis run.
+
+        Args:
+            params: holds information on peaktable and additional parameters.
+        """
+
+        def _extract_sample_names():
+            samples = set()
+            for s in df.filter(regex=":feature_state").columns:
+                samples.add(s.split(":")[1])
+            return tuple(samples)
+
+        df = pd.read_csv(params.peaktable_mzmine3)
+
+        self.rt_min = df.loc[:, "rt_range:min"].min()
+        self.rt_max = df.loc[:, "rt_range:max"].max()
+        self.rt_range = self.rt_max - self.rt_min
+
+        self.samples = _extract_sample_names()
+
+        self.features, self.int_removed = self._get_features_in_range_mzmine3(
+            df, params.rel_int_range
+        )

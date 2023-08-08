@@ -25,34 +25,41 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
+import pandas as pd
+from pathlib import Path
 from typing import Dict
-from fermo_core.input_output.dataclass_params_handler import ParamsHandler
+from fermo_core.data_processing.builder.class_feature_builder import FeatureBuilder
 
 
 class GeneralFeatureDirector:
     """Builds the general feature instances"""
 
     @staticmethod
-    def construct(params: ParamsHandler) -> Dict:
+    def construct_mzmine(peaktable: Path) -> Dict:
         """Constructs the products and returns them in a dict.
 
         Args:
-            params: an instance of the ParamsHandler class, holding user input
+            peaktable: Path towards an mzmine3 peaktable
 
         Returns:
             A dict containing instances of the GeneralFeature class.
         """
-        # load the peaktable
-        # loop over the peaktable and extract the entries to create the instance
-        # collect in dict
-        # return dict
-
         feature_dict = dict()
 
-        # pro forma test if it works
-        # feature_dict[1] = FeatureBuilder()\
-        #     .set_f_id(1)\
-        #     .set_mz(101.1)\
-        #     .get_result()
+        df = pd.read_csv(peaktable)
+        for i, row in df.iterrows():
+            # TODO(MMZ): filter for features that were filtered out based on rel int?
+            # TODO: if int(row["feature_ID"]) not in detected_features:
+            feature_dict[row["id"]] = (
+                FeatureBuilder()
+                .set_f_id(row["id"])
+                .set_intensity(row["height"])
+                .set_area(row["area"])
+                .set_mz(row["mz"])
+                .set_rt(row["rt"])
+                .set_rt_start(row["rt_range:min"])
+                .set_rt_stop(row["rt_range:max"])
+                .get_result()
+            )
 
         return feature_dict

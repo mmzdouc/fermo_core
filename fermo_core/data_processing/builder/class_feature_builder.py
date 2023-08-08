@@ -72,6 +72,10 @@ class FeatureBuilder:
         self.feature.intensity = intensity
         return self
 
+    def set_area(self, area: int):
+        self.feature.area = area
+        return self
+
     def set_msms(self, msms: Tuple):
         self.feature.msms = msms
         return self

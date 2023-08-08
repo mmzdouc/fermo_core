@@ -1,7 +1,4 @@
-"""Organize data of general (average) molecular feature
-
-TODO(MMZ): Improve description of class
-
+"""Organize molecular feature data. Product of Feature Builder class.
 
 Copyright (c) 2022-2023 Mitja Maximilian Zdouc, PhD
 
@@ -28,10 +25,9 @@ from typing import Optional, Tuple, Self, Dict
 
 
 class Feature:
-    """Organize data belonging to a general (average) molecular feature.
+    """Organize data belonging to a molecular feature.
 
-    Either instantiated as the general molecular feature representation (averaged over
-    all samples) or the sample-specific one.
+    Product of the FeatureBuilder class.
 
     Attributes:
         f_id: the integer ID of the molecular feature.
@@ -43,6 +39,7 @@ class Feature:
         trace: indicating the reconstructed rt/intensity trace of the molecular feature.
         fwhm: the feature width at half maximum intensity (peak width).
         intensity: the maximum intensity.
+        area: the area of the peak
         msms: a tuple of fragments [0] and intensities [1].
         samples: a tuple of samples to which feature is associated.
         blank: bool to indicate if feature is blank-associated (if provided).
@@ -65,6 +62,7 @@ class Feature:
         "trace",
         "fwhm",
         "intensity",
+        "area",
         "msms",
         "samples",
         "blank",
@@ -86,6 +84,7 @@ class Feature:
         self.trace: Optional[Tuple] = None
         self.fwhm: Optional[float] = None
         self.intensity: Optional[int] = None
+        self.area: Optional[int] = None
         self.msms: Optional[Tuple] = None
         self.samples: Optional[Tuple] = None
         self.blank: bool = False
