@@ -57,20 +57,26 @@ class Parser:
             stats = Stats()
             stats.parse_mzmine3(params)
 
-            features = GeneralFeatureDirector.construct_mzmine(
-                pd.read_csv(params.peaktable_mzmine3), stats.features
-            )
             feature_repo = Repository()
-            for identifier in features:
-                feature_repo.add(identifier, features[identifier])
+            for _, row in pd.read_csv(params.peaktable_mzmine3).iterrows():
+                if row["id"] in stats.features:
+                    feature_repo.add(
+                        row["id"], GeneralFeatureDirector.construct_mzmine3(row)
+                    )
 
-            # TODO(MMZ): collect samples info, finish class
-            # samples = SamplesDirector.construct_mzmine(params.peaktable_mzmine3)
             sample_repo = Repository()
-            # for identifier in samples:
-            #     sample_repo.add(identifier, samples[identifier])
+            for s_id in stats.samples:
+                sample_repo.add(
+                    s_id,
+                    SamplesDirector.construct_mzmine3(
+                        s_id, pd.read_csv(params.peaktable_mzmine3), stats.features
+                    ),
+                )
 
             return stats, feature_repo, sample_repo
+
+        # elif: entry for other peaktable formats
+
         else:
             raise Exception("Abort: No (compatible) peaktable found.")
 

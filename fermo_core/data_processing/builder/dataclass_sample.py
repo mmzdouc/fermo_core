@@ -24,27 +24,27 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from typing import Self, Dict, Optional
+from typing import Self, Optional
 
 
 class Sample:
-    """Collect sample-specific data
-
-    TODO(MMZ): Expand the attributes
+    """Organize sample-specific data, including features containing sample-specific info.
 
     Attributes:
-        sample_id: identifier of sample
-        features: dict of features associated to the sample (instances of SpecificFeature)
+        s_id: identifier of sample
+        features: dict of features detected in sample; contain sample-specific data
         groups: group association of sample (if provided)
-
         cliques: number of cliques in this sample
-        phenotypes: indicates the sample is associated with
-
+        phenotypes: indicates the phenotype the sample is associated with
+        max_intensity: the highest intensity of a feature in the sample (absolute)
     """
 
-    def __init__(self: Self, sample_id: str):
-        self.sample_id: str = sample_id
-        self.features: Optional[Dict] = None
-        self.groups: Optional[Dict] = None
-        self.cliques: Optional[Dict] = None
-        self.phenotypes: Optional[Dict] = None
+    def __init__(self: Self):
+        self.s_id: Optional[str] = None
+        self.features: Optional[dict] = None
+        self.groups: Optional[dict] = None
+        self.cliques: Optional[dict] = None
+        self.phenotypes: Optional[dict] = None
+        self.max_intensity: Optional[dict] = None
+
+        # TODO(MMZ): Add further parameters if necessary

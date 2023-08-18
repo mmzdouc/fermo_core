@@ -52,28 +52,6 @@ class Feature:
         scores: dict of objects representing associated scores
     """
 
-    __slots__ = (
-        "f_id",
-        "mz",
-        "rt",
-        "rt_start",
-        "rt_stop",
-        "rt_range",
-        "trace",
-        "fwhm",
-        "intensity",
-        "area",
-        "msms",
-        "samples",
-        "blank",
-        "groups",
-        "groups_fold",
-        "phenotypes",
-        "annotations",
-        "networks",
-        "scores",
-    )
-
     def __init__(self: Self):
         self.f_id: Optional[int] = None
         self.mz: Optional[float] = None
@@ -84,10 +62,11 @@ class Feature:
         self.trace: Optional[Tuple] = None
         self.fwhm: Optional[float] = None
         self.intensity: Optional[int] = None
+        self.rel_intensity: Optional[float] = None
         self.area: Optional[int] = None
         self.msms: Optional[Tuple] = None
         self.samples: Optional[Tuple] = None
-        self.blank: bool = False
+        self.blank: Optional[bool] = None
         self.groups: Optional[Tuple] = None
         self.groups_fold: Optional[Dict] = None
         self.phenotypes: Optional[Dict] = None

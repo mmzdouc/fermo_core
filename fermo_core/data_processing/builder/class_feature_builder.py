@@ -25,12 +25,10 @@ from fermo_core.data_processing.builder.dataclass_feature import Feature
 
 
 class FeatureBuilder:
-    """Contains methods to build varieties of features based on user input
+    """Contains methods to build variants of features based on user input
 
     Some product attributes are set only downstream and are therefore not included here.
     """
-
-    # TODO: Cast vars into the right types!
 
     def __init__(self):
         self.feature = Feature()
@@ -40,43 +38,39 @@ class FeatureBuilder:
         return self
 
     def set_mz(self, mz: float):
-        self.feature.mz = mz
+        self.feature.mz = float(mz)
         return self
 
     def set_rt(self, rt: float):
-        self.feature.rt = rt
+        self.feature.rt = float(rt)
         return self
 
     def set_rt_start(self, rt_start: float):
-        self.feature.rt_start = rt_start
+        self.feature.rt_start = float(rt_start)
         return self
 
     def set_rt_stop(self, rt_stop: float):
-        self.feature.rt_stop = rt_stop
+        self.feature.rt_stop = float(rt_stop)
         return self
 
     def set_rt_range(self, rt_range: float):
-        self.feature.rt_range = rt_range
-        return self
-
-    def set_trace(self, trace: Tuple):
-        self.feature.trace = trace
+        self.feature.rt_range = float(rt_range)
         return self
 
     def set_fwhm(self, fwhm: float):
-        self.feature.fwhm = fwhm
+        self.feature.fwhm = float(fwhm)
         return self
 
     def set_intensity(self, intensity: int):
-        self.feature.intensity = intensity
+        self.feature.intensity = round(intensity)
+        return self
+
+    def set_rel_intensity(self, rel_intensity: float):
+        self.feature.rel_intensity = float(rel_intensity)
         return self
 
     def set_area(self, area: int):
-        self.feature.area = area
-        return self
-
-    def set_msms(self, msms: Tuple):
-        self.feature.msms = msms
+        self.feature.area = int(area)
         return self
 
     def set_samples(self, samples: Tuple):

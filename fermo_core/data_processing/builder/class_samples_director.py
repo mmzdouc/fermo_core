@@ -1,8 +1,4 @@
-"""Direct the creation of a dict of samples
-
-
-TODO(MMZ): Improve description of class
-
+"""Direct the creation of an instance of the Sample object.
 
 Copyright (c) 2022-2023 Mitja Maximilian Zdouc, PhD
 
@@ -25,25 +21,50 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from pathlib import Path
-from typing import Dict
+import pandas as pd
+from typing import Tuple
+
+from fermo_core.data_processing.builder.class_sample_builder import SampleBuilder
+from fermo_core.data_processing.builder.dataclass_sample import Sample
+from fermo_core.data_processing.builder.class_specific_feature_director import (
+    SpecificFeatureDirector,
+)
 
 
 class SamplesDirector:
-    """Builds the sample instances"""
+    """Directs the construction of the sample instance."""
 
     @staticmethod
-    def construct_mzmine(peaktable: Path) -> Dict:
-        """Constructs the products and returns them in a dict.
+    def construct_mzmine3(
+        s_id: str,
+        df: pd.DataFrame,
+        features: Tuple,
+    ) -> Sample:
+        """Construct the Sample product instance.
 
         Args:
-            peaktable: Path towards a mzmine3 style peaktable
+            s_id: the sample identifier
+            df: a Pandas dataframe in mzmine3 format
+            features: a tuple containing ids of detected features
 
         Returns:
-            A dict containing instances of the GeneralFeature class.
+            An instance of the Sample class.
         """
+        sample = (
+            SampleBuilder()
+            .set_s_id(s_id)
+            .set_features()
+            .set_max_intensity(df.loc[:, f"datafile:{s_id}:intensity_range:max"].max())
+            .get_result()
+        )
 
-        # TODO(MMZ): Expand for the construction methods, the sample builder class,
-        # and use the Feature builder class too for the specialized features
+        for _, row in df.iterrows():
+            if row["id"] in features:
+                if row[f"datafile:{s_id}:feature_state"] == "DETECTED":
+                    sample.features[
+                        row["id"]
+                    ] = SpecificFeatureDirector.construct_mzmine3(
+                        row, s_id, sample.max_intensity
+                    )
 
-        pass
+        return sample

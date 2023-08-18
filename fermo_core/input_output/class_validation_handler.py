@@ -2,9 +2,7 @@
 
 Validation methods consist of static methods for validation of generic values and instance
 methods for testing of more specialized input values/parameters.
-\n
-\n
-\n
+
 Copyright (c) 2022-2023 Mitja Maximilian Zdouc, PhD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy

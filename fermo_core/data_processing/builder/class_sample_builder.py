@@ -1,4 +1,7 @@
-"""Direct the creation of an instance of a generalized molecular feature object.
+"""Builder for different instances of samples.
+
+TODO(MMZ): Improve description of class
+
 
 Copyright (c) 2022-2023 Mitja Maximilian Zdouc, PhD
 
@@ -21,37 +24,31 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-import pandas as pd
-from fermo_core.data_processing.builder.class_feature_builder import FeatureBuilder
+from fermo_core.data_processing.builder.dataclass_sample import Sample
 from fermo_core.data_processing.builder.dataclass_feature import Feature
 
 
-class GeneralFeatureDirector:
-    """Directs the construction of the Generalized Feature instance"""
+class SampleBuilder:
+    """Contains methods to build variants of samples based on user input.
 
-    @staticmethod
-    def construct_mzmine3(row: pd.Series) -> Feature:
-        """Construct the Feature product instance.
+    In set_feature, a new Feature object is added to the feature_dict attribute,
+    created by the SpecificFeatureDirector
+    """
 
-        Args:
-            row: a pandas series containing feature information
+    def __init__(self):
+        self.sample = Sample()
 
-        Returns:
-            An instance of the Feature class.
-        """
+    def set_s_id(self, s_id: str):
+        self.sample.s_id = s_id
+        return self
 
-        return (
-            FeatureBuilder()
-            .set_f_id(row["id"])
-            .set_area(row["area"])
-            .set_mz(row["mz"])
-            .set_rt(row["rt"])
-            .set_rt_start(row["rt_range:min"])
-            .set_rt_stop(row["rt_range:max"])
-            .set_samples(
-                tuple(
-                    [s.split(":")[1] for s in row.filter(regex=":feature_state").index]
-                )
-            )
-            .get_result()
-        )
+    def set_features(self):
+        self.sample.features = dict()
+        return self
+
+    def set_max_intensity(self, max_intensity: int):
+        self.sample.max_intensity = int(max_intensity)
+        return self
+
+    def get_result(self):
+        return self.sample

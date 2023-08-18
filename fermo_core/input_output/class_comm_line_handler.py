@@ -341,7 +341,7 @@ class CommLineHandler:
 
     @staticmethod
     def raise_value_error(param: str, val: Any, message: str) -> None:
-        """Raise value error for given value and message
+        """Raise value error for given value and message in command line mode
 
         Args:
             param: The name of the input value
