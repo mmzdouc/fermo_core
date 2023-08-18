@@ -1,5 +1,7 @@
 """Based on user input, run filetype-specific methods to parse data.
 
+***
+
 Copyright (c) 2022-2023 Mitja Maximilian Zdouc, PhD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,6 +23,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
+import pandas as pd
 from typing import Tuple
 
 from fermo_core.input_output.dataclass_params_handler import ParamsHandler
@@ -29,6 +32,7 @@ from fermo_core.data_processing.class_stats import Stats
 from fermo_core.data_processing.builder.class_general_feature_director import (
     GeneralFeatureDirector,
 )
+from fermo_core.data_processing.builder.class_samples_director import SamplesDirector
 
 
 class Parser:
@@ -53,16 +57,41 @@ class Parser:
             stats = Stats()
             stats.parse_mzmine3(params)
 
-            # TODO(MMZ): collect stats and finish class, test it
-
-            features = GeneralFeatureDirector.construct_mzmine(params.peaktable_mzmine3)
+            features = GeneralFeatureDirector.construct_mzmine(
+                pd.read_csv(params.peaktable_mzmine3), stats.features
+            )
             feature_repo = Repository()
             for identifier in features:
                 feature_repo.add(identifier, features[identifier])
 
             # TODO(MMZ): collect samples info, finish class
+            # samples = SamplesDirector.construct_mzmine(params.peaktable_mzmine3)
+            sample_repo = Repository()
+            # for identifier in samples:
+            #     sample_repo.add(identifier, samples[identifier])
 
+            return stats, feature_repo, sample_repo
         else:
             raise Exception("Abort: No (compatible) peaktable found.")
 
-        return feature_repo
+    @staticmethod
+    def parse_msms(
+        params: ParamsHandler, stats: Stats, feature_repo: Repository
+    ) -> Tuple[Stats, Repository,]:
+        """Parse peaktable depending on format
+
+        Args:
+            params: holds paths to msms data among other parameters
+            stats: class summarizing overall info on features and samples
+            feature_repo: Repository holding individual features
+
+        Returns:
+            A tuple with an instance of Stats, a Feature Repository, and a Sample
+            Repository
+
+        Notes:
+            Expanding towards other peaktable formats requires to add an elif condition to
+            parse correct peaktable
+        """
+        # TODO(MMZ): Fill this up
+        pass

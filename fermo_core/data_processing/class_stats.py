@@ -1,7 +1,6 @@
-"""Storage and handling of general stats of analysis run
+"""Storage and handling of general stats of analysis run.
 
-TODO(MMZ): Improve description of class
-
+***
 
 Copyright (c) 2022-2023 Mitja Maximilian Zdouc, PhD
 
@@ -24,11 +23,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from typing import Self, Tuple, Optional
-from pathlib import Path
-
-import pandas
 import pandas as pd
+from typing import Self, Tuple, Optional
 
 from fermo_core.input_output.dataclass_params_handler import ParamsHandler
 
@@ -36,6 +32,9 @@ from fermo_core.input_output.dataclass_params_handler import ParamsHandler
 class Stats:
     """Extract analysis run stats and organize them.
 
+    Ad method nomenclature: each type of supported peaktable should have a separate
+    parser method attributed to it that has the name of the peaktable in it.
+    All methods addressing a peaktable format should mention it in method name.
 
     Attributes:
         rt_min: overall lowest retention time start across all samples, in minutes
@@ -64,16 +63,16 @@ class Stats:
         self.int_removed: Optional[Tuple] = None
         self.annot_removed: Optional[Tuple] = None
 
-    # TODO(MMZ): write one method per type of peaktable that is parsed and call them
-    #  after the type of peaktable
-
     def _get_features_in_range_mzmine3(
-        self: Self, df: pandas.DataFrame, r: Tuple[float, float]
+        self: Self, df: pd.DataFrame, r: Tuple[float, float]
     ) -> Tuple[Tuple, Tuple]:
-        """Separate features into two sets based on range.
+        """Separate features into two sets based on their relative intensity.
 
-        Only exclude features that are below the relative intensity in all samples in
-        which they are detected.
+        Filter features based on their relative intensity compared against the feature
+        with the highest intensity in the sample. For a range between 0-1,
+        for each feature, test if feature lies inside the given range in at least one
+        sample. Only exclude features that are below the relative intensity in all
+        samples in which they are detected.
 
         Args:
             df: pandas DataFrame resulting from mzmine3 style peaktable
@@ -85,33 +84,47 @@ class Stats:
         """
         incl = set()
         excl = set()
-        samples_max = dict()
 
-        # Extract maximum intensity values for each sample as reference points
+        # Extract overall most intense feature per sample as ref for relative intensity
+        sample_max_int = dict()
         for s in self.samples:
-            samples_max[s] = df.loc[:, f"datafile:{s}:intensity_range:max"].max()
+            sample_max_int[s] = df.loc[:, f"datafile:{s}:intensity_range:max"].max()
 
-        # Use dropna() method with filter to get series of sample intensity
         for _, row in df.iterrows():
+            # Get feature intensity per sample, prepare for comparison
             sample_values = row.dropna().filter(regex=":intensity_range:max")
-
             feature_int = dict()
             for index, value in sample_values.items():
                 sample = index.split(":")[1]
                 feature_int[sample] = value
 
+            # Retain features that are inside rel int range for at least one sample
             if any(
-                (samples_max[s] * r[0]) <= feature_int[s] <= (samples_max[s] * r[1])
+                (sample_max_int[s] * r[0])
+                <= feature_int[s]
+                <= (sample_max_int[s] * r[1])
                 for s in feature_int
             ):
                 incl.add(row["id"])
             else:
                 excl.add(row["id"])
 
-            # TODO(MMZ): Write tests to verify results, then do the same for ms2query
-            #  range
-
         return tuple(incl), tuple(excl)
+
+    @staticmethod
+    def _extract_sample_names_mzmine3(df: pd.DataFrame) -> Tuple[str, ...]:
+        """Extract sample names from mzmine3-style peaktable.
+
+        Args:
+            df: dataframe of mzmine3 style peaktable
+
+        Returns:
+            Tuple containing sample name strings.
+        """
+        samples = set()
+        for s in df.filter(regex=":feature_state").columns:
+            samples.add(s.split(":")[1])
+        return tuple(samples)
 
     def parse_mzmine3(self, params: ParamsHandler):
         """Parse a mzmine3 peaktable for general stats on analysis run.
@@ -119,21 +132,18 @@ class Stats:
         Args:
             params: holds information on peaktable and additional parameters.
         """
-
-        def _extract_sample_names():
-            samples = set()
-            for s in df.filter(regex=":feature_state").columns:
-                samples.add(s.split(":")[1])
-            return tuple(samples)
-
         df = pd.read_csv(params.peaktable_mzmine3)
 
         self.rt_min = df.loc[:, "rt_range:min"].min()
         self.rt_max = df.loc[:, "rt_range:max"].max()
         self.rt_range = self.rt_max - self.rt_min
 
-        self.samples = _extract_sample_names()
+        self.samples = self._extract_sample_names_mzmine3(df)
 
         self.features, self.int_removed = self._get_features_in_range_mzmine3(
             df, params.rel_int_range
+        )
+
+        _, self.annot_removed = self._get_features_in_range_mzmine3(
+            df, params.ms2query_filter_range
         )

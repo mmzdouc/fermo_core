@@ -1,4 +1,4 @@
-"""Direct the creation of a dict of generalized features
+"""Direct the creation of a dict of samples
 
 
 TODO(MMZ): Improve description of class
@@ -25,40 +25,25 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-import pandas as pd
-from typing import Dict, Tuple
-from fermo_core.data_processing.builder.class_feature_builder import FeatureBuilder
-from fermo_core.data_processing.class_stats import Stats
+from pathlib import Path
+from typing import Dict
 
 
-class GeneralFeatureDirector:
-    """Builds the general feature instances"""
+class SamplesDirector:
+    """Builds the sample instances"""
 
     @staticmethod
-    def construct_mzmine(df: pd.DataFrame, features: Tuple) -> Dict:
+    def construct_mzmine(peaktable: Path) -> Dict:
         """Constructs the products and returns them in a dict.
 
         Args:
-            df: A dataframe of a mzmine3 style peaktable
-            features: A tuple of molecular features IDs in analysis run
+            peaktable: Path towards a mzmine3 style peaktable
 
         Returns:
             A dict containing instances of the GeneralFeature class.
         """
-        feature_dict = dict()
 
-        for _, row in df.iterrows():
-            if row["id"] in features:
-                feature_dict[row["id"]] = (
-                    FeatureBuilder()
-                    .set_f_id(row["id"])
-                    .set_intensity(row["height"])
-                    .set_area(row["area"])
-                    .set_mz(row["mz"])
-                    .set_rt(row["rt"])
-                    .set_rt_start(row["rt_range:min"])
-                    .set_rt_stop(row["rt_range:max"])
-                    .get_result()
-                )
+        # TODO(MMZ): Expand for the construction methods, the sample builder class,
+        # and use the Feature builder class too for the specialized features
 
-        return feature_dict
+        pass

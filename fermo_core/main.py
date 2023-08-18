@@ -52,9 +52,9 @@ def main(params: ParamsHandler) -> None:
         Should return a session object for use in the dashboard or for file export once
         this part is done.
     """
-    features = Parser.parse_peaktable(params)
+    stats, features, samples = Parser.parse_peaktable(params)
 
-    # TODO: return stats too
+    # TODO: parse the msms info in separate Parser class
 
     print(features)
 

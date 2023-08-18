@@ -1,7 +1,4 @@
-"""Builder design pattern
-
-TODO(MMZ): Improve description of class
-
+"""Builder for different instances of molecular features.
 
 Copyright (c) 2022-2023 Mitja Maximilian Zdouc, PhD
 
@@ -28,16 +25,18 @@ from fermo_core.data_processing.builder.dataclass_feature import Feature
 
 
 class FeatureBuilder:
-    """The Feature Builder.
+    """Contains methods to build varieties of features based on user input
 
-    Some attributes are defined in later parts of the program.
+    Some product attributes are set only downstream and are therefore not included here.
     """
+
+    # TODO: Cast vars into the right types!
 
     def __init__(self):
         self.feature = Feature()
 
     def set_f_id(self, f_id: int):
-        self.feature.f_id = f_id
+        self.feature.f_id = int(f_id)
         return self
 
     def set_mz(self, mz: float):
