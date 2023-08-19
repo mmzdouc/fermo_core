@@ -28,7 +28,7 @@ from typing import Self, Optional
 
 
 class Sample:
-    """Organize sample-specific data, including features containing sample-specific info.
+    """Organize sample-specific data, including sample-specific mol feature info.
 
     Attributes:
         s_id: identifier of sample

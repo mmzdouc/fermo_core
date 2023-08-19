@@ -2,7 +2,8 @@
 
 TODO(MMZ): Improve description of class
 
-TODO(MMZ): Add correct type hints for what can go into repository: General Feature, Sample
+TODO(MMZ): Add correct type hints for what can go into repository:
+ General Feature, Sample
 
 Copyright (c) 2022-2023 Mitja Maximilian Zdouc, PhD
 

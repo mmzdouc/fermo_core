@@ -1,7 +1,7 @@
 """Hold methods to validate user input from command line and GUI.
 
-Validation methods consist of static methods for validation of generic values and instance
-methods for testing of more specialized input values/parameters.
+Validation methods consist of static methods for validation of generic values
+and instance methods for testing of more specialized input values/parameters.
 
 Copyright (c) 2022-2023 Mitja Maximilian Zdouc, PhD
 

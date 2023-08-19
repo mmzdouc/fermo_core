@@ -25,7 +25,6 @@ SOFTWARE.
 """
 
 from fermo_core.data_processing.builder.dataclass_sample import Sample
-from fermo_core.data_processing.builder.dataclass_feature import Feature
 
 
 class SampleBuilder:

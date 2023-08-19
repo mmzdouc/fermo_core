@@ -26,7 +26,6 @@ SOFTWARE.
 #  External
 from importlib import metadata
 from pathlib import Path
-from typing import Tuple
 
 #  Internal
 from fermo_core.input_output.dataclass_params_handler import ParamsHandler

@@ -50,8 +50,8 @@ class Parser:
             Repository
 
         Notes:
-            Expanding towards other peaktable formats requires to add an elif condition to
-            parse correct peaktable
+            Expanding towards other peaktable formats requires to add an
+            elif condition to parse correct peaktable
         """
         if params.peaktable_mzmine3 is not None:
             stats = Stats()
@@ -96,7 +96,7 @@ class Parser:
             Repository
 
         Notes:
-            Expanding towards other peaktable formats requires to add an elif condition to
+            Expanding towards other ms/ms formats requires to add an elif condition to
             parse correct peaktable
         """
         # TODO(MMZ): Fill this up

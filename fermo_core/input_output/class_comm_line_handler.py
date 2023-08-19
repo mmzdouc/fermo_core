@@ -229,7 +229,7 @@ class CommLineHandler:
             default=params.spectral_sim_score_cutoff,
             required=False,
             help=(
-                "Similarity score cutoff to determine relatedness of two MS/MS spectra.\n"
+                "Similarity score cutoff: determine relatedness of two  MS2 spectra.\n"
                 f"(default: {params.spectral_sim_score_cutoff}).\n"
                 "For more information, see the docs.\n"
             ),
@@ -241,8 +241,8 @@ class CommLineHandler:
             default=params.max_nr_links_spec_sim,
             required=False,
             help=(
-                "In spectral similarity/molecular network calculations, maximum number\n"
-                "of links to other molecular features any molecular feature is allowed\n"
+                "In spectral similarity/molecular network calculations, max. number\n"
+                "of links to other molecular features any mol. feature is allowed\n"
                 "to have.\n"
                 f"(default: {params.max_nr_links_spec_sim}).\n"
                 "For more information, see the docs.\n"
@@ -297,7 +297,7 @@ class CommLineHandler:
             default=params.flag_ms2query_blank,
             required=False,
             help=(
-                "Flag to enable/disable annotation of sample blank-associated molecular\n"
+                "Flag to enable/disable annotation of sample blank-associated mol.\n"
                 "features by MS2Query. This can increase calculation time.\n"
                 f"(default: {params.flag_ms2query_blank}).\n"
                 "For more information, see the docs.\n"
@@ -543,7 +543,7 @@ class CommLineHandler:
     def assign_network_alg(
         self: Self, name: str, alg: str, val_handler: ValidationHandler
     ) -> str:
-        """Validate the validity of the chosen network algorithm, prepare for assignment.
+        """Validate the chosen network algorithm, prepare for assignment.
 
         Args:
             name: The command line parameter name.
@@ -682,13 +682,14 @@ class CommLineHandler:
                 self.raise_value_error(
                     f"--{arg}",
                     getattr(args_handler, arg),
-                    "Param not yet assignable to ParamsHandler. Contact fermo developers.",
+                    "Param not yet assignable to ParamsHandler. Contact the "
+                    "developers.",
                 )
 
         return par_handler
 
     def run_argparse(self: Self, params: ParamsHandler) -> ParamsHandler:
-        """Run argparse comm line interface and assign input to ParamsHandler attributes.
+        """Run argparse comm line interface, assign input to ParamsHandler attributes.
 
         Args:
             params: ParamsHandler instance to which command line input is assigned.
@@ -697,8 +698,8 @@ class CommLineHandler:
             Modified ParamsHandler instance.
 
         Notes:
-            To transfer parameters/user input from argparse to ParamsHandler, they need to
-            be added to the create_input_validation_dict() method.
+            To transfer parameters/user input from argparse to ParamsHandler,
+            they need to be added to the create_input_validation_dict() method.
         """
         parser = self.define_argparse_args(params)
         args = parser.parse_args()

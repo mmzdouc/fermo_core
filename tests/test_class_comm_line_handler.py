@@ -1,4 +1,3 @@
-from pathlib import Path
 import pytest
 
 from fermo_core.input_output.class_comm_line_handler import CommLineHandler
