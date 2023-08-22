@@ -26,6 +26,7 @@ SOFTWARE.
 #  External
 from importlib import metadata
 from pathlib import Path
+import logging
 
 #  Internal
 from fermo_core.input_output.dataclass_params_handler import ParamsHandler
@@ -35,6 +36,14 @@ from fermo_core.data_processing.class_parser import Parser
 
 VERSION = metadata.version("fermo_core")
 ROOT = Path(__file__).resolve().parent
+
+logging.basicConfig(
+    # TODO(MMZ): Uncomment before release to allow reading of log from file.
+    # filename="fermo_core.log",
+    level=logging.DEBUG,
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    filemode="w",
+)
 
 
 def main(params: ParamsHandler) -> None:
@@ -51,17 +60,23 @@ def main(params: ParamsHandler) -> None:
         Should return a session object for use in the dashboard or for file export once
         this part is done.
     """
+    logging.info("Start of peaktable parsing.")
     stats, features, samples = Parser.parse_peaktable(params)
 
-    # TODO: parse the msms info in separate Parser class
+    # TODO(MMZ): parse the msms info in separate Parser class
 
     print(features)
+
+    # TODO(MMZ): add a logger class to keep track of operations - or add this to
+    #  stats object?
+
+    # TODO(MMZ): Cover parser class with tests
 
     # TODO(MMZ): proceed with annotations, bioactivity etc.
 
 
 if __name__ == "__main__":
-    params_handler = ParamsHandler(VERSION, ROOT)
     comm_line_handler = CommLineHandler()
-    params_handler = comm_line_handler.run_argparse(params_handler)
+    params_handler = comm_line_handler.run_argparse(ParamsHandler(VERSION, ROOT))
+    logging.info("Completed command line parameter parsing.")
     main(params_handler)

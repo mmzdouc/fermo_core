@@ -20,8 +20,9 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-from typing import Tuple
-from fermo_core.data_processing.builder.dataclass_feature import Feature
+from typing import Tuple, Any
+from fermo_core.data_processing.builder_feature.dataclass_feature import Feature
+import logging
 
 
 class FeatureBuilder:
@@ -33,47 +34,70 @@ class FeatureBuilder:
     def __init__(self):
         self.feature = Feature()
 
+    @staticmethod
+    def type_testing(var: Any, kind: type):
+        try:
+            if not isinstance(var, kind):
+                raise ValueError(
+                    f"FeatureBuilder: Invalid type for '{var}'. Expected'{kind}', got "
+                    f"'{type(var)}'."
+                )
+        except ValueError as e:
+            logging.error(str(e))
+            raise e
+
     def set_f_id(self, f_id: int):
-        self.feature.f_id = int(f_id)
+        self.type_testing(f_id, int)
+        self.feature.f_id = f_id
         return self
 
     def set_mz(self, mz: float):
-        self.feature.mz = float(mz)
+        self.type_testing(mz, float)
+        self.feature.mz = mz
         return self
 
     def set_rt(self, rt: float):
-        self.feature.rt = float(rt)
+        self.type_testing(rt, float)
+        self.feature.rt = rt
         return self
 
     def set_rt_start(self, rt_start: float):
-        self.feature.rt_start = float(rt_start)
+        self.type_testing(rt_start, float)
+        self.feature.rt_start = rt_start
         return self
 
     def set_rt_stop(self, rt_stop: float):
-        self.feature.rt_stop = float(rt_stop)
+        self.type_testing(rt_stop, float)
+        self.feature.rt_stop = rt_stop
         return self
 
     def set_rt_range(self, rt_range: float):
-        self.feature.rt_range = float(rt_range)
+        self.type_testing(rt_range, float)
+        self.feature.rt_range = rt_range
         return self
 
     def set_fwhm(self, fwhm: float):
-        self.feature.fwhm = float(fwhm)
+        self.type_testing(fwhm, float)
+        self.feature.fwhm = fwhm
         return self
 
     def set_intensity(self, intensity: int):
-        self.feature.intensity = round(intensity)
+        self.type_testing(intensity, int)
+        self.feature.intensity = intensity
         return self
 
     def set_rel_intensity(self, rel_intensity: float):
-        self.feature.rel_intensity = float(rel_intensity)
+        self.type_testing(rel_intensity, float)
+        self.feature.rel_intensity = rel_intensity
         return self
 
     def set_area(self, area: int):
-        self.feature.area = int(area)
+        self.type_testing(area, int)
+        self.feature.area = area
         return self
 
     def set_samples(self, samples: Tuple):
+        self.type_testing(samples, tuple)
         self.feature.samples = samples
         return self
 

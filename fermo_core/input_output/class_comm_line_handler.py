@@ -1,8 +1,8 @@
-"""Handle and validate command line input.
+"""Handle and validate command line input and assign to ParamsHandler class.
 
 Interface to collect user input/parameters via argparse module. Input is validated
-using methods from the ParamsHandler class and eventually assigned to an instance of
-ParamsHandler class.
+using methods from the ValidationHandler class and eventually assigned to an instance
+of the ParamsHandler class.
 
 Note:
     To transfer parameters/user input from argparse to ParamsHandler, they need to
@@ -30,6 +30,7 @@ SOFTWARE.
 """
 
 import argparse
+import logging
 from pathlib import Path
 from typing import Self, Any, Tuple, List
 from fermo_core.input_output.dataclass_params_handler import ParamsHandler
@@ -351,7 +352,11 @@ class CommLineHandler:
         Raises:
             ValueError: Invalid command line input received.
         """
-        raise ValueError(f"Parameter {param}: {val} is invalid. Reason: {message}")
+        try:
+            raise ValueError(f"Parameter {param}: {val} is invalid. Reason: {message}")
+        except ValueError as e:
+            logging.error(str(e))
+            raise e
 
     def assign_peaktable_mzmine3(
         self: Self, name: str, peaktable: str, val_handler: ValidationHandler
@@ -682,8 +687,10 @@ class CommLineHandler:
                 self.raise_value_error(
                     f"--{arg}",
                     getattr(args_handler, arg),
-                    "Param not yet assignable to ParamsHandler. Contact the "
-                    "developers.",
+                    (
+                        "Param not yet assignable to ParamsHandler. Contact the fermo"
+                        " developers."
+                    ),
                 )
 
         return par_handler
@@ -703,5 +710,4 @@ class CommLineHandler:
         """
         parser = self.define_argparse_args(params)
         args = parser.parse_args()
-        validation_handler = ValidationHandler()
-        return self.assign_comm_line_input(params, args, validation_handler)
+        return self.assign_comm_line_input(params, args, ValidationHandler())

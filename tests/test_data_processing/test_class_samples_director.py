@@ -1,9 +1,9 @@
 import pytest
 import pandas as pd
-from fermo_core.data_processing.builder.class_samples_director import (
+from fermo_core.data_processing.builder_sample.class_samples_director import (
     SamplesDirector,
 )
-from fermo_core.data_processing.builder.dataclass_sample import Sample
+from fermo_core.data_processing.builder_sample.dataclass_sample import Sample
 
 
 @pytest.fixture

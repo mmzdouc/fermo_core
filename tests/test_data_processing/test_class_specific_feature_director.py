@@ -1,9 +1,9 @@
 import pytest
 import pandas as pd
-from fermo_core.data_processing.builder.class_specific_feature_director import (
+from fermo_core.data_processing.builder_feature.class_specific_feature_director import (
     SpecificFeatureDirector,
 )
-from fermo_core.data_processing.builder.dataclass_feature import Feature
+from fermo_core.data_processing.builder_feature.dataclass_feature import Feature
 
 
 @pytest.fixture

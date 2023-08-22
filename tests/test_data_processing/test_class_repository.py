@@ -1,6 +1,6 @@
 import pytest
 from fermo_core.data_processing.class_repository import Repository
-from fermo_core.data_processing.builder.dataclass_feature import Feature
+from fermo_core.data_processing.builder_feature.dataclass_feature import Feature
 
 
 @pytest.fixture

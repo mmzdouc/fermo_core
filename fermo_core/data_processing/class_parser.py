@@ -22,6 +22,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
+import logging
 
 import pandas as pd
 from typing import Tuple
@@ -29,10 +30,12 @@ from typing import Tuple
 from fermo_core.input_output.dataclass_params_handler import ParamsHandler
 from fermo_core.data_processing.class_repository import Repository
 from fermo_core.data_processing.class_stats import Stats
-from fermo_core.data_processing.builder.class_general_feature_director import (
+from fermo_core.data_processing.builder_feature.class_general_feature_director import (
     GeneralFeatureDirector,
 )
-from fermo_core.data_processing.builder.class_samples_director import SamplesDirector
+from fermo_core.data_processing.builder_sample.class_samples_director import (
+    SamplesDirector,
+)
 
 
 class Parser:
@@ -54,8 +57,11 @@ class Parser:
             elif condition to parse correct peaktable
         """
         if params.peaktable_mzmine3 is not None:
+            logging.debug(f"Peaktable {params.peaktable_mzmine3} is in MZmine3 format.")
+
             stats = Stats()
             stats.parse_mzmine3(params)
+            logging.debug(f"Created Stats object from {params.peaktable_mzmine3}.")
 
             feature_repo = Repository()
             for _, row in pd.read_csv(params.peaktable_mzmine3).iterrows():
@@ -63,6 +69,7 @@ class Parser:
                     feature_repo.add(
                         row["id"], GeneralFeatureDirector.construct_mzmine3(row)
                     )
+            logging.debug(f"Crated Feature object(s) from {params.peaktable_mzmine3}.")
 
             sample_repo = Repository()
             for s_id in stats.samples:
@@ -72,13 +79,21 @@ class Parser:
                         s_id, pd.read_csv(params.peaktable_mzmine3), stats.features
                     ),
                 )
+            logging.debug(f"Crated Sample object(s) from {params.peaktable_mzmine3}.")
 
+            logging.info(
+                f"Completed parsing of peaktable '{params.peaktable_mzmine3}'."
+            )
             return stats, feature_repo, sample_repo
 
         # elif: entry for other peaktable formats
 
         else:
-            raise Exception("Abort: No (compatible) peaktable found.")
+            try:
+                raise RuntimeError("Abort: No (compatible) peaktable found.")
+            except RuntimeError as e:
+                logging.error(str(e))
+                raise e
 
     @staticmethod
     def parse_msms(

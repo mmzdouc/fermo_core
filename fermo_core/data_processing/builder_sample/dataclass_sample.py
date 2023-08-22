@@ -1,7 +1,4 @@
-"""Builder for different instances of samples.
-
-TODO(MMZ): Improve description of class
-
+"""Organize data of sample-specific information.
 
 Copyright (c) 2022-2023 Mitja Maximilian Zdouc, PhD
 
@@ -24,30 +21,27 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from fermo_core.data_processing.builder.dataclass_sample import Sample
+from typing import Self, Optional
 
 
-class SampleBuilder:
-    """Contains methods to build variants of samples based on user input.
+class Sample:
+    """Organize sample-specific data, including sample-specific mol feature info.
 
-    In set_feature, a new Feature object is added to the feature_dict attribute,
-    created by the SpecificFeatureDirector
+    Attributes:
+        s_id: identifier of sample
+        features: dict of features detected in sample; contain sample-specific data
+        groups: group association of sample (if provided)
+        cliques: number of cliques in this sample
+        phenotypes: indicates the phenotype the sample is associated with
+        max_intensity: the highest intensity of a feature in the sample (absolute)
     """
 
-    def __init__(self):
-        self.sample = Sample()
+    def __init__(self: Self):
+        self.s_id: Optional[str] = None
+        self.features: Optional[dict] = None
+        self.groups: Optional[dict] = None
+        self.cliques: Optional[dict] = None
+        self.phenotypes: Optional[dict] = None
+        self.max_intensity: Optional[dict] = None
 
-    def set_s_id(self, s_id: str):
-        self.sample.s_id = s_id
-        return self
-
-    def set_features(self):
-        self.sample.features = dict()
-        return self
-
-    def set_max_intensity(self, max_intensity: int):
-        self.sample.max_intensity = int(max_intensity)
-        return self
-
-    def get_result(self):
-        return self.sample
+        # TODO(MMZ): Add further parameters if necessary

@@ -24,9 +24,9 @@ SOFTWARE.
 import pandas as pd
 from typing import Tuple
 
-from fermo_core.data_processing.builder.class_sample_builder import SampleBuilder
-from fermo_core.data_processing.builder.dataclass_sample import Sample
-from fermo_core.data_processing.builder.class_specific_feature_director import (
+from fermo_core.data_processing.builder_sample.class_sample_builder import SampleBuilder
+from fermo_core.data_processing.builder_sample.dataclass_sample import Sample
+from fermo_core.data_processing.builder_feature.class_specific_feature_director import (
     SpecificFeatureDirector,
 )
 
@@ -52,9 +52,11 @@ class SamplesDirector:
         """
         sample = (
             SampleBuilder()
-            .set_s_id(s_id)
+            .set_s_id(str(s_id))
             .set_features()
-            .set_max_intensity(df.loc[:, f"datafile:{s_id}:intensity_range:max"].max())
+            .set_max_intensity(
+                int(df.loc[:, f"datafile:{s_id}:intensity_range:max"].max())
+            )
             .get_result()
         )
 

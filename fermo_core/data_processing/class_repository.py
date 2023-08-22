@@ -26,8 +26,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 from abc import ABC, abstractmethod
-from fermo_core.data_processing.builder.dataclass_feature import Feature
-from fermo_core.data_processing.builder.dataclass_sample import Sample
+from fermo_core.data_processing.builder_feature.dataclass_feature import Feature
+from fermo_core.data_processing.builder_sample.dataclass_sample import Sample
 
 
 class IRepository(ABC):

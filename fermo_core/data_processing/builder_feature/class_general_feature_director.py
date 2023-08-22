@@ -1,8 +1,4 @@
-"""Direct the creation of an instance of a sample-specific feature
-
-
-TODO(MMZ): Improve description of class
-
+"""Direct the creation of an instance of a generalized molecular feature object.
 
 Copyright (c) 2022-2023 Mitja Maximilian Zdouc, PhD
 
@@ -26,41 +22,38 @@ SOFTWARE.
 """
 
 import pandas as pd
+from fermo_core.data_processing.builder_feature.class_feature_builder import (
+    FeatureBuilder,
+)
+from fermo_core.data_processing.builder_feature.dataclass_feature import Feature
 
-from fermo_core.data_processing.builder.class_feature_builder import FeatureBuilder
-from fermo_core.data_processing.builder.dataclass_feature import Feature
 
-
-class SpecificFeatureDirector:
-    """Directs the construction of the sample-specific Feature instance"""
+class GeneralFeatureDirector:
+    """Directs the construction of the Generalized Feature instance"""
 
     @staticmethod
-    def construct_mzmine3(row: pd.Series, s_id: str, max_intensity: int) -> Feature:
+    def construct_mzmine3(row: pd.Series) -> Feature:
         """Construct the Feature product instance.
 
         Args:
             row: a pandas series containing feature information
-            s_id: indicating the sample identifier
-            max_intensity: the highest intensity of the molecular feature in sample
 
         Returns:
             An instance of the Feature class.
         """
+
         return (
             FeatureBuilder()
-            .set_f_id(row["id"])
-            .set_fwhm(row[f"datafile:{s_id}:fwhm"])
-            .set_intensity(row[f"datafile:{s_id}:intensity_range:max"])
-            .set_rt_start(row[f"datafile:{s_id}:rt_range:min"])
-            .set_rt_stop(row[f"datafile:{s_id}:rt_range:max"])
-            .set_rt(row[f"datafile:{s_id}:rt"])
-            .set_area(row[f"datafile:{s_id}:area"])
-            .set_rt_range(
-                row[f"datafile:{s_id}:rt_range:max"]
-                - row[f"datafile:{s_id}:rt_range:min"]
-            )
-            .set_rel_intensity(
-                round((row[f"datafile:{s_id}:intensity_range:max"] / max_intensity), 2)
+            .set_f_id(int(row["id"]))
+            .set_area(int(row["area"]))
+            .set_mz(float(row["mz"]))
+            .set_rt(float(row["rt"]))
+            .set_rt_start(float(row["rt_range:min"]))
+            .set_rt_stop(float(row["rt_range:max"]))
+            .set_samples(
+                tuple(
+                    [s.split(":")[1] for s in row.filter(regex=":feature_state").index]
+                )
             )
             .get_result()
         )

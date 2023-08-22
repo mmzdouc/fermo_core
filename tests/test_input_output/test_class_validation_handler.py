@@ -272,14 +272,14 @@ def test_fail_validate_mgf(validation_handler):
 
 def test_success_validate_file_ending():
     result = ValidationHandler.validate_file_ending(
-        Path("example_files/example_phenotype_fermo.csv"), ".csv"
+        Path("../example_files/example_phenotype_fermo.csv"), ".csv"
     )
     assert result[0], result[1]
 
 
 def test_fail_validate_file_ending():
     result = ValidationHandler.validate_file_ending(
-        Path("example_files/example_phenotype_fermo.csv"), ".mgf"
+        Path("../example_files/example_phenotype_fermo.csv"), ".mgf"
     )
     assert not result[0], result[1]
 
