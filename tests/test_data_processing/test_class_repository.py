@@ -13,17 +13,37 @@ def feature():
     return Feature()
 
 
-def test_success_add_repository(repository, feature):
+def test_success_add_and_get_repository(repository, feature):
     repository.add(1, feature)
-    assert repository.entries[1] == feature
-
-
-def test_success_get_repository(repository, feature):
-    repository.add(1, feature)
-    assert repository.get(1) == feature
+    assert repository.get(1) == feature, "Could not retrieve feature from repository."
 
 
 def test_success_modify_repository(repository, feature):
     repository.add(1, feature)
-    repository.modify(1, Feature())
-    assert repository.get(1) != feature
+    new_feature = Feature()
+    repository.modify(1, new_feature)
+    assert repository.get(1) == new_feature, "Could not modify existing feature."
+
+
+def test_fail_add_existing_entry_repository(repository, feature):
+    repository.add(1, feature)
+    with pytest.raises(ValueError):
+        repository.add(1, feature)
+
+
+def test_fail_get_nonexisting_entry_repository(repository, feature):
+    with pytest.raises(KeyError):
+        repository.get(1)
+
+
+def test_fail_modify_nonexisting_entry_repository(repository, feature):
+    with pytest.raises(KeyError):
+        repository.modify(1, feature)
+
+
+def test_success_multiple_instances_repository(feature):
+    repository1 = Repository()
+    repository1.add(1, feature)
+    repository2 = Repository()
+    with pytest.raises(KeyError):
+        repository2.get(1)

@@ -24,6 +24,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 from abc import ABC, abstractmethod
+import logging
 from fermo_core.data_processing.builder_feature.dataclass_feature import Feature
 from fermo_core.data_processing.builder_sample.dataclass_sample import Sample
 
@@ -63,11 +64,18 @@ class Repository(IRepository):
         Args:
             identifier: an identifier used as key in dictionary
             entry: object to store
+
+        Raises:
+            ValueError: Cannot add entry because it already exists in the repository.
         """
         if identifier not in self.entries:
             self.entries[identifier] = entry
         else:
-            print(f"Cannot add entry: '{identifier}' already exists in repository.")
+            try:
+                raise ValueError(f"Object '{identifier}' already exists in repository.")
+            except ValueError as e:
+                logging.error(str(e))
+                raise e
 
     def get(self, identifier: int) -> Feature | Sample:
         """Get an entry from the repository dict.
@@ -77,11 +85,18 @@ class Repository(IRepository):
 
         Returns:
             An object instance from entries dict
+
+        Raises:
+            KeyError: Cannot get the entry because it does not exist in repository.
         """
         if identifier in self.entries:
             return self.entries.get(identifier)
         else:
-            print(f"Cannot get entry: '{identifier}' does not exist in repository.")
+            try:
+                raise KeyError(f"Object '{identifier}' does not exist in repository.")
+            except KeyError as e:
+                logging.error(str(e))
+                raise e
 
     def modify(self, identifier: int, entry: Feature | Sample):
         """Modify an entry by overwriting it.
@@ -89,8 +104,15 @@ class Repository(IRepository):
         Args:
             identifier: an identifier found in the repository dict.
             entry: an object instance.
+
+        Raises:
+            KeyError: Cannot modify entry because it does not exist in the repository.
         """
         if identifier in self.entries:
             self.entries[identifier] = entry
         else:
-            print("Cannot modify entry: does not exist.")
+            try:
+                raise KeyError(f"Object '{identifier}' does not exist in repository.")
+            except KeyError as e:
+                logging.error(str(e))
+                raise e
