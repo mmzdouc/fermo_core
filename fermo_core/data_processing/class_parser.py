@@ -1,7 +1,5 @@
 """Based on user input, run filetype-specific methods to parse data.
 
-***
-
 Copyright (c) 2022-2023 Mitja Maximilian Zdouc, PhD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -114,5 +112,5 @@ class Parser:
             Expanding towards other ms/ms formats requires to add an elif condition to
             parse correct peaktable
         """
-        # TODO(MMZ): Fill this up
+        # TODO(MMZ): Add code analogous to parse_peaktable()
         pass

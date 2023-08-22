@@ -1,8 +1,8 @@
 """Direct the creation of an instance of a sample-specific feature
 
-
-TODO(MMZ): Improve description of class
-
+These features are created with sample-specific information (e.g. retention time,
+which can be different in each sample). This is different to generalized features,
+which contain average values across samples.
 
 Copyright (c) 2022-2023 Mitja Maximilian Zdouc, PhD
 

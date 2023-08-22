@@ -1,7 +1,6 @@
 """Builder for different instances of samples.
 
-TODO(MMZ): Improve description of class
-
+Samples act as "feature aggregators" and contain feature-specific information.
 
 Copyright (c) 2022-2023 Mitja Maximilian Zdouc, PhD
 
