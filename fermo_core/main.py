@@ -50,7 +50,7 @@ def main(params: ParamsHandler) -> None:
     """Run fermo core processing part on input data contained in params.
 
     Args:
-        params (ParamsHandler) : Handling input file names and params
+        params: Handling input file names and params
 
     Returns:
         A data object with methods to export data to a JSON file.
@@ -61,14 +61,11 @@ def main(params: ParamsHandler) -> None:
         this part is done.
     """
     logging.info("Start of peaktable parsing.")
-    stats, features, samples = Parser.parse_peaktable(params)
+    stats, features, samples = Parser().parse_peaktable(params)
+
+    features = Parser().parse_msms(params, features)
 
     # TODO(MMZ): parse the msms info in separate Parser class
-
-    print(features)
-
-    # TODO(MMZ): add a logger class to keep track of operations - or add this to
-    #  stats object?
 
     # TODO(MMZ): Cover parser class with tests
 

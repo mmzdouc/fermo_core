@@ -24,7 +24,7 @@ SOFTWARE.
 """
 
 from pathlib import Path
-from typing import Self, Tuple
+from typing import Self, Tuple, Optional
 
 
 class ParamsHandler:
@@ -73,13 +73,13 @@ class ParamsHandler:
     def __init__(self: Self, version: str, root: Path):
         self.version: str = version
         self.root: Path = root
-        self.session: Path | None = None
-        self.peaktable_mzmine3: Path | None = None
-        self.msms_mgf: Path | None = None
-        self.phenotype_fermo: Path | None = None
-        self.phenotype_fermo_mode: str | None = None
-        self.group_fermo: Path | None = None
-        self.speclib_mgf: Path | None = None
+        self.session: Optional[Path] = None
+        self.peaktable_mzmine3: Optional[Path] = None
+        self.msms_mgf: Optional[Path] = None
+        self.phenotype_fermo: Optional[Path] = None
+        self.phenotype_fermo_mode: Optional[str] = None
+        self.group_fermo: Optional[Path] = None
+        self.speclib_mgf: Optional[Path] = None
         self.mass_dev_ppm: int = 20
         self.msms_frag_min: int = 5
         self.phenotype_fold: int = 10

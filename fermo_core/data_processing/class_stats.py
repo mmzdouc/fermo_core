@@ -22,9 +22,10 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
+import logging
 
 import pandas as pd
-from typing import Self, Tuple, Optional
+from typing import Self, Tuple, Optional, List
 
 from fermo_core.input_output.dataclass_params_handler import ParamsHandler
 
@@ -48,6 +49,7 @@ class Stats:
         blank: all blank-associated features in analysis run
         int_removed: all features that were removed due to intensity range
         annot_removed: all features that were removed due to annotation range
+        ms2_removed: feature IDs of which MS2 was removed
     """
 
     def __init__(self: Self):
@@ -62,6 +64,7 @@ class Stats:
         self.blank: Optional[Tuple] = None
         self.int_removed: Optional[Tuple] = None
         self.annot_removed: Optional[Tuple] = None
+        self.ms2_removed: Optional[List] = None
 
     def _get_features_in_range_mzmine3(
         self: Self, df: pd.DataFrame, r: Tuple[float, float]
@@ -108,6 +111,10 @@ class Stats:
                 incl.add(row["id"])
             else:
                 excl.add(row["id"])
+                logging.info(
+                    f"Molecular feature with feature ID '{row['id']}' was filtered "
+                    f"from dataset due to range settings."
+                )
 
         return tuple(incl), tuple(excl)
 
