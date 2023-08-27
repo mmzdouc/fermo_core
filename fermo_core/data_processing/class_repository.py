@@ -77,7 +77,7 @@ class Repository(IRepository):
                 logging.error(str(e))
                 raise e
 
-    def get(self, identifier: int) -> Feature | Sample:
+    def get(self, identifier: int | str) -> Feature | Sample:
         """Get an entry from the repository dict.
 
         Args:
@@ -98,7 +98,7 @@ class Repository(IRepository):
                 logging.error(str(e))
                 raise e
 
-    def modify(self, identifier: int, entry: Feature | Sample):
+    def modify(self, identifier: int | str, entry: Feature | Sample):
         """Modify an entry by overwriting it.
 
         Args:

@@ -25,9 +25,9 @@ def test_success_sample_builder_default_values(attr):
     sample = SampleBuilder().get_result()
     match attr:
         case "groups":
-            assert getattr(sample, attr) == [
+            assert getattr(sample, attr) == {
                 "DEFAULT"
-            ], "Sample attribute 'groups' is not the expected 'DEFAULT'."
+            }, "Sample attribute 'groups' is not the expected 'DEFAULT'."
         case _:
             assert (
                 getattr(sample, attr) is None

@@ -392,7 +392,8 @@ class ValidationHandler:
         sample3,medium_C,condition_A \n
 
         Ad values: The only prohibited value is 'GENERAL' which is reserved for
-        internal use.
+        internal use. 'BLANK' os a special value that indicates the sample/medium
+        blank for automated subtraction.
 
         Args:
            f: A pathlib.Path instance that points towards a fermo-style group data
@@ -414,7 +415,7 @@ class ValidationHandler:
             return False, "Empty fields in 'sample_name' or data column(s) detected."
         elif df.applymap(lambda x: str(x).isspace()).any().any():
             return False, "Fields containing only (white)space detected."
-        elif df.applymap(lambda x: x == "GENERAL").any().any():
-            return False, "Fields with prohibited value 'GENERAL' detected."
+        elif df.applymap(lambda x: x == "DEFAULT").any().any():
+            return False, "Fields with prohibited value 'DEFAULT' detected."
 
         return True, ""

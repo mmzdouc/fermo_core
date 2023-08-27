@@ -99,7 +99,7 @@ class Parser:
             return self.parse_peaktable_mzmine3(params)
         else:
             try:
-                raise RuntimeError("Abort: No (compatible) peaktable found.")
+                raise RuntimeError("Abort: No peaktable found.")
             except RuntimeError as e:
                 logging.error(str(e))
                 raise e
@@ -126,8 +126,8 @@ class Parser:
                         int(spectrum.get("params").get("feature_id"))
                     )
                     feature.msms = (
-                        spectrum.get("m/z array").tolist(),
-                        spectrum.get("intensity array").tolist(),
+                        tuple(spectrum.get("m/z array").tolist()),
+                        tuple(spectrum.get("intensity array").tolist()),
                     )
                     feature_repo.modify(
                         int(spectrum.get("params").get("feature_id")), feature
@@ -139,6 +139,10 @@ class Parser:
                         "This feature ID does not exist in peaktable or was filtered "
                         "out."
                     )
+
+        logging.info(
+            f"Completed parsing of MS/MS .mgf file '{params.peaktable_mzmine3}'."
+        )
         return feature_repo
 
     def parse_msms(
@@ -161,8 +165,94 @@ class Parser:
             logging.debug(f"MS/MS file '{params.msms_mgf}' is in '.mgf' format.")
             return self.parse_msms_mgf(params, feature_repo)
         else:
+            logging.warning(
+                "No MS/MS file provided - functionality of FERMO is limited. "
+                "For more information, consult the documentation."
+            )
+            return feature_repo
+
+    @staticmethod
+    def parse_group_mzmine3(df: pd.DataFrame, stats: Stats, sample_repo: Repository):
+        """Parse group metadata/information from a fermo-style group file.
+
+        Args:
+            df: the group metadata file as Pandas DataFrame
+            stats: holds stats and metadata about analysis run, features and samples
+            sample_repo: Repository holding individual samples
+
+        Returns:
+            Tuple containing Stats and Sample repository objects with added group info.
+
+        Notes:
+            Adding group info to features and any other calculation are performed later
+            in 'data analysis'.
+        """
+
+        def _remove_sample_id_from_group_general(stats_obj: Stats, s_id: str) -> Stats:
             try:
-                raise RuntimeError("Abort: No (compatible) MS/MS file found.")
-            except RuntimeError as e:
-                logging.error(str(e))
-                raise e
+                stats_obj.groups["DEFAULT"].remove(s_id)
+            except ValueError:
+                logging.warning(
+                    f"Could not find sample ID '{s_id}' from group metadata file "
+                    f"in the previously processed peaktable file."
+                    f"Are you sure that the files match?"
+                )
+            return stats_obj
+
+        def _add_group_id_to_sample_repo(samples: Repository) -> Repository:
+            sample = samples.get(sample_id)
+            sample.groups.add(group_id)
+            if "DEFAULT" in sample.groups:
+                sample.groups.remove("DEFAULT")
+            return samples.modify(sample_id, sample)
+
+        # TODO(MMZ): Write the tests for this function right away
+
+        for _, row in df.iterrows():
+            sample_id = row["sample_name"]
+            stats = _remove_sample_id_from_group_general(stats, sample_id)
+            for group_id in row:
+                if group_id == sample_id:
+                    pass
+                elif group_id not in stats.groups:
+                    stats.groups[group_id] = [sample_id]
+                    sample_repo = _add_group_id_to_sample_repo(sample_repo)
+                else:
+                    stats.groups[group_id].append(sample_id)
+                    sample_repo = _add_group_id_to_sample_repo(sample_repo)
+
+        logging.info("Completed parsing of fermo-style group metadata file.")
+        return stats, sample_repo
+
+    def parse_group_metadata(
+        self: Self,
+        params: ParamsHandler,
+        stats: Stats,
+        sample_repo: Repository,
+    ):
+        """Parse group/metadata file depending on format.
+
+        Args:
+            params: holds paths to file, among other information
+            stats: holds stats and metadata about analysis run, features and samples
+            sample_repo: Repository holding individual samples
+
+        Returns:
+            Tuple containing Stats and Sample repository objects with added group info.
+
+        Notes:
+            Once additional group metadata formats are adopted,
+             they need to be added here.
+        """
+        if params.group_fermo is not None:
+            logging.debug(
+                f"Group metadata file '{params.group_fermo}' is in FERMO format."
+            )
+            return self.parse_group_mzmine3(
+                pd.read_csv(params.group_fermo), stats, sample_repo
+            )
+        else:
+            logging.warning(
+                "No group metadata file provided. Sample grouping is not performed."
+            )
+            return stats, sample_repo

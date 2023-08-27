@@ -29,7 +29,7 @@ class Feature:
 
     Product of the FeatureBuilder class.
 
-    Attributes:
+    Attr:
         f_id: the integer ID of the molecular feature.
         mz: the precursor mass to charge ratio (m/z).
         rt: the retention time at peak apex.
@@ -40,7 +40,7 @@ class Feature:
         fwhm: the feature width at half maximum intensity (peak width).
         intensity: the maximum intensity.
         area: the area of the peak
-        msms: a tuple of fragments [0] and intensities [1].
+        msms: a tuple of two tuples: [0] ms/ms fragments, [1] ms/ms intensities.
         samples: a tuple of samples to which feature is associated.
         blank: bool to indicate if feature is blank-associated (if provided).
         groups: association to groups if such metadata was provided.
@@ -64,7 +64,7 @@ class Feature:
         self.intensity: Optional[int] = None
         self.rel_intensity: Optional[float] = None
         self.area: Optional[int] = None
-        self.msms: Optional[Tuple] = None
+        self.msms: Optional[Tuple[Tuple[float, ...], Tuple[float, ...]]] = None
         self.samples: Optional[Tuple] = None
         self.blank: Optional[bool] = None
         self.groups: Optional[Tuple] = None

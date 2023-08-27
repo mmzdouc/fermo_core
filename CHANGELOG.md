@@ -9,4 +9,12 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Added
 
-- Initiated project
+- Command line interface: allows to run FERMO via command line without GUI.
+
+### Modified
+
+- MS/MS data is not mandatory anymore. However, this disables certain functionality
+  (e.g. MS2Query annotation)
+- Group metadata: each sample can be part of an arbitrary number of groups. The
+  following group names are still reserved: 'BLANK' (annotation of sample-blank
+  associated feature), 'DEFAULT' (reserved for internal use)

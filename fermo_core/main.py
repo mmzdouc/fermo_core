@@ -65,7 +65,7 @@ def main(params: ParamsHandler) -> None:
 
     features = Parser().parse_msms(params, features)
 
-    # TODO(MMZ): parse the msms info in separate Parser class
+    stats, samples = Parser().parse_group_metadata(params, stats, samples)
 
     # TODO(MMZ): Cover parser class with tests
 

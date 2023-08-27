@@ -102,7 +102,7 @@ class CommLineHandler:
         parser.add_argument(
             "--msms_mgf",
             type=str,
-            required=True,
+            required=False,
             help=(
                 "Provide a file with molecular feature MS/MS information in the\n"
                 ".mgf-format.\n"

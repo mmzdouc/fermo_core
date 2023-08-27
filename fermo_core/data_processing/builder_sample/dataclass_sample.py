@@ -21,13 +21,13 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from typing import Self, Optional, List
+from typing import Self, Optional
 
 
 class Sample:
     """Organize sample-specific data, including sample-specific mol feature info.
 
-    Attributes:
+    Attr:
         s_id: identifier of sample
         features: dict of features detected in sample; contain sample-specific data
         groups: group association of sample (if provided, else default group DEFAULT)
@@ -39,7 +39,7 @@ class Sample:
     def __init__(self: Self):
         self.s_id: Optional[str] = None
         self.features: Optional[dict] = None
-        self.groups: Optional[List[str]] = ["DEFAULT"]
+        self.groups: Optional[set[str, ...]] = {"DEFAULT"}
         self.cliques: Optional[dict] = None
         self.phenotypes: Optional[dict] = None
         self.max_intensity: Optional[dict] = None
