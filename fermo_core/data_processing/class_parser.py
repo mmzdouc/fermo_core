@@ -158,7 +158,7 @@ class Parser:
             parse correct peaktable
         """
         if params.msms_mgf is not None:
-            logging.debug(f"MS/MS file {params.msms_mgf} is in mgf format.")
+            logging.debug(f"MS/MS file '{params.msms_mgf}' is in '.mgf' format.")
             return self.parse_msms_mgf(params, feature_repo)
         else:
             try:

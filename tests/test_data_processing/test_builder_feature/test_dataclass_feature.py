@@ -36,9 +36,9 @@ def expected_attributes():
 
 def test_expected_values_dataclass_feature(feature, expected_attributes):
     for attr in expected_attributes:
-        assert hasattr(feature, attr), (
-            f"Attribute '{attr} is missing in dataclass " f"Feature."
-        )
+        assert hasattr(
+            feature, attr
+        ), f"Attribute '{attr} is missing in dataclass Feature."
 
 
 def test_unexpected_values_dataclass_feature(feature, expected_attributes):

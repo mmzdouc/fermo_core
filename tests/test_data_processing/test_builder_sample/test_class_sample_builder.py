@@ -21,11 +21,17 @@ def test_success_init_sample_builder():
         "max_intensity",
     ),
 )
-def test_success_default_values_for_attributes_sample_builder(attr):
+def test_success_sample_builder_default_values(attr):
     sample = SampleBuilder().get_result()
-    assert (
-        getattr(sample, attr) is None
-    ), f"Sample attribute '{attr} is not the default 'None'."
+    match attr:
+        case "groups":
+            assert getattr(sample, attr) == [
+                "DEFAULT"
+            ], "Sample attribute 'groups' is not the expected 'DEFAULT'."
+        case _:
+            assert (
+                getattr(sample, attr) is None
+            ), f"Sample attribute '{attr}' is not the default 'None'."
 
 
 def test_success_set_attributes_sample_builder():

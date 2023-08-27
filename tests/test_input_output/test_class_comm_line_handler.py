@@ -1,7 +1,11 @@
 import pytest
 
+from pathlib import Path
+import argparse
+
 from fermo_core.input_output.class_comm_line_handler import CommLineHandler
 from fermo_core.input_output.class_validation_handler import ValidationHandler
+from fermo_core.input_output.dataclass_params_handler import ParamsHandler
 
 
 @pytest.fixture
@@ -12,6 +16,11 @@ def validation_handler():
 @pytest.fixture
 def commline_handler():
     return CommLineHandler()
+
+
+@pytest.fixture
+def params_handler():
+    return ParamsHandler("0.1.0", Path("my/path/here"))
 
 
 def test_success_assign_peaktable_mzmine3(validation_handler, commline_handler):
@@ -184,3 +193,9 @@ def test_fail_assign_network_alg(validation_handler, commline_handler):
         ),
         str,
     )
+
+
+def test_define_argparse_args(params_handler):
+    assert isinstance(
+        CommLineHandler.define_argparse_args(params_handler), argparse.ArgumentParser
+    ), "Could not instantiate 'argparse.ArgumentParser'."

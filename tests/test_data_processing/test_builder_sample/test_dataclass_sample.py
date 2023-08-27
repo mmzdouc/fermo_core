@@ -3,6 +3,12 @@ import pytest
 from fermo_core.data_processing.builder_sample.dataclass_sample import Sample
 
 
+def test_success_initialize_sample():
+    assert isinstance(Sample(), Sample), (
+        "Could not initialize instance of object " "Sample"
+    )
+
+
 @pytest.fixture
 def sample():
     return Sample()

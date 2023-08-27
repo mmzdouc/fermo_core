@@ -25,7 +25,7 @@ SOFTWARE.
 import logging
 
 import pandas as pd
-from typing import Self, Tuple, Optional, List
+from typing import Self, Tuple, Optional, List, Dict
 
 from fermo_core.input_output.dataclass_params_handler import ParamsHandler
 
@@ -43,7 +43,8 @@ class Stats:
         rt_range: range in minutes between min and max rt.
         samples: all sample ids in analysis run
         features: all feature ids in analysis run
-        groups: all group ids in analysis run
+        groups: a dict of lists containing sample ID strings to indicate membership in
+        groups (if no explicit information, all samples in group "DEFAULT")
         cliques: all similarity cliques in analysis run
         phenotypes: all phenotype classifications in analysis run
         blank: all blank-associated features in analysis run
@@ -58,7 +59,7 @@ class Stats:
         self.rt_range: Optional[float] = None
         self.samples: Optional[Tuple] = None
         self.features: Optional[Tuple] = None
-        self.groups: Optional[Tuple] = None
+        self.groups: Optional[Dict[str, List[str]]] = {"DEFAULT": []}
         self.cliques: Optional[Tuple] = None
         self.phenotypes: Optional[Tuple] = None
         self.blank: Optional[Tuple] = None
@@ -138,6 +139,9 @@ class Stats:
 
         Args:
             params: holds information on peaktable and additional parameters.
+
+        Notes:
+            All samples are grouped in group "DEFAULT".
         """
         df = pd.read_csv(params.peaktable_mzmine3)
 
@@ -146,6 +150,8 @@ class Stats:
         self.rt_range = self.rt_max - self.rt_min
 
         self.samples = self._extract_sample_names_mzmine3(df)
+
+        self.groups["DEFAULT"] = list(self.samples)
 
         self.features, self.int_removed = self._get_features_in_range_mzmine3(
             df, params.rel_int_range

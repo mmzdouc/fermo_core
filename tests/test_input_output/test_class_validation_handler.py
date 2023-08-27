@@ -138,6 +138,7 @@ def test_success_validate_float_zero_one(f):
     [
         -1.0,
         1.5,
+        "string",
     ],
 )
 def test_fail_validate_float_zero_one(f):
@@ -221,10 +222,15 @@ def test_success_validate_csv_file(validation_handler):
     assert result[0], result[1]
 
 
-def test_fail_validate_csv_file(validation_handler):
-    result = validation_handler.validate_csv_file(
-        Path("tests/example_files/example_invalid_csv.md")
-    )
+@pytest.mark.parametrize(
+    "file",
+    [
+        "tests/example_files/example_invalid_csv.md",
+        "not/existing/file" "tests/example_files/example_invalid_csv.csv",
+    ],
+)
+def test_fail_validate_csv_file(validation_handler, file):
+    result = validation_handler.validate_csv_file(Path(file))
     assert not result[0], result[1]
 
 
@@ -263,10 +269,15 @@ def test_success_validate_mgf(validation_handler):
     assert result[0], result[1]
 
 
-def test_fail_validate_mgf(validation_handler):
-    result = validation_handler.validate_mgf(
-        Path("tests/example_files/example_invalid_csv.md")
-    )
+@pytest.mark.parametrize(
+    "file",
+    [
+        "tests/example_files/example_invalid_csv.md",
+        "not/existing/file" "tests/example_files/example_invalid_csv.mgf",
+    ],
+)
+def test_fail_validate_mgf(validation_handler, file):
+    result = validation_handler.validate_mgf(Path(file))
     assert not result[0], result[1]
 
 
