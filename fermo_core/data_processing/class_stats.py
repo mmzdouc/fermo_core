@@ -25,7 +25,7 @@ SOFTWARE.
 import logging
 
 import pandas as pd
-from typing import Self, Tuple, Optional, List, Dict
+from typing import Self, Tuple, Optional, Set, Dict, List
 
 from fermo_core.input_output.dataclass_params_handler import ParamsHandler
 
@@ -59,7 +59,7 @@ class Stats:
         self.rt_range: Optional[float] = None
         self.samples: Optional[Tuple] = None
         self.features: Optional[Tuple] = None
-        self.groups: Optional[Dict[str, List[str]]] = {"DEFAULT": []}
+        self.groups: Optional[Dict[str, Set[str | int]]] = {"DEFAULT": set()}
         self.cliques: Optional[Tuple] = None
         self.phenotypes: Optional[Tuple] = None
         self.blank: Optional[Tuple] = None
@@ -151,7 +151,7 @@ class Stats:
 
         self.samples = self._extract_sample_names_mzmine3(df)
 
-        self.groups["DEFAULT"] = list(self.samples)
+        self.groups["DEFAULT"] = set(self.samples)
 
         self.features, self.int_removed = self._get_features_in_range_mzmine3(
             df, params.rel_int_range

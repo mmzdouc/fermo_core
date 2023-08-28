@@ -29,7 +29,7 @@ class Feature:
 
     Product of the FeatureBuilder class.
 
-    Attr:
+    Attributes:
         f_id: the integer ID of the molecular feature.
         mz: the precursor mass to charge ratio (m/z).
         rt: the retention time at peak apex.

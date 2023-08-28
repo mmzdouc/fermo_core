@@ -25,6 +25,7 @@ import logging
 import pandas as pd
 from pyteomics import mgf
 from typing import Tuple, Self
+from pathlib import Path
 
 from fermo_core.input_output.dataclass_params_handler import ParamsHandler
 from fermo_core.data_processing.class_repository import Repository
@@ -105,11 +106,11 @@ class Parser:
                 raise e
 
     @staticmethod
-    def parse_msms_mgf(params: ParamsHandler, feature_repo: Repository) -> Repository:
+    def parse_msms_mgf(msms_file: Path, feature_repo: Repository) -> Repository:
         """Parse MS/MS information from a .mgf file.
 
         Args:
-            params: holds paths to msms data among other parameters
+            msms_file: paths to msms data
             feature_repo: Repository holding individual features
 
         Returns:
@@ -119,7 +120,7 @@ class Parser:
             mgf.read() returns a Numpy array - turned to list for easier handling
 
         """
-        with open(params.msms_mgf) as infile:
+        with open(msms_file) as infile:
             for spectrum in mgf.read(infile, use_index=False):
                 try:
                     feature = feature_repo.get(
@@ -140,9 +141,7 @@ class Parser:
                         "out."
                     )
 
-        logging.info(
-            f"Completed parsing of MS/MS .mgf file '{params.peaktable_mzmine3}'."
-        )
+        logging.info(f"Completed parsing of MS/MS .mgf file '{msms_file}'.")
         return feature_repo
 
     def parse_msms(
@@ -163,7 +162,7 @@ class Parser:
         """
         if params.msms_mgf is not None:
             logging.debug(f"MS/MS file '{params.msms_mgf}' is in '.mgf' format.")
-            return self.parse_msms_mgf(params, feature_repo)
+            return self.parse_msms_mgf(params.msms_mgf, feature_repo)
         else:
             logging.warning(
                 "No MS/MS file provided - functionality of FERMO is limited. "
@@ -172,7 +171,7 @@ class Parser:
             return feature_repo
 
     @staticmethod
-    def parse_group_mzmine3(df: pd.DataFrame, stats: Stats, sample_repo: Repository):
+    def parse_group_fermo(df: pd.DataFrame, stats: Stats, sample_repo: Repository):
         """Parse group metadata/information from a fermo-style group file.
 
         Args:
@@ -199,14 +198,15 @@ class Parser:
                 )
             return stats_obj
 
-        def _add_group_id_to_sample_repo(samples: Repository) -> Repository:
-            sample = samples.get(sample_id)
+        def _add_group_id_to_sample_repo(
+            sample_r: Repository, s_id: str | int
+        ) -> Repository:
+            sample = sample_r.get(s_id)
             sample.groups.add(group_id)
             if "DEFAULT" in sample.groups:
                 sample.groups.remove("DEFAULT")
-            return samples.modify(sample_id, sample)
-
-        # TODO(MMZ): Write the tests for this function right away
+            sample_r.modify(s_id, sample)
+            return sample_r
 
         for _, row in df.iterrows():
             sample_id = row["sample_name"]
@@ -215,12 +215,12 @@ class Parser:
                 if group_id == sample_id:
                     pass
                 elif group_id not in stats.groups:
-                    stats.groups[group_id] = [sample_id]
-                    sample_repo = _add_group_id_to_sample_repo(sample_repo)
+                    stats.groups[group_id] = {sample_id}
+                    sample_repo = _add_group_id_to_sample_repo(sample_repo, sample_id)
                 else:
-                    stats.groups[group_id].append(sample_id)
-                    sample_repo = _add_group_id_to_sample_repo(sample_repo)
-
+                    stats.groups[group_id].add(sample_id)
+                    sample_repo = _add_group_id_to_sample_repo(sample_repo, sample_id)
+        print(stats.groups)
         logging.info("Completed parsing of fermo-style group metadata file.")
         return stats, sample_repo
 
@@ -248,7 +248,7 @@ class Parser:
             logging.debug(
                 f"Group metadata file '{params.group_fermo}' is in FERMO format."
             )
-            return self.parse_group_mzmine3(
+            return self.parse_group_fermo(
                 pd.read_csv(params.group_fermo), stats, sample_repo
             )
         else:

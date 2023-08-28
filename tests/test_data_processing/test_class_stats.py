@@ -70,7 +70,7 @@ def test_default_values_stats(stats, expected_attributes):
         match attr:
             case "groups":
                 assert getattr(stats, attr) == {
-                    "DEFAULT": []
+                    "DEFAULT": set()
                 }, "Attribute of class 'Stats' is not 'DEFAULT'."
             case _:
                 assert (

@@ -37,7 +37,7 @@ class ParamsHandler:
     type exists, they should be called with the same prefix (e.g. peaktable_fermo,
     (hypothetical) peaktable_openms)
 
-    Attr:
+    Attributes:
         version: Current program version.
         root: "Root" directory of program.
         session: Fermo json session file.
