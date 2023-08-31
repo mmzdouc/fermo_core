@@ -1,7 +1,7 @@
 Repo for the processing part of FERMO (fermo_core)
 
 
-Download, Installation, and Curation Strategy
+Download, Installation
 ============
 
 - Create a virtual environment (e.g. with `conda`)
@@ -9,11 +9,6 @@ Download, Installation, and Curation Strategy
 
 Usage
 =====
-
-TBA
-
-Curation Strategy
-=================
 
 TBA
 

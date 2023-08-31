@@ -7,7 +7,7 @@ from fermo_core.input_output.dataclass_params_handler import ParamsHandler
 
 
 def test_success_instantiate_sample_object():
-    assert isinstance(Stats(), Stats), "Could not instantiate object 'Sample'."
+    assert isinstance(Stats(), Stats), "Could not instantiate object 'Stats'."
 
 
 @pytest.fixture
@@ -71,7 +71,7 @@ def test_default_values_stats(stats, expected_attributes):
             case "groups":
                 assert getattr(stats, attr) == {
                     "DEFAULT": set()
-                }, "Attribute of class 'Stats' is not 'DEFAULT'."
+                }, f"Attribute '{attr}' of class 'Stats' is not 'DEFAULT'."
             case _:
                 assert (
                     getattr(stats, attr) is None

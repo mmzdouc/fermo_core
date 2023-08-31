@@ -21,7 +21,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from typing import Optional, Tuple, Self, Dict
+from typing import Optional, Tuple, Self, Dict, Set
 
 
 class Feature:
@@ -67,7 +67,7 @@ class Feature:
         self.msms: Optional[Tuple[Tuple[float, ...], Tuple[float, ...]]] = None
         self.samples: Optional[Tuple] = None
         self.blank: Optional[bool] = None
-        self.groups: Optional[Tuple] = None
+        self.groups: Optional[Set] = None
         self.groups_fold: Optional[Dict] = None
         self.phenotypes: Optional[Dict] = None
         self.annotations: Optional[Dict] = None

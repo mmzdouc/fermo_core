@@ -66,10 +66,11 @@ def main(params: ParamsHandler) -> None:
     features = Parser().parse_msms(params, features)
 
     stats, samples = Parser().parse_group_metadata(params, stats, samples)
-
-    # TODO(MMZ): Cover parser class with tests
+    # TODO(MMZ): Add phenotype/bioactivity parser file
 
     # TODO(MMZ): proceed with annotations, bioactivity etc.
+
+    # TODO(MMZ): when calculating fold changes, also add group info to features
 
 
 if __name__ == "__main__":
