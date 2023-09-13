@@ -220,8 +220,9 @@ class Parser:
                 else:
                     stats.groups[group_id].add(sample_id)
                     sample_repo = _add_group_id_to_sample_repo(sample_repo, sample_id)
-        print(stats.groups)
+
         logging.info("Completed parsing of fermo-style group metadata file.")
+
         return stats, sample_repo
 
     def parse_group_metadata(

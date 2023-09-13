@@ -1,0 +1,98 @@
+{
+  "files": {
+    "peaktable": {
+      "filename": "example_data/case_study_peak_table_quant_full.csv",
+      "type": "mzmine3",
+      "allowed_types": [
+        "mzmine3"
+      ]
+    },
+    "msms": {
+      "filename": "example_data/case_study_MSMS.mgf",
+      "type": "mgf",
+      "allowed_types": [
+        "mgf"
+      ]
+    },
+    "phenotype": {
+      "filename": "example_data/case_study_bioactivity.csv",
+      "type": "fermo",
+      "allowed_types": [
+        "fermo"
+      ],
+      "mode": "percentage",
+      "allowed_modes": [
+        "percentage",
+        "concentration"
+      ],
+      "algorithm": "fold_difference",
+      "allowed_algorithms": [
+        "fold_difference"
+      ]
+    },
+    "group_metadata": {
+      "filename": "example_data/case_study_group_metadata.csv",
+      "type": "fermo",
+      "allowed_types": [
+        "fermo"
+      ]
+    },
+    "spectral_library": {
+      "filename": "example_data/case_study_spectral_library.mgf",
+      "type": "mgf",
+      "allowed_types": [
+        "mgf"
+      ]
+    }
+  },
+  "parameters": {
+    "phenotype_algorithm_settings": {
+      "fold_difference": 10
+    },
+    "mass_deviation_ppm": 20,
+    "minimum_number_fragments_msms_spectrum": 5,
+    "column_retention_fold_change": 10,
+    "fragment_tolerance": 0.1,
+    "spectral_similarity_score_cutoff": 0.7,
+    "max_nr_links_spectral_sim_network": 10,
+    "msms_min_nr_matched_peaks": 5,
+    "spectral_sim_network_alg": {
+      "type": "modified_cosine",
+      "allowed_types": [
+        "all",
+        "modified_cosine",
+        "ms2deepscore"
+      ]
+    },
+    "ms2query": {
+      "mode": "off",
+      "allowed_modes": [
+        "on",
+        "off"
+      ],
+      "annot_features_from_blanks": "off",
+      "allowed_modes_annot_features_from_blanks": [
+        "on",
+        "off"
+      ],
+      "range": [
+        0.0,
+        1.0
+      ],
+      "allowed_range": [
+        0.0,
+        1.0
+      ]
+    },
+    "retain_features_minimum_relative_intensity": {
+      "range": [
+        0.0,
+        1.0
+      ],
+      "allowed_range": [
+        0.0,
+        1.0
+      ]
+    }
+  }
+}

@@ -64,8 +64,8 @@ def main(params: ParamsHandler) -> None:
     stats, features, samples = Parser().parse_peaktable(params)
 
     features = Parser().parse_msms(params, features)
-
     stats, samples = Parser().parse_group_metadata(params, stats, samples)
+
     # TODO(MMZ): Add phenotype/bioactivity parser file
 
     # TODO(MMZ): proceed with annotations, bioactivity etc.

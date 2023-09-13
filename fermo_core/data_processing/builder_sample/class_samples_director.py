@@ -49,6 +49,9 @@ class SamplesDirector:
 
         Returns:
             An instance of the Sample class.
+
+        Notes:
+            Adds features detected in sample via SpecificFeatureDirector
         """
         sample = (
             SampleBuilder()
