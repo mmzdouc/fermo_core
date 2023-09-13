@@ -2,22 +2,24 @@
   "files": {
     "peaktable": {
       "filename": "example_data/case_study_peak_table_quant_full.csv",
-      "type": "mzmine3",
-      "allowed_types": [
+      "format": "mzmine3",
+      "allowed_formats": [
         "mzmine3"
-      ]
+      ],
+      "description": "Provide a peaktable containing information on molecular features."
     },
     "msms": {
       "filename": "example_data/case_study_MSMS.mgf",
-      "type": "mgf",
-      "allowed_types": [
+      "format": "mgf",
+      "allowed_formats": [
         "mgf"
-      ]
+      ],
+      "description": "Provide a file with molecular feature MS/MS information."
     },
     "phenotype": {
       "filename": "example_data/case_study_bioactivity.csv",
-      "type": "fermo",
-      "allowed_types": [
+      "format": "fermo",
+      "allowed_formats": [
         "fermo"
       ],
       "mode": "percentage",
@@ -25,44 +27,73 @@
         "percentage",
         "concentration"
       ],
-      "algorithm": "fold_difference",
+      "algorithm": "all",
       "allowed_algorithms": [
+        "all",
         "fold_difference"
-      ]
+      ],
+      "description": "Provide a file with phenotype/biological activity information. All data must come from the same type of experiment (e.g. percentage inhibition)."
     },
     "group_metadata": {
       "filename": "example_data/case_study_group_metadata.csv",
-      "type": "fermo",
-      "allowed_types": [
+      "format": "fermo",
+      "allowed_formats": [
         "fermo"
-      ]
+      ],
+      "description": "Provide a file with group metadata information."
     },
     "spectral_library": {
       "filename": "example_data/case_study_spectral_library.mgf",
-      "type": "mgf",
-      "allowed_types": [
+      "format": "mgf",
+      "allowed_formats": [
         "mgf"
-      ]
+      ],
+      "description": "Provide a spectral library file with annotated MS/MS spectra."
     }
   },
   "parameters": {
     "phenotype_algorithm_settings": {
-      "fold_difference": 10
+      "fold_difference": {
+        "value": 10,
+        "description": "Factor to retain metabolites present in samples with sub-inhibitory concentrations."
+      }
     },
-    "mass_deviation_ppm": 20,
-    "minimum_number_fragments_msms_spectrum": 5,
-    "column_retention_fold_change": 10,
-    "fragment_tolerance": 0.1,
-    "spectral_similarity_score_cutoff": 0.7,
-    "max_nr_links_spectral_sim_network": 10,
-    "msms_min_nr_matched_peaks": 5,
+    "mass_deviation_ppm": {
+      "value": 20,
+      "description": "Expected mass deviation tolerance in ppm."
+    },
+    "minimum_number_fragments_msms_spectrum": {
+      "value": 5,
+      "description": "Minimum number of fragments per MS/MS spectrum."
+    },
+    "column_retention_fold_change": {
+      "value": 10,
+      "description": "Factor to retain metabolites that were detected in sample blanks due to cross-contamination"
+    },
+    "fragment_tolerance": {
+      "value": 0.1,
+      "description": "Tolerance when matching two MS/MS fragments in spectral similarity matching, in m/z units."
+    },
+    "spectral_similarity_score_cutoff": {
+      "value": 0.7,
+      "description": "Similarity score cutoff: determine relatedness of two  MS2 spectra."
+    },
+    "max_nr_links_spectral_sim_network": {
+      "value": 10,
+      "description": "In spectral similarity/molecular network calculations, max. number of links to other molecular features any mol. feature is allowed to have."
+    },
+    "msms_min_nr_matched_peaks": {
+      "value": 5,
+      "description": "For spectral similarity matching, minimum number of fragments two MS/MS spectra need to share to be considered related."
+    },
     "spectral_sim_network_alg": {
-      "type": "modified_cosine",
-      "allowed_types": [
+      "format": "modified_cosine",
+      "allowed_formats": [
         "all",
         "modified_cosine",
         "ms2deepscore"
-      ]
+      ],
+      "description": "For spectral similarity matching, spectral similarity/molecular networking algorithm to use."
     },
     "ms2query": {
       "mode": "off",
@@ -82,7 +113,8 @@
       "allowed_range": [
         0.0,
         1.0
-      ]
+      ],
+      "description": "Settings to enable/disable annotation by MS2Query."
     },
     "retain_features_minimum_relative_intensity": {
       "range": [
@@ -92,7 +124,8 @@
       "allowed_range": [
         0.0,
         1.0
-      ]
+      ],
+      "description": "Filter out molecular features that are outside of range."
     }
   }
 }
