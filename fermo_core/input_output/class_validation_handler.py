@@ -384,16 +384,7 @@ class ValidationHandler:
     def validate_group_fermo(self: Self, f: Path) -> Tuple[bool, str]:
         """Validate that input file is a fermo-style group data table.
 
-        A fermo-style group data file is a .csv-file with the layout:
 
-        sample_name,group_col_1,group_col_2,...,group_col_n \n
-        sample1,medium_A,condition_A \n
-        sample2,medium_B,condition_A\n
-        sample3,medium_C,condition_A \n
-
-        Ad values: The only prohibited value is 'GENERAL' which is reserved for
-        internal use. 'BLANK' os a special value that indicates the sample/medium
-        blank for automated subtraction.
 
         Args:
            f: A pathlib.Path instance that points towards a fermo-style group data

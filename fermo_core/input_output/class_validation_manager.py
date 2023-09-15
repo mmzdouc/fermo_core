@@ -23,11 +23,10 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-import json
 import pandas as pd
 from pathlib import Path
 from pyteomics import mgf
-from typing import Self, Tuple, List
+from typing import List
 
 
 class ValidationManager:
@@ -48,6 +47,19 @@ class ValidationManager:
         """
         if not isinstance(string, str):
             raise TypeError(f"Not a valid string: '{string}'.")
+
+    @staticmethod
+    def validate_integer(integer: int):
+        """Validate that input is an integer.
+
+        Parameters:
+            integer: an integer
+
+        Raises:
+            TypeError: not a valid string
+        """
+        if not isinstance(int(integer), int):
+            raise TypeError(f"Not a valid integer value: '{integer}'.")
 
     @staticmethod
     def validate_file_exists(path: str):
@@ -123,7 +135,7 @@ class ValidationManager:
         """
         try:
             pd.read_csv(csv_file, sep=",")
-        except pd.errors.ParserError as e:
+        except pd.errors.ParserError:
             raise ValueError(
                 f"File '{csv_file}' does not seem to be a valid file in '.csv' format."
             )
@@ -191,3 +203,64 @@ class ValidationManager:
                 next(mgf.read(infile))
         except StopIteration:
             raise ValueError(f"File '{mgf_file}' is not a .mgf-file or is empty.")
+
+    @staticmethod
+    def validate_phenotype_fermo(phenotype: str):
+        """Validate that file is a phenotype file in fermo style.
+
+        Args:
+           phenotype: A validated file path string pointing toward a fermo-style
+           phenotype/bioactivity file.
+
+        Raises:
+            ValueError: Not a fermo style bioactivity/phenotype file
+        """
+
+        def _raise_error(message):
+            raise ValueError(f"{message}  in file '{phenotype}' detected.")
+
+        df = pd.read_csv(phenotype, sep=",")
+
+        if df.filter(regex="^sample_name$").columns.empty:
+            _raise_error("No column labelled 'sample_name'")
+        elif not len(df.columns) > 1:
+            _raise_error("No data column(s)")
+        elif df.isnull().any().any():
+            _raise_error("Empty fields in 'sample_name' or data column(s)")
+        elif df.applymap(lambda x: str(x).isspace()).any().any():
+            _raise_error("Fields containing only (white)space")
+        elif (
+            df.loc[:, df.columns != "sample_name"]
+            .select_dtypes(include="object")
+            .any()
+            .any()
+        ):
+            _raise_error("Data column(s) with non-numeric values")
+
+    @staticmethod
+    def validate_group_metadata_fermo(group: str):
+        """Validate that file is a group metadata file in fermo style.
+
+        Args:
+           group: A validated file path string pointing toward a fermo-style group
+            metadata file
+
+        Raises:
+            ValueError: Not a fermo style group metadata file
+        """
+
+        def _raise_error(message):
+            raise ValueError(f"{message}  in file '{group}' detected.")
+
+        df = pd.read_csv(group)
+
+        if df.filter(regex="^sample_name$").columns.empty:
+            _raise_error("No column labelled 'sample_name'")
+        elif not len(df.columns) > 1:
+            _raise_error("No data column(s)")
+        elif df.isnull().any().any():
+            _raise_error("Empty fields in 'sample_name' or data column(s)")
+        elif df.applymap(lambda x: str(x).isspace()).any().any():
+            _raise_error("Fields containing only (white)space")
+        elif df.applymap(lambda x: x == "DEFAULT").any().any():
+            _raise_error("Fields with prohibited value 'DEFAULT'")

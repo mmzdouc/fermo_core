@@ -27,7 +27,7 @@ import argparse
 import logging
 import json
 from pathlib import Path
-from typing import Self, Tuple, Optional, Any
+from typing import Self, Tuple, Optional
 
 from fermo_core.input_output.class_validation_manager import ValidationManager
 
@@ -193,13 +193,17 @@ class ParameterManager:
                     ValidationManager.validate_no_duplicate_entries_csv_column(
                         user_params["peaktable"]["filename"], "id"
                     )
-                    self.peaktable = user_params.get("peaktable")
-                    logging.info(
-                        f"Validated and assigned MZmine3-style peaktable "
-                        f"'{user_params['peaktable']['filename']}'."
-                    )
                 case _:
-                    raise ValueError("Could not find a valid peaktable format.")
+                    raise ValueError(
+                        f"Could not recognize peaktable format "
+                        f"'{user_params['peaktable']['format']}'."
+                    )
+
+            self.peaktable = user_params.get("peaktable")
+            logging.info(
+                f"Validated and assigned MZmine3-style peaktable "
+                f"'{user_params['peaktable']['filename']}'."
+            )
         except Exception as e:
             logging.error(str(e))
             raise e
@@ -230,19 +234,24 @@ class ParameterManager:
             ValidationManager.validate_value_in_list(
                 default_params["msms"]["allowed_formats"], user_params["msms"]["format"]
             )
+
             match user_params["msms"]["format"]:
                 case "mgf":
                     ValidationManager.validate_file_extension(
                         user_params["msms"]["filename"], ".mgf"
                     )
                     ValidationManager.validate_mgf_file(user_params["msms"]["filename"])
-                    self.msms = user_params.get("msms")
-                    logging.info(
-                        f"Validated and assigned mgf-style MS/MS information "
-                        f"'{user_params['msms']['filename']}'."
-                    )
                 case _:
-                    raise ValueError("Could not find a valid MS/MS format.")
+                    raise ValueError(
+                        f"Could not recognize MS/MS format "
+                        f"'{user_params['msms']['format']}'."
+                    )
+
+            self.msms = user_params.get("msms")
+            logging.info(
+                f"Validated and assigned mgf-style MS/MS information "
+                f"'{user_params['msms']['filename']}'."
+            )
         except Exception as e:
             logging.error(str(e))
             raise e
@@ -257,6 +266,20 @@ class ParameterManager:
         Notes:
             Optional parameter, raises no error.
             Expand here for other file formats.
+
+            A fermo-style phenotype data file is a .csv-file with the layout:
+
+            sample_name,phenotype_col_1,phenotype_col_2,...,phenotype_col_n \n
+            sample1,1,0.1 \n
+            sample2,10,0.01 \n
+            sample3,100,0.001 \n
+
+            Ad columns: "sample_name" mandatory, one or more additional columns
+            Ad values: One experiment per column. All experiments must be of the
+            same type (e.g. concentration, percentage inhibition).
+            This is indicated by the "mode" of the file:
+            -> percentage-like (the higher the better),
+            -> concentration-like (the lower the better)
         """
         try:
             ValidationManager.validate_keys(user_params, "phenotype")
@@ -277,30 +300,194 @@ class ParameterManager:
                 default_params["phenotype"]["allowed_algorithms"],
                 user_params["phenotype"]["algorithm"],
             )
+
             match user_params["phenotype"]["format"]:
                 case "fermo":
                     ValidationManager.validate_file_extension(
-                        user_params["peaktable"]["filename"], ".csv"
+                        user_params["phenotype"]["filename"], ".csv"
                     )
                     ValidationManager.validate_csv_file(
-                        user_params["peaktable"]["filename"]
+                        user_params["phenotype"]["filename"]
                     )
                     ValidationManager.validate_phenotype_fermo(
-                        user_params["peaktable"]["filename"]
+                        user_params["phenotype"]["filename"]
                     )
                     ValidationManager.validate_no_duplicate_entries_csv_column(
-                        user_params["peaktable"]["filename"], "id"
-                    )
-                    self.peaktable = user_params.get("peaktable")
-                    logging.info(
-                        f"Validated and assigned MZmine3-style peaktable "
-                        f"'{user_params['peaktable']['filename']}'."
+                        user_params["phenotype"]["filename"], "sample_name"
                     )
                 case _:
-                    raise ValueError("Could not find a valid phenotype format.")
+                    raise ValueError(
+                        f"Could not recognize phenotype format "
+                        f"'{user_params['phenotype']['format']}'."
+                    )
+
+            self.phenotype = user_params.get("phenotype")
+            logging.info(
+                f"Validated and assigned FERMO-style phenotype/bioactivity "
+                f"table '{user_params['phenotype']['filename']}'."
+            )
+
         except Exception as e:
             logging.warning(str(e))
-            logging.info(f"Could not process phenotype file - SKIP.")
+            logging.info("Could not recognize phenotype file - SKIP.")
+
+    def assign_group_metadata(self: Self, user_params: dict, default_params: dict):
+        """Validate and assign the group metadata information to self.
+
+        Parameters:
+            user_params: user-provided params, read from json file
+            default_params: default parameters read from json file, serves as fallback
+
+        Notes:
+            Optional parameter, raises no error.
+            Expand here for other file formats.
+
+            A fermo-style group data file is a .csv-file with the layout:
+
+            sample_name,group_col_1,group_col_2,...,group_col_n \n
+            sample1,medium_A,condition_A \n
+            sample2,medium_B,condition_A\n
+            sample3,medium_C,condition_A \n
+
+            Ad values: The only prohibited value is 'DEFAULT' which is reserved for
+            internal use. 'BLANK' os a special value that indicates the sample/medium
+            blank for automated subtraction.
+        """
+        try:
+            ValidationManager.validate_keys(user_params, "group_metadata")
+            ValidationManager.validate_keys(
+                user_params.get("group_metadata"), "filename", "format"
+            )
+            ValidationManager.validate_string(user_params["group_metadata"]["filename"])
+            ValidationManager.validate_file_exists(
+                user_params["group_metadata"]["filename"]
+            )
+            ValidationManager.validate_value_in_list(
+                default_params["group_metadata"]["allowed_formats"],
+                user_params["group_metadata"]["format"],
+            )
+            match user_params["group_metadata"]["format"]:
+                case "fermo":
+                    ValidationManager.validate_file_extension(
+                        user_params["group_metadata"]["filename"], ".csv"
+                    )
+                    ValidationManager.validate_csv_file(
+                        user_params["group_metadata"]["filename"]
+                    )
+                    ValidationManager.validate_group_metadata_fermo(
+                        user_params["group_metadata"]["filename"]
+                    )
+                    ValidationManager.validate_no_duplicate_entries_csv_column(
+                        user_params["group_metadata"]["filename"], "sample_name"
+                    )
+                case _:
+                    raise ValueError(
+                        f"Could not recognize group metadata file format "
+                        f"'{user_params['group_metadata']['format']}'."
+                    )
+
+            self.group_metadata = user_params.get("group_metadata")
+            logging.info(
+                f"Validated and assigned FERMO-style group metadata "
+                f"table '{user_params['group_metadata']['filename']}'."
+            )
+
+        except Exception as e:
+            logging.warning(str(e))
+            logging.info("Could not process group metadata file - SKIP.")
+
+    def assign_spectral_library(self: Self, user_params: dict, default_params: dict):
+        """Validate and assign the spectral library information to self.
+
+        Parameters:
+            user_params: user-provided params, read from json file
+            default_params: default parameters read from json file, serves as fallback
+
+        Notes:
+            Optional parameter, raises no error.
+            Expand here for other file formats.
+        """
+        try:
+            ValidationManager.validate_keys(user_params, "spectral_library")
+            ValidationManager.validate_keys(
+                user_params.get("spectral_library"), "filename", "format"
+            )
+            ValidationManager.validate_string(
+                user_params["spectral_library"]["filename"]
+            )
+            ValidationManager.validate_file_exists(
+                user_params["spectral_library"]["filename"]
+            )
+            ValidationManager.validate_value_in_list(
+                default_params["spectral_library"]["allowed_formats"],
+                user_params["spectral_library"]["format"],
+            )
+            match user_params["spectral_library"]["format"]:
+                case "mgf":
+                    ValidationManager.validate_file_extension(
+                        user_params["spectral_library"]["filename"], ".mgf"
+                    )
+                    ValidationManager.validate_mgf_file(
+                        user_params["spectral_library"]["filename"]
+                    )
+                case _:
+                    raise ValueError(
+                        f"Could not recognize spectral library MS/MS format "
+                        f"'{user_params['spectral_library']['format']}'."
+                    )
+
+            self.speclib_mgf = user_params.get("spectral_library")
+            logging.info(
+                f"Validated and assigned mgf-style MS/MS spectral library "
+                f"'{user_params['spectral_library']['filename']}'."
+            )
+
+        except Exception as e:
+            logging.warning(str(e))
+            logging.info("Could not process spectral library file - SKIP.")
+
+    def assign_phenotype_algorithm_settings(
+        self: Self, user_params: dict, default_params: dict
+    ):
+        """Validate and assign the phenotype algorithm settings to self.
+
+        Parameters:
+            user_params: user-provided params, read from json file
+            default_params: default parameters read from json file, serves as fallback
+
+        Notes:
+            Optional parameter, raises no error.
+            Expand here for other file formats.
+        """
+        try:
+            ValidationManager.validate_keys(user_params, "phenotype_algorithm_settings")
+            for param in user_params["phenotype_algorithm_settings"].keys():
+                match param:
+                    case "fold_difference":
+                        ValidationManager.validate_integer(
+                            user_params["phenotype_algorithm_settings"][
+                                "fold_difference"
+                            ]["value"]
+                        )
+                    case _:
+                        raise ValueError(
+                            f"Could not recognize phenotype algorithm setting '"
+                            f"{param}'."
+                        )
+
+            self.phenotype_algorithm_settings = user_params[
+                "phenotype_algorithm_settings"
+            ]
+            logging.info("Validated and assigned phenotype_algorithm_settings.")
+        except Exception as e:
+            logging.warning(str(e))
+            logging.info(
+                "Could not process phenotype algorithm settings - fallback to "
+                "default values."
+            )
+            self.phenotype_algorithm_settings = default_params[
+                "phenotype_algorithm_settings"
+            ]
 
     def parse_parameters(self: Self, user_params: dict, default_params: dict):
         """Parses user-provided parameters based on expected params in default_params.
@@ -317,6 +504,15 @@ class ParameterManager:
                     self.assign_msms(user_params, default_params)
                 case "phenotype":
                     self.assign_phenotype(user_params, default_params)
+                case "group_metadata":
+                    self.assign_group_metadata(user_params, default_params)
+                case "spectral_library":
+                    self.assign_spectral_library(user_params, default_params)
+                case "phenotype_algorithm_settings":
+                    self.assign_phenotype_algorithm_settings(
+                        user_params, default_params
+                    )
+                # TODO(MMZ): continue adding parameters
 
         # load the default params
         # assign the default params one by one to self
