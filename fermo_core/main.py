@@ -32,7 +32,7 @@ import logging
 from fermo_core.input_output.dataclass_params_handler import ParamsHandler
 from fermo_core.input_output.class_comm_line_handler import CommLineHandler
 from fermo_core.data_processing.class_parser import Parser
-
+from fermo_core.input_output.class_parameter_manager import ParameterManager
 
 VERSION = metadata.version("fermo_core")
 ROOT = Path(__file__).resolve().parent
@@ -74,7 +74,15 @@ def main(params: ParamsHandler) -> None:
 
 
 if __name__ == "__main__":
-    comm_line_handler = CommLineHandler()
-    params_handler = comm_line_handler.run_argparse(ParamsHandler(VERSION, ROOT))
-    logging.info("Completed command line parameter parsing.")
-    main(params_handler)
+    params = ParameterManager(VERSION, ROOT)
+    args = params.run_argparse()
+    default_params = params.load_json_file(
+        str(ROOT.joinpath("config", "default_parameters.json"))
+    )
+    user_params = params.load_json_file(args.parameters)
+    params.parse_parameters(user_params, default_params)
+
+    # comm_line_handler = CommLineHandler()
+    # params_handler = comm_line_handler.run_argparse(ParamsHandler(VERSION, ROOT))
+    # logging.info("Completed command line parameter parsing.")
+    # main(params_handler)

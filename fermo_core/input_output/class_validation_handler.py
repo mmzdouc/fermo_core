@@ -319,7 +319,7 @@ class ValidationHandler:
             try:
                 next(mgf.read(infile))
             except StopIteration:
-                return False, "Is not an .mgf-file or is empty."
+                return (False,)
 
         return True, ""
 
