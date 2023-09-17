@@ -113,7 +113,8 @@ class ParameterManager:
             required=True,
             help=(
                 "Provide a FERMO parameter .json file.\n"
-                "See 'parameters.json' for an example or consult the documentation.\n"
+                "See 'example_data/example_parameters.json' for an example or consult "
+                "the documentation.\n"
             ),
         )
         return parser
@@ -203,7 +204,7 @@ class ParameterManager:
 
             self.peaktable = user_params.get("peaktable")
             logging.info(
-                f"Validated and assigned user-parameter peaktable "
+                f"Validated and assigned user-specified parameter 'peaktable' "
                 f"'{user_params['peaktable']['filename']}' in "
                 f"'{user_params['peaktable']['format']}' format."
             )
@@ -253,7 +254,8 @@ class ParameterManager:
 
             self.msms = user_params.get("msms")
             logging.info(
-                f"Validated and assigned user-parameter MS/MS information "
+                f"Validated and assigned user-specified parameter 'MS/MS "
+                f"information' "
                 f"'{user_params['msms']['filename']}' in "
                 f"'{user_params['msms']['format']}' format."
             )
@@ -329,8 +331,9 @@ class ParameterManager:
 
             self.phenotype = user_params.get("phenotype")
             logging.info(
-                f"Validated and assigned user-parameter phenotype/bioactivity "
-                f"information "
+                f"Validated and assigned user-specified parameter "
+                f"'phenotype/bioactivity "
+                f"information' "
                 f"'{user_params['phenotype']['filename']}' in "
                 f"'{user_params['phenotype']['format']}' format."
             )
@@ -397,7 +400,8 @@ class ParameterManager:
 
             self.group_metadata = user_params.get("group_metadata")
             logging.info(
-                f"Validated and assigned user-parameter group metadata information "
+                f"Validated and assigned user-specified parameter 'group metadata "
+                f"information' "
                 f"'{user_params['group_metadata']['filename']}' in "
                 f"'{user_params['group_metadata']['format']}' format."
             )
@@ -449,7 +453,8 @@ class ParameterManager:
 
             self.speclib_mgf = user_params.get("spectral_library")
             logging.info(
-                f"Validated and assigned user-parameter MS/MS spectral library "
+                f"Validated and assigned user-specified parameter 'MS/MS spectral "
+                f"library' "
                 f"'{user_params['spectral_library']['filename']}' in "
                 f"'{user_params['spectral_library']['format']}' format."
             )
@@ -481,6 +486,11 @@ class ParameterManager:
                                 "fold_difference"
                             ]["value"]
                         )
+                        ValidationManager.validate_positive_number(
+                            user_params["phenotype_algorithm_settings"][
+                                "fold_difference"
+                            ]["value"]
+                        )
                     case _:
                         raise ValueError(
                             f"Could not recognize phenotype algorithm setting '"
@@ -491,7 +501,8 @@ class ParameterManager:
                 "phenotype_algorithm_settings"
             )
             logging.info(
-                "Validated and assigned user-parameter 'phenotype_algorithm_settings'."
+                "Validated and assigned user-specified parameter "
+                "'phenotype_algorithm_settings'."
             )
 
         except Exception as e:
@@ -518,10 +529,16 @@ class ParameterManager:
             ValidationManager.validate_keys(user_params, "mass_dev_ppm")
             ValidationManager.validate_keys(user_params["mass_dev_ppm"], "value")
             ValidationManager.validate_integer(user_params["mass_dev_ppm"]["value"])
+            ValidationManager.validate_positive_number(
+                user_params["mass_dev_ppm"]["value"]
+            )
+            ValidationManager.validate_mass_deviation_ppm(
+                user_params["mass_dev_ppm"]["value"]
+            )
 
             self.mass_dev_ppm = int(user_params["mass_dev_ppm"]["value"])
             logging.info(
-                f"Validated and assigned user-parameter to 'mass_dev_ppm': "
+                f"Validated and assigned user-specified parameter to 'mass_dev_ppm': "
                 f"'{user_params['mass_dev_ppm']['value']}'."
             )
 
@@ -548,10 +565,13 @@ class ParameterManager:
             ValidationManager.validate_keys(user_params, "msms_frag_min")
             ValidationManager.validate_keys(user_params["msms_frag_min"], "value")
             ValidationManager.validate_integer(user_params["msms_frag_min"]["value"])
+            ValidationManager.validate_positive_number(
+                user_params["msms_frag_min"]["value"]
+            )
 
             self.msms_frag_min = int(user_params["msms_frag_min"]["value"])
             logging.info(
-                f"Validated and assigned user-parameter to 'msms_frag_min': "
+                f"Validated and assigned user-specified parameter to 'msms_frag_min': "
                 f"'{user_params['msms_frag_min']['value']}'."
             )
 
@@ -578,10 +598,14 @@ class ParameterManager:
             ValidationManager.validate_keys(user_params, "column_ret_fold")
             ValidationManager.validate_keys(user_params["column_ret_fold"], "value")
             ValidationManager.validate_integer(user_params["column_ret_fold"]["value"])
+            ValidationManager.validate_positive_number(
+                user_params["column_ret_fold"]["value"]
+            )
 
             self.column_ret_fold = int(user_params["column_ret_fold"]["value"])
             logging.info(
-                f"Validated and assigned user-parameter to 'column_ret_fold': "
+                f"Validated and assigned user-specified parameter to "
+                f"'column_ret_fold': "
                 f"'{user_params['column_ret_fold']['value']}'."
             )
 
@@ -608,10 +632,13 @@ class ParameterManager:
             ValidationManager.validate_keys(user_params, "fragment_tol")
             ValidationManager.validate_keys(user_params["fragment_tol"], "value")
             ValidationManager.validate_float(user_params["fragment_tol"]["value"])
+            ValidationManager.validate_positive_number(
+                user_params["fragment_tol"]["value"]
+            )
 
             self.fragment_tol = float(user_params["fragment_tol"]["value"])
             logging.info(
-                f"Validated and assigned user-parameter to 'fragment_tol': "
+                f"Validated and assigned user-specified parameter to 'fragment_tol': "
                 f"'{user_params['fragment_tol']['value']}'."
             )
 
@@ -644,12 +671,16 @@ class ParameterManager:
             ValidationManager.validate_float(
                 user_params["spectral_sim_score_cutoff"]["value"]
             )
+            ValidationManager.validate_positive_number(
+                user_params["spectral_sim_score_cutoff"]["value"]
+            )
 
             self.spectral_sim_score_cutoff = float(
                 user_params["spectral_sim_score_cutoff"]["value"]
             )
             logging.info(
-                f"Validated and assigned user-parameter to 'spectral_sim_score_cutoff':"
+                f"Validated and assigned user-specified parameter to "
+                f"'spectral_sim_score_cutoff':"
                 f" '{user_params['spectral_sim_score_cutoff']['value']}'."
             )
 
@@ -684,12 +715,16 @@ class ParameterManager:
             ValidationManager.validate_integer(
                 user_params["max_nr_links_spec_sim"]["value"]
             )
+            ValidationManager.validate_positive_number(
+                user_params["max_nr_links_spec_sim"]["value"]
+            )
 
             self.max_nr_links_spec_sim = int(
                 user_params["max_nr_links_spec_sim"]["value"]
             )
             logging.info(
-                f"Validated and assigned user-parameter to 'max_nr_links_spec_sim': "
+                f"Validated and assigned user-specified parameter to "
+                f"'max_nr_links_spec_sim': "
                 f"'{user_params['max_nr_links_spec_sim']['value']}'."
             )
 
@@ -724,12 +759,16 @@ class ParameterManager:
             ValidationManager.validate_integer(
                 user_params["min_nr_matched_peaks"]["value"]
             )
+            ValidationManager.validate_positive_number(
+                user_params["min_nr_matched_peaks"]["value"]
+            )
 
             self.min_nr_matched_peaks = int(
                 user_params["min_nr_matched_peaks"]["value"]
             )
             logging.info(
-                f"Validated and assigned user-parameter to 'min_nr_matched_peaks': "
+                f"Validated and assigned user-specified parameter to "
+                f"'min_nr_matched_peaks': "
                 f"'{user_params['min_nr_matched_peaks']['value']}'."
             )
 
@@ -768,7 +807,8 @@ class ParameterManager:
                 "format"
             ]
             logging.info(
-                f"Validated and assigned user-parameter to 'spectral_sim_network_alg': "
+                f"Validated and assigned user-specified parameter to "
+                f"'spectral_sim_network_alg': "
                 f"'{user_params['spectral_sim_network_alg']['format']}'."
             )
 
@@ -809,7 +849,7 @@ class ParameterManager:
             ValidationManager.validate_range_zero_one(user_params["ms2query"]["range"])
 
             self.ms2query = user_params["ms2query"]
-            logging.info("Validated and assigned user-parameter 'ms2query'.")
+            logging.info("Validated and assigned user-specified parameter 'ms2query'.")
 
         except Exception as e:
             logging.warning(str(e))
@@ -841,7 +881,7 @@ class ParameterManager:
                 user_params["rel_int_range"]["range"][1],
             )
             logging.info(
-                "Validated and assigned user-parameter to 'rel_int_range': "
+                "Validated and assigned user-specified parameter to 'rel_int_range': "
                 f"'{user_params['rel_int_range']['range']}'"
             )
 
@@ -901,4 +941,5 @@ class ParameterManager:
                     self.assign_ms2query(user_params, default_params)
                 case "rel_int_range":
                     self.assign_rel_int_range(user_params, default_params)
+
         logging.info("Completed assignment of user-provided parameters.")

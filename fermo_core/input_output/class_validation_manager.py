@@ -47,6 +47,21 @@ class ValidationManager:
         """
         if not isinstance(string, str):
             raise TypeError(f"Not a valid text string: '{string}'.")
+        elif not len(string) > 0:
+            raise TypeError(f"Empty text string: '{string}'.")
+
+    @staticmethod
+    def validate_bool(boolean: bool):
+        """Validate if input is boolean.
+
+        Args:
+            boolean: a bool
+
+        Raises:
+            TypeError: Not a boolean value
+        """
+        if not isinstance(boolean, bool):
+            raise TypeError(f"Not a boolean value (True/False): '{boolean}'.")
 
     @staticmethod
     def validate_integer(integer: int):
@@ -75,17 +90,46 @@ class ValidationManager:
             raise TypeError(f"Not a valid float point number: '{float_nr}'.")
 
     @staticmethod
-    def validate_file_exists(path: str):
+    def validate_positive_number(number: int | float):
+        """Validate if input is a positive number.
+
+        Args:
+            number: a positive number.
+
+        Raises:
+            ValueError: Not a positive number.
+        """
+        if not number > 0:
+            raise ValueError(f"Not a positive number: '{number}'")
+
+    @staticmethod
+    def validate_mass_deviation_ppm(ppm: int):
+        """Validate if mass deviation is in reasonable range.
+
+        Args:
+            ppm: a mass deviation value in ppm.
+
+        Raises:
+            ValueError: Out of reasonable range.
+        """
+        if ppm > 100:
+            raise ValueError(
+                f"User-specified mass deviation '{ppm}' greater than "
+                f"reasonable maximum of '100'."
+            )
+
+    @staticmethod
+    def validate_file_exists(file_path: str):
         """Validate that input file exists.
 
         Parameters:
-            path: a valid path as str
+            file_path: a valid path as str
 
         Raises:
             FileNotFoundError: file does not exist
         """
-        if not Path(path).exists():
-            raise FileNotFoundError(f"File not found: {path}")
+        if not Path(file_path).exists():
+            raise FileNotFoundError(f"File not found: {file_path}")
 
     @staticmethod
     def validate_file_extension(path: str, extension: str):
@@ -96,7 +140,7 @@ class ValidationManager:
             extension: a str describing the file extension
 
         Raises:
-            FileExtensionError: incorrect file name extension
+            TypeError: incorrect file name extension
         """
         if Path(path).suffix != extension:
             raise TypeError(
@@ -290,7 +334,7 @@ class ValidationManager:
             ValueError: More than two values OR not floats OR out of bounds
         """
         if not isinstance(user_range, list):
-            raise TypeError("Range is wrongly formatted: not a list.")
+            raise ValueError("Range is wrongly formatted: not a list.")
         elif len(user_range) != 2:
             raise ValueError(
                 f"Range must have exactly two values; has {len(user_range)} "
