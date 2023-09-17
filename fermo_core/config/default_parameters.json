@@ -5,7 +5,8 @@
     "allowed_formats": [
       "mzmine3"
     ],
-    "description": "Provide a peaktable containing information on molecular features."
+    "description": "Provide a peaktable containing information on molecular features.",
+    "mandatory": "yes"
   },
   "msms": {
     "filename": null,
@@ -13,7 +14,8 @@
     "allowed_formats": [
       "mgf"
     ],
-    "description": "Provide a file with molecular feature MS/MS information."
+    "description": "Provide a file with molecular feature MS/MS information.",
+    "mandatory": "yes"
   },
   "phenotype": {
     "filename": null,
@@ -31,7 +33,8 @@
       "all",
       "fold_difference"
     ],
-    "description": "Provide a file with phenotype/biological activity information. All data must come from the same type of experiment (e.g. percentage inhibition)."
+    "description": "Provide a file with phenotype/biological activity information. All data must come from the same type of experiment (e.g. percentage inhibition).",
+    "mandatory": "no"
   },
   "group_metadata": {
     "filename": null,
@@ -39,7 +42,8 @@
     "allowed_formats": [
       "fermo"
     ],
-    "description": "Provide a file with group metadata information."
+    "description": "Provide a file with group metadata information.",
+    "mandatory": "no"
   },
   "spectral_library": {
     "filename": null,
@@ -47,7 +51,8 @@
     "allowed_formats": [
       "mgf"
     ],
-    "description": "Provide a spectral library file with annotated MS/MS spectra."
+    "description": "Provide a spectral library file with annotated MS/MS spectra.",
+    "mandatory": "no"
   },
   "phenotype_algorithm_settings": {
     "fold_difference": {

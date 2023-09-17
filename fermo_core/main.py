@@ -30,7 +30,6 @@ import logging
 
 #  Internal
 from fermo_core.input_output.dataclass_params_handler import ParamsHandler
-from fermo_core.input_output.class_comm_line_handler import CommLineHandler
 from fermo_core.data_processing.class_parser import Parser
 from fermo_core.input_output.class_parameter_manager import ParameterManager
 
@@ -74,6 +73,7 @@ def main(params: ParamsHandler) -> None:
 
 
 if __name__ == "__main__":
+    logging.info(f"Started 'fermo_core' version '{VERSION}' in command line mode.")
     params = ParameterManager(VERSION, ROOT)
     args = params.run_argparse()
     default_params = params.load_json_file(
