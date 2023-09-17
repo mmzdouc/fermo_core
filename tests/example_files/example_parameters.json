@@ -1,7 +1,7 @@
 {
   "peaktable": {
-    "filename": "",
-    "format": "",
+    "filename": "example_data/case_study_peak_table_quant_full.csv",
+    "format": "mzmine3",
     "allowed_formats": [
       "mzmine3"
     ],
@@ -9,8 +9,8 @@
     "mandatory": "yes"
   },
   "msms": {
-    "filename": "",
-    "format": "",
+    "filename": "example_data/case_study_MSMS.mgf",
+    "format": "mgf",
     "allowed_formats": [
       "mgf"
     ],
@@ -18,8 +18,8 @@
     "mandatory": "yes"
   },
   "phenotype": {
-    "filename": "",
-    "format": "",
+    "filename": "example_data/case_study_bioactivity.csv",
+    "format": "fermo",
     "allowed_formats": [
       "fermo"
     ],
@@ -37,8 +37,8 @@
     "mandatory": "no"
   },
   "group_metadata": {
-    "filename": "",
-    "format": "",
+    "filename": "example_data/case_study_group_metadata.csv",
+    "format": "fermo",
     "allowed_formats": [
       "fermo"
     ],
@@ -46,8 +46,8 @@
     "mandatory": "no"
   },
   "spectral_library": {
-    "filename": "",
-    "format": "",
+    "filename": "example_data/case_study_spectral_library.mgf",
+    "format": "mgf",
     "allowed_formats": [
       "mgf"
     ],

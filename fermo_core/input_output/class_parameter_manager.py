@@ -50,7 +50,7 @@ class ParameterManager:
         msms: MS/MS information on molecular features.
         phenotype: phenotype/bioactivity information.
         group_metadata: sample grouping info.
-        speclib_mgf: Annotated MS/MS spectra.
+        spectral_library: Annotated MS/MS spectra.
         ---parameters---
         phenotype_algorithm_settings: setting for phenotype algorithms
         mass_dev_ppm: Expected mass deviation tolerance in ppm.
@@ -73,7 +73,7 @@ class ParameterManager:
         self.msms: Optional[dict] = None
         self.phenotype: Optional[dict] = None
         self.group_metadata: Optional[dict] = None
-        self.speclib_mgf: Optional[dict] = None
+        self.spectral_library: Optional[dict] = None
         self.phenotype_algorithm_settings: Optional[dict] = None
         self.mass_dev_ppm: Optional[int] = None
         self.msms_frag_min: Optional[int] = None
@@ -113,8 +113,8 @@ class ParameterManager:
             required=True,
             help=(
                 "Provide a FERMO parameter .json file.\n"
-                "See 'example_data/example_parameters.json' for an example or consult "
-                "the documentation.\n"
+                "See 'example_data/case_study_parameters.json' for an example or "
+                "consult the documentation.\n"
             ),
         )
         return parser
@@ -451,7 +451,7 @@ class ParameterManager:
                         f"'{user_params['spectral_library']['filename']}'."
                     )
 
-            self.speclib_mgf = user_params.get("spectral_library")
+            self.spectral_library = user_params.get("spectral_library")
             logging.info(
                 f"Validated and assigned user-specified parameter 'MS/MS spectral "
                 f"library' "

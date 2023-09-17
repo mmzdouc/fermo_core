@@ -15,7 +15,8 @@ files = ["requirements.txt"]
 dev = [
     "pre-commit",
     "pytest",
-    "pytest-cov"
+    "pytest-cov",
+    "jsonschema"
 ]
 
 [tool.pytest.ini_options]
