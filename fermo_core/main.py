@@ -31,6 +31,7 @@ import logging
 #  Internal
 from fermo_core.input_output.class_parameter_manager import ParameterManager
 from fermo_core.data_processing.parser.class_peaktable_parser import PeaktableParser
+from fermo_core.data_processing.parser.class_msms_parser import MsmsParser
 
 
 VERSION = metadata.version("fermo_core")
@@ -65,6 +66,15 @@ def main(params: ParameterManager) -> None:
         (params.ms2query.get("range")[0], params.ms2query.get("range")[1]),
     )
     stats, features, samples = peaktable_parser.parse()
+
+    msms_parser = MsmsParser(params.msms.get("filename"), params.msms.get("format"))
+    features = msms_parser.parse(features)
+
+    # TODO(MMZ): revise code to make msms optional -> do not raise the error in the
+    #  assign function?
+
+    # TODO(MMZ): add polarity (positive/negative) + add protocol for adding/changing
+    #  parameters
 
     # TODO(MMZ): cover new classes with tests
     #
