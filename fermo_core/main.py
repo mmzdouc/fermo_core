@@ -29,9 +29,9 @@ from pathlib import Path
 import logging
 
 #  Internal
-from fermo_core.input_output.dataclass_params_handler import ParamsHandler
-from fermo_core.data_processing.class_parser import Parser
 from fermo_core.input_output.class_parameter_manager import ParameterManager
+from fermo_core.data_processing.parser.class_peaktable_parser import PeaktableParser
+
 
 VERSION = metadata.version("fermo_core")
 ROOT = Path(__file__).resolve().parent
@@ -45,8 +45,8 @@ logging.basicConfig(
 )
 
 
-def main(params: ParamsHandler) -> None:
-    """Run fermo core processing part on input data contained in params.
+def main(params: ParameterManager) -> None:
+    """Run fermo_core processing part on input data contained in params.
 
     Args:
         params: Handling input file names and params
@@ -55,15 +55,24 @@ def main(params: ParamsHandler) -> None:
         A data object with methods to export data to a JSON file.
 
     Notes:
-        MMZ 28.08.23
-        Should return a session object for use in the dashboard or for file export once
-        this part is done.
+        TODO(MMZ): 28.08.23
+        Should return a session object for use in the dashboard or for file export
     """
-    logging.info("Start of peaktable parsing.")
-    stats, features, samples = Parser().parse_peaktable(params)
+    peaktable_parser = PeaktableParser(
+        params.peaktable.get("filename"),
+        params.peaktable.get("format"),
+        params.rel_int_range,
+        (params.ms2query.get("range")[0], params.ms2query.get("range")[1]),
+    )
+    stats, features, samples = peaktable_parser.parse()
 
-    features = Parser().parse_msms(params, features)
-    stats, samples = Parser().parse_group_metadata(params, stats, samples)
+    # TODO(MMZ): cover new classes with tests
+    #
+
+    # TODO(MMZ): add msms_parser, group_metadata_parser
+
+    # features = Parser().parse_msms(params, features)
+    # stats, samples = Parser().parse_group_metadata(params, stats, samples)
 
     # TODO(MMZ): Add phenotype/bioactivity parser file
 
@@ -74,15 +83,11 @@ def main(params: ParamsHandler) -> None:
 
 if __name__ == "__main__":
     logging.info(f"Started 'fermo_core' version '{VERSION}' in command line mode.")
-    params = ParameterManager(VERSION, ROOT)
-    args = params.run_argparse()
-    default_params = params.load_json_file(
+    params_manager = ParameterManager(VERSION, ROOT)
+    args = params_manager.run_argparse()
+    default_params = params_manager.load_json_file(
         str(ROOT.joinpath("config", "default_parameters.json"))
     )
-    user_params = params.load_json_file(args.parameters)
-    params.parse_parameters(user_params, default_params)
-
-    # comm_line_handler = CommLineHandler()
-    # params_handler = comm_line_handler.run_argparse(ParamsHandler(VERSION, ROOT))
-    # logging.info("Completed command line parameter parsing.")
-    # main(params_handler)
+    user_params = params_manager.load_json_file(args.parameters)
+    params_manager.parse_parameters(user_params, default_params)
+    main(params_manager)

@@ -48,6 +48,20 @@ def test_expected_attributes(params_manager, attributes):
         ), f"Attribute '{attr}  is missing in ParamsManager"
 
 
+def test_unexpected_values_stats(params_manager, attributes):
+    unexpected_attributes = []
+    for attr in dir(params_manager):
+        if (
+            (not attr.startswith("_"))
+            and (attr not in attributes)
+            and (not callable(getattr(params_manager, attr)))
+        ):
+            unexpected_attributes.append(attr)
+    assert (
+        len(unexpected_attributes) == 0
+    ), f"Unexpected attributes found in class 'Stats': {unexpected_attributes}."
+
+
 def test_define_argparse_args(params_manager):
     parser = params_manager.define_argparse_args()
     assert isinstance(parser, argparse.ArgumentParser)

@@ -45,13 +45,11 @@ class ParameterManager:
         version: Current program version.
         root: "Root" directory of program.
         session: Fermo json session file.
-        ---files---
         peaktable: Sample/feature information.
         msms: MS/MS information on molecular features.
         phenotype: phenotype/bioactivity information.
         group_metadata: sample grouping info.
         spectral_library: Annotated MS/MS spectra.
-        ---parameters---
         phenotype_algorithm_settings: setting for phenotype algorithms
         mass_dev_ppm: Expected mass deviation tolerance in ppm.
         msms_frag_min: Minimum tolerable number of msms fragments per spectrum.
@@ -84,7 +82,7 @@ class ParameterManager:
         self.min_nr_matched_peaks: Optional[int] = None
         self.spectral_sim_network_alg: Optional[str] = None
         self.ms2query: Optional[dict] = None
-        self.rel_int_range: Optional[dict] = None
+        self.rel_int_range: Optional[tuple] = None
 
     def define_argparse_args(self: Self) -> argparse.ArgumentParser:
         """Define command line options.
@@ -905,6 +903,7 @@ class ParameterManager:
             default_params: default parameters read from json file, serves as fallback
         """
         logging.info("Started assignment of user-provided parameters.")
+
         for param in default_params.keys():
             match param:
                 case "peaktable":

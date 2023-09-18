@@ -27,7 +27,6 @@ from pyteomics import mgf
 from typing import Tuple, Self
 from pathlib import Path
 
-from fermo_core.input_output.dataclass_params_handler import ParamsHandler
 from fermo_core.data_processing.class_repository import Repository
 from fermo_core.data_processing.class_stats import Stats
 from fermo_core.data_processing.builder_feature.class_general_feature_director import (
@@ -43,7 +42,7 @@ class Parser:
 
     @staticmethod
     def parse_peaktable_mzmine3(
-        params: ParamsHandler,
+        params,
     ) -> Tuple[Stats, Repository, Repository]:
         """Parse a mzmine3 style peaktable.
 
@@ -79,9 +78,7 @@ class Parser:
         logging.info(f"Completed parsing of peaktable '{params.peaktable_mzmine3}'.")
         return stats, feature_repo, sample_repo
 
-    def parse_peaktable(
-        self: Self, params: ParamsHandler
-    ) -> Tuple[Stats, Repository, Repository]:
+    def parse_peaktable(self: Self, params) -> Tuple[Stats, Repository, Repository]:
         """Call peaktable parser for appropriate format
 
         Args:
@@ -144,9 +141,7 @@ class Parser:
         logging.info(f"Completed parsing of MS/MS .mgf file '{msms_file}'.")
         return feature_repo
 
-    def parse_msms(
-        self: Self, params: ParamsHandler, feature_repo: Repository
-    ) -> Repository:
+    def parse_msms(self: Self, params, feature_repo: Repository) -> Repository:
         """Parse MS/MS file depending on format.
 
         Args:
@@ -227,7 +222,7 @@ class Parser:
 
     def parse_group_metadata(
         self: Self,
-        params: ParamsHandler,
+        params,
         stats: Stats,
         sample_repo: Repository,
     ):

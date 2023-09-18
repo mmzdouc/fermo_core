@@ -1,9 +1,7 @@
 import pytest
 import pandas as pd
-from pathlib import Path
 
 from fermo_core.data_processing.class_stats import Stats
-from fermo_core.input_output.dataclass_params_handler import ParamsHandler
 
 
 def test_success_instantiate_sample_object():
@@ -106,9 +104,9 @@ def test_success_get_features_in_range_mzmine3(stats, dummy_df, range_results):
 
 
 def test_success_parse_mzmine3(stats):
-    params = ParamsHandler("0.0.1", Path("no/real/path"))
-    params.peaktable_mzmine3 = "tests/example_files/example_peaktable_mzmine3.csv"
-    stats.parse_mzmine3(params)
+    stats.parse_mzmine3(
+        "tests/example_files/example_peaktable_mzmine3.csv", (0.0, 1.0), (0.0, 1.0)
+    )
     assert (
         len(stats.features) == 1
     ), "Could not process test file 'example_peaktable_mzmine3.csv' properly."

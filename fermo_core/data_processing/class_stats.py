@@ -27,8 +27,6 @@ import logging
 import pandas as pd
 from typing import Self, Tuple, Optional, Set, Dict, List
 
-from fermo_core.input_output.dataclass_params_handler import ParamsHandler
-
 
 class Stats:
     """Extract analysis run stats and organize them.
@@ -42,9 +40,9 @@ class Stats:
         rt_max: overall highest retention time stop across all samples, in minutes
         rt_range: range in minutes between min and max rt.
         samples: all sample ids in analysis run
-        features: all feature ids in analysis run
+        features: all feature ids in analysis run in a tuple
         groups: a dict of lists containing sample ID strings to indicate membership in
-        groups (if no explicit information, all samples in group "DEFAULT")
+            groups (if no explicit information, all samples in group "DEFAULT")
         cliques: all similarity cliques in analysis run
         phenotypes: all phenotype classifications in analysis run
         blank: all blank-associated features in analysis run
@@ -134,29 +132,29 @@ class Stats:
             samples.add(s.split(":")[1])
         return tuple(samples)
 
-    def parse_mzmine3(self, params: ParamsHandler):
+    def parse_mzmine3(
+        self,
+        peaktable_path: str,
+        rel_int_range: Tuple[float, float],
+        ms2query_range: Tuple[float, float],
+    ):
         """Parse a mzmine3 peaktable for general stats on analysis run.
 
         Args:
-            params: holds information on peaktable and additional parameters.
+            peaktable_path: path to peaktable file
+            rel_int_range: indicates range 0.0-1.0 to retain features in
+            ms2query_range: indicates range 0.0-1.0 to retain features for ms2query ann
 
         Notes:
             All samples are grouped in group "DEFAULT".
         """
-        df = pd.read_csv(params.peaktable_mzmine3)
-
+        df = pd.read_csv(peaktable_path)
         self.rt_min = df.loc[:, "rt_range:min"].min()
         self.rt_max = df.loc[:, "rt_range:max"].max()
         self.rt_range = self.rt_max - self.rt_min
-
         self.samples = self._extract_sample_names_mzmine3(df)
-
         self.groups["DEFAULT"] = set(self.samples)
-
         self.features, self.int_removed = self._get_features_in_range_mzmine3(
-            df, params.rel_int_range
+            df, rel_int_range
         )
-
-        _, self.annot_removed = self._get_features_in_range_mzmine3(
-            df, params.ms2query_filter_range
-        )
+        _, self.annot_removed = self._get_features_in_range_mzmine3(df, ms2query_range)
