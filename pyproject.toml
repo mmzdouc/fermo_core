@@ -13,10 +13,11 @@ files = ["requirements.txt"]
 
 [project.optional-dependencies]
 dev = [
-    "pre-commit",
-    "pytest",
-    "pytest-cov",
-    "jsonschema"
+    "pre-commit==3.4.0",
+    "pytest==7.4.2",
+    "pytest-cov==4.1.0",
+    "jsonschema==4.19.0",
+    "sphinx==7.1.0"
 ]
 
 [tool.pytest.ini_options]

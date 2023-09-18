@@ -20,14 +20,20 @@ TBA
 For developers
 ==============
 
-In this project, a number of tools are used to keep code and style consistent.
+For guidelines regarding contributing to this project, see
+[CONTRIBUTING](CONTRIBUTING.md).
+
+Install development dependencies with `pip install -e '.[dev]'`.
+
+Several tools are used to keep code and style consistent.
 These tools include:
 - `black` (v23.3.0)
 - `flake8` (v6.0.0)
+
 TBA
 
 We recommend using the package `pre-commit` to run these tools before committing.
-`pre-commit` can be installed with `pre-commit install`.
+`pre-commit` can be installed with `pre-commit install`. (TBA)
 
 Besides, we use type hinting and document code using Google-style docstrings.
 A convenient tool to check documentation style is `pycodestyle`.
