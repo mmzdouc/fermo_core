@@ -1,7 +1,7 @@
 {
   "peaktable": {
-    "filename": "",
-    "format": "",
+    "filename": null,
+    "format": null,
     "allowed_formats": [
       "mzmine3"
     ],
@@ -9,8 +9,8 @@
     "mandatory": "yes"
   },
   "msms": {
-    "filename": "",
-    "format": "",
+    "filename": null,
+    "format": null,
     "allowed_formats": [
       "mgf"
     ],
@@ -18,8 +18,8 @@
     "mandatory": "yes"
   },
   "phenotype": {
-    "filename": "",
-    "format": "",
+    "filename": null,
+    "format": null,
     "allowed_formats": [
       "fermo"
     ],
@@ -37,8 +37,8 @@
     "mandatory": "no"
   },
   "group_metadata": {
-    "filename": "",
-    "format": "",
+    "filename": null,
+    "format": null,
     "allowed_formats": [
       "fermo"
     ],
@@ -46,8 +46,8 @@
     "mandatory": "no"
   },
   "spectral_library": {
-    "filename": "",
-    "format": "",
+    "filename": null,
+    "format": null,
     "allowed_formats": [
       "mgf"
     ],

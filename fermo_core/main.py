@@ -79,7 +79,7 @@ def main(params: ParameterManager) -> None:
     # TODO(MMZ): cover new classes with tests
     #
 
-    # TODO(MMZ): add msms_parser, group_metadata_parser
+    # TODO(MMZ): group_metadata_parser
 
     # features = Parser().parse_msms(params, features)
     # stats, samples = Parser().parse_group_metadata(params, stats, samples)

@@ -7,10 +7,10 @@
       "type": "object",
       "properties": {
         "filename": {
-          "type": "string"
+          "type": "null"
         },
         "format": {
-          "type": "string"
+          "type": "null"
         },
         "allowed_formats": {
           "type": "array",
@@ -38,10 +38,10 @@
       "type": "object",
       "properties": {
         "filename": {
-          "type": "string"
+          "type": "null"
         },
         "format": {
-          "type": "string"
+          "type": "null"
         },
         "allowed_formats": {
           "type": "array",
@@ -69,10 +69,10 @@
       "type": "object",
       "properties": {
         "filename": {
-          "type": "string"
+          "type": "null"
         },
         "format": {
-          "type": "string"
+          "type": "null"
         },
         "allowed_formats": {
           "type": "array",
@@ -124,10 +124,10 @@
       "type": "object",
       "properties": {
         "filename": {
-          "type": "string"
+          "type": "null"
         },
         "format": {
-          "type": "string"
+          "type": "null"
         },
         "allowed_formats": {
           "type": "array",
@@ -155,10 +155,10 @@
       "type": "object",
       "properties": {
         "filename": {
-          "type": "string"
+          "type": "null"
         },
         "format": {
-          "type": "string"
+          "type": "null"
         },
         "allowed_formats": {
           "type": "array",

@@ -88,7 +88,7 @@ def test_load_json_file_invalid(infile):
 
 
 def test_json_default_parameters_jsonschema(params_manager):
-    schema = params_manager.load_json_file("tests/example_files/schema.json")
+    schema = params_manager.load_json_file("fermo_core/config/schema.json")
     default_params = params_manager.load_json_file(
         "fermo_core/config/default_parameters.json"
     )
@@ -129,8 +129,7 @@ def test_assign_msms_valid(params_manager, example_params, default_params):
 
 
 def test_assign_msms_invalid(params_manager, default_params):
-    with pytest.raises(KeyError):
-        params_manager.assign_msms(dict(), default_params)
+    assert params_manager.assign_msms(dict(), default_params) is None
 
 
 def test_assign_phenotype_valid(params_manager, example_params, default_params):

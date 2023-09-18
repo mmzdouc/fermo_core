@@ -259,7 +259,8 @@ class ParameterManager:
             )
         except Exception as e:
             logging.error(str(e))
-            raise e
+            logging.warning("Could not detect MS/MS information file - SKIP.")
+            self.msms = default_params.get("msms")
 
     def assign_phenotype(self: Self, user_params: dict, default_params: dict):
         """Validate and assign the phenotype information to self.
@@ -339,6 +340,7 @@ class ParameterManager:
         except Exception as e:
             logging.warning(str(e))
             logging.warning("Could not detect phenotype file - SKIP.")
+            self.phenotype = default_params.get("phenotype")
 
     def assign_group_metadata(self: Self, user_params: dict, default_params: dict):
         """Validate and assign the group metadata information to self.
@@ -407,6 +409,7 @@ class ParameterManager:
         except Exception as e:
             logging.warning(str(e))
             logging.warning("Could not detect group metadata file - SKIP.")
+            self.group_metadata = default_params.get("group_metadata")
 
     def assign_spectral_library(self: Self, user_params: dict, default_params: dict):
         """Validate and assign the spectral library information to self.
@@ -460,6 +463,7 @@ class ParameterManager:
         except Exception as e:
             logging.warning(str(e))
             logging.warning("Could not detect spectral library file - SKIP.")
+            self.spectral_library = default_params.get("spectral_library")
 
     def assign_phenotype_algorithm_settings(
         self: Self, user_params: dict, default_params: dict
