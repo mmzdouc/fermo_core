@@ -42,7 +42,7 @@ class Stats:
         samples: all sample ids in analysis run
         features: all feature ids in analysis run in a tuple
         groups: a dict of lists containing sample ID strings to indicate membership in
-            groups (if no explicit information, all samples in group "DEFAULT")
+                groups (if no explicit information, all samples in group "DEFAULT")
         cliques: all similarity cliques in analysis run
         phenotypes: all phenotype classifications in analysis run
         blank: all blank-associated features in analysis run

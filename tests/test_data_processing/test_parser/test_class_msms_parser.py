@@ -4,12 +4,6 @@ from fermo_core.data_processing.parser.class_msms_parser import MsmsParser
 from fermo_core.data_processing.class_repository import Repository
 from fermo_core.data_processing.builder_feature.dataclass_feature import Feature
 
-# fixture msms-parser
-# fixture feature_repository
-
-# test processing mgf file with both functions
-# test for a feature id that does not exist in the feature repository
-
 
 def test_instantiate_parser_valid():
     msms_parser = MsmsParser(

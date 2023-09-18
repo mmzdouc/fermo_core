@@ -32,6 +32,9 @@ import logging
 from fermo_core.input_output.class_parameter_manager import ParameterManager
 from fermo_core.data_processing.parser.class_peaktable_parser import PeaktableParser
 from fermo_core.data_processing.parser.class_msms_parser import MsmsParser
+from fermo_core.data_processing.parser.class_group_metadata_parser import (
+    GroupMetadataParser,
+)
 
 
 VERSION = metadata.version("fermo_core")
@@ -70,6 +73,12 @@ def main(params: ParameterManager) -> None:
     msms_parser = MsmsParser(params.msms.get("filename"), params.msms.get("format"))
     features = msms_parser.parse(features)
 
+    group_metadata_parser = GroupMetadataParser(
+        params.group_metadata.get("filename"),
+        params.group_metadata.get("format"),
+    )
+    stats, samples = group_metadata_parser.parse(stats, samples)
+
     # TODO(MMZ): revise code to make msms optional -> do not raise the error in the
     #  assign function?
 
@@ -78,8 +87,6 @@ def main(params: ParameterManager) -> None:
 
     # TODO(MMZ): cover new classes with tests
     #
-
-    # TODO(MMZ): group_metadata_parser
 
     # features = Parser().parse_msms(params, features)
     # stats, samples = Parser().parse_group_metadata(params, stats, samples)

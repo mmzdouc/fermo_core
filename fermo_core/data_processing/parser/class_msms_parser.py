@@ -55,7 +55,7 @@ class MsmsParser:
         Notes:
             Adjust here for additional msms formats.
         """
-        logging.info("Started MS/MS information parsing.")
+        logging.info("Started parsing of MS/MS information.")
 
         match self.msms_format:
             case "mgf":
@@ -82,7 +82,7 @@ class MsmsParser:
         Notes:
             mgf.read() returns a Numpy array - turned to list for easier handling
         """
-        logging.debug(f"Started adding MS/MS information from '{self.msms_filepath}'.")
+        logging.debug(f"Started parsing MS/MS information from '{self.msms_filepath}'.")
         with open(self.msms_filepath) as infile:
             for spectrum in mgf.read(infile, use_index=False):
                 try:
