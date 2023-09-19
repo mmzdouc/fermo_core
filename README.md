@@ -12,6 +12,22 @@ Usage
 
 TBA
 
+Data Compatibility
+=====
+
+Input data for fermo_core processing **MUST** be:
+- Liquid chromatography electrospray ionization mass spectrometry data (LC-ESI-MS)
+- Pre-processed by a pre-processing tool (see section `Compatibility`)
+- In a single polarity (either `positive` or `negative` ion mode)
+- Data-dependent acquisition.
+
+Further, data for fermo_core processing is **PREFERABLY**:
+- Mass spectrometry (MS1) data interlaced with tandem mass spectrometry (MS/MS)
+  scans
+- High resolution (< 20 ppm mass deviation)
+- Acquired on a reverse-phase chromatography gradient
+
+
 Background
 ==========
 

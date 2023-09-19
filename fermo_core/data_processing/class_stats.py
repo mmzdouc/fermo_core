@@ -49,9 +49,10 @@ class Stats:
         int_removed: all features that were removed due to intensity range
         annot_removed: all features that were removed due to annotation range
         ms2_removed: feature IDs of which MS2 was removed
+        polarity: Either positive or negative - no mixed polarity data.
     """
 
-    def __init__(self: Self):
+    def __init__(self: Self, polarity: str):
         self.rt_min: Optional[float] = None
         self.rt_max: Optional[float] = None
         self.rt_range: Optional[float] = None
@@ -64,6 +65,7 @@ class Stats:
         self.int_removed: Optional[Tuple] = None
         self.annot_removed: Optional[Tuple] = None
         self.ms2_removed: Optional[List] = None
+        self.polarity: str = polarity
 
     def _get_features_in_range_mzmine3(
         self: Self, df: pd.DataFrame, r: Tuple[float, float]

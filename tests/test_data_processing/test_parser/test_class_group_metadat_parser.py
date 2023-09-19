@@ -38,7 +38,7 @@ def sample_repo():
 
 @pytest.fixture
 def stats_obj():
-    stats_obj = Stats()
+    stats_obj = Stats(polarity="positive")
     stats_obj.groups.get("DEFAULT").add("sample1")
     stats_obj.groups.get("DEFAULT").add("sample2")
     return stats_obj

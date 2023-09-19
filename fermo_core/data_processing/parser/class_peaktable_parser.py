@@ -44,19 +44,22 @@ class PeaktableParser:
         peaktable_format: a peaktable format string
         rel_int_range: range to retain/exclude features
         ms2query_range: range to retain/exclude features for ms2query annotation
+        polarity: Either positive or negative - no mixed polarity data.
     """
 
     def __init__(
         self: Self,
         peaktable_filepath: str,
-        p_format: str,
+        peaktable_format: str,
         rel_int_range: Tuple[float, float],
         ms2query_range: Tuple[float, float],
+        polarity: str,
     ):
         self.peaktable_filepath = peaktable_filepath
-        self.peaktable_format = p_format
+        self.peaktable_format = peaktable_format
         self.rel_int_range = rel_int_range
         self.ms2query_range = ms2query_range
+        self.polarity = polarity
 
     def parse(self: Self) -> Tuple[Stats, Repository, Repository]:
         """Parses the peaktable based on format.
@@ -88,7 +91,7 @@ class PeaktableParser:
         logging.debug(
             f"Started creating Stats object from '{self.peaktable_filepath}'."
         )
-        stats = Stats()
+        stats = Stats(self.polarity)
         stats.parse_mzmine3(
             self.peaktable_filepath, self.rel_int_range, self.ms2query_range
         )

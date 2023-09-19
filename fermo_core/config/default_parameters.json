@@ -5,6 +5,11 @@
     "allowed_formats": [
       "mzmine3"
     ],
+    "polarity": "positive",
+    "allowed_polarities": [
+      "positive",
+      "negative"
+    ],
     "description": "Provide a peaktable containing information on molecular features.",
     "mandatory": "yes"
   },

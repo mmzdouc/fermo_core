@@ -169,15 +169,17 @@ class ParameterManager:
         try:
             ValidationManager.validate_keys(user_params, "peaktable")
             ValidationManager.validate_keys(
-                user_params.get("peaktable"),
-                "filename",
-                "format",
+                user_params.get("peaktable"), "filename", "format", "polarity"
             )
             ValidationManager.validate_string(user_params["peaktable"]["filename"])
             ValidationManager.validate_file_exists(user_params["peaktable"]["filename"])
             ValidationManager.validate_value_in_list(
                 default_params["peaktable"]["allowed_formats"],
                 user_params["peaktable"]["format"],
+            )
+            ValidationManager.validate_value_in_list(
+                default_params["peaktable"]["allowed_polarities"],
+                user_params["peaktable"]["polarity"],
             )
             match user_params["peaktable"]["format"]:
                 case "mzmine3":

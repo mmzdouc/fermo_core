@@ -19,6 +19,16 @@
             "type": "string"
           }
         },
+        "polarity": {
+          "type": "string"
+        },
+        "allowed_polarities": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          }
+        },
         "description": {
           "type": "string"
         },

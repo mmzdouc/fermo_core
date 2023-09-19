@@ -5,12 +5,14 @@ from fermo_core.data_processing.class_stats import Stats
 
 
 def test_success_instantiate_sample_object():
-    assert isinstance(Stats(), Stats), "Could not instantiate object 'Stats'."
+    assert isinstance(
+        Stats(polarity="positive"), Stats
+    ), "Could not instantiate object 'Stats'."
 
 
 @pytest.fixture
 def stats():
-    return Stats()
+    return Stats(polarity="positive")
 
 
 @pytest.fixture
@@ -41,6 +43,7 @@ def expected_attributes():
         "int_removed",
         "annot_removed",
         "ms2_removed",
+        "polarity",
     )
 
 
@@ -70,6 +73,8 @@ def test_default_values_stats(stats, expected_attributes):
                 assert getattr(stats, attr) == {
                     "DEFAULT": set()
                 }, f"Attribute '{attr}' of class 'Stats' is not 'DEFAULT'."
+            case "polarity":
+                assert isinstance(getattr(stats, attr), str)
             case _:
                 assert (
                     getattr(stats, attr) is None

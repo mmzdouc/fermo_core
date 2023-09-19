@@ -67,6 +67,7 @@ def main(params: ParameterManager) -> None:
         params.peaktable.get("format"),
         params.rel_int_range,
         (params.ms2query.get("range")[0], params.ms2query.get("range")[1]),
+        params.peaktable.get("polarity"),
     )
     stats, features, samples = peaktable_parser.parse()
 
@@ -78,18 +79,6 @@ def main(params: ParameterManager) -> None:
         params.group_metadata.get("format"),
     )
     stats, samples = group_metadata_parser.parse(stats, samples)
-
-    # TODO(MMZ): revise code to make msms optional -> do not raise the error in the
-    #  assign function?
-
-    # TODO(MMZ): add polarity (positive/negative) + add protocol for adding/changing
-    #  parameters
-
-    # TODO(MMZ): cover new classes with tests
-    #
-
-    # features = Parser().parse_msms(params, features)
-    # stats, samples = Parser().parse_group_metadata(params, stats, samples)
 
     # TODO(MMZ): Add phenotype/bioactivity parser file
 
