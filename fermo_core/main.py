@@ -30,12 +30,7 @@ import logging
 
 #  Internal
 from fermo_core.input_output.class_parameter_manager import ParameterManager
-from fermo_core.data_processing.parser.class_peaktable_parser import PeaktableParser
-from fermo_core.data_processing.parser.class_msms_parser import MsmsParser
-from fermo_core.data_processing.parser.class_group_metadata_parser import (
-    GroupMetadataParser,
-)
-
+from fermo_core.data_processing.parser.class_general_parser import GeneralParser
 
 VERSION = metadata.version("fermo_core")
 ROOT = Path(__file__).resolve().parent
@@ -59,26 +54,10 @@ def main(params: ParameterManager) -> None:
         A data object with methods to export data to a JSON file.
 
     Notes:
-        TODO(MMZ): 28.08.23
-        Should return a session object for use in the dashboard or for file export
+        TODO(MMZ): 28.08.23 Should return a session object for use in the dashboard
+            or for file export
     """
-    peaktable_parser = PeaktableParser(
-        params.peaktable.get("filename"),
-        params.peaktable.get("format"),
-        params.rel_int_range,
-        (params.ms2query.get("range")[0], params.ms2query.get("range")[1]),
-        params.peaktable.get("polarity"),
-    )
-    stats, features, samples = peaktable_parser.parse()
-
-    msms_parser = MsmsParser(params.msms.get("filename"), params.msms.get("format"))
-    features = msms_parser.parse(features)
-
-    group_metadata_parser = GroupMetadataParser(
-        params.group_metadata.get("filename"),
-        params.group_metadata.get("format"),
-    )
-    stats, samples = group_metadata_parser.parse(stats, samples)
+    stats, features, samples = GeneralParser.parse(params)
 
     # TODO(MMZ): Add phenotype/bioactivity parser file
 

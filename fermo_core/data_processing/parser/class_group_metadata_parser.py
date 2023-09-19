@@ -70,8 +70,7 @@ class GroupMetadataParser:
                 return self.parse_fermo(stats, sample_repo)
             case _:
                 logging.warning(
-                    "No group metadata provided - functionality of FERMO is limited. "
-                    "For more information, consult the documentation."
+                    "Could not recognize group metadata file format - SKIP."
                 )
                 return stats, sample_repo
 

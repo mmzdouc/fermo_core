@@ -64,10 +64,7 @@ class MsmsParser:
                 )
                 return self.parse_mgf(feature_repo)
             case _:
-                logging.warning(
-                    "No MS/MS file provided - functionality of FERMO is limited. "
-                    "For more information, consult the documentation."
-                )
+                logging.warning("Could not recognize MS/MS file format - SKIP.")
                 return feature_repo
 
     def parse_mgf(self: Self, feature_repo: Repository) -> Repository:

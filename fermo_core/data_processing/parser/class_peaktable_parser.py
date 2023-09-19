@@ -80,6 +80,9 @@ class PeaktableParser:
                     f"'{self.peaktable_filepath}.'"
                 )
                 return self.parse_mzmine3()
+            case _:
+                logging.fatal("Could not recognize peaktable file - ABORT.")
+                raise RuntimeError
 
     def parse_mzmine3(self: Self) -> Tuple[Stats, Repository, Repository]:
         """Parse a mzmine3 style peaktable.
