@@ -5,9 +5,7 @@ from fermo_core.data_processing.class_stats import Stats, SpecLibEntry
 
 
 def test_success_instantiate_sample_object():
-    assert isinstance(
-        Stats(polarity="positive"), Stats
-    ), "Could not instantiate object 'Stats'."
+    assert isinstance(Stats(), Stats), "Could not instantiate object 'Stats'."
 
 
 def test_success_instantiate_spec_lib_entry():
@@ -18,7 +16,7 @@ def test_success_instantiate_spec_lib_entry():
 
 @pytest.fixture
 def stats():
-    return Stats(polarity="positive")
+    return Stats()
 
 
 @pytest.fixture
@@ -54,7 +52,6 @@ def expected_attributes():
         "int_removed",
         "annot_removed",
         "ms2_removed",
-        "polarity",
         "spectral_library",
     )
 
@@ -103,8 +100,6 @@ def test_default_values_stats(stats, expected_attributes):
                 assert getattr(stats, attr) == {
                     "DEFAULT": set()
                 }, f"Attribute '{attr}' of class 'Stats' is not 'DEFAULT'."
-            case "polarity":
-                assert isinstance(getattr(stats, attr), str)
             case _:
                 assert (
                     getattr(stats, attr) is None

@@ -39,7 +39,7 @@ def sample_repo():
 
 @pytest.fixture
 def stats():
-    return Stats(polarity="positive")
+    return Stats()
 
 
 def test_parse_valid(stats, sample_repo, phenotype_parser):

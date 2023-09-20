@@ -59,7 +59,6 @@ class GeneralParser:
             params.peaktable.get("format"),
             params.rel_int_range,
             (params.ms2query.get("range")[0], params.ms2query.get("range")[1]),
-            params.peaktable.get("polarity"),
         )
         stats, features, samples = peaktable_parser.parse()
 

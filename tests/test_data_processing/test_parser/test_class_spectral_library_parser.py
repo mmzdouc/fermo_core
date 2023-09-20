@@ -8,7 +8,7 @@ from fermo_core.data_processing.class_stats import Stats
 
 @pytest.fixture
 def stats():
-    return Stats(polarity="positive")
+    return Stats()
 
 
 def test_instantiate_class():

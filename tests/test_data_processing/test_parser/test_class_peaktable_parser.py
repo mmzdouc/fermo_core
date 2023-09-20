@@ -7,7 +7,6 @@ def test_instantiate_parser_valid():
         "mzmine3",
         (0.0, 1.0),
         (0.0, 1.0),
-        "positive",
     )
     assert isinstance(peaktable_parser, PeaktableParser)
 
@@ -18,7 +17,6 @@ def test_parse_valid():
         "mzmine3",
         (0.0, 1.0),
         (0.0, 1.0),
-        "positive",
     )
     stats, feature_repo, sample_repo = peaktable_parser.parse()
     assert stats.features == tuple([1])
@@ -30,7 +28,6 @@ def test_parse_mzmine3_valid():
         "mzmine3",
         (0.0, 1.0),
         (0.0, 1.0),
-        "positive",
     )
     stats, feature_repo, sample_repo = peaktable_parser.parse_mzmine3()
     assert stats.features == tuple([1])

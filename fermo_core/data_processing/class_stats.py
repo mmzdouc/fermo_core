@@ -69,11 +69,10 @@ class Stats:
         int_removed: all features that were removed due to intensity range
         annot_removed: all features that were removed due to annotation range
         ms2_removed: feature IDs of which MS2 was removed
-        polarity: Either positive or negative - no mixed polarity data.
         spectral_library: a dict of SpecLibEntry instances
     """
 
-    def __init__(self: Self, polarity: str):
+    def __init__(self: Self):
         self.rt_min: Optional[float] = None
         self.rt_max: Optional[float] = None
         self.rt_range: Optional[float] = None
@@ -86,7 +85,6 @@ class Stats:
         self.int_removed: Optional[Tuple] = None
         self.annot_removed: Optional[Tuple] = None
         self.ms2_removed: Optional[List] = None
-        self.polarity: str = polarity
         self.spectral_library: Optional[Dict[int, SpecLibEntry]] = None
 
     def _get_features_in_range_mzmine3(
