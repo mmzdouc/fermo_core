@@ -35,21 +35,15 @@ class PhenotypeParser:
     Attributes:
         phenotype_filepath: a filepath string
         phenotype_format: a peaktable format string
-        phenotype_mode: indicating the data type
-        phenotype_algorithm: algorithm to use for processing
     """
 
     def __init__(
         self: Self,
         phenotype_filepath: str,
         phenotype_format: str,
-        phenotype_mode: str,
-        phenotype_algorithm: str,
     ):
         self.phenotype_filepath = phenotype_filepath
         self.phenotype_format = phenotype_format
-        self.phenotype_mode = phenotype_mode
-        self.phenotype_algorithm = phenotype_algorithm
 
     def parse(
         self: Self, stats: Stats, sample_repo: Repository
@@ -116,9 +110,6 @@ class PhenotypeParser:
         # Add data to stats object
         if not isinstance(stats.phenotypes, dict):
             stats.phenotypes = dict()
-        stats.phenotype_format = self.phenotype_format
-        stats.phenotype_mode = self.phenotype_mode
-        stats.phenotype_algorithm = self.phenotype_algorithm
         for experiment in experiments:
             stats.phenotypes[experiment] = tuple(experiments.get(experiment))
 

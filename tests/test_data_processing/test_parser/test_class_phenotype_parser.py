@@ -10,8 +10,6 @@ def test_instantiate_parser_valid():
     phenotype_parser = PhenotypeParser(
         "tests/example_files/example_phenotype_fermo.csv",
         "fermo",
-        "percentage",
-        "all",
     )
     assert isinstance(phenotype_parser, PhenotypeParser)
 
@@ -21,8 +19,6 @@ def phenotype_parser():
     return PhenotypeParser(
         "tests/example_files/example_phenotype_fermo.csv",
         "fermo",
-        "percentage",
-        "all",
     )
 
 

@@ -93,8 +93,6 @@ class GeneralParser:
             phenotype_parser = PhenotypeParser(
                 params.phenotype.get("filename"),
                 params.phenotype.get("format"),
-                params.phenotype.get("mode"),
-                params.phenotype.get("algorithm"),
             )
             stats, samples = phenotype_parser.parse(stats, samples)
         else:
