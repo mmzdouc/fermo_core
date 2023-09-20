@@ -436,6 +436,21 @@
         "allowed_range",
         "description"
       ]
+    },
+    "max_library_size": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "integer"
+        },
+        "description": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "value",
+        "description"
+      ]
     }
   },
   "required": [
@@ -454,6 +469,7 @@
     "min_nr_matched_peaks",
     "spectral_sim_network_alg",
     "ms2query",
-    "rel_int_range"
+    "rel_int_range",
+    "max_library_size"
   ]
 }

@@ -20,7 +20,7 @@
       "mgf"
     ],
     "description": "Provide a file with molecular feature MS/MS information.",
-    "mandatory": "yes"
+    "mandatory": "no"
   },
   "phenotype": {
     "filename": null,
@@ -133,5 +133,9 @@
       1.0
     ],
     "description": "Filter out molecular features that are outside of range."
+  },
+  "max_library_size": {
+    "value": 1000,
+    "description": "Maximum allowed entries in library for spectral library matching."
   }
 }

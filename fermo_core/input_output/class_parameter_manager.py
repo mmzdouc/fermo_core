@@ -61,6 +61,7 @@ class ParameterManager:
         spectral_sim_network_alg: Selected spectral similarity networking algorithm.
         ms2query: Info on running MS2Query annotation.
         rel_int_range: Restrict processing of features based on relative intensity.
+        max_library_size: Restrict spectral library size/entries to a max integer
     """
 
     def __init__(self: Self, version: str, root: Path):
@@ -83,6 +84,7 @@ class ParameterManager:
         self.spectral_sim_network_alg: Optional[str] = None
         self.ms2query: Optional[dict] = None
         self.rel_int_range: Optional[tuple] = None
+        self.max_library_size: Optional[int] = None
 
     def define_argparse_args(self: Self) -> argparse.ArgumentParser:
         """Define command line options.
@@ -901,6 +903,40 @@ class ParameterManager:
                 default_params["rel_int_range"]["range"][1],
             )
 
+    def assign_max_library_size(self: Self, user_params: dict, default_params: dict):
+        """Validate and assign the maximum spectra library size setting to self.
+
+        Parameters:
+            user_params: user-provided params, read from json file
+            default_params: default parameters read from json file, serves as fallback
+
+        Notes:
+            Optional parameter, raises no error.
+        """
+        try:
+            ValidationManager.validate_keys(user_params, "max_library_size")
+            ValidationManager.validate_keys(user_params["max_library_size"], "value")
+            ValidationManager.validate_integer(user_params["max_library_size"]["value"])
+            ValidationManager.validate_positive_number(
+                user_params["max_library_size"]["value"]
+            )
+
+            self.max_library_size = int(user_params["max_library_size"]["value"])
+            logging.info(
+                f"Validated and assigned user-specified parameter to "
+                f"'max_library_size': "
+                f"'{user_params['max_library_size']['value']}'."
+            )
+
+        except Exception as e:
+            logging.warning(str(e))
+            logging.warning(
+                "Could not detect/process parameter 'max_library_size'. "
+                "Assigned the default value: "
+                f"'{default_params['max_library_size']['value']}'."
+            )
+            self.max_library_size = default_params["max_library_size"]["value"]
+
     def parse_parameters(self: Self, user_params: dict, default_params: dict):
         """Validate an assign user-provided parameters.
 
@@ -946,5 +982,7 @@ class ParameterManager:
                     self.assign_ms2query(user_params, default_params)
                 case "rel_int_range":
                     self.assign_rel_int_range(user_params, default_params)
+                case "max_library_size":
+                    self.assign_max_library_size(user_params, default_params)
 
         logging.info("Completed assignment of user-provided parameters.")

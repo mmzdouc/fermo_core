@@ -38,6 +38,7 @@ def attributes():
         "spectral_sim_network_alg",
         "ms2query",
         "rel_int_range",
+        "max_library_size",
     )
 
 

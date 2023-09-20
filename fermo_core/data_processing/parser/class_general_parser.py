@@ -108,7 +108,7 @@ class GeneralParser:
             spec_lib_parser = SpectralLibraryParser(
                 params.spectral_library.get("filename"),
                 params.spectral_library.get("format"),
-                1000,  # TODO(MMZ): replace the hardcoded value with one from default
+                params.max_library_size,
             )
             stats = spec_lib_parser.parse(stats)
         else:
