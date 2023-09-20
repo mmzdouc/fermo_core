@@ -29,6 +29,7 @@ from fermo_core.data_processing.parser.class_msms_parser import MsmsParser
 from fermo_core.data_processing.parser.class_group_metadata_parser import (
     GroupMetadataParser,
 )
+from fermo_core.data_processing.parser.class_phenotype_parser import PhenotypeParser
 from fermo_core.data_processing.class_repository import Repository
 from fermo_core.data_processing.class_stats import Stats
 
@@ -49,6 +50,7 @@ class GeneralParser:
         Notes:
             Adjust here for additional input file types.
         """
+        # peaktable file
         peaktable_parser = PeaktableParser(
             params.peaktable.get("filename"),
             params.peaktable.get("format"),
@@ -58,6 +60,7 @@ class GeneralParser:
         )
         stats, features, samples = peaktable_parser.parse()
 
+        # MS/MS information file
         if params.msms.get("filename") is not None:
             msms_parser = MsmsParser(
                 params.msms.get("filename"), params.msms.get("format")
@@ -69,6 +72,7 @@ class GeneralParser:
                 "For more information, consult the documentation."
             )
 
+        # group metadata file
         if params.group_metadata.get("filename") is not None:
             group_metadata_parser = GroupMetadataParser(
                 params.group_metadata.get("filename"),
@@ -79,6 +83,21 @@ class GeneralParser:
             logging.warning(
                 "No group metadata provided - functionality of FERMO is limited. "
                 "For more information, consult the documentation."
+            )
+
+        # phenotype/bioactivity file
+        if params.phenotype.get("filename") is not None:
+            phenotype_parser = PhenotypeParser(
+                params.phenotype.get("filename"),
+                params.phenotype.get("format"),
+                params.phenotype.get("mode"),
+                params.phenotype.get("algorithm"),
+            )
+            stats, samples = phenotype_parser.parse(stats, samples)
+        else:
+            logging.warning(
+                "No phenotype/bioactivity file provided - functionality of FERMO is "
+                "limited. For more information, consult the documentation."
             )
 
         # TODO(MMZ): Add bioactivity file parser

@@ -21,7 +21,21 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from typing import Self, Optional
+from typing import Self, Optional, Dict
+
+
+class Phenotype:
+    """Organize information on phenotype/bioactivity of a Sample
+
+    Attributes:
+        value: the measured original value for the sample in an experiment
+        concentration: the concentration of the sample (if all samples were measured
+            at the same concentration, this is 1)
+    """
+
+    def __init__(self: Self, value: float | int, concentration: float | int):
+        self.value = value
+        self.concentration = concentration
 
 
 class Sample:
@@ -32,8 +46,9 @@ class Sample:
         features: dict of features detected in sample; contain sample-specific data
         groups: group association of sample (if provided, else default group DEFAULT)
         cliques: number of cliques in this sample
-        phenotypes: indicates the phenotype the sample is associated with
         max_intensity: the highest intensity of a feature in the sample (absolute)
+        phenotypes: indicates the conditions in which the sample showed activity. A
+            dict of condition : Phenotype() pairs.
     """
 
     def __init__(self: Self):
@@ -41,5 +56,5 @@ class Sample:
         self.features: Optional[dict] = None
         self.groups: Optional[set[str, ...]] = {"DEFAULT"}
         self.cliques: Optional[dict] = None
-        self.phenotypes: Optional[dict] = None
         self.max_intensity: Optional[dict] = None
+        self.phenotypes: Optional[Dict[str, Phenotype]] = None

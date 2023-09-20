@@ -44,7 +44,10 @@ class Stats:
         groups: a dict of lists containing sample ID strings to indicate membership in
                 groups (if no explicit information, all samples in group "DEFAULT")
         cliques: all similarity cliques in analysis run
-        phenotypes: all phenotype classifications in analysis run
+        phenotypes: a dict of tuples of experiments, with associated active samples
+        phenotype_format: the file format of the phenotype info file
+        phenotype_mode: the mode of the phenotype data (percentage, concentration)
+        phenotype_algorithm: the algorithm for phenotype data processing
         blank: all blank-associated features in analysis run
         int_removed: all features that were removed due to intensity range
         annot_removed: all features that were removed due to annotation range
@@ -60,7 +63,10 @@ class Stats:
         self.features: Optional[Tuple] = None
         self.groups: Optional[Dict[str, Set[str | int]]] = {"DEFAULT": set()}
         self.cliques: Optional[Tuple] = None
-        self.phenotypes: Optional[Tuple] = None
+        self.phenotypes: Optional[Dict[str, Tuple[str, ...]]] = None
+        self.phenotype_format: Optional[str] = None
+        self.phenotype_mode: Optional[str] = None
+        self.phenotype_algorithm: Optional[str] = None
         self.blank: Optional[Tuple] = None
         self.int_removed: Optional[Tuple] = None
         self.annot_removed: Optional[Tuple] = None
