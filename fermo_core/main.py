@@ -31,6 +31,7 @@ import logging
 #  Internal
 from fermo_core.input_output.class_parameter_manager import ParameterManager
 from fermo_core.data_processing.parser.class_general_parser import GeneralParser
+from fermo_core.data_analysis.class_analysis_manager import AnalysisManager
 
 VERSION = metadata.version("fermo_core")
 ROOT = Path(__file__).resolve().parent
@@ -58,12 +59,10 @@ def main(params: ParameterManager) -> None:
             or for file export
     """
     stats, features, samples = GeneralParser.parse(params)
+    stats, features, samples = AnalysisManager.analyze(params, stats, features, samples)
 
-    # TODO(MMZ): Add phenotype/bioactivity parser file
-
-    # TODO(MMZ): proceed with annotations, bioactivity etc.
-
-    # TODO(MMZ): when calculating fold changes, also add group info to features
+    # TODO(MMZ): Create a class that exports the processed data (with swich to
+    #  return either a fermo_gui compatible JSON or a table).
 
 
 if __name__ == "__main__":
