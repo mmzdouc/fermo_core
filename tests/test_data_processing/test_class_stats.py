@@ -1,7 +1,7 @@
 import pytest
 import pandas as pd
 
-from fermo_core.data_processing.class_stats import Stats
+from fermo_core.data_processing.class_stats import Stats, SpecLibEntry
 
 
 def test_success_instantiate_sample_object():
@@ -10,9 +10,20 @@ def test_success_instantiate_sample_object():
     ), "Could not instantiate object 'Stats'."
 
 
+def test_success_instantiate_spec_lib_entry():
+    assert isinstance(
+        SpecLibEntry("entry1", 123.456, ((100.0, 101.0), (20, 40))), SpecLibEntry
+    ), "Could not instantiate object 'SpecLibEntry'."
+
+
 @pytest.fixture
 def stats():
     return Stats(polarity="positive")
+
+
+@pytest.fixture
+def spec_lib_entry():
+    return SpecLibEntry("entry1", 123.456, ((100.0, 101.0), (20, 40)))
 
 
 @pytest.fixture
@@ -47,6 +58,7 @@ def expected_attributes():
         "annot_removed",
         "ms2_removed",
         "polarity",
+        "spectral_library",
     )
 
 
@@ -67,6 +79,24 @@ def test_unexpected_values_stats(stats, expected_attributes):
     assert (
         len(unexpected_attributes) == 0
     ), f"Unexpected attributes found in class 'Stats': {unexpected_attributes}."
+
+
+@pytest.fixture
+def expected_attributes_spec_lib_entry():
+    return (
+        "name",
+        "exact_mass",
+        "msms",
+    )
+
+
+def test_expected_values_spec_lib_entry(
+    spec_lib_entry, expected_attributes_spec_lib_entry
+):
+    for attr in expected_attributes_spec_lib_entry:
+        assert hasattr(
+            spec_lib_entry, attr
+        ), f"Attribute '{attr} is missing in class 'SpectralLibraryEntry'."
 
 
 def test_default_values_stats(stats, expected_attributes):

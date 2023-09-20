@@ -29,6 +29,9 @@ from fermo_core.data_processing.parser.class_msms_parser import MsmsParser
 from fermo_core.data_processing.parser.class_group_metadata_parser import (
     GroupMetadataParser,
 )
+from fermo_core.data_processing.parser.class_spectral_library_parser import (
+    SpectralLibraryParser,
+)
 from fermo_core.data_processing.parser.class_phenotype_parser import PhenotypeParser
 from fermo_core.data_processing.class_repository import Repository
 from fermo_core.data_processing.class_stats import Stats
@@ -100,8 +103,15 @@ class GeneralParser:
                 "limited. For more information, consult the documentation."
             )
 
-        # TODO(MMZ): Add bioactivity file parser
-
-        # TODO(MMZ): Add library file parser
+        # spectral library file
+        if params.spectral_library.get("filename") is not None:
+            spec_lib_parser = SpectralLibraryParser(
+                params.spectral_library.get("filename"),
+                params.spectral_library.get("format"),
+                1000,  # TODO(MMZ): replace the hardcoded value with one from default
+            )
+            stats = spec_lib_parser.parse(stats)
+        else:
+            logging.warning("No spectral library file provided - SKIP.")
 
         return stats, features, samples

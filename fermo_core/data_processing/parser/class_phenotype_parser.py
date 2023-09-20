@@ -67,14 +67,8 @@ class PhenotypeParser:
         Notes:
             Adjust here for additional phenotype formats.
         """
-        logging.info("Started parsing of phenotype/bioactivity file.")
-
         match self.phenotype_format:
             case "fermo":
-                logging.debug(
-                    f"Started parsing fermo-style phenotype/bioactivity data file "
-                    f"'{self.phenotype_filepath}.'"
-                )
                 return self.parse_fermo(stats, sample_repo)
             case _:
                 logging.warning(
@@ -106,6 +100,7 @@ class PhenotypeParser:
             if col != "sample_name":
                 experiments[col] = []
 
+        # Uses the column (experiment) names to extract sample measurement information
         for experiment in experiments.keys():
             df_actives = df[df[experiment] != 0]
             for _, row in df_actives.iterrows():
@@ -118,6 +113,7 @@ class PhenotypeParser:
                     concentration=1,
                 )
 
+        # Add data to stats object
         if not isinstance(stats.phenotypes, dict):
             stats.phenotypes = dict()
         stats.phenotype_format = self.phenotype_format

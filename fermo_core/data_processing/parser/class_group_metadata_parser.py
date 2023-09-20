@@ -59,14 +59,8 @@ class GroupMetadataParser:
         Notes:
             Adjust here for additional group formats.
         """
-        logging.info("Started parsing of group metadata file.")
-
         match self.group_format:
             case "fermo":
-                logging.debug(
-                    f"Started parsing fermo-style group metadata file "
-                    f"'{self.group_filepath}.'"
-                )
                 return self.parse_fermo(stats, sample_repo)
             case _:
                 logging.warning(

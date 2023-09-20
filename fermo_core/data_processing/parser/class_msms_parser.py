@@ -55,13 +55,8 @@ class MsmsParser:
         Notes:
             Adjust here for additional msms formats.
         """
-        logging.info("Started parsing of MS/MS information.")
-
         match self.msms_format:
             case "mgf":
-                logging.debug(
-                    f"Started parsing mgf-style MS/MS file" f"'{self.msms_filepath}.'"
-                )
                 return self.parse_mgf(feature_repo)
             case _:
                 logging.warning("Could not recognize MS/MS file format - SKIP.")
@@ -80,6 +75,7 @@ class MsmsParser:
             mgf.read() returns a Numpy array - turned to list for easier handling
         """
         logging.debug(f"Started parsing MS/MS information from '{self.msms_filepath}'.")
+
         with open(self.msms_filepath) as infile:
             for spectrum in mgf.read(infile, use_index=False):
                 try:
@@ -101,4 +97,5 @@ class MsmsParser:
                         "out by 'rel_int_range' settings."
                     )
         logging.debug(f"Completed parsing of MS/MS '.mgf' file '{self.msms_filepath}'.")
+
         return feature_repo

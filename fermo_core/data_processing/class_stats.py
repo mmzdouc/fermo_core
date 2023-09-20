@@ -28,6 +28,26 @@ import pandas as pd
 from typing import Self, Tuple, Optional, Set, Dict, List
 
 
+class SpecLibEntry:
+    """Organize information on a spectral library entry
+
+    Attributes:
+        name: the name of the entry
+        exact_mass: the exact mass of the entry
+        msms: a dict of two tuples: [1] fragments, [2] intensities
+    """
+
+    def __init__(
+        self: Self,
+        name: str,
+        exact_mass: float,
+        msms: Tuple[Tuple[float, ...], Tuple[float, ...]],
+    ):
+        self.name = name
+        self.exact_mass = exact_mass
+        self.msms = msms
+
+
 class Stats:
     """Extract analysis run stats and organize them.
 
@@ -53,6 +73,7 @@ class Stats:
         annot_removed: all features that were removed due to annotation range
         ms2_removed: feature IDs of which MS2 was removed
         polarity: Either positive or negative - no mixed polarity data.
+        spectral_library: a dict of SpecLibEntry instances
     """
 
     def __init__(self: Self, polarity: str):
@@ -72,6 +93,7 @@ class Stats:
         self.annot_removed: Optional[Tuple] = None
         self.ms2_removed: Optional[List] = None
         self.polarity: str = polarity
+        self.spectral_library: Optional[Dict[int, SpecLibEntry]] = None
 
     def _get_features_in_range_mzmine3(
         self: Self, df: pd.DataFrame, r: Tuple[float, float]

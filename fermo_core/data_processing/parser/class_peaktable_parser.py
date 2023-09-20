@@ -71,14 +71,8 @@ class PeaktableParser:
         Notes:
             Adjust here for additional peaktable formats.
         """
-        logging.info("Started peaktable parsing.")
-
         match self.peaktable_format:
             case "mzmine3":
-                logging.debug(
-                    f"Started parsing MZmine3-style peaktable"
-                    f"'{self.peaktable_filepath}.'"
-                )
                 return self.parse_mzmine3()
             case _:
                 logging.fatal("Could not recognize peaktable file - ABORT.")
@@ -91,6 +85,10 @@ class PeaktableParser:
             A tuple with an instance of Stats, a Feature Repository, and a Sample
             Repository
         """
+        logging.debug(
+            f"Started parsing MZmine3-style peaktable" f"'{self.peaktable_filepath}.'"
+        )
+
         logging.debug(
             f"Started creating Stats object from '{self.peaktable_filepath}'."
         )
