@@ -44,6 +44,7 @@ class Sample:
     Attributes:
         s_id: identifier of sample
         features: dict of features detected in sample; contain sample-specific data
+        feature_ids: tuple of feature ids
         groups: group association of sample (if provided, else default group DEFAULT)
         cliques: number of cliques in this sample
         max_intensity: the highest intensity of a feature in the sample (absolute)
@@ -54,7 +55,8 @@ class Sample:
     def __init__(self: Self):
         self.s_id: Optional[str] = None
         self.features: Optional[dict] = None
+        self.feature_ids: Optional[tuple] = None
         self.groups: Optional[set[str, ...]] = {"DEFAULT"}
         self.cliques: Optional[dict] = None
-        self.max_intensity: Optional[dict] = None
+        self.max_intensity: Optional[int] = None
         self.phenotypes: Optional[Dict[str, Phenotype]] = None

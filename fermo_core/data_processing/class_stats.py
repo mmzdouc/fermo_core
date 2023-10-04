@@ -111,11 +111,13 @@ class Stats:
 
         # Extract overall most intense feature per sample as ref for relative intensity
         sample_max_int = dict()
-        for s in self.samples:
-            sample_max_int[s] = df.loc[:, f"datafile:{s}:intensity_range:max"].max()
+        for sample in self.samples:
+            sample_max_int[sample] = df.loc[
+                :, f"datafile:{sample}:intensity_range:max"
+            ].max()
 
+        # Get feature intensity per sample, prepare for comparison
         for _, row in df.iterrows():
-            # Get feature intensity per sample, prepare for comparison
             sample_values = row.dropna().filter(regex=":intensity_range:max")
             feature_int = dict()
             for index, value in sample_values.items():
@@ -124,10 +126,10 @@ class Stats:
 
             # Retain features that are inside rel int range for at least one sample
             if any(
-                (sample_max_int[s] * r[0])
-                <= feature_int[s]
-                <= (sample_max_int[s] * r[1])
-                for s in feature_int
+                (sample_max_int[sample] * r[0])
+                <= feature_int[sample]
+                <= (sample_max_int[sample] * r[1])
+                for sample in feature_int
             ):
                 incl.add(row["id"])
             else:
@@ -150,8 +152,8 @@ class Stats:
             Tuple containing sample name strings.
         """
         samples = set()
-        for s in df.filter(regex=":feature_state").columns:
-            samples.add(s.split(":")[1])
+        for sample in df.filter(regex=":feature_state").columns:
+            samples.add(sample.split(":")[1])
         return tuple(samples)
 
     def parse_mzmine3(

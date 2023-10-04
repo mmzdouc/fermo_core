@@ -72,4 +72,6 @@ class SamplesDirector:
                         row, s_id, sample.max_intensity
                     )
 
+        sample.feature_ids = tuple(sample.features.keys())
+
         return sample

@@ -1,4 +1,4 @@
-"""Organizes calling different data analysis modules
+"""Organize the calling of various data analysis modules on the metabolomics data.
 
 Copyright (c) 2022-2023 Mitja Maximilian Zdouc, PhD
 
@@ -25,6 +25,8 @@ from typing import Tuple
 from fermo_core.input_output.class_parameter_manager import ParameterManager
 from fermo_core.data_processing.class_repository import Repository
 from fermo_core.data_processing.class_stats import Stats
+
+from fermo_core.data_analysis.class_chrom_trace_calculator import ChromTraceCalculator
 
 
 class AnalysisManager:
@@ -54,5 +56,7 @@ class AnalysisManager:
 
         # TODO(MMZ): proceed with annotations, bioactivity etc.
         # TODO(MMZ): when calculating fold changes, also add group info to features
+
+        samples = ChromTraceCalculator().modify_samples(samples, stats)
 
         return stats, features, samples

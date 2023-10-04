@@ -30,6 +30,7 @@ def expected_attributes_sample():
     return (
         "s_id",
         "features",
+        "feature_ids",
         "groups",
         "cliques",
         "phenotypes",

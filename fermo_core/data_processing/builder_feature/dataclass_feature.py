@@ -36,7 +36,8 @@ class Feature:
         rt_start: the start of the peak in minutes.
         rt_stop: the stop of the peak in minutes.
         rt_range: the length of a molecular feature peak in minutes.
-        trace: indicating the reconstructed rt/intensity trace of the molecular feature.
+        trace_rt: the rt data points of the pseudo-chromatogram trace
+        trace_int: the relative intensity data points of the pseudo-chromatogram trace
         fwhm: the feature width at half maximum intensity (peak width).
         intensity: the maximum intensity.
         area: the area of the peak
@@ -59,7 +60,8 @@ class Feature:
         self.rt_start: Optional[float] = None
         self.rt_stop: Optional[float] = None
         self.rt_range: Optional[float] = None
-        self.trace: Optional[Tuple] = None
+        self.trace_rt: Optional[Tuple] = None
+        self.trace_int: Optional[Tuple] = None
         self.fwhm: Optional[float] = None
         self.intensity: Optional[int] = None
         self.rel_intensity: Optional[float] = None
