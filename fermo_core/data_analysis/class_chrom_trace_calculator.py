@@ -185,7 +185,7 @@ class ChromTraceCalculator:
 
     def calc_rt_right_fwhm(self: Self):
         """Calculate rt_right_fwhm, validate if in rt range"""
-        rt_right_fwhm = self.chrom_trace.rt_apex + (0.5 * self.chrom_trace.fwhm)
+        rt_right_fwhm = self.chrom_trace.rt_left_fwhm + self.chrom_trace.fwhm
         if rt_right_fwhm <= self.chrom_trace.rt_end:
             self.chrom_trace.rt_right_fwhm = rt_right_fwhm
         else:
@@ -200,37 +200,15 @@ class ChromTraceCalculator:
 
     def calc_rt_left_kink(self: Self):
         """Calculate rt_left_kink and validate if in rt_range"""
-        rt_left_kink = self.chrom_trace.rt_left_fwhm - (
+        self.chrom_trace.rt_left_kink = self.chrom_trace.rt_left_fwhm - (
             0.5 * (self.chrom_trace.rt_left_fwhm - self.chrom_trace.rt_begin)
         )
-        if rt_left_kink >= self.chrom_trace.rt_begin:
-            self.chrom_trace.rt_left_kink = rt_left_kink
-        else:
-            self.chrom_trace.rt_left_kink = self.chrom_trace.rt_begin
-            logging.debug(
-                f"feature '{self.chrom_trace.feature_id}' in sample "
-                f"'{self.chrom_trace.sample_id}': "
-                f"'rt_left_kink' '{rt_left_kink}' is < 'rt_begin' "
-                f"'{self.chrom_trace.rt_begin}'. "
-                f"Setting 'rt_left_kink' to 'rt_begin'."
-            )
 
     def calc_rt_right_kink(self: Self):
         """Calculate rt_right_kink and validate if in rt_range"""
-        rt_right_kink = self.chrom_trace.rt_right_fwhm + (
+        self.chrom_trace.rt_right_kink = self.chrom_trace.rt_right_fwhm + (
             0.5 * (self.chrom_trace.rt_end - self.chrom_trace.rt_right_fwhm)
         )
-        if rt_right_kink <= self.chrom_trace.rt_end:
-            self.chrom_trace.rt_right_kink = rt_right_kink
-        else:
-            self.chrom_trace.rt_right_kink = self.chrom_trace.rt_end
-            logging.debug(
-                f"feature '{self.chrom_trace.feature_id}' in sample "
-                f"'{self.chrom_trace.sample_id}': "
-                f"'rt_right_kink' '{rt_right_kink}' is > 'rt_end' "
-                f"'{self.chrom_trace.rt_end}'. "
-                f"Setting 'rt_right_kink' to 'rt_end'."
-            )
 
     def assign_relative_intensity(self: Self, relative_int: float):
         """Calculates and assigns relative intensity values
@@ -250,36 +228,32 @@ class ChromTraceCalculator:
         """Create a trace of retention time points to assign to Feature object.
 
         Returns:
-            A tuple of floats used to draw a pseudo-chromatogram retention time trace
+            A tuple of floats used together with output from create_trace_int() to
+                draw a pseudo-chromatogram.
         """
         return (
-            round(self.chrom_trace.rt_begin, 2),
-            round(self.chrom_trace.rt_left_kink, 2),
-            round(self.chrom_trace.rt_left_fwhm, 2),
-            round(self.chrom_trace.rt_apex, 2),
-            round(self.chrom_trace.rt_right_fwhm, 2),
-            round(self.chrom_trace.rt_right_kink, 2),
-            round(self.chrom_trace.rt_end, 2),
+            round(self.chrom_trace.rt_begin, 3),
+            round(self.chrom_trace.rt_left_kink, 3),
+            round(self.chrom_trace.rt_left_fwhm, 3),
+            round(self.chrom_trace.rt_apex, 3),
+            round(self.chrom_trace.rt_right_fwhm, 3),
+            round(self.chrom_trace.rt_right_kink, 3),
+            round(self.chrom_trace.rt_end, 3),
         )
 
     def create_trace_int(self: Self) -> Tuple[float, ...]:
         """Create a trace of relative intensity points to assign to Feature object.
 
         Returns:
-            A tuple of floats used to draw a pseudo-chromatogram relative int trace.
+            A tuple of floats used together with output from create_trace_rt() to
+                draw a pseudo-chromatogram.
         """
         return (
-            round(self.chrom_trace.int_begin, 2),
-            round(self.chrom_trace.int_left_kink, 2),
-            round(self.chrom_trace.int_left_fwhm, 2),
-            round(self.chrom_trace.int_apex, 2),
-            round(self.chrom_trace.int_right_fwhm, 2),
-            round(self.chrom_trace.int_right_kink, 2),
-            round(self.chrom_trace.int_end, 2),
+            round(self.chrom_trace.int_begin, 3),
+            round(self.chrom_trace.int_left_kink, 3),
+            round(self.chrom_trace.int_left_fwhm, 3),
+            round(self.chrom_trace.int_apex, 3),
+            round(self.chrom_trace.int_right_fwhm, 3),
+            round(self.chrom_trace.int_right_kink, 3),
+            round(self.chrom_trace.int_end, 3),
         )
-
-    # TODO(MMZ 04.10.23): Test individual methods
-
-    # TODO(MMZ 04.10.23): Start the module within the Analysis Manager
-
-    # TODO(MMZ 04.10.23): round all float values to two digits after comma
