@@ -45,7 +45,7 @@ logging.basicConfig(
 )
 
 
-def main(params: ParameterManager) -> None:
+def main(params: ParameterManager) -> None:  # TODO(MMZ 27.11.23): Fix return
     """Run fermo_core processing part on input data contained in params.
 
     Args:
@@ -61,7 +61,7 @@ def main(params: ParameterManager) -> None:
     stats, features, samples = GeneralParser.parse(params)
     stats, features, samples = AnalysisManager.analyze(params, stats, features, samples)
 
-    # TODO(MMZ): Create a class that exports the processed data (with swich to
+    # TODO(MMZ): Create a class that exports the processed data (with switch to
     #  return either a fermo_gui compatible JSON or a table).
 
 

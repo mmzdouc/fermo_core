@@ -1,3 +1,4 @@
 argparse==1.4.0
+matchms==0.24.0
 pandas==2.0.3
-pyteomics==4.5.6
+pyteomics==4.6.3
