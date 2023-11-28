@@ -1,141 +1,141 @@
 {
-  "peaktable": {
-    "filename": null,
-    "format": null,
-    "allowed_formats": [
-      "mzmine3"
-    ],
-    "polarity": "positive",
-    "allowed_polarities": [
-      "positive",
-      "negative"
-    ],
-    "description": "Provide a peaktable containing information on molecular features.",
-    "mandatory": "yes"
-  },
-  "msms": {
-    "filename": null,
-    "format": null,
-    "allowed_formats": [
-      "mgf"
-    ],
-    "description": "Provide a file with molecular feature MS/MS information.",
-    "mandatory": "no"
-  },
-  "phenotype": {
-    "filename": null,
-    "format": null,
-    "allowed_formats": [
-      "fermo"
-    ],
-    "mode": "percentage",
-    "allowed_modes": [
-      "percentage",
-      "concentration"
-    ],
-    "algorithm": "all",
-    "allowed_algorithms": [
-      "all",
-      "fold_difference"
-    ],
-    "description": "Provide a file with phenotype/biological activity information. All data must come from the same type of experiment (e.g. percentage inhibition).",
-    "mandatory": "no"
-  },
-  "group_metadata": {
-    "filename": null,
-    "format": null,
-    "allowed_formats": [
-      "fermo"
-    ],
-    "description": "Provide a file with group metadata information.",
-    "mandatory": "no"
-  },
-  "spectral_library": {
-    "filename": null,
-    "format": null,
-    "allowed_formats": [
-      "mgf"
-    ],
-    "description": "Provide a spectral library file with annotated MS/MS spectra.",
-    "mandatory": "no"
-  },
-  "phenotype_algorithm_settings": {
-    "fold_difference": {
-      "value": 10,
-      "description": "Factor to retain metabolites present in samples with sub-inhibitory concentrations."
+    "peaktable": {
+        "filename": null,
+        "format": null,
+        "allowed_formats": [
+            "mzmine3"
+        ],
+        "polarity": "positive",
+        "allowed_polarities": [
+            "positive",
+            "negative"
+        ],
+        "description": "Provide a peaktable containing information on molecular features.",
+        "mandatory": "yes"
+    },
+    "msms": {
+        "filename": null,
+        "format": null,
+        "allowed_formats": [
+            "mgf"
+        ],
+        "description": "Provide a file with molecular feature MS/MS information.",
+        "mandatory": "no"
+    },
+    "phenotype": {
+        "filename": null,
+        "format": null,
+        "allowed_formats": [
+            "fermo"
+        ],
+        "mode": "percentage",
+        "allowed_modes": [
+            "percentage",
+            "concentration"
+        ],
+        "algorithm": "all",
+        "allowed_algorithms": [
+            "all",
+            "fold_difference"
+        ],
+        "description": "Provide a file with phenotype/biological activity information. All data must come from the same type of experiment (e.g. percentage inhibition).",
+        "mandatory": "no"
+    },
+    "group_metadata": {
+        "filename": null,
+        "format": null,
+        "allowed_formats": [
+            "fermo"
+        ],
+        "description": "Provide a file with group metadata information.",
+        "mandatory": "no"
+    },
+    "spectral_library": {
+        "filename": null,
+        "format": null,
+        "allowed_formats": [
+            "mgf"
+        ],
+        "description": "Provide a spectral library file with annotated MS/MS spectra.",
+        "mandatory": "no"
+    },
+    "phenotype_algorithm_settings": {
+        "fold_difference": {
+            "value": 10,
+            "description": "Factor to retain metabolites present in samples with sub-inhibitory concentrations."
+        }
+    },
+    "mass_dev_ppm": {
+        "value": 20,
+        "description": "Expected mass deviation tolerance in ppm."
+    },
+    "msms_frag_min": {
+        "value": 5,
+        "description": "Minimum number of fragments per MS/MS spectrum."
+    },
+    "column_ret_fold": {
+        "value": 10,
+        "description": "Factor to retain metabolites that were detected in sample blanks due to cross-contamination"
+    },
+    "fragment_tol": {
+        "value": 0.1,
+        "description": "Tolerance when matching two MS/MS fragments in spectral similarity matching, in m/z units."
+    },
+    "spectral_sim_score_cutoff": {
+        "value": 0.7,
+        "description": "Similarity score cutoff: determine relatedness of two  MS2 spectra."
+    },
+    "max_nr_links_spec_sim": {
+        "value": 10,
+        "description": "In spectral similarity/molecular network calculations, max. number of links to other molecular features any mol. feature is allowed to have."
+    },
+    "min_nr_matched_peaks": {
+        "value": 5,
+        "description": "For spectral similarity matching, minimum number of fragments two MS/MS spectra need to share to be considered related."
+    },
+    "spectral_sim_network_alg": {
+        "format": "modified_cosine",
+        "allowed_formats": [
+            "all",
+            "modified_cosine",
+            "ms2deepscore"
+        ],
+        "description": "For spectral similarity matching, spectral similarity/molecular networking algorithm to use."
+    },
+    "ms2query": {
+        "mode": "off",
+        "allowed_modes": [
+            "on",
+            "off"
+        ],
+        "annot_features_from_blanks": "off",
+        "allowed_modes_annot_features_from_blanks": [
+            "on",
+            "off"
+        ],
+        "range": [
+            0.0,
+            1.0
+        ],
+        "allowed_range": [
+            0.0,
+            1.0
+        ],
+        "description": "Settings to enable/disable annotation by MS2Query."
+    },
+    "rel_int_range": {
+        "range": [
+            0.0,
+            1.0
+        ],
+        "allowed_range": [
+            0.0,
+            1.0
+        ],
+        "description": "Filter out molecular features that are outside of range."
+    },
+    "max_library_size": {
+        "value": 1000,
+        "description": "Maximum allowed entries in library for spectral library matching."
     }
-  },
-  "mass_dev_ppm": {
-    "value": 20,
-    "description": "Expected mass deviation tolerance in ppm."
-  },
-  "msms_frag_min": {
-    "value": 5,
-    "description": "Minimum number of fragments per MS/MS spectrum."
-  },
-  "column_ret_fold": {
-    "value": 10,
-    "description": "Factor to retain metabolites that were detected in sample blanks due to cross-contamination"
-  },
-  "fragment_tol": {
-    "value": 0.1,
-    "description": "Tolerance when matching two MS/MS fragments in spectral similarity matching, in m/z units."
-  },
-  "spectral_sim_score_cutoff": {
-    "value": 0.7,
-    "description": "Similarity score cutoff: determine relatedness of two  MS2 spectra."
-  },
-  "max_nr_links_spec_sim": {
-    "value": 10,
-    "description": "In spectral similarity/molecular network calculations, max. number of links to other molecular features any mol. feature is allowed to have."
-  },
-  "min_nr_matched_peaks": {
-    "value": 5,
-    "description": "For spectral similarity matching, minimum number of fragments two MS/MS spectra need to share to be considered related."
-  },
-  "spectral_sim_network_alg": {
-    "format": "modified_cosine",
-    "allowed_formats": [
-      "all",
-      "modified_cosine",
-      "ms2deepscore"
-    ],
-    "description": "For spectral similarity matching, spectral similarity/molecular networking algorithm to use."
-  },
-  "ms2query": {
-    "mode": "off",
-    "allowed_modes": [
-      "on",
-      "off"
-    ],
-    "annot_features_from_blanks": "off",
-    "allowed_modes_annot_features_from_blanks": [
-      "on",
-      "off"
-    ],
-    "range": [
-      0.0,
-      1.0
-    ],
-    "allowed_range": [
-      0.0,
-      1.0
-    ],
-    "description": "Settings to enable/disable annotation by MS2Query."
-  },
-  "rel_int_range": {
-    "range": [
-      0.0,
-      1.0
-    ],
-    "allowed_range": [
-      0.0,
-      1.0
-    ],
-    "description": "Filter out molecular features that are outside of range."
-  },
-  "max_library_size": {
-    "value": 1000,
-    "description": "Maximum allowed entries in library for spectral library matching."
-  }
 }

@@ -66,7 +66,7 @@ def main(params: ParameterManager) -> None:  # TODO(MMZ 27.11.23): Fix return
 
 
 if __name__ == "__main__":
-    logging.info(f"Started 'fermo_core' version '{VERSION}' in command line mode.")
+    logging.info(f"Started 'fermo_core' version '{VERSION}' as CLI.")
     params_manager = ParameterManager(VERSION, ROOT)
     args = params_manager.run_argparse()
     default_params = params_manager.load_json_file(

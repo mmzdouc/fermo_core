@@ -1,475 +1,475 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema#",
-  "$schema_version": "1.0",
-  "type": "object",
-  "properties": {
-    "peaktable": {
-      "type": "object",
-      "properties": {
-        "filename": {
-          "type": "null"
-        },
-        "format": {
-          "type": "null"
-        },
-        "allowed_formats": {
-          "type": "array",
-          "minItems": 1,
-          "items": {
-            "type": "string"
-          }
-        },
-        "polarity": {
-          "type": "string"
-        },
-        "allowed_polarities": {
-          "type": "array",
-          "minItems": 1,
-          "items": {
-            "type": "string"
-          }
-        },
-        "description": {
-          "type": "string"
-        },
-        "mandatory": {
-          "type": "string"
-        }
-      },
-      "required": [
-        "filename",
-        "format",
-        "allowed_formats",
-        "description",
-        "mandatory"
-      ]
-    },
-    "msms": {
-      "type": "object",
-      "properties": {
-        "filename": {
-          "type": "null"
-        },
-        "format": {
-          "type": "null"
-        },
-        "allowed_formats": {
-          "type": "array",
-          "minItems": 1,
-          "items": {
-            "type": "string"
-          }
-        },
-        "description": {
-          "type": "string"
-        },
-        "mandatory": {
-          "type": "string"
-        }
-      },
-      "required": [
-        "filename",
-        "format",
-        "allowed_formats",
-        "description",
-        "mandatory"
-      ]
-    },
-    "phenotype": {
-      "type": "object",
-      "properties": {
-        "filename": {
-          "type": "null"
-        },
-        "format": {
-          "type": "null"
-        },
-        "allowed_formats": {
-          "type": "array",
-          "minItems": 1,
-          "items": {
-            "type": "string"
-          }
-        },
-        "mode": {
-          "type": "string"
-        },
-        "allowed_modes": {
-          "type": "array",
-          "minItems": 1,
-          "items": {
-            "type": "string"
-          }
-        },
-        "algorithm": {
-          "type": "string"
-        },
-        "allowed_algorithms": {
-          "type": "array",
-          "minItems": 1,
-          "items": {
-            "type": "string"
-          }
-        },
-        "description": {
-          "type": "string"
-        },
-        "mandatory": {
-          "type": "string"
-        }
-      },
-      "required": [
-        "filename",
-        "format",
-        "allowed_formats",
-        "mode",
-        "allowed_modes",
-        "algorithm",
-        "allowed_algorithms",
-        "description",
-        "mandatory"
-      ]
-    },
-    "group_metadata": {
-      "type": "object",
-      "properties": {
-        "filename": {
-          "type": "null"
-        },
-        "format": {
-          "type": "null"
-        },
-        "allowed_formats": {
-          "type": "array",
-          "minItems": 1,
-          "items": {
-            "type": "string"
-          }
-        },
-        "description": {
-          "type": "string"
-        },
-        "mandatory": {
-          "type": "string"
-        }
-      },
-      "required": [
-        "filename",
-        "format",
-        "allowed_formats",
-        "description",
-        "mandatory"
-      ]
-    },
-    "spectral_library": {
-      "type": "object",
-      "properties": {
-        "filename": {
-          "type": "null"
-        },
-        "format": {
-          "type": "null"
-        },
-        "allowed_formats": {
-          "type": "array",
-          "minItems": 1,
-          "items": {
-            "type": "string"
-          }
-        },
-        "description": {
-          "type": "string"
-        },
-        "mandatory": {
-          "type": "string"
-        }
-      },
-      "required": [
-        "filename",
-        "format",
-        "allowed_formats",
-        "description",
-        "mandatory"
-      ]
-    },
-    "phenotype_algorithm_settings": {
-      "type": "object",
-      "properties": {
-        "fold_difference": {
-          "type": "object",
-          "properties": {
-            "value": {
-              "type": "integer"
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "$schema_version": "1.0",
+    "type": "object",
+    "properties": {
+        "peaktable": {
+            "type": "object",
+            "properties": {
+                "filename": {
+                    "type": "null"
+                },
+                "format": {
+                    "type": "null"
+                },
+                "allowed_formats": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "polarity": {
+                    "type": "string"
+                },
+                "allowed_polarities": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "description": {
+                    "type": "string"
+                },
+                "mandatory": {
+                    "type": "string"
+                }
             },
-            "description": {
-              "type": "string"
-            }
-          },
-          "required": [
-            "value",
-            "description"
-          ]
-        }
-      },
-      "required": [
-        "fold_difference"
-      ]
-    },
-    "mass_dev_ppm": {
-      "type": "object",
-      "properties": {
-        "value": {
-          "type": "integer"
+            "required": [
+                "filename",
+                "format",
+                "allowed_formats",
+                "description",
+                "mandatory"
+            ]
         },
-        "description": {
-          "type": "string"
-        }
-      },
-      "required": [
-        "value",
-        "description"
-      ]
-    },
-    "msms_frag_min": {
-      "type": "object",
-      "properties": {
-        "value": {
-          "type": "integer"
-        },
-        "description": {
-          "type": "string"
-        }
-      },
-      "required": [
-        "value",
-        "description"
-      ]
-    },
-    "column_ret_fold": {
-      "type": "object",
-      "properties": {
-        "value": {
-          "type": "integer"
-        },
-        "description": {
-          "type": "string"
-        }
-      },
-      "required": [
-        "value",
-        "description"
-      ]
-    },
-    "fragment_tol": {
-      "type": "object",
-      "properties": {
-        "value": {
-          "type": "number"
-        },
-        "description": {
-          "type": "string"
-        }
-      },
-      "required": [
-        "value",
-        "description"
-      ]
-    },
-    "spectral_sim_score_cutoff": {
-      "type": "object",
-      "properties": {
-        "value": {
-          "type": "number"
-        },
-        "description": {
-          "type": "string"
-        }
-      },
-      "required": [
-        "value",
-        "description"
-      ]
-    },
-    "max_nr_links_spec_sim": {
-      "type": "object",
-      "properties": {
-        "value": {
-          "type": "integer"
-        },
-        "description": {
-          "type": "string"
-        }
-      },
-      "required": [
-        "value",
-        "description"
-      ]
-    },
-    "min_nr_matched_peaks": {
-      "type": "object",
-      "properties": {
-        "value": {
-          "type": "integer"
-        },
-        "description": {
-          "type": "string"
-        }
-      },
-      "required": [
-        "value",
-        "description"
-      ]
-    },
-    "spectral_sim_network_alg": {
-      "type": "object",
-      "properties": {
-        "format": {
-          "type": "string"
-        },
-        "allowed_formats": {
-          "type": "array",
-          "minItems": 1,
-          "items": {
-            "type": "string"
-          }
-        },
-        "description": {
-          "type": "string"
-        }
-      },
-      "required": [
-        "format",
-        "allowed_formats",
-        "description"
-      ]
-    },
-    "ms2query": {
-      "type": "object",
-      "properties": {
-        "mode": {
-          "type": "string"
-        },
-        "allowed_modes": {
-          "type": "array",
-          "minItems": 1,
-          "items": {
-            "type": "string"
-          }
-        },
-        "annot_features_from_blanks": {
-          "type": "string"
-        },
-        "allowed_modes_annot_features_from_blanks": {
-          "type": "array",
-          "minItems": 1,
-          "items": {
-            "type": "string"
-          }
-        },
-        "range": {
-          "type": "array",
-          "items": [
-            {
-              "type": "number"
+        "msms": {
+            "type": "object",
+            "properties": {
+                "filename": {
+                    "type": "null"
+                },
+                "format": {
+                    "type": "null"
+                },
+                "allowed_formats": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "description": {
+                    "type": "string"
+                },
+                "mandatory": {
+                    "type": "string"
+                }
             },
-            {
-              "type": "number"
-            }
-          ]
+            "required": [
+                "filename",
+                "format",
+                "allowed_formats",
+                "description",
+                "mandatory"
+            ]
         },
-        "allowed_range": {
-          "type": "array",
-          "items": [
-            {
-              "type": "number"
+        "phenotype": {
+            "type": "object",
+            "properties": {
+                "filename": {
+                    "type": "null"
+                },
+                "format": {
+                    "type": "null"
+                },
+                "allowed_formats": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "mode": {
+                    "type": "string"
+                },
+                "allowed_modes": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "algorithm": {
+                    "type": "string"
+                },
+                "allowed_algorithms": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "description": {
+                    "type": "string"
+                },
+                "mandatory": {
+                    "type": "string"
+                }
             },
-            {
-              "type": "number"
-            }
-          ]
+            "required": [
+                "filename",
+                "format",
+                "allowed_formats",
+                "mode",
+                "allowed_modes",
+                "algorithm",
+                "allowed_algorithms",
+                "description",
+                "mandatory"
+            ]
         },
-        "description": {
-          "type": "string"
+        "group_metadata": {
+            "type": "object",
+            "properties": {
+                "filename": {
+                    "type": "null"
+                },
+                "format": {
+                    "type": "null"
+                },
+                "allowed_formats": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "description": {
+                    "type": "string"
+                },
+                "mandatory": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "filename",
+                "format",
+                "allowed_formats",
+                "description",
+                "mandatory"
+            ]
+        },
+        "spectral_library": {
+            "type": "object",
+            "properties": {
+                "filename": {
+                    "type": "null"
+                },
+                "format": {
+                    "type": "null"
+                },
+                "allowed_formats": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "description": {
+                    "type": "string"
+                },
+                "mandatory": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "filename",
+                "format",
+                "allowed_formats",
+                "description",
+                "mandatory"
+            ]
+        },
+        "phenotype_algorithm_settings": {
+            "type": "object",
+            "properties": {
+                "fold_difference": {
+                    "type": "object",
+                    "properties": {
+                        "value": {
+                            "type": "integer"
+                        },
+                        "description": {
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "value",
+                        "description"
+                    ]
+                }
+            },
+            "required": [
+                "fold_difference"
+            ]
+        },
+        "mass_dev_ppm": {
+            "type": "object",
+            "properties": {
+                "value": {
+                    "type": "integer"
+                },
+                "description": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "value",
+                "description"
+            ]
+        },
+        "msms_frag_min": {
+            "type": "object",
+            "properties": {
+                "value": {
+                    "type": "integer"
+                },
+                "description": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "value",
+                "description"
+            ]
+        },
+        "column_ret_fold": {
+            "type": "object",
+            "properties": {
+                "value": {
+                    "type": "integer"
+                },
+                "description": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "value",
+                "description"
+            ]
+        },
+        "fragment_tol": {
+            "type": "object",
+            "properties": {
+                "value": {
+                    "type": "number"
+                },
+                "description": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "value",
+                "description"
+            ]
+        },
+        "spectral_sim_score_cutoff": {
+            "type": "object",
+            "properties": {
+                "value": {
+                    "type": "number"
+                },
+                "description": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "value",
+                "description"
+            ]
+        },
+        "max_nr_links_spec_sim": {
+            "type": "object",
+            "properties": {
+                "value": {
+                    "type": "integer"
+                },
+                "description": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "value",
+                "description"
+            ]
+        },
+        "min_nr_matched_peaks": {
+            "type": "object",
+            "properties": {
+                "value": {
+                    "type": "integer"
+                },
+                "description": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "value",
+                "description"
+            ]
+        },
+        "spectral_sim_network_alg": {
+            "type": "object",
+            "properties": {
+                "format": {
+                    "type": "string"
+                },
+                "allowed_formats": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "description": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "format",
+                "allowed_formats",
+                "description"
+            ]
+        },
+        "ms2query": {
+            "type": "object",
+            "properties": {
+                "mode": {
+                    "type": "string"
+                },
+                "allowed_modes": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "annot_features_from_blanks": {
+                    "type": "string"
+                },
+                "allowed_modes_annot_features_from_blanks": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "range": {
+                    "type": "array",
+                    "items": [
+                        {
+                            "type": "number"
+                        },
+                        {
+                            "type": "number"
+                        }
+                    ]
+                },
+                "allowed_range": {
+                    "type": "array",
+                    "items": [
+                        {
+                            "type": "number"
+                        },
+                        {
+                            "type": "number"
+                        }
+                    ]
+                },
+                "description": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "mode",
+                "allowed_modes",
+                "annot_features_from_blanks",
+                "allowed_modes_annot_features_from_blanks",
+                "range",
+                "allowed_range",
+                "description"
+            ]
+        },
+        "rel_int_range": {
+            "type": "object",
+            "properties": {
+                "range": {
+                    "type": "array",
+                    "items": [
+                        {
+                            "type": "number"
+                        },
+                        {
+                            "type": "number"
+                        }
+                    ]
+                },
+                "allowed_range": {
+                    "type": "array",
+                    "items": [
+                        {
+                            "type": "number"
+                        },
+                        {
+                            "type": "number"
+                        }
+                    ]
+                },
+                "description": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "range",
+                "allowed_range",
+                "description"
+            ]
+        },
+        "max_library_size": {
+            "type": "object",
+            "properties": {
+                "value": {
+                    "type": "integer"
+                },
+                "description": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "value",
+                "description"
+            ]
         }
-      },
-      "required": [
-        "mode",
-        "allowed_modes",
-        "annot_features_from_blanks",
-        "allowed_modes_annot_features_from_blanks",
-        "range",
-        "allowed_range",
-        "description"
-      ]
     },
-    "rel_int_range": {
-      "type": "object",
-      "properties": {
-        "range": {
-          "type": "array",
-          "items": [
-            {
-              "type": "number"
-            },
-            {
-              "type": "number"
-            }
-          ]
-        },
-        "allowed_range": {
-          "type": "array",
-          "items": [
-            {
-              "type": "number"
-            },
-            {
-              "type": "number"
-            }
-          ]
-        },
-        "description": {
-          "type": "string"
-        }
-      },
-      "required": [
-        "range",
-        "allowed_range",
-        "description"
-      ]
-    },
-    "max_library_size": {
-      "type": "object",
-      "properties": {
-        "value": {
-          "type": "integer"
-        },
-        "description": {
-          "type": "string"
-        }
-      },
-      "required": [
-        "value",
-        "description"
-      ]
-    }
-  },
-  "required": [
-    "peaktable",
-    "msms",
-    "phenotype",
-    "group_metadata",
-    "spectral_library",
-    "phenotype_algorithm_settings",
-    "mass_dev_ppm",
-    "msms_frag_min",
-    "column_ret_fold",
-    "fragment_tol",
-    "spectral_sim_score_cutoff",
-    "max_nr_links_spec_sim",
-    "min_nr_matched_peaks",
-    "spectral_sim_network_alg",
-    "ms2query",
-    "rel_int_range",
-    "max_library_size"
-  ]
+    "required": [
+        "peaktable",
+        "msms",
+        "phenotype",
+        "group_metadata",
+        "spectral_library",
+        "phenotype_algorithm_settings",
+        "mass_dev_ppm",
+        "msms_frag_min",
+        "column_ret_fold",
+        "fragment_tol",
+        "spectral_sim_score_cutoff",
+        "max_nr_links_spec_sim",
+        "min_nr_matched_peaks",
+        "spectral_sim_network_alg",
+        "ms2query",
+        "rel_int_range",
+        "max_library_size"
+    ]
 }

@@ -1,7 +1,7 @@
-"""Hold methods to validate user input from command line and GUI.
+"""Hold methods to validate user input.
 
-Validation methods consist of static methods for validation of generic values
-and instance methods for testing of more specialized input values/parameters.
+Validation methods that are used by both graphical user interface and command line
+interface.
 
 Copyright (c) 2022-2023 Mitja Maximilian Zdouc, PhD
 
@@ -30,9 +30,12 @@ from typing import List
 
 
 class ValidationManager:
-    """Manage methods for user input validation and error-handling logic
+    """Manage methods for user input validation and error-handling logic.
 
-    Method syntax: All validation methods should start with "validate".
+    Notes:
+        All validation methods are static and raise errors that need to be handled
+            by the calling methods.
+        Method syntax: All validation methods should start with "validate".
     """
 
     @staticmethod
