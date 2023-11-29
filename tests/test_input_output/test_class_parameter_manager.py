@@ -68,28 +68,6 @@ def test_define_argparse_args(params_manager):
     assert isinstance(parser, argparse.ArgumentParser)
 
 
-def test_load_json_file_valid():
-    assert isinstance(
-        ParameterManager.load_json_file(
-            "fermo_core/example_data/case_study_parameters.json"
-        ),
-        dict,
-    )
-
-
-@pytest.mark.parametrize(
-    "infile",
-    [
-        "",
-        "tests/example_files/example_duplicate_entries.csv",
-        "tests/example_files/invalid_json.json",
-    ],
-)
-def test_load_json_file_invalid(infile):
-    with pytest.raises((TypeError, FileNotFoundError, json.JSONDecodeError)):
-        ParameterManager.load_json_file(infile)
-
-
 def test_json_default_parameters_jsonschema(params_manager):
     schema = params_manager.load_json_file("fermo_core/config/schema.json")
     default_params = params_manager.load_json_file(

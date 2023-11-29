@@ -26,3 +26,8 @@ def test_define_argparse_args_valid():
     assert isinstance(
         ArgparseManager().define_argparse_args("version"), argparse.ArgumentParser
     )
+
+
+def test_define_argparse_args_invalid():
+    with pytest.raises(TypeError):
+        ArgparseManager().define_argparse_args()

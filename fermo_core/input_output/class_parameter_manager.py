@@ -86,31 +86,6 @@ class ParameterManager:
         self.rel_int_range: Optional[tuple] = None
         self.max_library_size: Optional[int] = None
 
-    @staticmethod
-    def load_json_file(json_file: str) -> dict:
-        """Validates json file and attempts to load it.
-
-        Parameters:
-            json_file: a filepath to a json file
-
-        Returns:
-            The loaded file as a dict.
-        """
-        try:
-            ValidationManager.validate_string(json_file)
-            ValidationManager.validate_file_exists(json_file)
-            ValidationManager.validate_file_extension(json_file, ".json")
-
-            with open(Path(json_file)) as infile:
-                return json.load(infile)
-
-        except json.JSONDecodeError as e:
-            logging.error(f"Error decoding JSON file '{json_file}': wrong format.")
-            raise e
-        except Exception as e:
-            logging.error(str(e))
-            raise e
-
     def assign_peaktable(self: Self, user_params: dict, default_params: dict):
         """Validate and assign the peaktable information to self.
 
