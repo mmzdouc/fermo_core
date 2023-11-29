@@ -86,48 +86,6 @@ class ParameterManager:
         self.rel_int_range: Optional[tuple] = None
         self.max_library_size: Optional[int] = None
 
-    def define_argparse_args(self: Self) -> argparse.ArgumentParser:
-        """Define command line options.
-
-        Returns:
-            argparse object containing command line options.
-
-        """
-        parser = argparse.ArgumentParser(
-            description=(
-                "#####################################################\n"
-                f"fermo_core v{self.version}: command line interface of FERMO.\n"
-                "#####################################################\n"
-                "Focused on large-scale data processing by advanced users.\n"
-                "For a more user-friendly experience, see fermo.bioinformatics.nl\n"
-                "More info on usage can be found in the README, docs, or publication.\n"
-                "#####################################################\n"
-            ),
-            formatter_class=argparse.RawTextHelpFormatter,
-        )
-
-        parser.add_argument(
-            "-p",
-            "--parameters",
-            type=str,
-            required=True,
-            help=(
-                "Provide a FERMO parameter .json file.\n"
-                "See 'example_data/case_study_parameters.json' for an example or "
-                "consult the documentation.\n"
-            ),
-        )
-        return parser
-
-    def run_argparse(self: Self) -> argparse.Namespace:
-        """Run argparse comm line interface.
-
-        Returns:
-            Namespace containing the command line params.
-        """
-        parser = self.define_argparse_args()
-        return parser.parse_args()
-
     @staticmethod
     def load_json_file(json_file: str) -> dict:
         """Validates json file and attempts to load it.

@@ -26,9 +26,11 @@ SOFTWARE.
 #  External
 from importlib import metadata
 from pathlib import Path
+from sys import argv
 import logging
 
 #  Internal
+from fermo_core.input_output.class_argparse_manager import ArgparseManager
 from fermo_core.input_output.class_parameter_manager import ParameterManager
 from fermo_core.data_processing.parser.class_general_parser import GeneralParser
 from fermo_core.data_analysis.class_analysis_manager import AnalysisManager
@@ -67,8 +69,11 @@ def main(params: ParameterManager) -> None:  # TODO(MMZ 27.11.23): Fix return
 
 if __name__ == "__main__":
     logging.info(f"Started 'fermo_core' version '{VERSION}' as CLI.")
+
+    args = ArgparseManager().run_argparse(VERSION, argv[1:])
+
     params_manager = ParameterManager(VERSION, ROOT)
-    args = params_manager.run_argparse()
+
     default_params = params_manager.load_json_file(
         str(ROOT.joinpath("config", "default_parameters.json"))
     )
