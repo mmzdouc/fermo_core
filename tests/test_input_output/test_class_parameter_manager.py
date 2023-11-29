@@ -70,7 +70,9 @@ def test_define_argparse_args(params_manager):
 
 def test_load_json_file_valid():
     assert isinstance(
-        ParameterManager.load_json_file("fermo_core/config/default_parameters.json"),
+        ParameterManager.load_json_file(
+            "fermo_core/example_data/case_study_parameters.json"
+        ),
         dict,
     )
 
@@ -91,7 +93,7 @@ def test_load_json_file_invalid(infile):
 def test_json_default_parameters_jsonschema(params_manager):
     schema = params_manager.load_json_file("fermo_core/config/schema.json")
     default_params = params_manager.load_json_file(
-        "fermo_core/config/default_parameters.json"
+        "fermo_core/example_data/case_study_parameters.json"
     )
     try:
         jsonschema.validate(instance=default_params, schema=schema)
@@ -101,12 +103,16 @@ def test_json_default_parameters_jsonschema(params_manager):
 
 @pytest.fixture
 def default_params(params_manager):
-    return params_manager.load_json_file("fermo_core/config/default_parameters.json")
+    return params_manager.load_json_file(
+        "fermo_core/example_data/case_study_parameters.json"
+    )
 
 
 @pytest.fixture
 def example_params(params_manager):
-    return params_manager.load_json_file("tests/example_files/example_parameters.json")
+    return params_manager.load_json_file(
+        "fermo_core/example_data/case_study_parameters.json"
+    )
 
 
 def test_assign_peaktable_valid(params_manager, example_params, default_params):
