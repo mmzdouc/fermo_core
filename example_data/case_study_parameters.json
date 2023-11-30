@@ -28,27 +28,25 @@
             "mass_dev_ppm": 20.0
         },
         "spec_sim_networking": {
-            "activate_module": true,
-            "algorithm": [
-                {
-                    "name": "modified_cosine",
-                    "msms_min_frag_nr": 5,
-                    "fragment_tol": 0.1,
-                    "min_nr_matched_peaks": 5,
-                    "score_cutoff": 0.7,
-                    "max_nr_links": 10
-                },
-                {
-                    "name": "ms2deepscore",
-                    "directory_path": "/path/to/dir",
-                    "score_cutoff": 0.7,
-                    "max_nr_links": 10
-                }
-            ]
+            "modified_cosine": {
+                "activate_module": true,
+                "msms_min_frag_nr": 5,
+                "fragment_tol": 0.1,
+                "min_nr_matched_peaks": 5,
+                "score_cutoff": 0.7,
+                "max_nr_links": 10
+            },
+            "ms2deepscore": {
+                "activate_module": true,
+                "directory_path": "/path/to/dir",
+                "score_cutoff": 0.7,
+                "max_nr_links": 10
+            }
         }
     },
     "additional_modules": {
         "peaktable_filtering": {
+            "activate_module": true,
             "filter_rel_int_range": [
                 0.0,
                 1.0
@@ -59,30 +57,24 @@
             "column_ret_fold": 10
         },
         "phenotype_assignment": {
-            "activate_module": true,
-            "algorithm": [
-                {
-                    "name": "fold_difference",
-                    "fold_diff": 10,
-                    "data_type": "percentage"
-                }
-            ]
+            "fold_difference": {
+                "activate_module": true,
+                "fold_diff": 10,
+                "data_type": "percentage"
+            }
         },
         "spectral_library_matching": {
-            "activate_module": true,
-            "algorithm": [
-                {
-                    "name": "modified_cosine",
-                    "fragment_tol": 0.1,
-                    "min_nr_matched_peaks": 5,
-                    "score_cutoff": 0.7
-                },
-                {
-                    "name": "ms2deepscore",
-                    "directory_path": "/path/to/dir",
-                    "score_cutoff": 0.7
-                }
-            ]
+            "modified_cosine": {
+                "activate_module": true,
+                "fragment_tol": 0.1,
+                "min_nr_matched_peaks": 5,
+                "score_cutoff": 0.7
+            },
+            "ms2deepscore": {
+                "activate_module": true,
+                "directory_path": "/path/to/dir",
+                "score_cutoff": 0.7
+            }
         },
         "ms2query_annotation": {
             "activate_module": true,

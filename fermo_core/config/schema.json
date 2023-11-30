@@ -161,97 +161,76 @@
                     }
                 },
                 "spec_sim_networking": {
-                    "title": "(Optional): settings for spectral similarity networking (='molecular networking'). By default, the 'modified_cosine' algorithm is executed.",
+                    "title": "(Optional): settings for spectral similarity networking (='molecular networking') with one or more algorithms. By default, the 'modified_cosine' algorithm is executed with default parameters.",
                     "additionalProperties": false,
                     "type": "object",
-                    "required": [
-                        "activate_module"
-                    ],
                     "properties": {
-                        "activate_module": {
-                            "title": "Specifies whether this module should be run.",
-                            "type": "boolean"
+                        "modified_cosine": {
+                            "title": "(Optional): modified cosine algorithm. Most commonly used, quantifies the similarity between two spectra based on their dot-product. See 'https://matchms.readthedocs.io/en/latest/api/matchms.similarity.ModifiedCosine.html' for details.",
+                            "additionalProperties": false,
+                            "type": "object",
+                            "required": [
+                                "activate_module"
+                            ],
+                            "properties": {
+                                "activate_module": {
+                                    "title": "Specifies whether this module should be run.",
+                                    "type": "boolean"
+                                },
+                                "msms_min_frag_nr": {
+                                    "title": "(Optional): minimum number of fragments a MS/MS fragmentation spectrum must have to be considered in spectral similarity networking. Spectra with a low number of fragments may lead to unspecific matching and so-called 'hairball clusters'. Default value: 5.",
+                                    "type": "integer",
+                                    "minimum": 1
+                                },
+                                "fragment_tol": {
+                                    "title": "(Optional): tolerance for matching two MS/MS fragments, in m/z units. Default value: 0.1",
+                                    "type": "number"
+                                },
+                                "min_nr_matched_peaks": {
+                                    "title": "(Optional): minimum number of fragments that must be matched between two MS/MS fragmentation spectra to consider two spectra related. Default value: 5",
+                                    "type": "integer",
+                                    "minimum": 1
+                                },
+                                "score_cutoff": {
+                                    "title": "(Optional): minimum modified cosine score that must be reached to consider two MS/MS fragmentation spectra to be related. Default value: 0.7",
+                                    "type": "number",
+                                    "minimum": 0.1,
+                                    "maximum": 1.0
+                                },
+                                "max_nr_links": {
+                                    "title": "(Optional): max. number of links to other molecular features any molecular feature is allowed to have. Default value: 10",
+                                    "type": "integer",
+                                    "minimum": 1
+                                }
+                            }
                         },
-                        "algorithm": {
-                            "title": "(Optional): specify the algorithm(s) and settings to use for spectral similarity networking.",
-                            "type": "array",
-                            "minItems": 1,
-                            "items": {
-                                "type": "object",
-                                "oneOf": [
-                                    {
-                                        "title": "Modified cosine algorithm. Quantifies the similarity between two spectra based on their dot-product. See 'https://matchms.readthedocs.io/en/latest/api/matchms.similarity.ModifiedCosine.html' for details.",
-                                        "additionalProperties": false,
-                                        "required": [
-                                            "name"
-                                        ],
-                                        "properties": {
-                                            "name": {
-                                                "title": "Modified cosine algorithm",
-                                                "type": "string",
-                                                "enum": [
-                                                    "modified_cosine"
-                                                ]
-                                            },
-                                            "msms_min_frag_nr": {
-                                                "title": "(Optional): minimum number of fragments a MS/MS fragmentation spectrum must have to be considered in spectral similarity networking. Spectra with a low number of fragments may lead to unspecific matching and so-called 'hairball clusters'. Default value: 5.",
-                                                "type": "integer",
-                                                "minimum": 1
-                                            },
-                                            "fragment_tol": {
-                                                "title": "(Optional): tolerance for matching two MS/MS fragments, in m/z units. Default value: 0.1",
-                                                "type": "number"
-                                            },
-                                            "min_nr_matched_peaks": {
-                                                "title": "(Optional): minimum number of fragments that must be matched between two MS/MS fragmentation spectra to consider two spectra related. Default value: 5",
-                                                "type": "integer",
-                                                "minimum": 1
-                                            },
-                                            "score_cutoff": {
-                                                "title": "(Optional): minimum modified cosine score that must be reached to consider two MS/MS fragmentation spectra to be related. Default value: 0.7",
-                                                "type": "number",
-                                                "minimum": 0.1,
-                                                "maximum": 1.0
-                                            },
-                                            "max_nr_links": {
-                                                "title": "(Optional): max. number of links to other molecular features any molecular feature is allowed to have. Default value: 10",
-                                                "type": "integer",
-                                                "minimum": 1
-                                            }
-                                        }
-                                    },
-                                    {
-                                        "title": "MS2Deepscore algorithm. Quantifies the similarity between two spectra based on a spectral embedding (deep learning). See 'https://github.com/matchms/ms2deepscore' for details.",
-                                        "additionalProperties": false,
-                                        "required": [
-                                            "name"
-                                        ],
-                                        "properties": {
-                                            "name": {
-                                                "title": "MS2DeepScore algorithm.",
-                                                "type": "string",
-                                                "enum": [
-                                                    "ms2deepscore"
-                                                ]
-                                            },
-                                            "directory_path": {
-                                                "title": "(Optional): A path to a directory containing MS2DeepScore files. If not specified, MS2DeepScore files will be downloaded and put into the default directory ('fermo_core/libraries').",
-                                                "type": "string"
-                                            },
-                                            "score_cutoff": {
-                                                "title": "(Optional): minimum score that must be reached to consider two MS/MS fragmentation spectra to be related. Default value: 0.7",
-                                                "type": "number",
-                                                "minimum": 0.1,
-                                                "maximum": 1.0
-                                            },
-                                            "max_nr_links": {
-                                                "title": "(Optional): max. number of links to other molecular features any molecular feature is allowed to have. Default value: 10",
-                                                "type": "integer",
-                                                "minimum": 1
-                                            }
-                                        }
-                                    }
-                                ]
+                        "ms2deepscore": {
+                            "title": "(Optional): MS2Deepscore algorithm. Quantifies the similarity between two spectra based on a spectral embedding (deep learning). See 'https://github.com/matchms/ms2deepscore' for details.",
+                            "additionalProperties": false,
+                            "type": "object",
+                            "required": [
+                                "activate_module"
+                            ],
+                            "properties": {
+                                "activate_module": {
+                                    "title": "Specifies whether this module should be run.",
+                                    "type": "boolean"
+                                },
+                                "directory_path": {
+                                    "title": "(Optional): A path to a directory containing MS2DeepScore files. If not specified, MS2DeepScore files will be downloaded and put into the default directory ('fermo_core/libraries').",
+                                    "type": "string"
+                                },
+                                "score_cutoff": {
+                                    "title": "(Optional): minimum score that must be reached to consider two MS/MS fragmentation spectra to be related. Default value: 0.7",
+                                    "type": "number",
+                                    "minimum": 0.1,
+                                    "maximum": 1.0
+                                },
+                                "max_nr_links": {
+                                    "title": "(Optional): max. number of links to other molecular features any molecular feature is allowed to have. Default value: 10",
+                                    "type": "integer",
+                                    "minimum": 1
+                                }
                             }
                         }
                     }
@@ -268,11 +247,15 @@
                     "additionalProperties": false,
                     "type": "object",
                     "required": [
-                        "filter_rel_int_range"
+                        "activate_module"
                     ],
                     "properties": {
+                        "activate_module": {
+                            "title": "Specifies whether this module should be run.",
+                            "type": "boolean"
+                        },
                         "filter_rel_int_range": {
-                            "title": "Filter to restrict processing to molecular features inside the specified range, based on relative intensity. All molecular features outside the range will be ignored. By default, the range is from 0.0-1.0 (all molecular features are considered).",
+                            "title": "(Optional): filter to restrict processing to molecular features inside the specified range, based on relative intensity. All molecular features outside the range will be ignored. By default, the range is from 0.0-1.0 (all molecular features are considered).",
                             "type": "array",
                             "minItems": 2,
                             "maxItems": 2,
@@ -307,53 +290,32 @@
                     "title": "(Optional): settings for determination of phenotype-associated molecular features. Is only executed if a 'phenotype' file is provided.",
                     "additionalProperties": false,
                     "type": "object",
-                    "required": [
-                        "activate_module"
-                    ],
                     "properties": {
-                        "activate_module": {
-                            "title": "Specifies whether this module should be run.",
-                            "type": "boolean"
-                        },
-                        "algorithm": {
-                            "title": "(Optional): specify the algorithm(s) and settings to use for the phenotype assignment.",
-                            "type": "array",
-                            "minItems": 1,
-                            "items": {
-                                "type": "object",
-                                "oneOf": [
-                                    {
-                                        "title": "Fold-difference algorithm. Molecular features detected in both phenotype positive/negative samples are separated by the fold-difference between the lowest area in positive samples and the highest area in negative samples. If the difference is >= to the fold-change parameter, molecular features are still considered phenotype-associated.",
-                                        "additionalProperties": false,
-                                        "required": [
-                                            "name",
-                                            "fold_diff",
-                                            "data_type"
-                                        ],
-                                        "properties": {
-                                            "name": {
-                                                "title": "Fold-difference algorithm",
-                                                "type": "string",
-                                                "enum": [
-                                                    "fold_difference"
-                                                ]
-                                            },
-                                            "fold_diff": {
-                                                "title": "Fold-change difference to be used for molecular feature differentiation. Default value: 10",
-                                                "type": "integer",
-                                                "minimum": 1
-                                            },
-                                            "data_type": {
-                                                "title": "Specifies how the data type is interpreted. Is the data 'percentage-like' ('the higher the better)' or 'concentration-like' ('the lower, the better')?",
-                                                "type": "string",
-                                                "enum": [
-                                                    "percentage",
-                                                    "concentration"
-                                                ]
-                                            }
-                                        }
-                                    }
-                                ]
+                        "fold_difference": {
+                            "title": "Fold-difference algorithm. Molecular features detected in both phenotype positive/negative samples are separated by the fold-difference between the lowest area in positive samples and the highest area in negative samples. If the difference is >= to the fold-change parameter, molecular features are still considered phenotype-associated.",
+                            "additionalProperties": false,
+                            "type": "object",
+                            "required": [
+                                "activate_module"
+                            ],
+                            "properties": {
+                                "activate_module": {
+                                    "title": "Specifies whether this module should be run.",
+                                    "type": "boolean"
+                                },
+                                "fold_diff": {
+                                    "title": "Fold-change difference to be used for molecular feature differentiation. Default value: 10",
+                                    "type": "integer",
+                                    "minimum": 1
+                                },
+                                "data_type": {
+                                    "title": "Specifies how the data type is interpreted. Is the data 'percentage-like' ('the higher the better)' or 'concentration-like' ('the lower, the better')? Default value: 'percentage'.",
+                                    "type": "string",
+                                    "enum": [
+                                        "percentage",
+                                        "concentration"
+                                    ]
+                                }
                             }
                         }
                     }
@@ -362,79 +324,58 @@
                     "title": "(Optional): settings for spectral library matching. Will be only executed if a 'spectral_library' file was provided.",
                     "additionalProperties": false,
                     "type": "object",
-                    "required": [
-                        "activate_module"
-                    ],
                     "properties": {
-                        "activate_module": {
-                            "title": "Specifies whether this module should be run.",
-                            "type": "boolean"
+                        "modified_cosine": {
+                            "title": "Modified cosine algorithm. Most commonly used, quantifies the similarity between two spectra based on their dot-product. See 'https://matchms.readthedocs.io/en/latest/api/matchms.similarity.ModifiedCosine.html' for details.",
+                            "additionalProperties": false,
+                            "type": "object",
+                            "required": [
+                                "activate_module"
+                            ],
+                            "properties": {
+                                "activate_module": {
+                                    "title": "Specifies whether this module should be run.",
+                                    "type": "boolean"
+                                },
+                                "fragment_tol": {
+                                    "title": "(Optional): tolerance for matching two MS/MS fragments, in m/z units. Default value: 0.1",
+                                    "type": "number"
+                                },
+                                "min_nr_matched_peaks": {
+                                    "title": "(Optional): minimum number of fragments that must be matched between two MS/MS fragmentation spectra to consider two spectra related. Default value: 5",
+                                    "type": "integer",
+                                    "minimum": 1
+                                },
+                                "score_cutoff": {
+                                    "title": "(Optional): minimum modified cosine score that must be reached to consider two MS/MS fragmentation spectra to be related. Default value: 0.7",
+                                    "type": "number",
+                                    "minimum": 0.1,
+                                    "maximum": 1.0
+                                }
+                            }
                         },
-                        "algorithm": {
-                            "title": "(Optional): specify the algorithm(s) and settings to use for spectral library matching.",
-                            "type": "array",
-                            "minItems": 1,
-                            "items": {
-                                "type": "object",
-                                "oneOf": [
-                                    {
-                                        "title": "Modified cosine algorithm. Quantifies the similarity between two spectra based on their dot-product. See 'https://matchms.readthedocs.io/en/latest/api/matchms.similarity.ModifiedCosine.html' for details.",
-                                        "additionalProperties": false,
-                                        "required": [
-                                            "name"
-                                        ],
-                                        "properties": {
-                                            "name": {
-                                                "title": "Modified cosine algorithm",
-                                                "type": "string",
-                                                "enum": [
-                                                    "modified_cosine"
-                                                ]
-                                            },
-                                            "fragment_tol": {
-                                                "title": "(Optional): tolerance for matching two MS/MS fragments, in m/z units. Default value: 0.1",
-                                                "type": "number"
-                                            },
-                                            "min_nr_matched_peaks": {
-                                                "title": "(Optional): minimum number of fragments that must be matched between two MS/MS fragmentation spectra to consider two spectra related. Default value: 5",
-                                                "type": "integer",
-                                                "minimum": 1
-                                            },
-                                            "score_cutoff": {
-                                                "title": "(Optional): minimum modified cosine score that must be reached to consider two MS/MS fragmentation spectra to be related. Default value: 0.7",
-                                                "type": "number",
-                                                "minimum": 0.1,
-                                                "maximum": 1.0
-                                            }
-                                        }
-                                    },
-                                    {
-                                        "title": "MS2Deepscore algorithm. Quantifies the similarity between two spectra based on a spectral embedding (deep learning). See 'https://github.com/matchms/ms2deepscore' for details.",
-                                        "additionalProperties": false,
-                                        "required": [
-                                            "name"
-                                        ],
-                                        "properties": {
-                                            "name": {
-                                                "title": "MS2DeepScore algorithm.",
-                                                "type": "string",
-                                                "enum": [
-                                                    "ms2deepscore"
-                                                ]
-                                            },
-                                            "directory_path": {
-                                                "title": "(Optional): A path to a directory containing MS2DeepScore files. If not specified, MS2DeepScore files will be downloaded and put into the default directory ('fermo_core/libraries').",
-                                                "type": "string"
-                                            },
-                                            "score_cutoff": {
-                                                "title": "(Optional): minimum score that must be reached to consider two MS/MS fragmentation spectra to be related. Default value: 0.7",
-                                                "type": "number",
-                                                "minimum": 0.1,
-                                                "maximum": 1.0
-                                            }
-                                        }
-                                    }
-                                ]
+                        "ms2deepscore": {
+                            "title": "MS2Deepscore algorithm. Quantifies the similarity between two spectra based on a spectral embedding (deep learning). See 'https://github.com/matchms/ms2deepscore' for details.",
+                            "additionalProperties": false,
+                            "type": "object",
+                            "required": [
+                                "activate_module"
+                            ],
+                            "properties": {
+                                "activate_module": {
+                                    "title": "Specifies whether this module should be run.",
+                                    "type": "boolean"
+                                },
+                                "directory_path": {
+                                    "title": "(Optional): A path to a directory containing MS2DeepScore files. If not specified, MS2DeepScore files will be downloaded and put into the default directory ('fermo_core/libraries').",
+                                    "type": "string"
+                                },
+                                "score_cutoff": {
+                                    "title": "(Optional): minimum score that must be reached to consider two MS/MS fragmentation spectra to be related. Default value: 0.7",
+                                    "type": "number",
+                                    "minimum": 0.1,
+                                    "maximum": 1.0
+                                }
                             }
                         }
                     }
