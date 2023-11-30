@@ -135,20 +135,20 @@ class ValidationManager:
             raise FileNotFoundError(f"File not found: {file_path}")
 
     @staticmethod
-    def validate_file_extension(path: str, extension: str):
+    def validate_file_extension(filepath: Path, extension: str):
         """Validate the file name extension.
 
         Parameters:
-            path: a valid path as str
+            filepath: A pathlib Path object
             extension: a str describing the file extension
 
         Raises:
             TypeError: incorrect file name extension
         """
-        if Path(path).suffix != extension:
+        if filepath.suffix != extension:
             raise TypeError(
                 f"File extension incorrect. Should be '{extension}', is"
-                f" {Path(path).suffix}."
+                f" '{filepath.suffix}'."
             )
 
     @staticmethod
@@ -184,11 +184,11 @@ class ValidationManager:
             )
 
     @staticmethod
-    def validate_csv_file(csv_file: str):
+    def validate_csv_file(csv_file: Path):
         """Validate that input file is a comma separated values file (csv).
 
         Args:
-           csv_file: A file path str
+           csv_file: A pathlib Path object
 
         Raises:
            pd.errors.ParserError if file is not readable by pandas
@@ -197,20 +197,21 @@ class ValidationManager:
             pd.read_csv(csv_file, sep=",")
         except pd.errors.ParserError:
             raise ValueError(
-                f"File '{csv_file}' does not seem to be a valid file in '.csv' format."
+                f"File '{csv_file.name}' does not seem to be a valid file in '.csv' "
+                f"format."
             )
 
     @staticmethod
-    def validate_peaktable_mzmine3(mzmine: str):
+    def validate_peaktable_mzmine3(mzmine_file: Path):
         """Validate that input file is a mzmine3-style peaktable
 
         Args:
-           mzmine: A validated file path string to a mzmine3-style file
+           mzmine_file: A pathlib Path object
 
         Raises:
             ValueError: unexpected values
         """
-        df = pd.read_csv(mzmine, sep=",")
+        df = pd.read_csv(mzmine_file, sep=",")
         for arg in [
             ("^id$", "id"),
             ("^mz$", "mz"),
@@ -226,34 +227,34 @@ class ValidationManager:
             if df.filter(regex=arg[0]).columns.empty:
                 raise KeyError(
                     f"Column '{arg[1]}' is missing in MZmine3-style peaktable "
-                    f"'{mzmine}'."
+                    f"'{mzmine_file.name}'."
                 )
 
     @staticmethod
-    def validate_no_duplicate_entries_csv_column(csv: str, column: str):
+    def validate_no_duplicate_entries_csv_column(csv_file: Path, column: str):
         """Validate that csv column has no duplicate entries
 
         Args:
-           csv: A validated file path string to a csv file
+           csv_file: A pathlib Path object
            column: Name of column to test for duplicate entries
 
         Raises:
             ValueError: duplicate entries found
         """
-        df = pd.read_csv(csv, sep=",")
+        df = pd.read_csv(csv_file, sep=",")
         if df.duplicated(subset=[column]).any():
             raise ValueError(
-                f"Duplicate entries found in column '{column}' of file 'csv'. The "
+                f"Duplicate entries found in column '{column}' of file '"
+                f"{csv_file.name}'. The "
                 f"same identifier cannot be used multiple times."
             )
 
     @staticmethod
-    def validate_mgf_file(mgf_file: str):
+    def validate_mgf_file(mgf_file: Path):
         """Validate that file is a mgf file containing MS/MS spectra.
 
         Args:
-           mgf_file: A validated file path string pointing toward a mascot generic
-            format (mgf) file
+           mgf_file: A pathlib Path object to a Mascot Generic Format (mgf) file
 
         Raises:
             ValueError: Not a mgf file or empty
@@ -262,24 +263,23 @@ class ValidationManager:
             with open(mgf_file) as infile:
                 next(mgf.read(infile))
         except StopIteration:
-            raise ValueError(f"File '{mgf_file}' is not a .mgf-file or is empty.")
+            raise ValueError(f"File '{mgf_file.name}' is not a .mgf-file or is empty.")
 
     @staticmethod
-    def validate_phenotype_fermo(phenotype: str):
+    def validate_phenotype_fermo(pheno_file: Path):
         """Validate that file is a phenotype file in fermo style.
 
         Args:
-           phenotype: A validated file path string pointing toward a fermo-style
-           phenotype/bioactivity file.
+           pheno_file: A pathlib Path object pointing towards a fermo-bioactivity file
 
         Raises:
             ValueError: Not a fermo style bioactivity/phenotype file
         """
 
         def _raise_error(message):
-            raise ValueError(f"{message}  in file '{phenotype}' detected.")
+            raise ValueError(f"{message} in file '{pheno_file.name}' detected.")
 
-        df = pd.read_csv(phenotype, sep=",")
+        df = pd.read_csv(pheno_file, sep=",")
 
         if df.filter(regex="^sample_name$").columns.empty:
             _raise_error("No column labelled 'sample_name'")
@@ -298,21 +298,20 @@ class ValidationManager:
             _raise_error("Data column(s) with non-numeric values")
 
     @staticmethod
-    def validate_group_metadata_fermo(group: str):
+    def validate_group_metadata_fermo(group_file: Path):
         """Validate that file is a group metadata file in fermo style.
 
         Args:
-           group: A validated file path string pointing toward a fermo-style group
-            metadata file
+           group_file: A pathlib Path object to a fermo-group metadata file
 
         Raises:
             ValueError: Not a fermo style group metadata file
         """
 
         def _raise_error(message):
-            raise ValueError(f"{message}  in file '{group}' detected.")
+            raise ValueError(f"{message}  in file '{group_file.name}' detected.")
 
-        df = pd.read_csv(group)
+        df = pd.read_csv(group_file)
 
         if df.filter(regex="^sample_name$").columns.empty:
             _raise_error("No column labelled 'sample_name'")
