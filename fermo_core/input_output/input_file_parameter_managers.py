@@ -179,3 +179,33 @@ class GroupMetadataParameters(BaseModel):
                     f"Unsupported group metadata format: " f"'{format_group}'."
                 )
         return self
+
+
+class SpecLibParameters(BaseModel):
+    """A Pydantic-based class for repres. and valid. spectral library files  parameters.
+
+    Attributes:
+        filepath: a pathlib Path object pointing towards a spectral library file
+        format: indicates the format of the spectral library file
+
+    Raise:
+        ValueError: Unsupported spectral library format.
+        pydantic.ValidationError: Pydantic validation failed during instantiation.
+    """
+
+    filepath: FilePath
+    format: str
+
+    @model_validator(mode="after")
+    def validate_spectral_library_format(self):
+        path_speclib = self.filepath
+        format_speclib = self.format
+        match format_speclib:
+            case "mgf":
+                ValidationManager.validate_file_extension(path_speclib, ".mgf")
+                ValidationManager.validate_mgf_file(path_speclib)
+            case _:
+                raise ValueError(
+                    f"Unsupported spectral library format: " f"'{format_speclib}'."
+                )
+        return self
