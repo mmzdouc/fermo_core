@@ -21,7 +21,14 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from pydantic import BaseModel, model_validator, PositiveFloat, PositiveInt
+from pathlib import Path
+from pydantic import (
+    BaseModel,
+    model_validator,
+    PositiveFloat,
+    PositiveInt,
+    DirectoryPath,
+)
 
 from fermo_core.input_output.class_validation_manager import ValidationManager
 
@@ -73,3 +80,24 @@ class SpecSimNetworkCosineParameters(BaseModel):
     score_cutoff: PositiveFloat = 0.7
     max_nr_links: PositiveInt = 10
     max_precursor_mass_diff: PositiveInt = 400
+
+
+class SpecSimNetworkDeepscoreParameters(BaseModel):
+    """A Pydantic-based class for repr. and valid. of spec. similarity network params.
+
+    This class manages parameters for the ms2deepscore algorithm.
+
+    Attributes:
+        activate_module: bool to indicate if module should be executed.
+        directory_path: pathlib Path object pointing to dir with ms2deepscore files
+        score_cutoff: the minimum similarity score between two spectra.
+        max_nr_links: max links to a single spectra.
+
+    Raise:
+        pydantic.ValidationError: Pydantic validation failed during instantiation.
+    """
+
+    activate_module: bool = False
+    directory_path: DirectoryPath = Path(__file__).parent.parent.joinpath("libraries")
+    score_cutoff: PositiveFloat = 0.7
+    max_nr_links: PositiveInt = 10
