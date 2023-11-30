@@ -21,7 +21,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from pydantic import BaseModel, model_validator, PositiveFloat
+from pydantic import BaseModel, model_validator, PositiveFloat, PositiveInt
 
 from fermo_core.input_output.class_validation_manager import ValidationManager
 
@@ -46,3 +46,30 @@ class AdductAnnotationParameters(BaseModel):
         ppm = self.mass_dev_ppm
         ValidationManager.validate_mass_deviation_ppm(ppm)
         return self
+
+
+class SpecSimNetworkCosineParameters(BaseModel):
+    """A Pydantic-based class for repr. and valid. of spec. similarity network params.
+
+    This class manages parameters for the modified cosine algorithm.
+
+    Attributes:
+        activate_module: bool to indicate if module should be executed.
+        msms_min_frag_nr: minimum nr of fragments a spectrum must have to be considered.
+        fragment_tol: the tolerance between matched fragments, in m/z units.
+        min_nr_matched_peaks: the min number of peaks two matching spectra must share.
+        score_cutoff: the minimum similarity score between two spectra.
+        max_nr_links: max links to a single spectra.
+        max_precursor_mass_diff: max diff between precursor masses of two spectra
+
+    Raise:
+        pydantic.ValidationError: Pydantic validation failed during instantiation.
+    """
+
+    activate_module: bool = True
+    msms_min_frag_nr: PositiveInt = 5
+    fragment_tol: PositiveFloat = 0.1
+    min_nr_matched_peaks: PositiveInt = 5
+    score_cutoff: PositiveFloat = 0.7
+    max_nr_links: PositiveInt = 10
+    max_precursor_mass_diff: PositiveInt = 400
