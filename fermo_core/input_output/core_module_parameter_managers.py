@@ -21,7 +21,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from pydantic import BaseModel, model_validator, PositiveInt
+from pydantic import BaseModel, model_validator, PositiveFloat
 
 from fermo_core.input_output.class_validation_manager import ValidationManager
 
@@ -39,7 +39,7 @@ class AdductAnnotationParameters(BaseModel):
     """
 
     activate_module: bool = True
-    mass_dev_ppm: PositiveInt = 20
+    mass_dev_ppm: PositiveFloat = 20.0
 
     @model_validator(mode="after")
     def validate_adduct_annotation_parameters(self):
