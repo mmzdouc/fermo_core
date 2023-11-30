@@ -201,6 +201,11 @@
                                     "title": "(Optional): max. number of links to other molecular features any molecular feature is allowed to have. Default value: 10",
                                     "type": "integer",
                                     "minimum": 1
+                                },
+                                "max_precursor_mass_diff": {
+                                    "title": "(Optional): maximum difference between the precursor masses of two MS/MS spectra, in m/z units. A high number may lead to serendipitous matching between unrelated spectra, while a low number may exclude possible analogues. Default value: 400 m/z.",
+                                    "type": "integer",
+                                    "minimum": 1
                                 }
                             }
                         },
