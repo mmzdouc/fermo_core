@@ -22,7 +22,7 @@ SOFTWARE.
 """
 from typing import List
 
-from pydantic import BaseModel, model_validator
+from pydantic import BaseModel, model_validator, PositiveInt
 
 from fermo_core.input_output.class_validation_manager import ValidationManager
 
@@ -36,6 +36,7 @@ class PeaktableFilteringParameters(BaseModel):
 
     Raise:
         pydantic.ValidationError: Pydantic validation failed during instantiation.
+        ValueError: raised by 'validate_range_zero_one', malformed range.
     """
 
     activate_module: bool = False
@@ -48,3 +49,18 @@ class PeaktableFilteringParameters(BaseModel):
         ValidationManager.validate_range_zero_one(r_list)
         self.filter_rel_int_range = r_list
         return self
+
+
+class BlankAssignmentParameters(BaseModel):
+    """A Pydantic-based class for repr. and valid. of blank assignment parameters.
+
+    Attributes:
+        activate_module: bool to indicate if module should be executed.
+        column_ret_fold: An integer fold-change to differentiate blank features.
+
+    Raise:
+        pydantic.ValidationError: Pydantic validation failed during instantiation.
+    """
+
+    activate_module: bool = False
+    column_ret_fold: PositiveInt = 10
