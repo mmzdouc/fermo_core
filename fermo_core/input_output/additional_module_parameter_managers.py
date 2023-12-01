@@ -20,9 +20,16 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
+from pathlib import Path
 from typing import List
 
-from pydantic import BaseModel, model_validator, PositiveInt, PositiveFloat
+from pydantic import (
+    BaseModel,
+    model_validator,
+    PositiveInt,
+    PositiveFloat,
+    DirectoryPath,
+)
 
 from fermo_core.input_output.class_validation_manager import ValidationManager
 
@@ -103,4 +110,23 @@ class SpectralLibMatchingCosineParameters(BaseModel):
     activate_module: bool = False
     fragment_tol: PositiveFloat = 0.1
     min_nr_matched_peaks: PositiveInt = 5
+    score_cutoff: PositiveFloat = 0.7
+
+
+class SpectralLibMatchingDeepscoreParameters(BaseModel):
+    """A Pydantic-based class for repr. and valid. of spectral library matching params.
+
+    This class addresses parameters for the MS2DeepScore algorithm.
+
+    Attributes:
+        activate_module: bool to indicate if module should be executed.
+        directory_path: pathlib Path object pointing to dir with ms2deepscore files.
+        score_cutoff: score cutoff to consider a match of two MS/MS spectra.
+
+    Raise:
+        pydantic.ValidationError: Pydantic validation failed during instantiation.
+    """
+
+    activate_module: bool = False
+    directory_path: DirectoryPath = Path(__file__).parent.parent.joinpath("libraries")
     score_cutoff: PositiveFloat = 0.7
