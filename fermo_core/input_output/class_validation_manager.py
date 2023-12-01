@@ -326,25 +326,16 @@ class ValidationManager:
 
     @staticmethod
     def validate_range_zero_one(user_range: List[float]):
-        """Validate that user-provided range is inside range 0-1.
+        """Validate that user-provided range is inside range 0.0 - 1.0.
 
-        Args
+        Arguments:
            user_range: User-provided range: two floats, upper and lower bounds.
 
         Raises:
             TypeError: user-range not a list
             ValueError: More than two values OR not floats OR out of bounds
         """
-        if not isinstance(user_range, list):
-            raise ValueError("Range is wrongly formatted: not a list.")
-        elif len(user_range) != 2:
-            raise ValueError(
-                f"Range must have exactly two values; has {len(user_range)} "
-                f"('{user_range}')."
-            )
-        elif not all(isinstance(entry, float) for entry in user_range):
-            raise ValueError("At least one of the values is not a float point number.")
-        elif not all(0.0 <= entry <= 1.0 for entry in user_range):
+        if not all(0.0 <= entry <= 1.0 for entry in user_range):
             raise ValueError(
                 "At least one of the values is outside of range 0.0 to 1.0."
             )
