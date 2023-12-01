@@ -64,3 +64,22 @@ class BlankAssignmentParameters(BaseModel):
 
     activate_module: bool = False
     column_ret_fold: PositiveInt = 10
+
+
+class PhenotypeAssignmentFoldParameters(BaseModel):
+    """A Pydantic-based class for repr. and valid. of phenotype assignment parameters.
+
+    This class addresses parameters for the fold-difference algorithm.
+
+    Attributes:
+        activate_module: bool to indicate if module should be executed.
+        fold_diff: An integer fold-change to differentiate phenotype-assoc. features.
+        data_type: Type of data ('percentage'- or 'concentration'-like).
+
+    Raise:
+        pydantic.ValidationError: Pydantic validation failed during instantiation.
+    """
+
+    activate_module: bool = True
+    fold_diff: PositiveInt = 10
+    data_type: str = "percentage"
