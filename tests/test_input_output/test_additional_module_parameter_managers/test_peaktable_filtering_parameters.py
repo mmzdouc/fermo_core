@@ -22,7 +22,6 @@ def test_init_peaktable_filtering_parameters_fail():
 
 def test_rel_int_range_scrambled_valid():
     json_dict = {
-        "activate_module": True,
         "filter_rel_int_range": [1.0, 0.0],
     }
     assert isinstance(
@@ -33,7 +32,6 @@ def test_rel_int_range_scrambled_valid():
 def test_rel_int_range_invalid():
     with pytest.raises(ValueError):
         json_dict = {
-            "activate_module": True,
             "filter_rel_int_range": [0.0],
         }
         PeaktableFilteringParameters(**json_dict)
