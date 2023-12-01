@@ -50,7 +50,7 @@ class PeaktableFilteringParameters(BaseModel):
     filter_rel_int_range: List[float] = [0.0, 1.0]
 
     @model_validator(mode="after")
-    def order_values_min_max(self):
+    def order_and_validate_range(self):
         r_list = self.filter_rel_int_range
         r_list = [min(r_list), max(r_list)]
         ValidationManager.validate_range_zero_one(r_list)
@@ -130,3 +130,30 @@ class SpectralLibMatchingDeepscoreParameters(BaseModel):
     activate_module: bool = False
     directory_path: DirectoryPath = Path(__file__).parent.parent.joinpath("libraries")
     score_cutoff: PositiveFloat = 0.7
+
+
+class Ms2QueryAnnotationParameters(BaseModel):
+    """A Pydantic-based class for repr. and valid. of ms2query annotation params.
+
+    Attributes:
+        activate_module: bool to indicate if module should be executed.
+        directory_path: pathlib Path object pointing to dir with ms2query files.
+        consider_blank: indicates if blank-associated features are annotated too
+        filter_rel_int_range: only features inside range are annotated
+
+    Raise:
+        pydantic.ValidationError: Pydantic validation failed during instantiation.
+    """
+
+    activate_module: bool = False
+    directory_path: DirectoryPath = Path(__file__).parent.parent.joinpath("libraries")
+    consider_blank: bool = False
+    filter_rel_int_range: List[float] = [0.0, 1.0]
+
+    @model_validator(mode="after")
+    def order_and_validate_range(self):
+        r_list = self.filter_rel_int_range
+        r_list = [min(r_list), max(r_list)]
+        ValidationManager.validate_range_zero_one(r_list)
+        self.filter_rel_int_range = r_list
+        return self
