@@ -97,7 +97,7 @@ class SpecSimNetworkDeepscoreParameters(BaseModel):
         pydantic.ValidationError: Pydantic validation failed during instantiation.
     """
 
-    activate_module: bool = False
+    activate_module: bool = True
     directory_path: DirectoryPath = Path(__file__).parent.parent.joinpath("libraries")
     score_cutoff: PositiveFloat = 0.7
     max_nr_links: PositiveInt = 10

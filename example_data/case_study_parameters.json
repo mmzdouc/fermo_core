@@ -38,7 +38,7 @@
                 "max_precursor_mass_diff": 400
             },
             "ms2deepscore": {
-                "activate_module": false,
+                "activate_module": true,
                 "directory_path": "fermo_core/libraries",
                 "score_cutoff": 0.7,
                 "max_nr_links": 10
