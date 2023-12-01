@@ -22,7 +22,7 @@ SOFTWARE.
 """
 from typing import List
 
-from pydantic import BaseModel, model_validator, PositiveInt
+from pydantic import BaseModel, model_validator, PositiveInt, PositiveFloat
 
 from fermo_core.input_output.class_validation_manager import ValidationManager
 
@@ -80,6 +80,27 @@ class PhenotypeAssignmentFoldParameters(BaseModel):
         pydantic.ValidationError: Pydantic validation failed during instantiation.
     """
 
-    activate_module: bool = True
+    activate_module: bool = False
     fold_diff: PositiveInt = 10
     data_type: str = "percentage"
+
+
+class SpectralLibMatchingCosineParameters(BaseModel):
+    """A Pydantic-based class for repr. and valid. of spectral library matching params.
+
+    This class addresses parameters for the modified cosine algorithm.
+
+    Attributes:
+        activate_module: bool to indicate if module should be executed.
+        fragment_tol: max tolerable diff to consider two fragments as equal, in m/z
+        min_nr_matched_peaks: peak cutoff to consider a match of two MS/MS spectra
+        score_cutoff: score cutoff to consider a match of two MS/MS spectra
+
+    Raise:
+        pydantic.ValidationError: Pydantic validation failed during instantiation.
+    """
+
+    activate_module: bool = False
+    fragment_tol: PositiveFloat = 0.1
+    min_nr_matched_peaks: PositiveInt = 5
+    score_cutoff: PositiveFloat = 0.7
