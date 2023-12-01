@@ -329,13 +329,14 @@ class ValidationManager:
         """Validate that user-provided range is inside range 0.0 - 1.0.
 
         Arguments:
-           user_range: User-provided range: two floats, upper and lower bounds.
+            user_range: User-provided range: two floats, upper and lower bounds.
 
         Raises:
-            TypeError: user-range not a list
             ValueError: More than two values OR not floats OR out of bounds
         """
-        if not all(0.0 <= entry <= 1.0 for entry in user_range):
+        if len(user_range) > 2:
+            raise ValueError("More than two values in range.")
+        elif not all(0.0 <= entry <= 1.0 for entry in user_range):
             raise ValueError(
                 "At least one of the values is outside of range 0.0 to 1.0."
             )
