@@ -63,36 +63,6 @@ def test_unexpected_values_stats(params_manager, attributes):
     ), f"Unexpected attributes found in class 'Stats': {unexpected_attributes}."
 
 
-def test_define_argparse_args(params_manager):
-    parser = params_manager.define_argparse_args()
-    assert isinstance(parser, argparse.ArgumentParser)
-
-
-def test_json_default_parameters_jsonschema(params_manager):
-    schema = params_manager.load_json_file("fermo_core/config/schema.json")
-    default_params = params_manager.load_json_file(
-        "fermo_core/example_data/case_study_parameters.json"
-    )
-    try:
-        jsonschema.validate(instance=default_params, schema=schema)
-    except jsonschema.exceptions.ValidationError:
-        pytest.fail("JSON schema validation failed.")
-
-
-@pytest.fixture
-def default_params(params_manager):
-    return params_manager.load_json_file(
-        "fermo_core/example_data/case_study_parameters.json"
-    )
-
-
-@pytest.fixture
-def example_params(params_manager):
-    return params_manager.load_json_file(
-        "fermo_core/example_data/case_study_parameters.json"
-    )
-
-
 def test_assign_peaktable_valid(params_manager, example_params, default_params):
     params_manager.assign_peaktable(example_params, default_params)
     assert (

@@ -23,125 +23,116 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-import argparse
 import logging
-import json
 from pathlib import Path
+from pydantic import BaseModel
 from typing import Self, Optional
 
 from fermo_core.input_output.class_validation_manager import ValidationManager
 
+from fermo_core.input_output.input_file_parameter_managers import (
+    PeaktableParameters,
+    MsmsParameters,
+    PhenotypeParameters,
+    GroupMetadataParameters,
+    SpecLibParameters,
+)
+from fermo_core.input_output.core_module_parameter_managers import (
+    AdductAnnotationParameters,
+    SpecSimNetworkCosineParameters,
+    SpecSimNetworkDeepscoreParameters,
+)
+from fermo_core.input_output.additional_module_parameter_managers import (
+    PeaktableFilteringParameters,
+    BlankAssignmentParameters,
+    PhenotypeAssignmentFoldParameters,
+    SpectralLibMatchingCosineParameters,
+    SpectralLibMatchingDeepscoreParameters,
+    Ms2QueryAnnotationParameters,
+)
 
-class ParameterManager:
+
+class ParameterManager(BaseModel):
     """Handle parameters for processing by fermo_core.
 
     Handle input from both graphical user interface and command line,
-    well as default values, for downstream processing.
-
-    More information on default parameters and the properties of the dicts can be
-    found in fermo_core/config/default_parameters.json
+    well as default values, for downstream processing. More information on default
+    parameters and the properties of the dicts can be found in
+    fermo_core/config/default_parameters.json
 
     Attributes:
-        version: Current program version.
-        root: "Root" directory of program.
-        session: Fermo json session file.
-        peaktable: Sample/feature information.
-        msms: MS/MS information on molecular features.
-        phenotype: phenotype/bioactivity information.
-        group_metadata: sample grouping info.
-        spectral_library: Annotated MS/MS spectra.
-        phenotype_algorithm_settings: setting for phenotype algorithms
-        mass_dev_ppm: Expected mass deviation tolerance in ppm.
-        msms_frag_min: Minimum tolerable number of msms fragments per spectrum.
-        column_ret_fold: Fold-factor to determine blank-associated features.
-        fragment_tol: Tolerance in m/z to connect features by spectral sim.
-        spectral_sim_score_cutoff: Cutoff tolerance spectra similarity.
-        max_nr_links_spec_sim: Maximum tolerable nr of connections.
-        min_nr_matched_peaks: Minimum tolerable nr of peaks for a spec sim match.
-        spectral_sim_network_alg: Selected spectral similarity networking algorithm.
-        ms2query: Info on running MS2Query annotation.
-        rel_int_range: Restrict processing of features based on relative intensity.
-        max_library_size: Restrict spectral library size/entries to a max integer
+        PeaktableParameters: instance of class handling peaktable parameters or None
+        MsmsParameters: instance of class handling MS/MS parameters or None
+        PhenotypeParameters: instance of class handling phenotype parameters or None
+        GroupMetadataParameters: instance of class handling metadata parameters or None
+        SpecLibParameters: instance of class handling spectra library parameters or Non
+        AdductAnnotationParameters:
+        SpecSimNetworkCosineParameters:
+        SpecSimNetworkDeepscoreParameters:
+        PeaktableFilteringParameters:
+        BlankAssignmentParameters:
+        PhenotypeAssignmentFoldParameters:
+        SpectralLibMatchingCosineParameters:
+        SpectralLibMatchingDeepscoreParameters:
+        Ms2QueryAnnotationParameters:
+        TODO(MMZ 04.12.23): complete docstring
     """
 
-    def __init__(self: Self, version: str, root: Path):
-        self.version: str = version
-        self.root: Path = root
-        self.session: Optional[dict] = None
-        self.peaktable: Optional[dict] = None
-        self.msms: Optional[dict] = None
-        self.phenotype: Optional[dict] = None
-        self.group_metadata: Optional[dict] = None
-        self.spectral_library: Optional[dict] = None
-        self.phenotype_algorithm_settings: Optional[dict] = None
-        self.mass_dev_ppm: Optional[int] = None
-        self.msms_frag_min: Optional[int] = None
-        self.column_ret_fold: Optional[int] = None
-        self.fragment_tol: Optional[float] = None
-        self.spectral_sim_score_cutoff: Optional[float] = None
-        self.max_nr_links_spec_sim: Optional[int] = None
-        self.min_nr_matched_peaks: Optional[int] = None
-        self.spectral_sim_network_alg: Optional[str] = None
-        self.ms2query: Optional[dict] = None
-        self.rel_int_range: Optional[tuple] = None
-        self.max_library_size: Optional[int] = None
+    PeaktableParameters: Optional[PeaktableParameters] = None
+    MsmsParameters: Optional[MsmsParameters] = None
+    PhenotypeParameters: Optional[PhenotypeParameters] = None
+    GroupMetadataParameters: Optional[GroupMetadataParameters] = None
+    SpecLibParameters: Optional[SpecLibParameters] = None
+    AdductAnnotationParameters: AdductAnnotationParameters = (
+        AdductAnnotationParameters()
+    )
+    SpecSimNetworkCosineParameters: SpecSimNetworkCosineParameters = (
+        SpecSimNetworkCosineParameters()
+    )
+    SpecSimNetworkDeepscoreParameters: SpecSimNetworkDeepscoreParameters = (
+        SpecSimNetworkDeepscoreParameters()
+    )
+    PeaktableFilteringParameters: PeaktableFilteringParameters = (
+        PeaktableFilteringParameters()
+    )
+    BlankAssignmentParameters: BlankAssignmentParameters = BlankAssignmentParameters()
+    PhenotypeAssignmentFoldParameters: PhenotypeAssignmentFoldParameters = (
+        PhenotypeAssignmentFoldParameters()
+    )
+    SpectralLibMatchingCosineParameters: SpectralLibMatchingCosineParameters = (
+        SpectralLibMatchingCosineParameters()
+    )
+    SpectralLibMatchingDeepscoreParameters: SpectralLibMatchingDeepscoreParameters = (
+        SpectralLibMatchingDeepscoreParameters()
+    )
+    Ms2QueryAnnotationParameters: Ms2QueryAnnotationParameters = (
+        Ms2QueryAnnotationParameters()
+    )
 
-    def assign_peaktable(self: Self, user_params: dict, default_params: dict):
-        """Validate and assign the peaktable information to self.
+    def assign_parameters(self: Self, user_params: dict):
+        """Assigns user-input to different methods for attribute modification.
+
+        Arguments:
+            user_params: a json-derived dict with user input; jsonschema-controlled.
+        """
+        if (info := user_params.get("files").get("peaktable")) is not None:
+            self.assign_peaktable(info)
+        if (info := user_params.get("files").get("msms")) is not None:
+            self.assign_peaktable(info)
+
+    def assign_peaktable(self: Self, user_params: dict):
+        """Assign peaktable params to self.PeaktableParameters
 
         Parameters:
             user_params: user-provided params, read from json file
-            default_params: default parameters read from json file, serves as fallback
 
         Raises:
-            Exception: catch for more specific exception raised by methods in
-            ValidationManager.
-
-        Notes:
-            Mandatory parameter.
-            Expand here for other file formats.
+            Exception: catch for specific exception by PeaktableParameters()
         """
         try:
-            ValidationManager.validate_keys(user_params, "peaktable")
-            ValidationManager.validate_keys(
-                user_params.get("peaktable"), "filename", "format", "polarity"
-            )
-            ValidationManager.validate_string(user_params["peaktable"]["filename"])
-            ValidationManager.validate_file_exists(user_params["peaktable"]["filename"])
-            ValidationManager.validate_value_in_list(
-                default_params["peaktable"]["allowed_formats"],
-                user_params["peaktable"]["format"],
-            )
-            ValidationManager.validate_value_in_list(
-                default_params["peaktable"]["allowed_polarities"],
-                user_params["peaktable"]["polarity"],
-            )
-            match user_params["peaktable"]["format"]:
-                case "mzmine3":
-                    ValidationManager.validate_file_extension(
-                        user_params["peaktable"]["filename"], ".csv"
-                    )
-                    ValidationManager.validate_csv_file(
-                        user_params["peaktable"]["filename"]
-                    )
-                    ValidationManager.validate_peaktable_mzmine3(
-                        user_params["peaktable"]["filename"]
-                    )
-                    ValidationManager.validate_no_duplicate_entries_csv_column(
-                        user_params["peaktable"]["filename"], "id"
-                    )
-                case _:
-                    raise ValueError(
-                        f"Could not recognize peaktable format "
-                        f"'{user_params['peaktable']['format']}' of file "
-                        f"'{user_params['peaktable']['filename']}'."
-                    )
-
-            self.peaktable = user_params.get("peaktable")
+            self.PeaktableParameters = PeaktableParameters(**user_params)
             logging.info(
-                f"Validated and assigned user-specified parameter 'peaktable' "
-                f"'{user_params['peaktable']['filename']}' in "
-                f"'{user_params['peaktable']['format']}' format."
+                "Validated and assigned user-specified parameter for 'peaktable'."
             )
         except Exception as e:
             logging.error(str(e))
