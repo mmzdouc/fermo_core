@@ -117,8 +117,33 @@ class ParameterManager(BaseModel):
         """
         if (info := user_params.get("files").get("peaktable")) is not None:
             self.assign_peaktable(info)
+
         if (info := user_params.get("files").get("msms")) is not None:
-            self.assign_peaktable(info)
+            self.assign_msms(info)
+        else:
+            self.log_skipped_modules("msms")
+
+    # TODO(MMZ 04.12.23): continue writing here -> next function should be PhenotypeParameters
+
+    @staticmethod
+    def log_skipped_modules(module: str):
+        """Write log of skipped module assignment.
+
+        Arguments:
+            module: a str referencing the module that was skipped.
+        """
+        logging.info(f"ParameterManager: no parameters for module '{module}' - SKIP.")
+
+    @staticmethod
+    def log_default_values(module: str):
+        """Write log for module for which defaults are used.
+
+        Arguments:
+            module: a str referencing the module for which default params are used.
+        """
+        logging.info(
+            f"ParameterManager: no parameters for module '{module}' - DEFAULT VALUES."
+        )
 
     def assign_peaktable(self: Self, user_params: dict):
         """Assign peaktable params to self.PeaktableParameters
@@ -138,57 +163,20 @@ class ParameterManager(BaseModel):
             logging.error(str(e))
             raise e
 
-    def assign_msms(self: Self, user_params: dict, default_params: dict):
-        """Validate and assign the msms information to self.
+    def assign_msms(self: Self, user_params: dict):
+        """Assign msms params to self.MsmsParameters
 
         Parameters:
             user_params: user-provided params, read from json file
-            default_params: default parameters read from json file, serves as fallback
 
         Raises:
-            Exception: catch for more specific exception raised by methods in
-            ValidationManager.
-
-        Notes:
-            Expand here for other file formats.
+            Exception: catch for specific exception by MsmsParameters()
         """
         try:
-            ValidationManager.validate_keys(user_params, "msms")
-            ValidationManager.validate_keys(
-                user_params.get("msms"),
-                "filename",
-                "format",
-            )
-            ValidationManager.validate_string(user_params["msms"]["filename"])
-            ValidationManager.validate_file_exists(user_params["msms"]["filename"])
-            ValidationManager.validate_value_in_list(
-                default_params["msms"]["allowed_formats"], user_params["msms"]["format"]
-            )
-
-            match user_params["msms"]["format"]:
-                case "mgf":
-                    ValidationManager.validate_file_extension(
-                        user_params["msms"]["filename"], ".mgf"
-                    )
-                    ValidationManager.validate_mgf_file(user_params["msms"]["filename"])
-                case _:
-                    raise ValueError(
-                        f"Could not recognize MS/MS format "
-                        f"'{user_params['msms']['format']}' of file "
-                        f"'{user_params['msms']['filename']}'."
-                    )
-
-            self.msms = user_params.get("msms")
-            logging.info(
-                f"Validated and assigned user-specified parameter 'MS/MS "
-                f"information' "
-                f"'{user_params['msms']['filename']}' in "
-                f"'{user_params['msms']['format']}' format."
-            )
+            self.MsmsParameters = MsmsParameters(**user_params)
+            logging.info("Validated and assigned user-specified parameter for 'MS/MS'.")
         except Exception as e:
             logging.error(str(e))
-            logging.warning("Could not detect MS/MS information file - SKIP.")
-            self.msms = default_params.get("msms")
 
     def assign_phenotype(self: Self, user_params: dict, default_params: dict):
         """Validate and assign the phenotype information to self.

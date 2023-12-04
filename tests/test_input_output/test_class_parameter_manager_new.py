@@ -1,5 +1,6 @@
 import pytest
 
+
 from pydantic import ValidationError
 
 from fermo_core.input_output.class_parameter_manager import ParameterManager
@@ -37,3 +38,20 @@ def test_assign_peaktable_invalid():
                 "filepath": "example_data/case_study_peak_table_quant_full.csv",
             }
         )
+
+
+def test_assign_msms_valid():
+    params = ParameterManager()
+    params.assign_msms(
+        {"filepath": "example_data/case_study_MSMS.mgf", "format": "mgf"}
+    )
+
+
+def test_assign_msms_invalid():
+    params = ParameterManager()
+    params.assign_msms(
+        {
+            "filepath": "example_data/case_study_MSMS.mgf",
+        }
+    )
+    assert params.MsmsParameters is None

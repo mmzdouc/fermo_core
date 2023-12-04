@@ -10,8 +10,7 @@
             "additionalProperties": false,
             "type": "object",
             "required": [
-                "peaktable",
-                "msms"
+                "peaktable"
             ],
             "properties": {
                 "peaktable": {
