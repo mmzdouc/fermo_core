@@ -110,7 +110,21 @@ class ParameterManager(BaseModel):
     )
 
     def assign_parameters(self: Self, user_params: dict):
-        """Assigns user-input to different methods for attribute modification.
+        """Modifies attributes by calling methods that take user input.
+
+        Arguments:
+            user_params: a json-derived dict with user input; jsonschema-controlled.
+        """
+        logging.info("Started assignment of user-provided parameters.")
+
+        self.assign_files_parameters(user_params)
+        self.assign_core_modules_parameters(user_params)
+        self.assign_additional_modules_parameters(user_params)
+
+        logging.info("Completed assignment of user-provided parameters.")
+
+    def assign_files_parameters(self: Self, user_params: dict):
+        """Assigns user-input on files using dedicated methods.
 
         Arguments:
             user_params: a json-derived dict with user input; jsonschema-controlled.
@@ -123,7 +137,37 @@ class ParameterManager(BaseModel):
         else:
             self.log_skipped_modules("msms")
 
-    # TODO(MMZ 04.12.23): continue writing here -> next function should be PhenotypeParameters
+        if (info := user_params.get("files").get("phenotype")) is not None:
+            self.assign_phenotype(info)
+        else:
+            self.log_skipped_modules("phenotype")
+
+        if (info := user_params.get("files").get("group_metadata")) is not None:
+            self.assign_group_metadata(info)
+        else:
+            self.log_skipped_modules("group_metadata")
+
+        if (info := user_params.get("files").get("spectral_library")) is not None:
+            self.assign_spectral_library(info)
+        else:
+            self.log_skipped_modules("spectral_library")
+
+    def assign_core_modules_parameters(self: Self, user_params: dict):
+        """Assigns user-input on core modules using dedicated methods.
+
+        Arguments:
+            user_params: a json-derived dict with user input; jsonschema-controlled.
+        """
+        if (
+            info := user_params.get("core_modules").get("adduct_annotation")
+        ) is not None:
+            self.assign_adduct_annotation(info)
+        else:
+            self.log_default_values("adduct_annotation")
+
+        # TODO(MMZ 05.12.23): continue with core modules assignment
+
+    # function assign_additional_modules_parameters()
 
     @staticmethod
     def log_skipped_modules(module: str):
@@ -142,11 +186,24 @@ class ParameterManager(BaseModel):
             module: a str referencing the module for which default params are used.
         """
         logging.info(
-            f"ParameterManager: no parameters for module '{module}' - DEFAULT VALUES."
+            f"ParameterManager: no parameters for module '{module}' "
+            f"- USED DEFAULT VALUES."
+        )
+
+    @staticmethod
+    def log_malformed_parameters(module: str):
+        """Write log for module for which missing/malformed parameters were found.
+
+        Arguments:
+            module: a str referencing the module for errors were detected.
+        """
+        logging.warning(
+            f"ParameterManager: found missing/malformed parameter values for module "
+            f"'{module}' - SKIP."
         )
 
     def assign_peaktable(self: Self, user_params: dict):
-        """Assign peaktable params to self.PeaktableParameters
+        """Assign peaktable file parameters to self.PeaktableParameters
 
         Parameters:
             user_params: user-provided params, read from json file
@@ -160,226 +217,95 @@ class ParameterManager(BaseModel):
                 "Validated and assigned user-specified parameter for 'peaktable'."
             )
         except Exception as e:
-            logging.error(str(e))
+            logging.warning(str(e))
+            logging.critical(
+                "ParameterManager: no or malformed parameters for "
+                "'peaktable' - ABORT"
+            )
             raise e
 
     def assign_msms(self: Self, user_params: dict):
-        """Assign msms params to self.MsmsParameters
+        """Assign msms file parameters to self.MsmsParameters
 
         Parameters:
             user_params: user-provided params, read from json file
-
-        Raises:
-            Exception: catch for specific exception by MsmsParameters()
         """
         try:
             self.MsmsParameters = MsmsParameters(**user_params)
-            logging.info("Validated and assigned user-specified parameter for 'MS/MS'.")
+            logging.info("Validated and assigned user-specified parameter for 'msms'.")
         except Exception as e:
-            logging.error(str(e))
+            logging.warning(str(e))
+            self.log_malformed_parameters("msms")
+            self.MsmsParameters = None
 
-    def assign_phenotype(self: Self, user_params: dict, default_params: dict):
-        """Validate and assign the phenotype information to self.
+    def assign_phenotype(self: Self, user_params: dict):
+        """Assign phenotype file parameters to self.PhenotypeParameters
 
         Parameters:
             user_params: user-provided params, read from json file
-            default_params: default parameters read from json file, serves as fallback
-
-        Notes:
-            Optional parameter, raises no error.
-            Expand here for other file formats.
-
-            A fermo-style phenotype data file is a .csv-file with the layout:
-
-            sample_name,phenotype_col_1,phenotype_col_2,...,phenotype_col_n \n
-            sample1,1,0.1 \n
-            sample2,10,0.01 \n
-            sample3,100,0.001 \n
-
-            Ad columns: "sample_name" mandatory, one or more additional columns
-            Ad values: One experiment per column. All experiments must be of the
-            same type (e.g. concentration, percentage inhibition).
-            This is indicated by the "mode" of the file:
-            -> percentage-like (the higher the better),
-            -> concentration-like (the lower the better)
         """
         try:
-            ValidationManager.validate_keys(user_params, "phenotype")
-            ValidationManager.validate_keys(
-                user_params.get("phenotype"), "filename", "format", "mode", "algorithm"
-            )
-            ValidationManager.validate_string(user_params["phenotype"]["filename"])
-            ValidationManager.validate_file_exists(user_params["phenotype"]["filename"])
-            ValidationManager.validate_value_in_list(
-                default_params["phenotype"]["allowed_formats"],
-                user_params["phenotype"]["format"],
-            )
-            ValidationManager.validate_value_in_list(
-                default_params["phenotype"]["allowed_modes"],
-                user_params["phenotype"]["mode"],
-            )
-            ValidationManager.validate_value_in_list(
-                default_params["phenotype"]["allowed_algorithms"],
-                user_params["phenotype"]["algorithm"],
-            )
-
-            match user_params["phenotype"]["format"]:
-                case "fermo":
-                    ValidationManager.validate_file_extension(
-                        user_params["phenotype"]["filename"], ".csv"
-                    )
-                    ValidationManager.validate_csv_file(
-                        user_params["phenotype"]["filename"]
-                    )
-                    ValidationManager.validate_phenotype_fermo(
-                        user_params["phenotype"]["filename"]
-                    )
-                    ValidationManager.validate_no_duplicate_entries_csv_column(
-                        user_params["phenotype"]["filename"], "sample_name"
-                    )
-                case _:
-                    raise ValueError(
-                        f"Could not recognize phenotype format "
-                        f"'{user_params['phenotype']['format']}' of file "
-                        f"'{user_params['phenotype']['filename']}'."
-                    )
-
-            self.phenotype = user_params.get("phenotype")
+            self.PhenotypeParameters = PhenotypeParameters(**user_params)
             logging.info(
-                f"Validated and assigned user-specified parameter "
-                f"'phenotype/bioactivity "
-                f"information' "
-                f"'{user_params['phenotype']['filename']}' in "
-                f"'{user_params['phenotype']['format']}' format."
+                "Validated and assigned user-specified parameter for " "'phenotype'."
             )
-
         except Exception as e:
             logging.warning(str(e))
-            logging.warning("Could not detect phenotype file - SKIP.")
-            self.phenotype = default_params.get("phenotype")
+            self.log_malformed_parameters("phenotype")
+            self.PhenotypeParameters = None
 
-    def assign_group_metadata(self: Self, user_params: dict, default_params: dict):
-        """Validate and assign the group metadata information to self.
+    def assign_group_metadata(self: Self, user_params: dict):
+        """Assign group metadata file parameters to self.GroupMetadataParameters.
 
         Parameters:
             user_params: user-provided params, read from json file
-            default_params: default parameters read from json file, serves as fallback
-
-        Notes:
-            Optional parameter, raises no error.
-            Expand here for other file formats.
-
-            A fermo-style group data file is a .csv-file with the layout:
-
-            sample_name,group_col_1,group_col_2,...,group_col_n \n
-            sample1,medium_A,condition_A \n
-            sample2,medium_B,condition_A\n
-            sample3,medium_C,condition_A \n
-
-            Ad values: The only prohibited value is 'DEFAULT' which is reserved for
-            internal use. 'BLANK' os a special value that indicates the sample/medium
-            blank for automated subtraction.
         """
         try:
-            ValidationManager.validate_keys(user_params, "group_metadata")
-            ValidationManager.validate_keys(
-                user_params.get("group_metadata"), "filename", "format"
-            )
-            ValidationManager.validate_string(user_params["group_metadata"]["filename"])
-            ValidationManager.validate_file_exists(
-                user_params["group_metadata"]["filename"]
-            )
-            ValidationManager.validate_value_in_list(
-                default_params["group_metadata"]["allowed_formats"],
-                user_params["group_metadata"]["format"],
-            )
-            match user_params["group_metadata"]["format"]:
-                case "fermo":
-                    ValidationManager.validate_file_extension(
-                        user_params["group_metadata"]["filename"], ".csv"
-                    )
-                    ValidationManager.validate_csv_file(
-                        user_params["group_metadata"]["filename"]
-                    )
-                    ValidationManager.validate_group_metadata_fermo(
-                        user_params["group_metadata"]["filename"]
-                    )
-                    ValidationManager.validate_no_duplicate_entries_csv_column(
-                        user_params["group_metadata"]["filename"], "sample_name"
-                    )
-                case _:
-                    raise ValueError(
-                        f"Could not recognize group metadata format "
-                        f"'{user_params['group_metadata']['format']}' of file "
-                        f"'{user_params['group_metadata']['filename']}'."
-                    )
-
-            self.group_metadata = user_params.get("group_metadata")
+            self.GroupMetadataParameters = GroupMetadataParameters(**user_params)
             logging.info(
-                f"Validated and assigned user-specified parameter 'group metadata "
-                f"information' "
-                f"'{user_params['group_metadata']['filename']}' in "
-                f"'{user_params['group_metadata']['format']}' format."
+                "Validated and assigned user-specified parameter for "
+                "'group_metadata'."
             )
-
         except Exception as e:
             logging.warning(str(e))
-            logging.warning("Could not detect group metadata file - SKIP.")
-            self.group_metadata = default_params.get("group_metadata")
+            self.log_malformed_parameters("group_metadata")
+            self.GroupMetadataParameters = None
 
-    def assign_spectral_library(self: Self, user_params: dict, default_params: dict):
-        """Validate and assign the spectral library information to self.
+    def assign_spectral_library(self: Self, user_params: dict):
+        """Assign spectral library file parameters to self.SpecLibParameters.
 
         Parameters:
             user_params: user-provided params, read from json file
-            default_params: default parameters read from json file, serves as fallback
-
-        Notes:
-            Optional parameter, raises no error.
-            Expand here for other file formats.
         """
         try:
-            ValidationManager.validate_keys(user_params, "spectral_library")
-            ValidationManager.validate_keys(
-                user_params.get("spectral_library"), "filename", "format"
-            )
-            ValidationManager.validate_string(
-                user_params["spectral_library"]["filename"]
-            )
-            ValidationManager.validate_file_exists(
-                user_params["spectral_library"]["filename"]
-            )
-            ValidationManager.validate_value_in_list(
-                default_params["spectral_library"]["allowed_formats"],
-                user_params["spectral_library"]["format"],
-            )
-            match user_params["spectral_library"]["format"]:
-                case "mgf":
-                    ValidationManager.validate_file_extension(
-                        user_params["spectral_library"]["filename"], ".mgf"
-                    )
-                    ValidationManager.validate_mgf_file(
-                        user_params["spectral_library"]["filename"]
-                    )
-                case _:
-                    raise ValueError(
-                        f"Could not recognize spectral library MS/MS format "
-                        f"'{user_params['spectral_library']['format']}' of file "
-                        f"'{user_params['spectral_library']['filename']}'."
-                    )
-
-            self.spectral_library = user_params.get("spectral_library")
+            self.SpecLibParameters = SpecLibParameters(**user_params)
             logging.info(
-                f"Validated and assigned user-specified parameter 'MS/MS spectral "
-                f"library' "
-                f"'{user_params['spectral_library']['filename']}' in "
-                f"'{user_params['spectral_library']['format']}' format."
+                "Validated and assigned user-specified parameter for "
+                "'spectral_library'."
             )
-
         except Exception as e:
             logging.warning(str(e))
-            logging.warning("Could not detect spectral library file - SKIP.")
-            self.spectral_library = default_params.get("spectral_library")
+            self.log_malformed_parameters("spectral_library")
+            self.SpecLibParameters = None
+
+    def assign_adduct_annotation(self: Self, user_params: dict):
+        """Assign adduct_annotation parameters to self.AdductAnnotationParameters.
+
+        Parameters:
+            user_params: user-provided params, read from json file
+        """
+        try:
+            self.AdductAnnotationParameters = AdductAnnotationParameters(**user_params)
+            logging.info(
+                "Validated and assigned user-specified parameter for "
+                "'adduct_annotation'."
+            )
+        except Exception as e:
+            logging.warning(str(e))
+            self.log_malformed_parameters("adduct_annotation")
+            self.AdductAnnotationParameters = AdductAnnotationParameters()
+
+    # TODO(MMZ 05.12.23): continue here with functions; all below will be deleted later
 
     def assign_phenotype_algorithm_settings(
         self: Self, user_params: dict, default_params: dict

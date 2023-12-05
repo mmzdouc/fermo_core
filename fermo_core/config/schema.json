@@ -45,7 +45,7 @@
                     }
                 },
                 "msms": {
-                    "title": "File containing information of MS/MS spectra of molecular features in peaktable.",
+                    "title": "(Optional): file containing information of MS/MS spectra of molecular features in peaktable.",
                     "additionalProperties": false,
                     "type": "object",
                     "required": [
@@ -89,7 +89,7 @@
                     }
                 },
                 "group_metadata": {
-                    "title": "(Optional): File containing information on group metadata information.",
+                    "title": "(Optional): file containing information on group metadata information.",
                     "additionalProperties": false,
                     "type": "object",
                     "required": [
@@ -111,7 +111,7 @@
                     }
                 },
                 "spectral_library": {
-                    "title": "(Optional): File containing a custom spectral library for spectra similarity matching.",
+                    "title": "(Optional): file containing a custom spectral library for spectra similarity matching.",
                     "additionalProperties": false,
                     "type": "object",
                     "required": [
@@ -308,12 +308,12 @@
                                     "type": "boolean"
                                 },
                                 "fold_diff": {
-                                    "title": "Fold-change difference to be used for molecular feature differentiation. Default value: 10",
+                                    "title": "(Optional): fold-change difference to be used for molecular feature differentiation. Default value: 10",
                                     "type": "integer",
                                     "minimum": 1
                                 },
                                 "data_type": {
-                                    "title": "Specifies how the data type is interpreted. Is the data 'percentage-like' ('the higher the better)' or 'concentration-like' ('the lower, the better')? Default value: 'percentage'.",
+                                    "title": "(Optional): specifies how the data type is interpreted. Is the data 'percentage-like' ('the higher the better)' or 'concentration-like' ('the lower, the better')? Default value: 'percentage'.",
                                     "type": "string",
                                     "enum": [
                                         "percentage",
@@ -330,7 +330,7 @@
                     "type": "object",
                     "properties": {
                         "modified_cosine": {
-                            "title": "Modified cosine algorithm. Most commonly used, quantifies the similarity between two spectra based on their dot-product. See 'https://matchms.readthedocs.io/en/latest/api/matchms.similarity.ModifiedCosine.html' for details.",
+                            "title": "(Optional): modified cosine algorithm. Most commonly used, quantifies the similarity between two spectra based on their dot-product. See 'https://matchms.readthedocs.io/en/latest/api/matchms.similarity.ModifiedCosine.html' for details.",
                             "additionalProperties": false,
                             "type": "object",
                             "required": [
@@ -359,7 +359,7 @@
                             }
                         },
                         "ms2deepscore": {
-                            "title": "MS2Deepscore algorithm. Quantifies the similarity between two spectra based on a spectral embedding (deep learning). See 'https://github.com/matchms/ms2deepscore' for details.",
+                            "title": "(Optional): MS2Deepscore algorithm. Quantifies the similarity between two spectra based on a spectral embedding (deep learning). See 'https://github.com/matchms/ms2deepscore' for details.",
                             "additionalProperties": false,
                             "type": "object",
                             "required": [
