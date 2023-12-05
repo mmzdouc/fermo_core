@@ -144,3 +144,48 @@ def test_assign_adduct_annotation_invalid():
         }
     )
     assert params.AdductAnnotationParameters.mass_dev_ppm == 20.0
+
+
+def test_assign_spec_sim_networking_cosine_valid():
+    params = ParameterManager()
+    params.assign_spec_sim_networking_cosine(
+        {
+            "activate_module": True,
+            "msms_min_frag_nr": 5,
+            "fragment_tol": 0.1,
+            "min_nr_matched_peaks": 5,
+            "score_cutoff": 0.7,
+            "max_nr_links": 10,
+            "max_precursor_mass_diff": 400,
+        }
+    )
+    assert isinstance(
+        params.SpecSimNetworkCosineParameters, SpecSimNetworkCosineParameters
+    )
+
+
+def test_assign_spec_sim_networking_cosine_invalid():
+    params = ParameterManager()
+    params.assign_spec_sim_networking_cosine({"asdfg": "asdfg"})
+    assert params.SpecSimNetworkCosineParameters.msms_min_frag_nr == 5
+
+
+def test_assign_spec_sim_networking_ms2deepscore_valid():
+    params = ParameterManager()
+    params.assign_spec_sim_networking_ms2deepscore(
+        {
+            "activate_module": True,
+            "directory_path": "fermo_core/libraries",
+            "score_cutoff": 0.7,
+            "max_nr_links": 10,
+        }
+    )
+    assert isinstance(
+        params.SpecSimNetworkDeepscoreParameters, SpecSimNetworkDeepscoreParameters
+    )
+
+
+def test_assign_spec_sim_networking_ms2deepscore_invalid():
+    params = ParameterManager()
+    params.assign_spec_sim_networking_ms2deepscore({"asdfg": "asdfg"})
+    assert params.SpecSimNetworkDeepscoreParameters.score_cutoff == 0.7

@@ -124,7 +124,7 @@ class ParameterManager(BaseModel):
         logging.info("Completed assignment of user-provided parameters.")
 
     def assign_files_parameters(self: Self, user_params: dict):
-        """Assigns user-input on files using dedicated methods.
+        """Assigns user-input on files to ParameterManager.
 
         Arguments:
             user_params: a json-derived dict with user input; jsonschema-controlled.
@@ -153,7 +153,7 @@ class ParameterManager(BaseModel):
             self.log_skipped_modules("spectral_library")
 
     def assign_core_modules_parameters(self: Self, user_params: dict):
-        """Assigns user-input on core modules using dedicated methods.
+        """Assigns user-input on core modules to ParameterManager.
 
         Arguments:
             user_params: a json-derived dict with user input; jsonschema-controlled.
@@ -164,6 +164,37 @@ class ParameterManager(BaseModel):
             self.assign_adduct_annotation(info)
         else:
             self.log_default_values("adduct_annotation")
+
+        if (
+            info := user_params.get("core_modules")
+            .get("spec_sim_networking")
+            .get("modified_cosine")
+        ) is not None:
+            self.assign_spec_sim_networking_cosine(info)
+        else:
+            self.log_default_values("spec_sim_networking/modified_cosine")
+
+        if (
+            info := user_params.get("core_modules")
+            .get("spec_sim_networking")
+            .get("ms2deepscore")
+        ) is not None:
+            self.assign_spec_sim_networking_ms2deepscore(info)
+        else:
+            self.log_default_values("spec_sim_networking/ms2deepscore")
+
+    def assign_additional_modules_parameters(self: Self, user_params: dict):
+        """Assigns user-input on additional modules to ParameterManager.
+
+        Arguments:
+            user_params: a json-derived dict with user input; jsonschema-controlled.
+        """
+        if (
+            info := user_params.get("additional_modules").get("peaktable_filtering")
+        ) is not None:
+            self.assign_peaktable_filtering(info)
+        else:
+            self.log_default_values("peaktable_filtering")
 
         # TODO(MMZ 05.12.23): continue with core modules assignment
 
@@ -304,6 +335,63 @@ class ParameterManager(BaseModel):
             logging.warning(str(e))
             self.log_malformed_parameters("adduct_annotation")
             self.AdductAnnotationParameters = AdductAnnotationParameters()
+
+    def assign_spec_sim_networking_cosine(self: Self, user_params: dict):
+        """Assign spec_sim_networking/modified_cosine parameters to self.SpecSimNetworkCosineParameters.
+
+        Parameters:
+            user_params: user-provided params, read from json file
+        """
+        try:
+            self.SpecSimNetworkCosineParameters = SpecSimNetworkCosineParameters(
+                **user_params
+            )
+            logging.info(
+                "Validated and assigned user-specified parameter for "
+                "'spec_sim_networking/modified_cosine'."
+            )
+        except Exception as e:
+            logging.warning(str(e))
+            self.log_malformed_parameters("spec_sim_networking/modified_cosine")
+            self.SpecSimNetworkCosineParameters = SpecSimNetworkCosineParameters()
+
+    def assign_spec_sim_networking_ms2deepscore(self: Self, user_params: dict):
+        """Assign spec_sim_networking/ms2deepscore parameters to self.SpecSimNetworkDeepscoreParameters.
+
+        Parameters:
+            user_params: user-provided params, read from json file
+        """
+        try:
+            self.SpecSimNetworkDeepscoreParameters = SpecSimNetworkDeepscoreParameters(
+                **user_params
+            )
+            logging.info(
+                "Validated and assigned user-specified parameter for "
+                "'spec_sim_networking/ms2deepscore'."
+            )
+        except Exception as e:
+            logging.warning(str(e))
+            self.log_malformed_parameters("spec_sim_networking/ms2deepscore")
+            self.SpecSimNetworkDeepscoreParameters = SpecSimNetworkDeepscoreParameters()
+
+    def assign_peaktable_filtering(self: Self, user_params: dict):
+        """Assign peaktable_filtering parameters to self.PeaktableFilteringParameters.
+
+        Parameters:
+            user_params: user-provided params, read from json file
+        """
+        try:
+            self.PeaktableFilteringParameters = PeaktableFilteringParameters(
+                **user_params
+            )
+            logging.info(
+                "Validated and assigned user-specified parameter for "
+                "'peaktable_filtering'."
+            )
+        except Exception as e:
+            logging.warning(str(e))
+            self.log_malformed_parameters("spec_sim_networking/ms2deepscore")
+            self.SpecSimNetworkDeepscoreParameters = SpecSimNetworkDeepscoreParameters()
 
     # TODO(MMZ 05.12.23): continue here with functions; all below will be deleted later
 
