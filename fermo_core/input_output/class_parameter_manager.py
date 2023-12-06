@@ -24,7 +24,6 @@ SOFTWARE.
 """
 
 import logging
-from pathlib import Path
 from pydantic import BaseModel
 from typing import Self, Optional
 
@@ -75,7 +74,19 @@ class ParameterManager(BaseModel):
         SpectralLibMatchingCosineParameters:
         SpectralLibMatchingDeepscoreParameters:
         Ms2QueryAnnotationParameters:
+
+    Notes:
         TODO(MMZ 04.12.23): complete docstring
+        TODO(MMZ 06.12.23): write integration tests for first four methods
+        TODO(MMZ 06.12.23): check if some of the if-else can be simplified
+        TODO(MMZ 06.12.23): check current paramsmanager tests
+        TODO(MMZ 06.12.23): rename the new parametermanager test file
+        TODO(MMZ 06.12.23): check the validationmanager class and tests
+        TODO(MMZ 06.12.23): rework the test organisation
+        TODO(MMZ 06.12.23): start integrating paramsmanager in program again
+        TODO(MMZ 06.12.23): add a schema-checker before paramsmanager so that the
+        json is valid
+
     """
 
     PeaktableParameters: Optional[PeaktableParameters] = None
@@ -196,9 +207,48 @@ class ParameterManager(BaseModel):
         else:
             self.log_default_values("peaktable_filtering")
 
-        # TODO(MMZ 05.12.23): continue with core modules assignment
+        if (
+            info := user_params.get("additional_modules").get("blank_assignment")
+        ) is not None:
+            self.assign_blank_assignment(info)
+        else:
+            self.log_default_values("blank_assignment")
 
-    # function assign_additional_modules_parameters()
+        if (
+            info := user_params.get("additional_modules")
+            .get("phenotype_assignment")
+            .get("fold_difference")
+        ) is not None:
+            self.assign_phenotype_assignment_fold(info)
+        else:
+            self.log_default_values("phenotype_assignment/fold_difference")
+
+        if (
+            info := user_params.get("additional_modules")
+            .get("spectral_library_matching")
+            .get("modified_cosine")
+        ) is not None:
+            self.assign_spec_lib_matching_cosine(info)
+        else:
+            self.log_default_values("spectral_library_matching/modified_cosine")
+
+        if (
+            info := user_params.get("additional_modules")
+            .get("spectral_library_matching")
+            .get("ms2deepscore")
+        ) is not None:
+            self.assign_spec_lib_matching_ms2deepscore(info)
+        else:
+            self.log_default_values("spectral_library_matching/ms2deepscore")
+
+        if (
+            info := user_params.get("additional_modules").get("ms2query_annotation")
+        ) is not None:
+            self.assign_ms2query(info)
+        else:
+            self.log_default_values("ms2query_annotation")
+
+        # TODO(MMZ 05.12.23): continue with core modules assignment
 
     @staticmethod
     def log_skipped_modules(module: str):
@@ -337,7 +387,8 @@ class ParameterManager(BaseModel):
             self.AdductAnnotationParameters = AdductAnnotationParameters()
 
     def assign_spec_sim_networking_cosine(self: Self, user_params: dict):
-        """Assign spec_sim_networking/modified_cosine parameters to self.SpecSimNetworkCosineParameters.
+        """Assign spec_sim_networking/modified_cosine parameters to
+            self.SpecSimNetworkCosineParameters.
 
         Parameters:
             user_params: user-provided params, read from json file
@@ -356,7 +407,8 @@ class ParameterManager(BaseModel):
             self.SpecSimNetworkCosineParameters = SpecSimNetworkCosineParameters()
 
     def assign_spec_sim_networking_ms2deepscore(self: Self, user_params: dict):
-        """Assign spec_sim_networking/ms2deepscore parameters to self.SpecSimNetworkDeepscoreParameters.
+        """Assign spec_sim_networking/ms2deepscore parameters to
+            self.SpecSimNetworkDeepscoreParameters.
 
         Parameters:
             user_params: user-provided params, read from json file
@@ -393,522 +445,101 @@ class ParameterManager(BaseModel):
             self.log_malformed_parameters("peaktable_filtering")
             self.PeaktableFilteringParameters = PeaktableFilteringParameters()
 
-    # TODO(MMZ 05.12.23): continue here with functions; all below will be deleted later
-
-    def assign_phenotype_algorithm_settings(
-        self: Self, user_params: dict, default_params: dict
-    ):
-        """Validate and assign the phenotype algorithm settings to self.
+    def assign_blank_assignment(self: Self, user_params: dict):
+        """Assign blank_assignment parameters to self.BlankAssignmentParameters.
 
         Parameters:
             user_params: user-provided params, read from json file
-            default_params: default parameters read from json file, serves as fallback
-
-        Notes:
-            Optional parameter, raises no error.
-            Expand here for other file formats.
         """
         try:
-            ValidationManager.validate_keys(user_params, "phenotype_algorithm_settings")
-            for param in user_params["phenotype_algorithm_settings"].keys():
-                match param:
-                    case "fold_difference":
-                        ValidationManager.validate_integer(
-                            user_params["phenotype_algorithm_settings"][
-                                "fold_difference"
-                            ]["value"]
-                        )
-                        ValidationManager.validate_positive_number(
-                            user_params["phenotype_algorithm_settings"][
-                                "fold_difference"
-                            ]["value"]
-                        )
-                    case _:
-                        raise ValueError(
-                            f"Could not recognize phenotype algorithm setting '"
-                            f"{param}'."
-                        )
+            self.BlankAssignmentParameters = BlankAssignmentParameters(**user_params)
+            logging.info(
+                "Validated and assigned user-specified parameter for "
+                "'blank_assignment'."
+            )
+        except Exception as e:
+            logging.warning(str(e))
+            self.log_malformed_parameters("blank_assignment")
+            self.BlankAssignmentParameters = BlankAssignmentParameters()
 
-            self.phenotype_algorithm_settings = user_params.get(
-                "phenotype_algorithm_settings"
+    def assign_phenotype_assignment_fold(self: Self, user_params: dict):
+        """Assign phenotype_assignment/fold_difference parameters to
+            self.PhenotypeAssignmentFoldParameters.
+
+        Parameters:
+            user_params: user-provided params, read from json file
+        """
+        try:
+            self.PhenotypeAssignmentFoldParameters = PhenotypeAssignmentFoldParameters(
+                **user_params
             )
             logging.info(
-                "Validated and assigned user-specified parameter "
-                "'phenotype_algorithm_settings'."
+                "Validated and assigned user-specified parameter for "
+                "'phenotype_assignment/fold_difference'."
             )
-
         except Exception as e:
             logging.warning(str(e))
-            logging.warning(
-                "Could not detect/process parameter 'phenotype_algorithm_settings'. "
-                "Continue with default values."
-            )
-            self.phenotype_algorithm_settings = default_params.get(
-                "phenotype_algorithm_settings"
-            )
+            self.log_malformed_parameters("phenotype_assignment/fold_difference")
+            self.PhenotypeAssignmentFoldParameters = PhenotypeAssignmentFoldParameters()
 
-    def assign_mass_dev_ppm(self: Self, user_params: dict, default_params: dict):
-        """Validate and assign the mass deviation setting to self.
+    def assign_spec_lib_matching_cosine(self: Self, user_params: dict):
+        """Assign spectral_library_matching/modified_cosine parameters to
+            self.SpectralLibMatchingCosineParameters.
 
         Parameters:
             user_params: user-provided params, read from json file
-            default_params: default parameters read from json file, serves as fallback
-
-        Notes:
-            Optional parameter, raises no error.
         """
         try:
-            ValidationManager.validate_keys(user_params, "mass_dev_ppm")
-            ValidationManager.validate_keys(user_params["mass_dev_ppm"], "value")
-            ValidationManager.validate_integer(user_params["mass_dev_ppm"]["value"])
-            ValidationManager.validate_positive_number(
-                user_params["mass_dev_ppm"]["value"]
-            )
-            ValidationManager.validate_mass_deviation_ppm(
-                user_params["mass_dev_ppm"]["value"]
-            )
-
-            self.mass_dev_ppm = int(user_params["mass_dev_ppm"]["value"])
-            logging.info(
-                f"Validated and assigned user-specified parameter to 'mass_dev_ppm': "
-                f"'{user_params['mass_dev_ppm']['value']}'."
-            )
-
-        except Exception as e:
-            logging.warning(str(e))
-            logging.warning(
-                "Could not detect/process parameter 'mass_dev_ppm'. "
-                "Assigned the default value: "
-                f"'{default_params['mass_dev_ppm']['value']}'."
-            )
-            self.mass_dev_ppm = default_params["mass_dev_ppm"]["value"]
-
-    def assign_msms_frag_min(self: Self, user_params: dict, default_params: dict):
-        """Validate and assign the minimum mass fragments per spectrum setting to self.
-
-        Parameters:
-            user_params: user-provided params, read from json file
-            default_params: default parameters read from json file, serves as fallback
-
-        Notes:
-            Optional parameter, raises no error.
-        """
-        try:
-            ValidationManager.validate_keys(user_params, "msms_frag_min")
-            ValidationManager.validate_keys(user_params["msms_frag_min"], "value")
-            ValidationManager.validate_integer(user_params["msms_frag_min"]["value"])
-            ValidationManager.validate_positive_number(
-                user_params["msms_frag_min"]["value"]
-            )
-
-            self.msms_frag_min = int(user_params["msms_frag_min"]["value"])
-            logging.info(
-                f"Validated and assigned user-specified parameter to 'msms_frag_min': "
-                f"'{user_params['msms_frag_min']['value']}'."
-            )
-
-        except Exception as e:
-            logging.warning(str(e))
-            logging.warning(
-                "Could not detect/process parameter 'msms_frag_min'. "
-                "Assigned the default value: "
-                f"'{default_params['msms_frag_min']['value']}'."
-            )
-            self.msms_frag_min = default_params["msms_frag_min"]["value"]
-
-    def assign_column_ret_fold(self: Self, user_params: dict, default_params: dict):
-        """Validate and assign the column retention factor setting to self.
-
-        Parameters:
-            user_params: user-provided params, read from json file
-            default_params: default parameters read from json file, serves as fallback
-
-        Notes:
-            Optional parameter, raises no error.
-        """
-        try:
-            ValidationManager.validate_keys(user_params, "column_ret_fold")
-            ValidationManager.validate_keys(user_params["column_ret_fold"], "value")
-            ValidationManager.validate_integer(user_params["column_ret_fold"]["value"])
-            ValidationManager.validate_positive_number(
-                user_params["column_ret_fold"]["value"]
-            )
-
-            self.column_ret_fold = int(user_params["column_ret_fold"]["value"])
-            logging.info(
-                f"Validated and assigned user-specified parameter to "
-                f"'column_ret_fold': "
-                f"'{user_params['column_ret_fold']['value']}'."
-            )
-
-        except Exception as e:
-            logging.warning(str(e))
-            logging.warning(
-                "Could not detect/process parameter 'column_ret_fold'. "
-                "Assigned the default value: "
-                f"'{default_params['column_ret_fold']['value']}'."
-            )
-            self.column_ret_fold = default_params["column_ret_fold"]["value"]
-
-    def assign_fragment_tol(self: Self, user_params: dict, default_params: dict):
-        """Validate and assign the fragmentation tolerance setting to self.
-
-        Parameters:
-            user_params: user-provided params, read from json file
-            default_params: default parameters read from json file, serves as fallback
-
-        Notes:
-            Optional parameter, raises no error.
-        """
-        try:
-            ValidationManager.validate_keys(user_params, "fragment_tol")
-            ValidationManager.validate_keys(user_params["fragment_tol"], "value")
-            ValidationManager.validate_float(user_params["fragment_tol"]["value"])
-            ValidationManager.validate_positive_number(
-                user_params["fragment_tol"]["value"]
-            )
-
-            self.fragment_tol = float(user_params["fragment_tol"]["value"])
-            logging.info(
-                f"Validated and assigned user-specified parameter to 'fragment_tol': "
-                f"'{user_params['fragment_tol']['value']}'."
-            )
-
-        except Exception as e:
-            logging.warning(str(e))
-            logging.warning(
-                "Could not detect/process parameter 'fragment_tol'. "
-                "Assigned the default value: "
-                f"'{default_params['fragment_tol']['value']}'."
-            )
-            self.fragment_tol = default_params["fragment_tol"]["value"]
-
-    def assign_spectral_sim_score_cutoff(
-        self: Self, user_params: dict, default_params: dict
-    ):
-        """Validate and assign the spectral similarity score cutoff to self.
-
-        Parameters:
-            user_params: user-provided params, read from json file
-            default_params: default parameters read from json file, serves as fallback
-
-        Notes:
-            Optional parameter, raises no error.
-        """
-        try:
-            ValidationManager.validate_keys(user_params, "spectral_sim_score_cutoff")
-            ValidationManager.validate_keys(
-                user_params["spectral_sim_score_cutoff"], "value"
-            )
-            ValidationManager.validate_float(
-                user_params["spectral_sim_score_cutoff"]["value"]
-            )
-            ValidationManager.validate_positive_number(
-                user_params["spectral_sim_score_cutoff"]["value"]
-            )
-
-            self.spectral_sim_score_cutoff = float(
-                user_params["spectral_sim_score_cutoff"]["value"]
+            self.SpectralLibMatchingCosineParameters = (
+                SpectralLibMatchingCosineParameters(**user_params)
             )
             logging.info(
-                f"Validated and assigned user-specified parameter to "
-                f"'spectral_sim_score_cutoff':"
-                f" '{user_params['spectral_sim_score_cutoff']['value']}'."
+                "Validated and assigned user-specified parameter for "
+                "'spectral_library_matching/modified_cosine'."
             )
-
         except Exception as e:
             logging.warning(str(e))
-            logging.warning(
-                "Could not detect/process parameter 'spectral_sim_score_cutoff'. "
-                "Assigned the default value: "
-                f"'{default_params['spectral_sim_score_cutoff']['value']}'."
+            self.log_malformed_parameters("spectral_library_matching/modified_cosine")
+            self.SpectralLibMatchingCosineParameters = (
+                SpectralLibMatchingCosineParameters()
             )
-            self.spectral_sim_score_cutoff = default_params[
-                "spectral_sim_score_cutoff"
-            ]["value"]
 
-    def assign_max_nr_links_spec_sim(
-        self: Self, user_params: dict, default_params: dict
-    ):
-        """Validate and assign the max nr of neighbours in spec sim network param.
+    def assign_spec_lib_matching_ms2deepscore(self: Self, user_params: dict):
+        """Assign spectral_library_matching/ms2deepscore parameters to
+            self.SpectralLibMatchingDeepscoreParameters.
 
         Parameters:
             user_params: user-provided params, read from json file
-            default_params: default parameters read from json file, serves as fallback
-
-        Notes:
-            Optional parameter, raises no error.
         """
         try:
-            ValidationManager.validate_keys(user_params, "max_nr_links_spec_sim")
-            ValidationManager.validate_keys(
-                user_params["max_nr_links_spec_sim"], "value"
-            )
-            ValidationManager.validate_integer(
-                user_params["max_nr_links_spec_sim"]["value"]
-            )
-            ValidationManager.validate_positive_number(
-                user_params["max_nr_links_spec_sim"]["value"]
-            )
-
-            self.max_nr_links_spec_sim = int(
-                user_params["max_nr_links_spec_sim"]["value"]
+            self.SpectralLibMatchingDeepscoreParameters = (
+                SpectralLibMatchingDeepscoreParameters(**user_params)
             )
             logging.info(
-                f"Validated and assigned user-specified parameter to "
-                f"'max_nr_links_spec_sim': "
-                f"'{user_params['max_nr_links_spec_sim']['value']}'."
+                "Validated and assigned user-specified parameter for "
+                "'spectral_library_matching/ms2deepscore'."
             )
-
         except Exception as e:
             logging.warning(str(e))
-            logging.warning(
-                "Could not detect/process parameter 'max_nr_links_spec_sim'. "
-                "Assigned the default value: "
-                f"'{default_params['max_nr_links_spec_sim']['value']}'."
+            self.log_malformed_parameters("spectral_library_matching/ms2deepscore")
+            self.SpectralLibMatchingDeepscoreParameters = (
+                SpectralLibMatchingDeepscoreParameters()
             )
-            self.max_nr_links_spec_sim = default_params["max_nr_links_spec_sim"][
-                "value"
-            ]
 
-    def assign_min_nr_matched_peaks(
-        self: Self, user_params: dict, default_params: dict
-    ):
-        """Validate and assign the min number of corresponding peaks for match param.
+    def assign_ms2query(self: Self, user_params: dict):
+        """Assign ms2query parameters to self.Ms2QueryAnnotationParameters.
 
         Parameters:
             user_params: user-provided params, read from json file
-            default_params: default parameters read from json file, serves as fallback
-
-        Notes:
-            Optional parameter, raises no error.
         """
         try:
-            ValidationManager.validate_keys(user_params, "min_nr_matched_peaks")
-            ValidationManager.validate_keys(
-                user_params["min_nr_matched_peaks"], "value"
-            )
-            ValidationManager.validate_integer(
-                user_params["min_nr_matched_peaks"]["value"]
-            )
-            ValidationManager.validate_positive_number(
-                user_params["min_nr_matched_peaks"]["value"]
-            )
-
-            self.min_nr_matched_peaks = int(
-                user_params["min_nr_matched_peaks"]["value"]
+            self.Ms2QueryAnnotationParameters = Ms2QueryAnnotationParameters(
+                **user_params
             )
             logging.info(
-                f"Validated and assigned user-specified parameter to "
-                f"'min_nr_matched_peaks': "
-                f"'{user_params['min_nr_matched_peaks']['value']}'."
+                "Validated and assigned user-specified parameter for 'ms2query'."
             )
-
         except Exception as e:
             logging.warning(str(e))
-            logging.warning(
-                "Could not detect/process parameter 'min_nr_matched_peaks'. "
-                "Assigned the default value: "
-                f"'{default_params['min_nr_matched_peaks']['value']}'."
-            )
-            self.min_nr_matched_peaks = default_params["min_nr_matched_peaks"]["value"]
-
-    def assign_spectral_sim_network_alg(
-        self: Self, user_params: dict, default_params: dict
-    ):
-        """Validate and assign the spectral similarity network algorithm param.
-
-        Parameters:
-            user_params: user-provided params, read from json file
-            default_params: default parameters read from json file, serves as fallback
-
-        Notes:
-            Optional parameter, raises no error.
-        """
-        try:
-            ValidationManager.validate_keys(user_params, "spectral_sim_network_alg")
-            ValidationManager.validate_keys(
-                user_params["spectral_sim_network_alg"], "format"
-            )
-            ValidationManager.validate_value_in_list(
-                default_params["spectral_sim_network_alg"]["allowed_formats"],
-                user_params["spectral_sim_network_alg"]["format"],
-            )
-
-            self.spectral_sim_network_alg = user_params["spectral_sim_network_alg"][
-                "format"
-            ]
-            logging.info(
-                f"Validated and assigned user-specified parameter to "
-                f"'spectral_sim_network_alg': "
-                f"'{user_params['spectral_sim_network_alg']['format']}'."
-            )
-
-        except Exception as e:
-            logging.warning(str(e))
-            logging.warning(
-                "Could not detect/process parameter 'spectral_sim_network_alg'. "
-                "Assigned the default value: "
-                f"'{default_params['spectral_sim_network_alg']['format']}'."
-            )
-            self.spectral_sim_network_alg = default_params["spectral_sim_network_alg"][
-                "format"
-            ]
-
-    def assign_ms2query(self: Self, user_params: dict, default_params: dict):
-        """Validate and assign the ms2query parameter settings.
-
-        Parameters:
-            user_params: user-provided params, read from json file
-            default_params: default parameters read from json file, serves as fallback
-
-        Notes:
-            Optional parameter, raises no error.
-        """
-        try:
-            ValidationManager.validate_keys(user_params, "ms2query")
-            ValidationManager.validate_keys(
-                user_params["ms2query"], "mode", "annot_features_from_blanks", "range"
-            )
-            ValidationManager.validate_value_in_list(
-                default_params["ms2query"]["allowed_modes"],
-                user_params["ms2query"]["mode"],
-            )
-            ValidationManager.validate_value_in_list(
-                default_params["ms2query"]["allowed_modes_annot_features_from_blanks"],
-                user_params["ms2query"]["annot_features_from_blanks"],
-            )
-            ValidationManager.validate_range_zero_one(user_params["ms2query"]["range"])
-
-            self.ms2query = user_params["ms2query"]
-            logging.info("Validated and assigned user-specified parameter 'ms2query'.")
-
-        except Exception as e:
-            logging.warning(str(e))
-            logging.warning("Could not detect/process parameter 'ms2query' - SKIP.")
-            self.ms2query = default_params["ms2query"]
-
-    def assign_rel_int_range(self: Self, user_params: dict, default_params: dict):
-        """Validate and assign the relative intensity range parameter settings.
-
-        Parameters:
-            user_params: user-provided params, read from json file
-            default_params: default parameters read from json file, serves as fallback
-
-        Notes:
-            Optional parameter, raises no error.
-        """
-        try:
-            ValidationManager.validate_keys(user_params, "rel_int_range")
-            ValidationManager.validate_keys(
-                user_params["rel_int_range"],
-                "range",
-            )
-            ValidationManager.validate_range_zero_one(
-                user_params["rel_int_range"]["range"]
-            )
-
-            self.rel_int_range = (
-                user_params["rel_int_range"]["range"][0],
-                user_params["rel_int_range"]["range"][1],
-            )
-            logging.info(
-                "Validated and assigned user-specified parameter to 'rel_int_range': "
-                f"'{user_params['rel_int_range']['range']}'"
-            )
-
-        except Exception as e:
-            logging.warning(str(e))
-            logging.warning(
-                "Could not detect/process parameter 'rel_int_range'. "
-                "Assigned the default value: "
-                f"'{default_params['rel_int_range']['range']}'."
-            )
-            self.rel_int_range = (
-                default_params["rel_int_range"]["range"][0],
-                default_params["rel_int_range"]["range"][1],
-            )
-
-    def assign_max_library_size(self: Self, user_params: dict, default_params: dict):
-        """Validate and assign the maximum spectra library size setting to self.
-
-        Parameters:
-            user_params: user-provided params, read from json file
-            default_params: default parameters read from json file, serves as fallback
-
-        Notes:
-            Optional parameter, raises no error.
-        """
-        try:
-            ValidationManager.validate_keys(user_params, "max_library_size")
-            ValidationManager.validate_keys(user_params["max_library_size"], "value")
-            ValidationManager.validate_integer(user_params["max_library_size"]["value"])
-            ValidationManager.validate_positive_number(
-                user_params["max_library_size"]["value"]
-            )
-
-            self.max_library_size = int(user_params["max_library_size"]["value"])
-            logging.info(
-                f"Validated and assigned user-specified parameter to "
-                f"'max_library_size': "
-                f"'{user_params['max_library_size']['value']}'."
-            )
-
-        except Exception as e:
-            logging.warning(str(e))
-            logging.warning(
-                "Could not detect/process parameter 'max_library_size'. "
-                "Assigned the default value: "
-                f"'{default_params['max_library_size']['value']}'."
-            )
-            self.max_library_size = default_params["max_library_size"]["value"]
-
-    def parse_parameters(self: Self, user_params: dict, default_params: dict):
-        """Validate an assign user-provided parameters.
-
-        Parameters:
-            user_params: user-provided params, read from json file
-            default_params: default parameters read from json file, serves as fallback
-        """
-        logging.info("Started assignment of user-provided parameters.")
-
-        for param in default_params.keys():
-            match param:
-                case "peaktable":
-                    self.assign_peaktable(user_params, default_params)
-                case "msms":
-                    self.assign_msms(user_params, default_params)
-                case "phenotype":
-                    self.assign_phenotype(user_params, default_params)
-                case "group_metadata":
-                    self.assign_group_metadata(user_params, default_params)
-                case "spectral_library":
-                    self.assign_spectral_library(user_params, default_params)
-                case "phenotype_algorithm_settings":
-                    self.assign_phenotype_algorithm_settings(
-                        user_params, default_params
-                    )
-                case "mass_dev_ppm":
-                    self.assign_mass_dev_ppm(user_params, default_params)
-                case "msms_frag_min":
-                    self.assign_msms_frag_min(user_params, default_params)
-                case "column_ret_fold":
-                    self.assign_column_ret_fold(user_params, default_params)
-                case "fragment_tol":
-                    self.assign_fragment_tol(user_params, default_params)
-                case "spectral_sim_score_cutoff":
-                    self.assign_spectral_sim_score_cutoff(user_params, default_params)
-                case "max_nr_links_spec_sim":
-                    self.assign_max_nr_links_spec_sim(user_params, default_params)
-                case "min_nr_matched_peaks":
-                    self.assign_min_nr_matched_peaks(user_params, default_params)
-                case "spectral_sim_network_alg":
-                    self.assign_spectral_sim_network_alg(user_params, default_params)
-                case "ms2query":
-                    self.assign_ms2query(user_params, default_params)
-                case "rel_int_range":
-                    self.assign_rel_int_range(user_params, default_params)
-                case "max_library_size":
-                    self.assign_max_library_size(user_params, default_params)
-
-        logging.info("Completed assignment of user-provided parameters.")
+            self.log_malformed_parameters("ms2query")
+            self.Ms2QueryAnnotationParameters = Ms2QueryAnnotationParameters()

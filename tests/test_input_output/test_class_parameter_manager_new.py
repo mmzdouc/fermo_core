@@ -203,3 +203,92 @@ def test_assign_peaktable_filtering_invalid():
     params = ParameterManager()
     params.assign_peaktable_filtering({"asdfg": "asdfg"})
     assert params.PeaktableFilteringParameters.filter_rel_int_range[0] == 0.0
+
+
+def test_assign_blank_assignment_valid():
+    params = ParameterManager()
+    params.assign_blank_assignment({"activate_module": True, "column_ret_fold": 10})
+    assert isinstance(params.BlankAssignmentParameters, BlankAssignmentParameters)
+
+
+def test_assign_blank_assignment_invalid():
+    params = ParameterManager()
+    params.assign_blank_assignment({"asdfg": "asdfg"})
+    assert params.BlankAssignmentParameters.column_ret_fold == 10
+
+
+def test_assign_phenotype_assignment_fold_valid():
+    params = ParameterManager()
+    params.assign_phenotype_assignment_fold(
+        {"activate_module": True, "fold_diff": 10, "data_type": "percentage"}
+    )
+    assert isinstance(
+        params.PhenotypeAssignmentFoldParameters, PhenotypeAssignmentFoldParameters
+    )
+
+
+def test_assign_phenotype_assignment_fold_invalid():
+    params = ParameterManager()
+    params.assign_phenotype_assignment_fold({"asdfg": "asdfg"})
+    assert params.PhenotypeAssignmentFoldParameters.fold_diff == 10
+
+
+def test_assign_spec_lib_matching_cosine_valid():
+    params = ParameterManager()
+    params.assign_spec_lib_matching_cosine(
+        {
+            "activate_module": True,
+            "fragment_tol": 0.1,
+            "min_nr_matched_peaks": 5,
+            "score_cutoff": 0.7,
+        }
+    )
+    assert isinstance(
+        params.SpectralLibMatchingCosineParameters, SpectralLibMatchingCosineParameters
+    )
+
+
+def test_assign_spec_lib_matching_cosine_invalid():
+    params = ParameterManager()
+    params.assign_spec_lib_matching_cosine({"asdfg": "asdfg"})
+    assert params.SpectralLibMatchingCosineParameters.fragment_tol == 0.1
+
+
+def test_assign_spec_lib_matching_ms2deepscore_valid():
+    params = ParameterManager()
+    params.assign_spec_lib_matching_ms2deepscore(
+        {
+            "activate_module": True,
+            "directory_path": "fermo_core/libraries",
+            "score_cutoff": 0.7,
+        }
+    )
+    assert isinstance(
+        params.SpectralLibMatchingDeepscoreParameters,
+        SpectralLibMatchingDeepscoreParameters,
+    )
+
+
+def test_assign_spec_lib_matching_ms2deepscore_invalid():
+    params = ParameterManager()
+    params.assign_spec_lib_matching_ms2deepscore({"asdfg": "asdfg"})
+    assert params.SpectralLibMatchingDeepscoreParameters.score_cutoff == 0.7
+
+
+def test_assign_ms2query_valid():
+    params = ParameterManager()
+    params.assign_ms2query(
+        {
+            "activate_module": True,
+            "directory_path": "fermo_core/libraries",
+            "consider_blank": True,
+            "filter_rel_int_range": [0.0, 0.1],
+        }
+    )
+    assert isinstance(params.Ms2QueryAnnotationParameters, Ms2QueryAnnotationParameters)
+
+
+def test_assign_ms2query_invalid():
+    params = ParameterManager()
+    params.assign_ms2query({"asdfg": "asdfg"})
+    assert params.Ms2QueryAnnotationParameters.filter_rel_int_range[0] == 0.0
