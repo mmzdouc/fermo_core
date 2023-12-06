@@ -189,3 +189,17 @@ def test_assign_spec_sim_networking_ms2deepscore_invalid():
     params = ParameterManager()
     params.assign_spec_sim_networking_ms2deepscore({"asdfg": "asdfg"})
     assert params.SpecSimNetworkDeepscoreParameters.score_cutoff == 0.7
+
+
+def test_assign_peaktable_filtering_valid():
+    params = ParameterManager()
+    params.assign_peaktable_filtering(
+        {"activate_module": True, "filter_rel_int_range": [0.0, 1.0]}
+    )
+    assert isinstance(params.PeaktableFilteringParameters, PeaktableFilteringParameters)
+
+
+def test_assign_peaktable_filtering_invalid():
+    params = ParameterManager()
+    params.assign_peaktable_filtering({"asdfg": "asdfg"})
+    assert params.PeaktableFilteringParameters.filter_rel_int_range[0] == 0.0

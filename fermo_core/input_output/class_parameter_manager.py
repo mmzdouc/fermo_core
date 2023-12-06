@@ -390,8 +390,8 @@ class ParameterManager(BaseModel):
             )
         except Exception as e:
             logging.warning(str(e))
-            self.log_malformed_parameters("spec_sim_networking/ms2deepscore")
-            self.SpecSimNetworkDeepscoreParameters = SpecSimNetworkDeepscoreParameters()
+            self.log_malformed_parameters("peaktable_filtering")
+            self.PeaktableFilteringParameters = PeaktableFilteringParameters()
 
     # TODO(MMZ 05.12.23): continue here with functions; all below will be deleted later
 
