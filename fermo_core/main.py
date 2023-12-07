@@ -30,10 +30,13 @@ from sys import argv
 import logging
 
 #  Internal
-from fermo_core.input_output.class_argparse_manager import ArgparseManager
-from fermo_core.input_output.class_parameter_manager import ParameterManager
 from fermo_core.data_processing.parser.class_general_parser import GeneralParser
 from fermo_core.data_analysis.class_analysis_manager import AnalysisManager
+
+from fermo_core.input_output.class_argparse_manager import ArgparseManager
+from fermo_core.input_output.class_file_manager import FileManager
+from fermo_core.input_output.class_parameter_manager import ParameterManager
+from fermo_core.input_output.class_validation_manager import ValidationManager
 
 VERSION = metadata.version("fermo_core")
 ROOT = Path(__file__).resolve().parent
@@ -60,8 +63,9 @@ def main(params: ParameterManager) -> None:  # TODO(MMZ 27.11.23): Fix return
         TODO(MMZ): 28.08.23 Should return a session object for use in the dashboard
             or for file export
     """
-    stats, features, samples = GeneralParser.parse(params)
-    stats, features, samples = AnalysisManager.analyze(params, stats, features, samples)
+    pass
+    # stats, features, samples = GeneralParser.parse(params)
+    # stats, features, samples = AnalysisManager.analyze(params, stats, features, samples)
 
     # TODO(MMZ): Create a class that exports the processed data (with switch to
     #  return either a fermo_gui compatible JSON or a table).
@@ -72,11 +76,10 @@ if __name__ == "__main__":
 
     args = ArgparseManager().run_argparse(VERSION, argv[1:])
 
-    params_manager = ParameterManager(VERSION, ROOT)
+    user_input = FileManager.load_json_file(args.parameters)
+    ValidationManager().validate_file_vs_jsonschema(user_input, args.parameters)
 
-    default_params = params_manager.load_json_file(
-        str(ROOT.joinpath("config", "default_parameters.json"))
-    )
-    user_params = params_manager.load_json_file(args.parameters)
-    params_manager.parse_parameters(user_params, default_params)
-    main(params_manager)
+    param_manager = ParameterManager()
+    param_manager.assign_parameters(user_input)
+
+    main(param_manager)
