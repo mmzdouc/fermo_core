@@ -43,7 +43,7 @@ class FileManager:
         """
         try:
             ValidationManager.validate_file_exists(json_file)
-            ValidationManager.validate_file_extension(json_file, ".json")
+            ValidationManager.validate_file_extension(Path(json_file), ".json")
 
             with open(Path(json_file)) as infile:
                 return json.load(infile)

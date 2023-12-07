@@ -27,8 +27,6 @@ import logging
 from pydantic import BaseModel
 from typing import Self, Optional
 
-from fermo_core.input_output.class_validation_manager import ValidationManager
-
 from fermo_core.input_output.input_file_parameter_managers import (
     PeaktableParameters,
     MsmsParameters,
@@ -55,38 +53,36 @@ class ParameterManager(BaseModel):
     """Handle parameters for processing by fermo_core.
 
     Handle input from both graphical user interface and command line,
-    well as default values, for downstream processing. More information on default
+    as well as default values, for downstream processing. More information on default
     parameters and the properties of the dicts can be found in
     fermo_core/config/default_parameters.json
 
     Attributes:
-        PeaktableParameters: instance of class handling peaktable parameters or None
-        MsmsParameters: instance of class handling MS/MS parameters or None
-        PhenotypeParameters: instance of class handling phenotype parameters or None
-        GroupMetadataParameters: instance of class handling metadata parameters or None
-        SpecLibParameters: instance of class handling spectra library parameters or Non
-        AdductAnnotationParameters:
-        SpecSimNetworkCosineParameters:
-        SpecSimNetworkDeepscoreParameters:
-        PeaktableFilteringParameters:
-        BlankAssignmentParameters:
-        PhenotypeAssignmentFoldParameters:
-        SpectralLibMatchingCosineParameters:
-        SpectralLibMatchingDeepscoreParameters:
-        Ms2QueryAnnotationParameters:
+        PeaktableParameters: class handling peaktable parameters or None
+        MsmsParameters: class handling MS/MS parameters or None
+        PhenotypeParameters: class handling phenotype parameters or None
+        GroupMetadataParameters: class handling metadata parameters or None
+        SpecLibParameters: class handling spectra library parameters or None
+        AdductAnnotationParameters: class handling adduct annotation module parameter
+        SpecSimNetworkCosineParameters: class handling cosine-based spectral
+            similarity networking module parameter
+        SpecSimNetworkDeepscoreParameters: class handling ms2deepscore-based spectral
+            similarity networking module parameter
+        PeaktableFilteringParameters: class handling peaktable filter module parameter
+        BlankAssignmentParameters: class handling blank-assignment module parameter
+        PhenotypeAssignmentFoldParameters: class handling phenotype-assignment module
+            parameter
+        SpectralLibMatchingCosineParameters: class handling cosine-based spectral
+            library matching module parameter
+        SpectralLibMatchingDeepscoreParameters: class handling ms2deepscore-based
+            spectral library matching module parameter
+        Ms2QueryAnnotationParameters: class handling ms2query annotation module params
 
     Notes:
-        TODO(MMZ 04.12.23): complete docstring
-        TODO(MMZ 06.12.23): write integration tests for first four methods
-        TODO(MMZ 06.12.23): check if some of the if-else can be simplified
-        TODO(MMZ 06.12.23): check current paramsmanager tests
-        TODO(MMZ 06.12.23): rename the new parametermanager test file
         TODO(MMZ 06.12.23): check the validationmanager class and tests
         TODO(MMZ 06.12.23): rework the test organisation
         TODO(MMZ 06.12.23): start integrating paramsmanager in program again
-        TODO(MMZ 06.12.23): add a schema-checker before paramsmanager so that the
-        json is valid
-
+        TODO(MMZ 06.12.23): add a schema-checker before paramsmanager for json validat
     """
 
     PeaktableParameters: Optional[PeaktableParameters] = None
@@ -139,26 +135,37 @@ class ParameterManager(BaseModel):
 
         Arguments:
             user_params: a json-derived dict with user input; jsonschema-controlled.
-        """
-        if (info := user_params.get("files").get("peaktable")) is not None:
-            self.assign_peaktable(info)
 
-        if (info := user_params.get("files").get("msms")) is not None:
+        Raises:
+            ValueError: could not find "peaktable" parameters in user input.
+        """
+        if (info := user_params.get("files", {}).get("peaktable")) is not None:
+            self.assign_peaktable(info)
+        else:
+            self.log_skipped_modules("peaktable")
+            logging.critical(
+                "ParameterManager: no or malformed parameters for 'peaktable' - ABORT"
+            )
+            raise ValueError(
+                "ParameterManager: could not find 'peaktable' parameters in user input."
+            )
+
+        if (info := user_params.get("files", {}).get("msms")) is not None:
             self.assign_msms(info)
         else:
             self.log_skipped_modules("msms")
 
-        if (info := user_params.get("files").get("phenotype")) is not None:
+        if (info := user_params.get("files", {}).get("phenotype")) is not None:
             self.assign_phenotype(info)
         else:
             self.log_skipped_modules("phenotype")
 
-        if (info := user_params.get("files").get("group_metadata")) is not None:
+        if (info := user_params.get("files", {}).get("group_metadata")) is not None:
             self.assign_group_metadata(info)
         else:
             self.log_skipped_modules("group_metadata")
 
-        if (info := user_params.get("files").get("spectral_library")) is not None:
+        if (info := user_params.get("files", {}).get("spectral_library")) is not None:
             self.assign_spectral_library(info)
         else:
             self.log_skipped_modules("spectral_library")
@@ -170,15 +177,15 @@ class ParameterManager(BaseModel):
             user_params: a json-derived dict with user input; jsonschema-controlled.
         """
         if (
-            info := user_params.get("core_modules").get("adduct_annotation")
+            info := user_params.get("core_modules", {}).get("adduct_annotation")
         ) is not None:
             self.assign_adduct_annotation(info)
         else:
             self.log_default_values("adduct_annotation")
 
         if (
-            info := user_params.get("core_modules")
-            .get("spec_sim_networking")
+            info := user_params.get("core_modules", {})
+            .get("spec_sim_networking", {})
             .get("modified_cosine")
         ) is not None:
             self.assign_spec_sim_networking_cosine(info)
@@ -186,8 +193,8 @@ class ParameterManager(BaseModel):
             self.log_default_values("spec_sim_networking/modified_cosine")
 
         if (
-            info := user_params.get("core_modules")
-            .get("spec_sim_networking")
+            info := user_params.get("core_modules", {})
+            .get("spec_sim_networking", {})
             .get("ms2deepscore")
         ) is not None:
             self.assign_spec_sim_networking_ms2deepscore(info)
@@ -201,22 +208,22 @@ class ParameterManager(BaseModel):
             user_params: a json-derived dict with user input; jsonschema-controlled.
         """
         if (
-            info := user_params.get("additional_modules").get("peaktable_filtering")
+            info := user_params.get("additional_modules", {}).get("peaktable_filtering")
         ) is not None:
             self.assign_peaktable_filtering(info)
         else:
             self.log_default_values("peaktable_filtering")
 
         if (
-            info := user_params.get("additional_modules").get("blank_assignment")
+            info := user_params.get("additional_modules", {}).get("blank_assignment")
         ) is not None:
             self.assign_blank_assignment(info)
         else:
             self.log_default_values("blank_assignment")
 
         if (
-            info := user_params.get("additional_modules")
-            .get("phenotype_assignment")
+            info := user_params.get("additional_modules", {})
+            .get("phenotype_assignment", {})
             .get("fold_difference")
         ) is not None:
             self.assign_phenotype_assignment_fold(info)
@@ -224,8 +231,8 @@ class ParameterManager(BaseModel):
             self.log_default_values("phenotype_assignment/fold_difference")
 
         if (
-            info := user_params.get("additional_modules")
-            .get("spectral_library_matching")
+            info := user_params.get("additional_modules", {})
+            .get("spectral_library_matching", {})
             .get("modified_cosine")
         ) is not None:
             self.assign_spec_lib_matching_cosine(info)
@@ -233,8 +240,8 @@ class ParameterManager(BaseModel):
             self.log_default_values("spectral_library_matching/modified_cosine")
 
         if (
-            info := user_params.get("additional_modules")
-            .get("spectral_library_matching")
+            info := user_params.get("additional_modules", {})
+            .get("spectral_library_matching", {})
             .get("ms2deepscore")
         ) is not None:
             self.assign_spec_lib_matching_ms2deepscore(info)
@@ -242,13 +249,11 @@ class ParameterManager(BaseModel):
             self.log_default_values("spectral_library_matching/ms2deepscore")
 
         if (
-            info := user_params.get("additional_modules").get("ms2query_annotation")
+            info := user_params.get("additional_modules", {}).get("ms2query_annotation")
         ) is not None:
             self.assign_ms2query(info)
         else:
             self.log_default_values("ms2query_annotation")
-
-        # TODO(MMZ 05.12.23): continue with core modules assignment
 
     @staticmethod
     def log_skipped_modules(module: str):
