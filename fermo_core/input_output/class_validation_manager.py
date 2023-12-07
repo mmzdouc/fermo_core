@@ -32,78 +32,9 @@ from typing import List
 class ValidationManager:
     """Manage methods for user input validation and error-handling logic.
 
-    Notes:
-        All validation methods are static and raise errors that need to be handled
-            by the calling methods.
-        Method syntax: All validation methods should start with "validate".
+    All validation methods are static and raise errors that need to be handled
+    by the calling methods. All validation methods should start with "validate".
     """
-
-    @staticmethod
-    def validate_string(string: str):
-        """Validate that input is a string.
-
-        Parameters:
-            string: a valid string
-
-        Raises:
-            TypeError: not a valid string
-        """
-        if not isinstance(string, str):
-            raise TypeError(f"Not a valid text string: '{string}'.")
-        elif not len(string) > 0:
-            raise TypeError(f"Empty text string: '{string}'.")
-
-    @staticmethod
-    def validate_bool(boolean: bool):
-        """Validate if input is boolean.
-
-        Args:
-            boolean: a bool
-
-        Raises:
-            TypeError: Not a boolean value
-        """
-        if not isinstance(boolean, bool):
-            raise TypeError(f"Not a boolean value (True/False): '{boolean}'.")
-
-    @staticmethod
-    def validate_integer(integer: int):
-        """Validate that input is an integer.
-
-        Parameters:
-            integer: an integer
-
-        Raises:
-            TypeError: not a valid integer
-        """
-        if not isinstance(integer, int):
-            raise TypeError(f"Not a valid integer number: '{integer}'.")
-
-    @staticmethod
-    def validate_float(float_nr: float):
-        """Validate that input is a float number.
-
-        Parameters:
-            float_nr: a float
-
-        Raises:
-            TypeError: not a valid float
-        """
-        if not isinstance(float_nr, float):
-            raise TypeError(f"Not a valid float point number: '{float_nr}'.")
-
-    @staticmethod
-    def validate_positive_number(number: int | float):
-        """Validate if input is a positive number.
-
-        Args:
-            number: a positive number.
-
-        Raises:
-            ValueError: Not a positive number.
-        """
-        if not number > 0:
-            raise ValueError(f"Not a positive number: '{number}'")
 
     @staticmethod
     def validate_mass_deviation_ppm(ppm: int):
@@ -149,38 +80,6 @@ class ValidationManager:
             raise TypeError(
                 f"File extension incorrect. Should be '{extension}', is"
                 f" '{filepath.suffix}'."
-            )
-
-    @staticmethod
-    def validate_keys(json_dict: dict, *args: str):
-        """Validate presence of keys in dict.
-
-        Parameters:
-            json_dict: a dictionary containing one or more keys
-            args: one or more keys to validate
-
-        Raises:
-            KeyError: missing key in dict
-        """
-        for arg in args:
-            if json_dict.get(arg) is None:
-                raise KeyError(f"Could not find parameter '{arg}'.")
-
-    @staticmethod
-    def validate_value_in_list(list_values: List[str], value: str):
-        """Validate presence of a value in a list.
-
-        Parameters:
-            list_values: a list of strings
-            value: a string to validate presence in list
-
-        Raises:
-            ValueError: missing value in list
-        """
-        if value not in list_values:
-            raise ValueError(
-                f"Could not find specified format '{value}' in allowed formats "
-                f"'{list_values}'."
             )
 
     @staticmethod
