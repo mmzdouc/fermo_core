@@ -77,12 +77,6 @@ class ParameterManager(BaseModel):
         SpectralLibMatchingDeepscoreParameters: class handling ms2deepscore-based
             spectral library matching module parameter
         Ms2QueryAnnotationParameters: class handling ms2query annotation module params
-
-    Notes:
-        TODO(MMZ 06.12.23): check the validationmanager class and tests
-        TODO(MMZ 06.12.23): rework the test organisation
-        TODO(MMZ 06.12.23): start integrating paramsmanager in program again
-        TODO(MMZ 06.12.23): add a schema-checker before paramsmanager for json validat
     """
 
     PeaktableParameters: Optional[PeaktableParameters] = None
@@ -277,15 +271,27 @@ class ParameterManager(BaseModel):
         )
 
     @staticmethod
-    def log_malformed_parameters(module: str):
+    def log_malformed_parameters_skip(module: str):
         """Write log for module for which missing/malformed parameters were found.
 
         Arguments:
             module: a str referencing the module for errors were detected.
         """
         logging.warning(
-            f"ParameterManager: found missing/malformed parameter values for module "
+            f"ParameterManager: missing/malformed parameter values for module "
             f"'{module}' - SKIP."
+        )
+
+    @staticmethod
+    def log_malformed_parameters_default(module: str):
+        """Write log for module for which missing/malformed parameters were found.
+
+        Arguments:
+            module: a str referencing the module for errors were detected.
+        """
+        logging.warning(
+            f"ParameterManager: missing/malformed parameter values for module "
+            f"'{module}' - USED DEFAULT VALUES."
         )
 
     def assign_peaktable(self: Self, user_params: dict):
@@ -321,7 +327,7 @@ class ParameterManager(BaseModel):
             logging.info("Validated and assigned user-specified parameter for 'msms'.")
         except Exception as e:
             logging.warning(str(e))
-            self.log_malformed_parameters("msms")
+            self.log_malformed_parameters_skip("msms")
             self.MsmsParameters = None
 
     def assign_phenotype(self: Self, user_params: dict):
@@ -333,11 +339,11 @@ class ParameterManager(BaseModel):
         try:
             self.PhenotypeParameters = PhenotypeParameters(**user_params)
             logging.info(
-                "Validated and assigned user-specified parameter for " "'phenotype'."
+                "Validated and assigned user-specified parameter for 'phenotype'."
             )
         except Exception as e:
             logging.warning(str(e))
-            self.log_malformed_parameters("phenotype")
+            self.log_malformed_parameters_skip("phenotype")
             self.PhenotypeParameters = None
 
     def assign_group_metadata(self: Self, user_params: dict):
@@ -349,12 +355,11 @@ class ParameterManager(BaseModel):
         try:
             self.GroupMetadataParameters = GroupMetadataParameters(**user_params)
             logging.info(
-                "Validated and assigned user-specified parameter for "
-                "'group_metadata'."
+                "Validated and assigned user-specified parameter for 'group_metadata'."
             )
         except Exception as e:
             logging.warning(str(e))
-            self.log_malformed_parameters("group_metadata")
+            self.log_malformed_parameters_skip("group_metadata")
             self.GroupMetadataParameters = None
 
     def assign_spectral_library(self: Self, user_params: dict):
@@ -371,7 +376,7 @@ class ParameterManager(BaseModel):
             )
         except Exception as e:
             logging.warning(str(e))
-            self.log_malformed_parameters("spectral_library")
+            self.log_malformed_parameters_skip("spectral_library")
             self.SpecLibParameters = None
 
     def assign_adduct_annotation(self: Self, user_params: dict):
@@ -388,7 +393,7 @@ class ParameterManager(BaseModel):
             )
         except Exception as e:
             logging.warning(str(e))
-            self.log_malformed_parameters("adduct_annotation")
+            self.log_malformed_parameters_default("adduct_annotation")
             self.AdductAnnotationParameters = AdductAnnotationParameters()
 
     def assign_spec_sim_networking_cosine(self: Self, user_params: dict):
@@ -408,7 +413,7 @@ class ParameterManager(BaseModel):
             )
         except Exception as e:
             logging.warning(str(e))
-            self.log_malformed_parameters("spec_sim_networking/modified_cosine")
+            self.log_malformed_parameters_default("spec_sim_networking/modified_cosine")
             self.SpecSimNetworkCosineParameters = SpecSimNetworkCosineParameters()
 
     def assign_spec_sim_networking_ms2deepscore(self: Self, user_params: dict):
@@ -428,7 +433,7 @@ class ParameterManager(BaseModel):
             )
         except Exception as e:
             logging.warning(str(e))
-            self.log_malformed_parameters("spec_sim_networking/ms2deepscore")
+            self.log_malformed_parameters_default("spec_sim_networking/ms2deepscore")
             self.SpecSimNetworkDeepscoreParameters = SpecSimNetworkDeepscoreParameters()
 
     def assign_peaktable_filtering(self: Self, user_params: dict):
@@ -447,7 +452,7 @@ class ParameterManager(BaseModel):
             )
         except Exception as e:
             logging.warning(str(e))
-            self.log_malformed_parameters("peaktable_filtering")
+            self.log_malformed_parameters_default("peaktable_filtering")
             self.PeaktableFilteringParameters = PeaktableFilteringParameters()
 
     def assign_blank_assignment(self: Self, user_params: dict):
@@ -464,7 +469,7 @@ class ParameterManager(BaseModel):
             )
         except Exception as e:
             logging.warning(str(e))
-            self.log_malformed_parameters("blank_assignment")
+            self.log_malformed_parameters_default("blank_assignment")
             self.BlankAssignmentParameters = BlankAssignmentParameters()
 
     def assign_phenotype_assignment_fold(self: Self, user_params: dict):
@@ -484,7 +489,9 @@ class ParameterManager(BaseModel):
             )
         except Exception as e:
             logging.warning(str(e))
-            self.log_malformed_parameters("phenotype_assignment/fold_difference")
+            self.log_malformed_parameters_default(
+                "phenotype_assignment/fold_difference"
+            )
             self.PhenotypeAssignmentFoldParameters = PhenotypeAssignmentFoldParameters()
 
     def assign_spec_lib_matching_cosine(self: Self, user_params: dict):
@@ -504,7 +511,9 @@ class ParameterManager(BaseModel):
             )
         except Exception as e:
             logging.warning(str(e))
-            self.log_malformed_parameters("spectral_library_matching/modified_cosine")
+            self.log_malformed_parameters_default(
+                "spectral_library_matching/modified_cosine"
+            )
             self.SpectralLibMatchingCosineParameters = (
                 SpectralLibMatchingCosineParameters()
             )
@@ -526,7 +535,9 @@ class ParameterManager(BaseModel):
             )
         except Exception as e:
             logging.warning(str(e))
-            self.log_malformed_parameters("spectral_library_matching/ms2deepscore")
+            self.log_malformed_parameters_default(
+                "spectral_library_matching/ms2deepscore"
+            )
             self.SpectralLibMatchingDeepscoreParameters = (
                 SpectralLibMatchingDeepscoreParameters()
             )
@@ -546,5 +557,5 @@ class ParameterManager(BaseModel):
             )
         except Exception as e:
             logging.warning(str(e))
-            self.log_malformed_parameters("ms2query")
+            self.log_malformed_parameters_default("ms2query")
             self.Ms2QueryAnnotationParameters = Ms2QueryAnnotationParameters()
