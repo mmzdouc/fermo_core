@@ -23,6 +23,9 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
+import json
+import jsonschema
+import logging
 import pandas as pd
 from pathlib import Path
 from pyteomics import mgf
@@ -244,3 +247,26 @@ class ValidationManager:
                 f"The first value '{user_range[0]}' must be less than the second "
                 f"value '{user_range[1]}'."
             )
+
+    @staticmethod
+    def validate_file_vs_jsonschema(user_input: dict, filename: str):
+        """Validate user-input against jsonschema.
+
+        Arguments:
+            user_input: dict containing user-input, derived from json-file
+            filename: the name of the input file for error message
+
+        Raises:
+            jsonschema.ValidationError: user input does not validate against schema
+        """
+        with open(
+            Path(__file__).parent.parent.joinpath("config/schema.json")
+        ) as infile:
+            schema = json.load(infile)
+
+        try:
+            jsonschema.validate(instance=user_input, schema=schema)
+        except jsonschema.ValidationError as err:
+            lines = str(err).splitlines()
+            logging.critical(f"{filename}: {lines[-2]} {lines[0]}")
+            raise TypeError
