@@ -82,4 +82,7 @@ if __name__ == "__main__":
     param_manager = ParameterManager()
     param_manager.assign_parameters(user_input)
 
+    # TODO(MMZ 09.12.23): Integration testing of input parameters
+    # TODO(MMZ 07.12.23): Continue with integration of new ParameterManager downstream
+
     main(param_manager)

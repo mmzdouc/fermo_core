@@ -1,4 +1,5 @@
 import json
+import jsonschema
 from pathlib import Path
 
 import pytest
@@ -220,10 +221,9 @@ def test_validate_range_zero_one_invalid(variable):
 def test_validate_file_vs_jsonschema_valid():
     with open(Path("example_data/case_study_parameters.json")) as infile:
         json_dict = json.load(infile)
-
     assert ValidationManager.validate_file_vs_jsonschema(json_dict, "name") is None
 
 
 def test_validate_file_vs_jsonschema_invalid():
-    with pytest.raises(TypeError):
+    with pytest.raises(jsonschema.exceptions.ValidationError):
         ValidationManager.validate_file_vs_jsonschema({"key": "value"}, "name")

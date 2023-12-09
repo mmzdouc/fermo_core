@@ -257,7 +257,7 @@ class ValidationManager:
             filename: the name of the input file for error message
 
         Raises:
-            jsonschema.ValidationError: user input does not validate against schema
+            jsonschema.exceptions.ValidationError: user input does not validate against schema
         """
         with open(
             Path(__file__).parent.parent.joinpath("config/schema.json")
@@ -266,7 +266,8 @@ class ValidationManager:
 
         try:
             jsonschema.validate(instance=user_input, schema=schema)
-        except jsonschema.ValidationError as err:
+        except jsonschema.exceptions.ValidationError as err:
             lines = str(err).splitlines()
-            logging.critical(f"{filename}: {lines[-2]} {lines[0]}")
-            raise TypeError
+            msg = f"{filename}: {lines[0]}"
+            logging.critical(msg)
+            raise jsonschema.exceptions.ValidationError(msg)
