@@ -304,7 +304,7 @@ def test_assign_parameters_valid():
 
 def test_assign_parameters_invalid():
     params = ParameterManager()
-    with pytest.raises(ValueError):
+    with pytest.raises(KeyError):
         params.assign_parameters({"adsasd": "dsfaa"})
 
 
@@ -317,7 +317,7 @@ def test_assign_files_parameters_valid():
 
 def test_assign_files_parameters_invalid():
     params = ParameterManager()
-    with pytest.raises(ValueError):
+    with pytest.raises(KeyError):
         params.assign_files_parameters({"adsasd": "dsfaa"})
 
 

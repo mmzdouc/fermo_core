@@ -131,38 +131,37 @@ class ParameterManager(BaseModel):
             user_params: a json-derived dict with user input; jsonschema-controlled.
 
         Raises:
-            ValueError: could not find "peaktable" parameters in user input.
+            KeyError: could not find "peaktable" parameters in user input.
         """
-        if (info := user_params.get("files", {}).get("peaktable")) is not None:
-            self.assign_peaktable(info)
+        if user_params.get("files") is not None:
+            user_params = user_params.get("files")
         else:
-            self.log_skipped_modules("peaktable")
             logging.critical(
-                "ParameterManager: no or malformed parameters for 'peaktable' - ABORT"
+                "ParameterManager: found no parameters for 'files' - ABORT"
             )
-            raise ValueError(
-                "ParameterManager: could not find 'peaktable' parameters in user input."
-            )
+            raise KeyError("ParameterManager: found no parameters for 'files' - ABORT")
 
-        if (info := user_params.get("files", {}).get("msms")) is not None:
-            self.assign_msms(info)
-        else:
-            self.log_skipped_modules("msms")
+        modules = (
+            (user_params.get("peaktable"), self.assign_peaktable, "peaktable"),
+            (user_params.get("msms"), self.assign_msms, "msms"),
+            (user_params.get("phenotype"), self.assign_phenotype, "phenotype"),
+            (
+                user_params.get("group_metadata"),
+                self.assign_group_metadata,
+                "group_metadata",
+            ),
+            (
+                user_params.get("spectral_library"),
+                self.assign_spectral_library,
+                "spectral_library",
+            ),
+        )
 
-        if (info := user_params.get("files", {}).get("phenotype")) is not None:
-            self.assign_phenotype(info)
-        else:
-            self.log_skipped_modules("phenotype")
-
-        if (info := user_params.get("files", {}).get("group_metadata")) is not None:
-            self.assign_group_metadata(info)
-        else:
-            self.log_skipped_modules("group_metadata")
-
-        if (info := user_params.get("files", {}).get("spectral_library")) is not None:
-            self.assign_spectral_library(info)
-        else:
-            self.log_skipped_modules("spectral_library")
+        for module in modules:
+            if (info := module[0]) is not None:
+                module[1](info)
+            else:
+                self.log_skipped_modules(module[2])
 
     def assign_core_modules_parameters(self: Self, user_params: dict):
         """Assigns user-input on core modules to ParameterManager.
@@ -170,30 +169,35 @@ class ParameterManager(BaseModel):
         Arguments:
             user_params: a json-derived dict with user input; jsonschema-controlled.
         """
-        if (
-            info := user_params.get("core_modules", {}).get("adduct_annotation")
-        ) is not None:
-            self.assign_adduct_annotation(info)
+        if user_params.get("core_modules") is not None:
+            user_params = user_params.get("core_modules")
         else:
-            self.log_default_values("adduct_annotation")
+            self.log_default_values("core_modules")
+            return
 
-        if (
-            info := user_params.get("core_modules", {})
-            .get("spec_sim_networking", {})
-            .get("modified_cosine")
-        ) is not None:
-            self.assign_spec_sim_networking_cosine(info)
-        else:
-            self.log_default_values("spec_sim_networking/modified_cosine")
+        modules = (
+            (
+                user_params.get("adduct_annotation"),
+                self.assign_adduct_annotation,
+                "adduct_annotation",
+            ),
+            (
+                user_params.get("spec_sim_networking", {}).get("modified_cosine"),
+                self.assign_spec_sim_networking_cosine,
+                "spec_sim_networking/modified_cosine",
+            ),
+            (
+                user_params.get("spec_sim_networking", {}).get("ms2deepscore"),
+                self.assign_spec_sim_networking_ms2deepscore,
+                "spec_sim_networking/ms2deepscore",
+            ),
+        )
 
-        if (
-            info := user_params.get("core_modules", {})
-            .get("spec_sim_networking", {})
-            .get("ms2deepscore")
-        ) is not None:
-            self.assign_spec_sim_networking_ms2deepscore(info)
-        else:
-            self.log_default_values("spec_sim_networking/ms2deepscore")
+        for module in modules:
+            if (info := module[0]) is not None:
+                module[1](info)
+            else:
+                self.log_default_values(module[2])
 
     def assign_additional_modules_parameters(self: Self, user_params: dict):
         """Assigns user-input on additional modules to ParameterManager.
@@ -201,53 +205,50 @@ class ParameterManager(BaseModel):
         Arguments:
             user_params: a json-derived dict with user input; jsonschema-controlled.
         """
-        if (
-            info := user_params.get("additional_modules", {}).get("peaktable_filtering")
-        ) is not None:
-            self.assign_peaktable_filtering(info)
+        if user_params.get("additional_modules") is not None:
+            user_params = user_params.get("additional_modules")
         else:
-            self.log_default_values("peaktable_filtering")
+            self.log_default_values("additional_modules")
+            return
 
-        if (
-            info := user_params.get("additional_modules", {}).get("blank_assignment")
-        ) is not None:
-            self.assign_blank_assignment(info)
-        else:
-            self.log_default_values("blank_assignment")
+        modules = (
+            (
+                user_params.get("peaktable_filtering"),
+                self.assign_peaktable_filtering,
+                "peaktable_filtering",
+            ),
+            (
+                user_params.get("blank_assignment"),
+                self.assign_blank_assignment,
+                "blank_assignment",
+            ),
+            (
+                user_params.get("phenotype_assignment", {}).get("fold_difference"),
+                self.assign_phenotype_assignment_fold,
+                "phenotype_assignment/fold_difference",
+            ),
+            (
+                user_params.get("spectral_library_matching", {}).get("modified_cosine"),
+                self.assign_spec_lib_matching_cosine,
+                "spectral_library_matching/modified_cosine",
+            ),
+            (
+                user_params.get("spectral_library_matching", {}).get("ms2deepscore"),
+                self.assign_spec_lib_matching_ms2deepscore,
+                "spectral_library_matching/ms2deepscore",
+            ),
+            (
+                user_params.get("ms2query_annotation"),
+                self.assign_ms2query,
+                "ms2query_annotation",
+            ),
+        )
 
-        if (
-            info := user_params.get("additional_modules", {})
-            .get("phenotype_assignment", {})
-            .get("fold_difference")
-        ) is not None:
-            self.assign_phenotype_assignment_fold(info)
-        else:
-            self.log_default_values("phenotype_assignment/fold_difference")
-
-        if (
-            info := user_params.get("additional_modules", {})
-            .get("spectral_library_matching", {})
-            .get("modified_cosine")
-        ) is not None:
-            self.assign_spec_lib_matching_cosine(info)
-        else:
-            self.log_default_values("spectral_library_matching/modified_cosine")
-
-        if (
-            info := user_params.get("additional_modules", {})
-            .get("spectral_library_matching", {})
-            .get("ms2deepscore")
-        ) is not None:
-            self.assign_spec_lib_matching_ms2deepscore(info)
-        else:
-            self.log_default_values("spectral_library_matching/ms2deepscore")
-
-        if (
-            info := user_params.get("additional_modules", {}).get("ms2query_annotation")
-        ) is not None:
-            self.assign_ms2query(info)
-        else:
-            self.log_default_values("ms2query_annotation")
+        for module in modules:
+            if (info := module[0]) is not None:
+                module[1](info)
+            else:
+                self.log_default_values(module[2])
 
     @staticmethod
     def log_skipped_modules(module: str):
