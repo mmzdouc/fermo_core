@@ -110,8 +110,8 @@ class ParameterManager(BaseModel):
         Ms2QueryAnnotationParameters()
     )
 
-    def assign_parameters(self: Self, user_params: dict):
-        """Modifies attributes by calling methods that take user input.
+    def assign_parameters_cli(self: Self, user_params: dict):
+        """Modifies attributes by calling methods that take user input from CLI.
 
         Arguments:
             user_params: a json-derived dict with user input; jsonschema-controlled.

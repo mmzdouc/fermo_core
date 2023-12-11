@@ -295,17 +295,17 @@ def test_assign_ms2query_invalid():
     assert params.Ms2QueryAnnotationParameters.filter_rel_int_range[0] == 0.0
 
 
-def test_assign_parameters_valid():
+def test_assign_parameters_cli_valid():
     json_in = FileManager.load_json_file("example_data/case_study_parameters.json")
     params = ParameterManager()
-    params.assign_parameters(json_in)
+    params.assign_parameters_cli(json_in)
     assert params.PeaktableParameters.format == "mzmine3"
 
 
-def test_assign_parameters_invalid():
+def test_assign_parameters_cli_invalid():
     params = ParameterManager()
     with pytest.raises(KeyError):
-        params.assign_parameters({"adsasd": "dsfaa"})
+        params.assign_parameters_cli({"adsasd": "dsfaa"})
 
 
 def test_assign_files_parameters_valid():

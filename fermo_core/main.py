@@ -50,18 +50,11 @@ logging.basicConfig(
 )
 
 
-def main(params: ParameterManager) -> None:  # TODO(MMZ 27.11.23): Fix return
+def main(params: ParameterManager):
     """Run fermo_core processing part on input data contained in params.
 
     Args:
         params: Handling input file names and params
-
-    Returns:
-        A data object with methods to export data to a JSON file.
-
-    Notes:
-        TODO(MMZ): 28.08.23 Should return a session object for use in the dashboard
-            or for file export
     """
     pass
     # stats, features, samples = GeneralParser.parse(params)
@@ -80,9 +73,6 @@ if __name__ == "__main__":
     ValidationManager().validate_file_vs_jsonschema(user_input, args.parameters)
 
     param_manager = ParameterManager()
-    param_manager.assign_parameters(user_input)
-
-    # TODO(MMZ 09.12.23): Integration testing of input parameters
-    # TODO(MMZ 07.12.23): Continue with integration of new ParameterManager downstream
+    param_manager.assign_parameters_cli(user_input)
 
     main(param_manager)
