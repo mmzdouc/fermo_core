@@ -26,65 +26,52 @@ from typing import Self, Tuple
 
 from fermo_core.data_processing.class_stats import Stats
 from fermo_core.data_processing.class_repository import Repository
+from fermo_core.input_output.class_parameter_manager import ParameterManager
 
 
 class GroupMetadataParser:
-    """Interface to parse different input group metadata files.
-
-    Attributes:
-        group_filepath: a file path string
-        group_format: a string indicating the format of the grouping file
-    """
-
-    def __init__(
-        self: Self,
-        group_filepath: str,
-        group_format: str,
-    ):
-        self.group_filepath = group_filepath
-        self.group_format = group_format
+    """Interface to parse different input group metadata files."""
 
     def parse(
-        self: Self, stats: Stats, sample_repo: Repository
+        self: Self, stats: Stats, sample_repo: Repository, params: ParameterManager
     ) -> Tuple[Stats, Repository]:
         """Parses the group metadata information based on format.
 
         Arguments:
             stats: Stats object holding various information of overall data
             sample_repo: Repository holding Sample objects
+            params: a ParameterManager instance holding user input data
 
         Returns:
             Tuple containing Stats and Sample repository objects with added group info.
-
-        Notes:
-            Adjust here for additional group formats.
+        TODO(MMZ 13.12.23): Cover with tests
         """
-        match self.group_format:
+        match params.GroupMetadataParameters.format:
             case "fermo":
-                return self.parse_fermo(stats, sample_repo)
+                return self.parse_fermo(stats, sample_repo, params)
             case _:
-                logging.warning(
-                    "Could not recognize group metadata file format - SKIP."
-                )
                 return stats, sample_repo
 
     def parse_fermo(
-        self: Self, stats: Stats, sample_repo: Repository
+        self: Self, stats: Stats, sample_repo: Repository, params: ParameterManager
     ) -> Tuple[Stats, Repository]:
         """Parses a fermo-style group metadata file.
 
         Arguments:
             stats: Stats object holding various information of overall data
             sample_repo: Repository holding Sample objects
+            params: a ParameterManager instance holding user input data
 
         Returns:
             Tuple containing Stats and Sample repository objects with added group info.
+        TODO(MMZ 13.12.23): Cover with tests
         """
-        logging.debug(
-            f"Started parsing group metadata information from '{self.group_filepath}'."
+        logging.info(
+            f"'GroupMetadataParser': started parsing fermo-style group metadata file "
+            f"'{params.GroupMetadataParameters.filepath.name}'"
         )
-        df = pd.read_csv(self.group_filepath)
-        for _, row in df.iterrows():
+
+        for _, row in pd.read_csv(params.GroupMetadataParameters.filepath).iterrows():
             sample_id = row["sample_name"]
             stats = self.remove_sample_id_from_group_default(stats, sample_id)
             for group_id in row:
@@ -101,15 +88,14 @@ class GroupMetadataParser:
                         sample_repo, sample_id, group_id
                     )
 
-        logging.debug(
-            f"Completed parsing of group metadata from 'fermo'-style file "
-            f"'{self.group_filepath}'."
+        logging.info(
+            f"'GroupMetadataParser': completed parsing fermo-style group metadata file "
+            f"'{params.GroupMetadataParameters.filepath.name}'"
         )
         return stats, sample_repo
 
-    def remove_sample_id_from_group_default(
-        self: Self, stats_obj: Stats, sample_id: str
-    ) -> Stats:
+    @staticmethod
+    def remove_sample_id_from_group_default(stats_obj: Stats, sample_id: str) -> Stats:
         """Removes the sample id from the group 'DEFAULT' in Stats object.
 
         Arguments:
@@ -118,21 +104,22 @@ class GroupMetadataParser:
 
         Returns:
             A (modified) stats object
+        TODO(MMZ 13.12.23): Cover with tests
         """
         try:
             stats_obj.groups.get("DEFAULT").remove(sample_id)
             return stats_obj
         except KeyError:
             logging.warning(
-                f"Could not find sample ID '{sample_id}' from group metadata file "
-                f"'{self.group_filepath}' "
-                f"in the previously processed peaktable file."
-                f"Are you sure that the files match?"
+                f"'GroupMetadataParser': Could not find sample ID '{sample_id}' in "
+                f"previously processed peaktable file. Have you provided the correct "
+                f"group metadata file?"
             )
             return stats_obj
 
+    @staticmethod
     def add_group_id_to_sample_repo(
-        self: Self, sample_repo: Repository, sample_id: str, group_id: str
+        sample_repo: Repository, sample_id: str, group_id: str
     ) -> Repository:
         """Adds the group information to the Sample objects in the Repository.
 
@@ -143,6 +130,7 @@ class GroupMetadataParser:
 
         Returns:
             A (modified) Repository object
+        TODO(MMZ 13.12.23): Cover with tests
         """
         try:
             sample = sample_repo.get(sample_id)
@@ -153,9 +141,8 @@ class GroupMetadataParser:
             return sample_repo
         except KeyError:
             logging.warning(
-                f"Could not find sample ID '{sample_id}' from group metadata file "
-                f"'{self.group_filepath}' "
-                f"in the previously processed peaktable file."
-                f"Are you sure that the files match?"
+                f"'GroupMetadataParser': Could not find sample ID '{sample_id}' in "
+                f"previously processed peaktable file. Have you provided the correct "
+                f"group metadata file?"
             )
             return sample_repo

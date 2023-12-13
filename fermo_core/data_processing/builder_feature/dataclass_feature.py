@@ -51,6 +51,9 @@ class Feature:
         annotations: dict of objects representing associated annotation data
         networks: dict of objects representing associated networking data
         scores: dict of objects representing associated scores
+
+        TODO(MMZ 13.12.23): Change to pydantic class? Add an "active" field to
+        indicate if it had been filtered out at some point?
     """
 
     def __init__(self: Self):

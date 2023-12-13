@@ -25,76 +25,58 @@ from pyteomics import mgf
 from typing import Self
 
 from fermo_core.data_processing.class_stats import Stats, SpecLibEntry
+from fermo_core.input_output.class_parameter_manager import ParameterManager
 
 
 class SpectralLibraryParser:
-    """Interface to parse different spectral library file formats.
+    """Interface to parse different spectral library file formats."""
 
-    Attributes:
-        spectral_library_filepath: a filepath string
-        spectral_library_format: a peaktable format string
-        max_library_size: a cutoff limiting the number of spectral entries
-    """
-
-    def __init__(
-        self: Self,
-        filepath: str,
-        file_format: str,
-        max_library_size: int,
-    ):
-        self.spectral_library_filepath = filepath
-        self.spectral_library_format = file_format
-        self.max_library_size = max_library_size
-
-    def parse(self: Self, stats: Stats) -> Stats:
+    def parse(self: Self, stats: Stats, params: ParameterManager) -> Stats:
         """Parses a spectral library file based on file format.
 
         Arguments:
-            stats: Stats object - can hold information on spectral library
+            stats: Stats object handling spectral library information
+            params: Parameter Object holding user input information
 
         Returns:
             (Modified) Stats object.
 
         Notes:
             Adjust here for additional spectral library file formats.
+
+        # TODO(MMZ 13.12.23): Cover with tests
         """
-        match self.spectral_library_format:
+        match params.SpecLibParameters.format:
             case "mgf":
-                return self.parse_mgf(stats)
+                return self.parse_mgf(stats, params)
             case _:
-                logging.warning(
-                    "Could not recognize spectral library data file format - SKIP."
-                )
                 return stats
 
-    def parse_mgf(self: Self, stats: Stats) -> Stats:
+    @staticmethod
+    def parse_mgf(stats: Stats, params: ParameterManager) -> Stats:
         """Parses a spectral library file in mgf format, attributes to Stats.
 
         Arguments:
             stats: Stats object which handles the entries in the spectral library file
+            params: Parameter Object holding user input information
 
         Returns:
             A (modified) Stats object
 
         Notes:
             mgf.read() returns a Numpy array - turned to list for easier handling
+
+        # TODO(MMZ 13.12.23): Cover with tests
         """
-        logging.debug(
-            f"Started parsing spectral library file '{self.spectral_library_filepath}'."
+        logging.info(
+            f"'SpectralLibraryParser': started parsing of spectral library file "
+            f"'{params.SpecLibParameters.filepath.name}'"
         )
 
-        with open(self.spectral_library_filepath) as infile:
+        with open(params.SpecLibParameters.filepath) as infile:
             counter = 1
             stats.spectral_library = dict()
             for spectrum in mgf.read(infile, use_index=False):
-                if counter > self.max_library_size:
-                    logging.warning(
-                        "Spectral library entry exceeds the maximum permitted number "
-                        f"of '{self.max_library_size}'. All remaining entries will "
-                        "be skipped. To override this number, specify a higher number "
-                        "for 'max_library_size' in the parameter settings"
-                    )
-                    break
                 try:
                     stats.spectral_library[counter] = SpecLibEntry(
                         spectrum["params"]["name"],
@@ -106,15 +88,15 @@ class SpectralLibraryParser:
                     )
                 except KeyError:
                     logging.warning(
-                        f"Malformed entry (number '{counter}') in file"
-                        f"'{self.spectral_library_filepath}'"
+                        f"Malformed entry (count: '{counter}') in file"
+                        f"'{params.SpecLibParameters.filepath.name}'"
                         "detected. Missing 'NAME', 'PEPMASS', or MS/MS information. "
                         "Entry skipped, continue with next entry."
                     )
                 counter += 1
 
-        logging.debug(
-            f"Completed parsing spectral library file "
-            f"'{self.spectral_library_filepath}'."
+        logging.info(
+            f"'SpectralLibraryParser': completed parsing of spectral library file "
+            f"'{params.SpecLibParameters.filepath.name}'"
         )
         return stats

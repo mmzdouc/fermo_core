@@ -28,66 +28,65 @@ from fermo_core.data_processing.class_repository import Repository
 from fermo_core.data_processing.class_stats import Stats
 from fermo_core.data_processing.builder_sample.dataclass_sample import Phenotype
 
+from fermo_core.input_output.class_parameter_manager import ParameterManager
+
+# TODO(MMZ 13.12.23): continue here - fix class, add test adding reference
+
 
 class PhenotypeParser:
-    """Interface to parse different input peak tables.
-
-    Attributes:
-        phenotype_filepath: a filepath string
-        phenotype_format: a peaktable format string
-    """
-
-    def __init__(
-        self: Self,
-        phenotype_filepath: str,
-        phenotype_format: str,
-    ):
-        self.phenotype_filepath = phenotype_filepath
-        self.phenotype_format = phenotype_format
+    """Interface to parse different input peak tables."""
 
     def parse(
-        self: Self, stats: Stats, sample_repo: Repository
+        self: Self, stats: Stats, sample_repo: Repository, params: ParameterManager
     ) -> Tuple[Stats, Repository]:
         """Parses the phenotype/bioactivity information based on file format.
 
         Arguments:
             stats: Stats object holding various information of overall data
             sample_repo: Repository holding Sample objects
+            params: Instance of ParameterManager holding user input
 
         Returns:
-            Tuple containing Stats and Sample repository objects with added bioactivity
-            info.
+            Tuple of Stats and Sample repository, modified for bioactivity info.
 
         Notes:
             Adjust here for additional phenotype formats.
+
+        # TODO(MMZ 13.12.23): Cover with tests
         """
-        match self.phenotype_format:
+        match params.PhenotypeParameters.format:
             case "fermo":
-                return self.parse_fermo(stats, sample_repo)
+                return self.parse_fermo(stats, sample_repo, params)
             case _:
-                logging.warning(
-                    "Could not recognize phenotype/bioactivity data file format - SKIP."
-                )
                 return stats, sample_repo
 
     def parse_fermo(
-        self: Self, stats: Stats, sample_repo: Repository
+        self: Self, stats: Stats, sample_repo: Repository, params: ParameterManager
     ) -> Tuple[Stats, Repository]:
         """Parses a fermo-style phenotype/bioactivity data file.
 
         Arguments:
             stats: Stats object holding various information of overall data
             sample_repo: Repository holding Sample objects
+            params: Instance of ParameterManager holding user input
 
         Returns:
             Tuple containing Stats and Sample repository objects with added
             phenotype/bioactivity info.
+
+        Notes:
+            the fermo bioactivity/phenotype data format assumes the same
+            concentration of all experiments (1).
+            TODO(MMZ 13.12.23): fermo bioactivity format needs to be changed.
+
+        # TODO(MMZ 13.12.23): Cover with tests
         """
-        logging.debug(
-            f"Started parsing phenotype/bioactivity data from "
-            f"'{self.phenotype_filepath}'."
+        logging.info(
+            f"'PhenotypeParser': started parsing fermo-style phenotype data file "
+            f"'{params.PhenotypeParameters.filepath.name}'"
         )
-        df = pd.read_csv(self.phenotype_filepath)
+
+        df = pd.read_csv(params.PhenotypeParameters.filepath)
 
         experiments = dict()
         for col in df.columns:
@@ -107,20 +106,21 @@ class PhenotypeParser:
                     concentration=1,
                 )
 
-        # Add data to stats object
         if not isinstance(stats.phenotypes, dict):
             stats.phenotypes = dict()
+
         for experiment in experiments:
             stats.phenotypes[experiment] = tuple(experiments.get(experiment))
 
-        logging.debug(
-            f"Completed parsing of phenotype/bioactivity data from 'fermo'-style file "
-            f"'{self.phenotype_filepath}'."
+        logging.info(
+            f"'PhenotypeParser': completed parsing fermo-style phenotype data file "
+            f"'{params.PhenotypeParameters.filepath.name}'"
         )
+
         return stats, sample_repo
 
+    @staticmethod
     def add_phenotype_to_sample(
-        self: Self,
         sample_repo: Repository,
         sample_id: str,
         experiment: str,
@@ -138,23 +138,28 @@ class PhenotypeParser:
 
         Returns:
             A (modified) Repository object
+
+        # TODO(MMZ 13.12.23): Cover with tests
         """
         try:
             sample = sample_repo.get(sample_id)
+
             if not isinstance(sample.phenotypes, dict):
                 sample.phenotypes = dict()
+
             sample.phenotypes[experiment] = Phenotype(
                 value=measurement,
                 concentration=concentration,
             )
+
             sample_repo.modify(sample_id, sample)
+
             return sample_repo
         except KeyError:
             logging.warning(
                 f"Could not find sample ID '{sample_id}' from "
                 "phenotype/bioactivity file "
-                f"'{self.phenotype_filepath}' "
                 f"in the previously processed peaktable file."
-                f"Are you sure that the files match?"
+                f"Is this the correct file?"
             )
             return sample_repo

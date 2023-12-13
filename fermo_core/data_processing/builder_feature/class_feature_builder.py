@@ -29,6 +29,8 @@ class FeatureBuilder:
     """Contains methods to build variants of features based on user input
 
     Some product attributes are set only downstream and are therefore not included here.
+
+    TODO(MMZ 13.12.23): Finish covering with tests
     """
 
     def __init__(self):

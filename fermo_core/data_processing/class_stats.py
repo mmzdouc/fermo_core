@@ -27,6 +27,8 @@ import logging
 import pandas as pd
 from typing import Self, Tuple, Optional, Set, Dict, List
 
+from fermo_core.input_output.class_parameter_manager import ParameterManager
+
 
 class SpecLibEntry:
     """Organize information on a spectral library entry
@@ -88,7 +90,7 @@ class Stats:
         self.spectral_library: Optional[Dict[int, SpecLibEntry]] = None
 
     def _get_features_in_range_mzmine3(
-        self: Self, df: pd.DataFrame, r: Tuple[float, float]
+        self: Self, df: pd.DataFrame, rng: List[float]
     ) -> Tuple[Tuple, Tuple]:
         """Separate features into two sets based on their relative intensity.
 
@@ -100,7 +102,7 @@ class Stats:
 
         Args:
             df: pandas DataFrame resulting from mzmine3 style peaktable
-            r: user-provided range
+            rng: user-provided range
 
         Returns:
             Two tuples: one "included" (features inside of range), one "excluded" (
@@ -126,15 +128,15 @@ class Stats:
 
             # Retain features that are inside rel int range for at least one sample
             if any(
-                (sample_max_int[sample] * r[0])
+                (sample_max_int[sample] * rng[0])
                 <= feature_int[sample]
-                <= (sample_max_int[sample] * r[1])
+                <= (sample_max_int[sample] * rng[1])
                 for sample in feature_int
             ):
                 incl.add(row["id"])
             else:
                 excl.add(row["id"])
-                logging.info(
+                logging.debug(
                     f"Molecular feature with feature ID '{row['id']}' was filtered "
                     f"from dataset due to range settings."
                 )
@@ -156,29 +158,24 @@ class Stats:
             samples.add(sample.split(":")[1])
         return tuple(samples)
 
-    def parse_mzmine3(
-        self,
-        peaktable_path: str,
-        rel_int_range: Tuple[float, float],
-        ms2query_range: Tuple[float, float],
-    ):
+    def parse_mzmine3(self: Self, params: ParameterManager):
         """Parse a mzmine3 peaktable for general stats on analysis run.
 
-        Args:
-            peaktable_path: path to peaktable file
-            rel_int_range: indicates range 0.0-1.0 to retain features in
-            ms2query_range: indicates range 0.0-1.0 to retain features for ms2query ann
+        Arguments:
+            params: instance of ParameterManager object holding user input data
 
         Notes:
             All samples are grouped in group "DEFAULT".
         """
-        df = pd.read_csv(peaktable_path)
+        df = pd.read_csv(params.PeaktableParameters.filepath)
         self.rt_min = df.loc[:, "rt_range:min"].min()
         self.rt_max = df.loc[:, "rt_range:max"].max()
         self.rt_range = self.rt_max - self.rt_min
         self.samples = self._extract_sample_names_mzmine3(df)
         self.groups["DEFAULT"] = set(self.samples)
         self.features, self.int_removed = self._get_features_in_range_mzmine3(
-            df, rel_int_range
+            df, params.PeaktableFilteringParameters.filter_rel_int_range
         )
-        _, self.annot_removed = self._get_features_in_range_mzmine3(df, ms2query_range)
+        _, self.annot_removed = self._get_features_in_range_mzmine3(
+            df, params.Ms2QueryAnnotationParameters.filter_rel_int_range
+        )

@@ -27,6 +27,7 @@ SOFTWARE.
 from importlib import metadata
 from pathlib import Path
 from sys import argv
+import coloredlogs
 import logging
 
 #  Internal
@@ -41,13 +42,16 @@ from fermo_core.input_output.class_validation_manager import ValidationManager
 VERSION = metadata.version("fermo_core")
 ROOT = Path(__file__).resolve().parent
 
-logging.basicConfig(
-    # TODO(MMZ): Uncomment before release to allow reading of log from file.
-    # filename="fermo_core.log",
-    level=logging.DEBUG,
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-    filemode="w",
-)
+# logging.basicConfig(
+#     # TODO(MMZ): Uncomment before release to allow reading of log from file.
+#     # filename="fermo_core.log",
+#     level=logging.DEBUG,
+#     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+#     filemode="w",
+# )
+
+logging = logging.getLogger(__name__)
+coloredlogs.install(level="DEBUG")
 
 
 def main(params: ParameterManager):
@@ -56,8 +60,15 @@ def main(params: ParameterManager):
     Args:
         params: Handling input file names and params
     """
-    pass
-    # stats, features, samples = GeneralParser.parse(params)
+    general_parser = GeneralParser()
+    general_parser.parse_parameters(params)
+    stats, features, samples = general_parser.return_attributes()
+
+    # TODO(MMZ 13.12.23): Remove dropout
+    logging.critical("DROP OUT")
+    quit()
+
+    # TODO(MMZ 13.12.23): Reactivate AnalysisManager again
     # stats, features, samples = AnalysisManager.analyze(params, stats, features, samples)
 
     # TODO(MMZ): Create a class that exports the processed data (with switch to

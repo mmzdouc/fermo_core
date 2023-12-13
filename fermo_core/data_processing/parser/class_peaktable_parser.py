@@ -34,99 +34,103 @@ from fermo_core.data_processing.builder_sample.class_samples_director import (
 
 from fermo_core.data_processing.class_repository import Repository
 from fermo_core.data_processing.class_stats import Stats
+from fermo_core.input_output.class_parameter_manager import ParameterManager
 
 
 class PeaktableParser:
-    """Interface to parse different input peak tables.
+    """Interface to parse different input peak tables."""
 
-    Attributes:
-        peaktable_filepath: a filepath string
-        peaktable_format: a peaktable format string
-        rel_int_range: range to retain/exclude features
-        ms2query_range: range to retain/exclude features for ms2query annotation
-    """
-
-    def __init__(
-        self: Self,
-        peaktable_filepath: str,
-        peaktable_format: str,
-        rel_int_range: Tuple[float, float],
-        ms2query_range: Tuple[float, float],
-    ):
-        self.peaktable_filepath = peaktable_filepath
-        self.peaktable_format = peaktable_format
-        self.rel_int_range = rel_int_range
-        self.ms2query_range = ms2query_range
-
-    def parse(self: Self) -> Tuple[Stats, Repository, Repository]:
+    def parse(
+        self: Self, params: ParameterManager
+    ) -> Tuple[Stats, Repository, Repository]:
         """Parses the peaktable based on format.
+
+        Arguments:
+            params: An instance of the ParameterManager class
 
         Returns:
             A tuple with an instance of Stats, a Feature Repository, and a Sample
                 Repository
 
-        Notes:
-            Adjust here for additional peaktable formats.
+        TODO(MMZ 11.12.23): Cover with tests
         """
-        match self.peaktable_format:
+        match params.PeaktableParameters.format:
             case "mzmine3":
-                return self.parse_mzmine3()
-            case _:
-                logging.fatal("Could not recognize peaktable file - ABORT.")
-                raise RuntimeError
+                return self.parse_mzmine3(params)
 
-    def parse_mzmine3(self: Self) -> Tuple[Stats, Repository, Repository]:
+    def parse_mzmine3(
+        self: Self, params: ParameterManager
+    ) -> Tuple[Stats, Repository, Repository]:
         """Parse a mzmine3 style peaktable.
+
+        Arguments:
+            params: An instance of the ParameterManager class
 
         Returns:
             A tuple with an instance of Stats, a Feature Repository, and a Sample
             Repository
+
+        TODO(MMZ 11.12.23): Cover with tests
         """
-        logging.debug(
-            f"Started parsing MZmine3-style peaktable" f"'{self.peaktable_filepath}.'"
+        logging.info(
+            f"'PeaktableParser': started parsing MZmine3-style peaktable file "
+            f"'{params.PeaktableParameters.filepath.name}'"
         )
 
-        logging.debug(
-            f"Started creating Stats object from '{self.peaktable_filepath}'."
-        )
         stats = Stats()
-        stats.parse_mzmine3(
-            self.peaktable_filepath, self.rel_int_range, self.ms2query_range
-        )
-        logging.debug(
-            f"Completed creating Stats object from '{self.peaktable_filepath}'."
+        stats.parse_mzmine3(params)
+
+        feature_repo = self.mzmine3_extract_features(stats, params)
+
+        sample_repo = self.mzmine3_extract_samples(stats, params)
+
+        logging.info(
+            f"'PeaktableParser': completed parsing MZmine3-style peaktable file "
+            f"'{params.PeaktableParameters.filepath.name}'"
         )
 
-        logging.debug(
-            f"Started creating Feature object(s) from '{self.peaktable_filepath}'."
-        )
+        return stats, feature_repo, sample_repo
+
+    @staticmethod
+    def mzmine3_extract_features(stats: Stats, params: ParameterManager) -> Repository:
+        """Extract features from MZMine3-style peaktable.
+
+        Arguments:
+            stats: An instance of the Stats class
+            params: An instance of the ParameterManager class
+
+        Returns:
+            A Repository object containing Feature objects
+        TODO(MMZ 13.12.23): Cover with tests
+        """
         feature_repo = Repository()
-        for _, row in pd.read_csv(self.peaktable_filepath).iterrows():
+        for _, row in pd.read_csv(params.PeaktableParameters.filepath).iterrows():
             if row["id"] in stats.features:
                 feature_repo.add(
                     row["id"], GeneralFeatureDirector.construct_mzmine3(row)
                 )
-        logging.debug(
-            f"Completed creating Feature object(s) from '{self.peaktable_filepath}'."
-        )
+        return feature_repo
 
-        logging.debug(
-            f"Started creating Sample object(s) from '{self.peaktable_filepath}'."
-        )
+    @staticmethod
+    def mzmine3_extract_samples(stats: Stats, params: ParameterManager) -> Repository:
+        """Extract samples from MZMine3-style peaktable.
+
+        Arguments:
+            stats: An instance of the Stats class
+            params: An instance of the ParameterManager class
+
+        Returns:
+            A Repository object containing Sample objects
+        TODO(MMZ 13.12.23): Cover with tests
+        """
         sample_repo = Repository()
         for s_id in stats.samples:
             sample_repo.add(
                 s_id,
                 SamplesDirector.construct_mzmine3(
-                    s_id, pd.read_csv(self.peaktable_filepath), stats.features
+                    s_id,
+                    pd.read_csv(params.PeaktableParameters.filepath),
+                    stats.features,
                 ),
             )
-        logging.debug(
-            f"Completed creating Sample object(s) from '{self.peaktable_filepath}'."
-        )
-
-        logging.debug(
-            f"Completed parsing MZmine3-style peaktable '{self.peaktable_filepath}'."
-        )
-
-        return stats, feature_repo, sample_repo
+        return sample_repo

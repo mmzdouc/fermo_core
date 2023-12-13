@@ -25,58 +25,49 @@ from pyteomics import mgf
 from typing import Self
 
 from fermo_core.data_processing.class_repository import Repository
+from fermo_core.input_output.class_parameter_manager import ParameterManager
 
 
 class MsmsParser:
-    """Interface to parse different input msms files.
+    """Interface to parse different input msms files."""
 
-    Attributes:
-        msms_filepath: a file path string
-        msms_format: a string indicating the format of the msms file
-    """
-
-    def __init__(
-        self: Self,
-        msms_filepath: str,
-        msms_format: str,
-    ):
-        self.msms_filepath = msms_filepath
-        self.msms_format = msms_format
-
-    def parse(self: Self, feature_repo: Repository) -> Repository:
+    def parse(
+        self: Self, feature_repo: Repository, params: ParameterManager
+    ) -> Repository:
         """Parses the msms information based on format.
 
         Arguments:
             feature_repo: Repository holding individual features
+            params: instance of ParameterManager holding user input
 
         Returns:
-            A (modified) Feature Repository
-
-        Notes:
-            Adjust here for additional msms formats.
+            A Repository object with modified features
+        TODO(MMZ 13.12.23): Cover with tests
         """
-        match self.msms_format:
+        match params.MsmsParameters.format:
             case "mgf":
-                return self.parse_mgf(feature_repo)
+                return self.parse_mgf(feature_repo, params)
             case _:
-                logging.warning("Could not recognize MS/MS file format - SKIP.")
                 return feature_repo
 
-    def parse_mgf(self: Self, feature_repo: Repository) -> Repository:
+    @staticmethod
+    def parse_mgf(feature_repo: Repository, params: ParameterManager) -> Repository:
         """Parses a mgf file for MS/MS information and adds info to molecular features.
 
         Arguments:
             feature_repo: Repository holding individual features
+            params: instance of ParameterManager holding user input
 
         Returns:
-            A (modified) Feature Repository
-
-        Notes:
-            mgf.read() returns a Numpy array - turned to list for easier handling
+            A Repository object with modified features
+        TODO(MMZ 13.12.23): Cover with tests
         """
-        logging.debug(f"Started parsing MS/MS information from '{self.msms_filepath}'.")
+        logging.info(
+            f"'MsmsParser': started parsing MS/MS-data containing .mgf-file "
+            f"'{params.MsmsParameters.filepath.name}'"
+        )
 
-        with open(self.msms_filepath) as infile:
+        with open(params.MsmsParameters.filepath) as infile:
             for spectrum in mgf.read(infile, use_index=False):
                 try:
                     feature = feature_repo.get(
@@ -96,6 +87,10 @@ class MsmsParser:
                         "This feature ID does not exist in peaktable or was filtered "
                         "out by 'rel_int_range' settings."
                     )
-        logging.debug(f"Completed parsing of MS/MS '.mgf' file '{self.msms_filepath}'.")
+
+        logging.info(
+            f"'MsmsParser': completed parsing MS/MS-data containing .mgf-file "
+            f"'{params.MsmsParameters.filepath.name}'"
+        )
 
         return feature_repo
