@@ -35,7 +35,9 @@ from fermo_core.data_processing.parser.group_metadata_parser.class_fermo_metadat
 from fermo_core.data_processing.parser.class_spectral_library_parser import (
     SpectralLibraryParser,
 )
-from fermo_core.data_processing.parser.class_phenotype_parser import PhenotypeParser
+from fermo_core.data_processing.parser.phenotype_parser.class_fermo_phenotype_parser import (
+    PhenotypeFermoParser,
+)
 from fermo_core.data_processing.class_repository import Repository
 from fermo_core.data_processing.class_stats import Stats
 
@@ -82,7 +84,7 @@ class GeneralParser:
         logging.info("'GeneralParser': completed file parsing.")
 
     def parse_peaktable(self: Self, params: ParameterManager):
-        """Parses user-provided peaktable and logs process.
+        """Parses user-provided peaktable file.
 
         Arguments:
             params: ParameterManager holding validated user input
@@ -96,7 +98,7 @@ class GeneralParser:
                 )
 
     def parse_msms(self: Self, params: ParameterManager):
-        """Parses user-provided msms and logs process.
+        """Parses user-provided msms file.
 
         Arguments:
             params: ParameterManager holding validated user input
@@ -114,7 +116,7 @@ class GeneralParser:
                 self.features = MgfParser().parse(self.features, params)
 
     def parse_group_metadata(self: Self, params: ParameterManager):
-        """Parses user-provided group metadata and logs process.
+        """Parses user-provided group metadata file.
 
         Arguments:
             params: ParameterManager holding validated user input
@@ -135,7 +137,7 @@ class GeneralParser:
                 )
 
     def parse_phenotype(self: Self, params: ParameterManager):
-        """Parses user-provided phenotype/bioactivity data and logs process.
+        """Parses user-provided phenotype/bioactivity data file.
 
         Arguments:
             params: ParameterManager holding validated user input
@@ -149,22 +151,14 @@ class GeneralParser:
             )
             return
 
-        logging.info(
-            "'GeneralParser': started parsing of phenotype data file "
-            f"'{params.PhenotypeParameters.filepath.name}'."
-        )
-
-        self.stats, self.samples = PhenotypeParser().parse(
-            self.stats, self.samples, params
-        )
-
-        logging.info(
-            "'GeneralParser': completed parsing of phenotype data file "
-            f"'{params.PhenotypeParameters.filepath.name}'."
-        )
+        match params.PhenotypeParameters.format:
+            case "fermo":
+                self.stats, self.samples = PhenotypeFermoParser().parse(
+                    self.stats, self.samples, params
+                )
 
     def parse_spectral_library(self: Self, params: ParameterManager):
-        """Parses user-provided spectral_library data and logs process.
+        """Parses user-provided spectral_library file.
 
         Arguments:
             params: ParameterManager holding validated user input

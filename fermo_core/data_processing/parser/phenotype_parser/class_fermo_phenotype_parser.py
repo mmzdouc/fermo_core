@@ -1,4 +1,4 @@
-"""Parses phenotype files depending on file format.
+"""Parses fermo-style phenotype data file.
 
 Copyright (c) 2022-2023 Mitja Maximilian Zdouc, PhD
 
@@ -27,40 +27,17 @@ from typing import Self, Tuple
 from fermo_core.data_processing.class_repository import Repository
 from fermo_core.data_processing.class_stats import Stats
 from fermo_core.data_processing.builder_sample.dataclass_sample import Phenotype
+from fermo_core.data_processing.parser.phenotype_parser.acb_phenotype_parser import (
+    PhenotypeParser,
+)
 
 from fermo_core.input_output.class_parameter_manager import ParameterManager
 
-# TODO(MMZ 13.12.23): continue here - fix class, add test adding reference
 
-
-class PhenotypeParser:
-    """Interface to parse different input peak tables."""
+class PhenotypeFermoParser(PhenotypeParser):
+    """Interface to parse fermo-style phenotype file."""
 
     def parse(
-        self: Self, stats: Stats, sample_repo: Repository, params: ParameterManager
-    ) -> Tuple[Stats, Repository]:
-        """Parses the phenotype/bioactivity information based on file format.
-
-        Arguments:
-            stats: Stats object holding various information of overall data
-            sample_repo: Repository holding Sample objects
-            params: Instance of ParameterManager holding user input
-
-        Returns:
-            Tuple of Stats and Sample repository, modified for bioactivity info.
-
-        Notes:
-            Adjust here for additional phenotype formats.
-
-        # TODO(MMZ 13.12.23): Cover with tests
-        """
-        match params.PhenotypeParameters.format:
-            case "fermo":
-                return self.parse_fermo(stats, sample_repo, params)
-            case _:
-                return stats, sample_repo
-
-    def parse_fermo(
         self: Self, stats: Stats, sample_repo: Repository, params: ParameterManager
     ) -> Tuple[Stats, Repository]:
         """Parses a fermo-style phenotype/bioactivity data file.
@@ -82,39 +59,38 @@ class PhenotypeParser:
         # TODO(MMZ 13.12.23): Cover with tests
         """
         logging.info(
-            f"'PhenotypeParser': started parsing fermo-style phenotype data file "
+            f"'PhenotypeFermoParser': started parsing fermo-style phenotype data file "
             f"'{params.PhenotypeParameters.filepath.name}'"
         )
 
         df = pd.read_csv(params.PhenotypeParameters.filepath)
 
-        experiments = dict()
-        for col in df.columns:
-            if col != "sample_name":
-                experiments[col] = []
+        assays = dict()
+        for assay_type in df.columns:
+            if assay_type != "sample_name":
+                assays[assay_type] = []
 
-        # Uses the column (experiment) names to extract sample measurement information
-        for experiment in experiments.keys():
-            df_actives = df[df[experiment] != 0]
+        for assay in assays.keys():
+            df_actives = df[df[assay] != 0]
             for _, row in df_actives.iterrows():
-                experiments[experiment].append(row["sample_name"])
+                assays[assay].append(row["sample_name"])
                 sample_repo = self.add_phenotype_to_sample(
                     sample_repo,
                     row["sample_name"],
-                    experiment,
-                    row[experiment],
+                    assay,
+                    row[assay],
                     concentration=1,
                 )
 
         if not isinstance(stats.phenotypes, dict):
             stats.phenotypes = dict()
 
-        for experiment in experiments:
-            stats.phenotypes[experiment] = tuple(experiments.get(experiment))
+        for assay in assays:
+            stats.phenotypes[assay] = tuple(assays.get(assay))
 
         logging.info(
-            f"'PhenotypeParser': completed parsing fermo-style phenotype data file "
-            f"'{params.PhenotypeParameters.filepath.name}'"
+            f"'PhenotypeFermoParser': completed parsing fermo-style phenotype data file"
+            f" '{params.PhenotypeParameters.filepath.name}'"
         )
 
         return stats, sample_repo
@@ -123,7 +99,7 @@ class PhenotypeParser:
     def add_phenotype_to_sample(
         sample_repo: Repository,
         sample_id: str,
-        experiment: str,
+        assay: str,
         measurement: int | float,
         concentration: int | float,
     ) -> Repository:
@@ -132,7 +108,7 @@ class PhenotypeParser:
         Arguments:
             sample_repo: Repository holding sample objects
             sample_id: a sample identifier
-            experiment: an experiment/measurement type identifier
+            assay: an experiment/measurement type identifier
             measurement: the measurement for the sample
             concentration: at which concentration the measurement was made
 
@@ -147,7 +123,7 @@ class PhenotypeParser:
             if not isinstance(sample.phenotypes, dict):
                 sample.phenotypes = dict()
 
-            sample.phenotypes[experiment] = Phenotype(
+            sample.phenotypes[assay] = Phenotype(
                 value=measurement,
                 concentration=concentration,
             )

@@ -50,6 +50,7 @@ ROOT = Path(__file__).resolve().parent
 #     filemode="w",
 # )
 
+# TODO(MMZ 14.12.23): add a switch to print log to file
 logging = logging.getLogger(__name__)
 coloredlogs.install(level="DEBUG")
 
