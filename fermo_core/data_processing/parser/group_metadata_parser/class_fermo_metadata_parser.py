@@ -86,7 +86,6 @@ class MetadataFermoParser(GroupMetadataParser):
 
         Returns:
             A (modified) stats object
-        TODO(MMZ 13.12.23): Cover with tests
         """
         try:
             stats_obj.groups.get("DEFAULT").remove(sample_id)
@@ -112,7 +111,6 @@ class MetadataFermoParser(GroupMetadataParser):
 
         Returns:
             A (modified) Repository object
-        TODO(MMZ 13.12.23): Cover with tests
         """
         try:
             sample = sample_repo.get(sample_id)
