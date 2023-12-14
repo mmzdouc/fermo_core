@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Tuple
+from typing import Tuple, Self
 
 from fermo_core.data_processing.class_repository import Repository
 from fermo_core.data_processing.class_stats import Stats
@@ -10,8 +10,10 @@ class PeaktableParser(ABC):
     """Abstract base class for all peaktable parsers."""
 
     @abstractmethod
-    def parse(self, params: ParameterManager) -> Tuple[Stats, Repository, Repository]:
-        """Interface for class calling and point of entry. Calls class methods.
+    def parse(
+        self: Self, params: ParameterManager
+    ) -> Tuple[Stats, Repository, Repository]:
+        """Interface for class calling and point of entry. Calls static methods.
 
         Arguments:
             params: An instance of the ParameterManager class

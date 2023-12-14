@@ -25,34 +25,17 @@ from pyteomics import mgf
 from typing import Self
 
 from fermo_core.data_processing.class_repository import Repository
+from fermo_core.data_processing.parser.msms_parser.abc_msms_parser import MsmsParser
 from fermo_core.input_output.class_parameter_manager import ParameterManager
 
 
-class MsmsParser:
-    """Interface to parse different input msms files."""
+class MgfParser(MsmsParser):
+    """Interface to parse MS/MS files in mgf format."""
 
     def parse(
         self: Self, feature_repo: Repository, params: ParameterManager
     ) -> Repository:
-        """Parses the msms information based on format.
-
-        Arguments:
-            feature_repo: Repository holding individual features
-            params: instance of ParameterManager holding user input
-
-        Returns:
-            A Repository object with modified features
-        TODO(MMZ 13.12.23): Cover with tests
-        """
-        match params.MsmsParameters.format:
-            case "mgf":
-                return self.parse_mgf(feature_repo, params)
-            case _:
-                return feature_repo
-
-    @staticmethod
-    def parse_mgf(feature_repo: Repository, params: ParameterManager) -> Repository:
-        """Parses a mgf file for MS/MS information and adds info to molecular features.
+        """Parse a mgf style MS/MS file.
 
         Arguments:
             feature_repo: Repository holding individual features
@@ -63,10 +46,33 @@ class MsmsParser:
         TODO(MMZ 13.12.23): Cover with tests
         """
         logging.info(
-            f"'MsmsParser': started parsing MS/MS-data containing .mgf-file "
+            f"'MgfParser': started parsing of MS/MS data-containing file "
             f"'{params.MsmsParameters.filepath.name}'"
         )
 
+        feature_repo = self.modify_features(feature_repo, params)
+
+        logging.info(
+            f"'MgfParser': completed parsing of MS/MS data-containing file "
+            f"'{params.MsmsParameters.filepath.name}'"
+        )
+
+        return feature_repo
+
+    @staticmethod
+    def modify_features(
+        feature_repo: Repository, params: ParameterManager
+    ) -> Repository:
+        """Modifies Feature objects by adding MS/MS information.
+
+        Arguments:
+            feature_repo: Repository holding individual features
+            params: instance of ParameterManager holding user input
+
+        Returns:
+            A Repository object with modified features
+        TODO(MMZ 13.12.23): Cover with tests
+        """
         with open(params.MsmsParameters.filepath) as infile:
             for spectrum in mgf.read(infile, use_index=False):
                 try:
@@ -84,13 +90,8 @@ class MsmsParser:
                     logging.warning(
                         f"Could not add MS/MS spectrum with the feature ID "
                         f"'{spectrum.get('params').get('feature_id')}'. "
-                        "This feature ID does not exist in peaktable or was filtered "
-                        "out by 'rel_int_range' settings."
+                        "This feature ID does not exist in the provided peaktable"
+                        " - SKIP"
                     )
-
-        logging.info(
-            f"'MsmsParser': completed parsing MS/MS-data containing .mgf-file "
-            f"'{params.MsmsParameters.filepath.name}'"
-        )
 
         return feature_repo

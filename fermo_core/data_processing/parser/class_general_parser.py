@@ -28,7 +28,7 @@ from fermo_core.data_processing.parser.peaktable_parser.class_mzmine3_parser imp
     PeakMzmine3Parser,
 )
 
-from fermo_core.data_processing.parser.class_msms_parser import MsmsParser
+from fermo_core.data_processing.parser.msms_parser.class_mgf_parser import MgfParser
 from fermo_core.data_processing.parser.class_group_metadata_parser import (
     GroupMetadataParser,
 )
@@ -109,17 +109,9 @@ class GeneralParser:
             )
             return
 
-        logging.info(
-            "'GeneralParser': started parsing of MS/MS file "
-            f"'{params.MsmsParameters.filepath.name}'."
-        )
-
-        self.features = MsmsParser().parse(self.features, params)
-
-        logging.info(
-            "'GeneralParser': finished parsing of MS/MS file "
-            f"'{params.MsmsParameters.filepath.name}'."
-        )
+        match params.MsmsParameters.format:
+            case "mgf":
+                self.features = MgfParser().parse(self.features, params)
 
     def parse_group_metadata(self: Self, params: ParameterManager):
         """Parses user-provided group metadata and logs process.
