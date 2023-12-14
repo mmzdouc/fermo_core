@@ -1,4 +1,4 @@
-"""Parses msms information files depending on msms file format.
+"""Parses msms information from a .mgf-file.
 
 Copyright (c) 2022-2023 Mitja Maximilian Zdouc, PhD
 
@@ -43,7 +43,6 @@ class MgfParser(MsmsParser):
 
         Returns:
             A Repository object with modified features
-        TODO(MMZ 13.12.23): Cover with tests
         """
         logging.info(
             f"'MgfParser': started parsing of MS/MS data-containing file "
@@ -71,7 +70,6 @@ class MgfParser(MsmsParser):
 
         Returns:
             A Repository object with modified features
-        TODO(MMZ 13.12.23): Cover with tests
         """
         with open(params.MsmsParameters.filepath) as infile:
             for spectrum in mgf.read(infile, use_index=False):

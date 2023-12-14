@@ -116,13 +116,17 @@ class ParameterManager(BaseModel):
         Arguments:
             user_params: a json-derived dict with user input; jsonschema-controlled.
         """
-        logging.info("Started assignment of user-provided parameters.")
+        logging.info(
+            "'ParameterManager': started assignment of user-provided parameters."
+        )
 
         self.assign_files_parameters(user_params)
         self.assign_core_modules_parameters(user_params)
         self.assign_additional_modules_parameters(user_params)
 
-        logging.info("Completed assignment of user-provided parameters.")
+        logging.info(
+            "'ParameterManager': completed assignment of user-provided parameters."
+        )
 
     def assign_files_parameters(self: Self, user_params: dict):
         """Assigns user-input on files to ParameterManager.
@@ -257,7 +261,7 @@ class ParameterManager(BaseModel):
         Arguments:
             module: a str referencing the module that was skipped.
         """
-        logging.info(f"ParameterManager: no parameters for module '{module}' - SKIP.")
+        logging.info(f"'ParameterManager': no parameters for module '{module}' - SKIP.")
 
     @staticmethod
     def log_default_values(module: str):
@@ -267,7 +271,7 @@ class ParameterManager(BaseModel):
             module: a str referencing the module for which default params are used.
         """
         logging.info(
-            f"ParameterManager: no parameters for module '{module}' "
+            f"'ParameterManager': no parameters for module '{module}' "
             f"- USED DEFAULT VALUES."
         )
 
@@ -279,7 +283,7 @@ class ParameterManager(BaseModel):
             module: a str referencing the module for errors were detected.
         """
         logging.warning(
-            f"ParameterManager: missing/malformed parameter values for module "
+            f"'ParameterManager': missing/malformed parameter values for module "
             f"'{module}' - SKIP."
         )
 
@@ -291,7 +295,7 @@ class ParameterManager(BaseModel):
             module: a str referencing the module for errors were detected.
         """
         logging.warning(
-            f"ParameterManager: missing/malformed parameter values for module "
+            f"'ParameterManager': missing/malformed parameter values for module "
             f"'{module}' - USED DEFAULT VALUES."
         )
 
@@ -307,12 +311,13 @@ class ParameterManager(BaseModel):
         try:
             self.PeaktableParameters = PeaktableParameters(**user_params)
             logging.info(
-                "Validated and assigned user-specified parameter for 'peaktable'."
+                "'ParameterManager': validated and assigned parameters "
+                "for 'peaktable'."
             )
         except Exception as e:
             logging.warning(str(e))
             logging.critical(
-                "ParameterManager: no or malformed parameters for "
+                "'ParameterManager': no or malformed parameters for "
                 "'peaktable' - ABORT"
             )
             raise e
@@ -325,7 +330,9 @@ class ParameterManager(BaseModel):
         """
         try:
             self.MsmsParameters = MsmsParameters(**user_params)
-            logging.info("Validated and assigned user-specified parameter for 'msms'.")
+            logging.info(
+                "'ParameterManager': validated and assigned parameters for 'msms'."
+            )
         except Exception as e:
             logging.warning(str(e))
             self.log_malformed_parameters_skip("msms")
@@ -340,7 +347,8 @@ class ParameterManager(BaseModel):
         try:
             self.PhenotypeParameters = PhenotypeParameters(**user_params)
             logging.info(
-                "Validated and assigned user-specified parameter for 'phenotype'."
+                "'ParameterManager': validated and assigned parameters "
+                "for 'phenotype'."
             )
         except Exception as e:
             logging.warning(str(e))
@@ -356,7 +364,8 @@ class ParameterManager(BaseModel):
         try:
             self.GroupMetadataParameters = GroupMetadataParameters(**user_params)
             logging.info(
-                "Validated and assigned user-specified parameter for 'group_metadata'."
+                "'ParameterManager': validated and assigned parameters "
+                "for 'group_metadata'."
             )
         except Exception as e:
             logging.warning(str(e))
@@ -372,8 +381,8 @@ class ParameterManager(BaseModel):
         try:
             self.SpecLibParameters = SpecLibParameters(**user_params)
             logging.info(
-                "Validated and assigned user-specified parameter for "
-                "'spectral_library'."
+                "'ParameterManager': validated and assigned parameters "
+                "for 'spectral_library'."
             )
         except Exception as e:
             logging.warning(str(e))
@@ -389,8 +398,8 @@ class ParameterManager(BaseModel):
         try:
             self.AdductAnnotationParameters = AdductAnnotationParameters(**user_params)
             logging.info(
-                "Validated and assigned user-specified parameter for "
-                "'adduct_annotation'."
+                "'ParameterManager': validated and assigned parameters "
+                "for 'adduct_annotation'."
             )
         except Exception as e:
             logging.warning(str(e))
@@ -409,8 +418,8 @@ class ParameterManager(BaseModel):
                 **user_params
             )
             logging.info(
-                "Validated and assigned user-specified parameter for "
-                "'spec_sim_networking/modified_cosine'."
+                "'ParameterManager': validated and assigned parameters "
+                "for 'spec_sim_networking/modified_cosine'."
             )
         except Exception as e:
             logging.warning(str(e))
@@ -429,8 +438,8 @@ class ParameterManager(BaseModel):
                 **user_params
             )
             logging.info(
-                "Validated and assigned user-specified parameter for "
-                "'spec_sim_networking/ms2deepscore'."
+                "'ParameterManager': validated and assigned parameters "
+                "for 'spec_sim_networking/ms2deepscore'."
             )
         except Exception as e:
             logging.warning(str(e))
@@ -448,8 +457,8 @@ class ParameterManager(BaseModel):
                 **user_params
             )
             logging.info(
-                "Validated and assigned user-specified parameter for "
-                "'peaktable_filtering'."
+                "'ParameterManager': validated and assigned parameters "
+                "for 'peaktable_filtering'."
             )
         except Exception as e:
             logging.warning(str(e))
@@ -465,8 +474,8 @@ class ParameterManager(BaseModel):
         try:
             self.BlankAssignmentParameters = BlankAssignmentParameters(**user_params)
             logging.info(
-                "Validated and assigned user-specified parameter for "
-                "'blank_assignment'."
+                "'ParameterManager': validated and assigned parameters "
+                "for 'blank_assignment'."
             )
         except Exception as e:
             logging.warning(str(e))
@@ -485,8 +494,8 @@ class ParameterManager(BaseModel):
                 **user_params
             )
             logging.info(
-                "Validated and assigned user-specified parameter for "
-                "'phenotype_assignment/fold_difference'."
+                "'ParameterManager': validated and assigned parameters "
+                "for 'phenotype_assignment/fold_difference'."
             )
         except Exception as e:
             logging.warning(str(e))
@@ -507,8 +516,8 @@ class ParameterManager(BaseModel):
                 SpectralLibMatchingCosineParameters(**user_params)
             )
             logging.info(
-                "Validated and assigned user-specified parameter for "
-                "'spectral_library_matching/modified_cosine'."
+                "'ParameterManager': validated and assigned parameters "
+                "for 'spectral_library_matching/modified_cosine'."
             )
         except Exception as e:
             logging.warning(str(e))
@@ -531,8 +540,8 @@ class ParameterManager(BaseModel):
                 SpectralLibMatchingDeepscoreParameters(**user_params)
             )
             logging.info(
-                "Validated and assigned user-specified parameter for "
-                "'spectral_library_matching/ms2deepscore'."
+                "'ParameterManager': validated and assigned parameters "
+                "for 'spectral_library_matching/ms2deepscore'."
             )
         except Exception as e:
             logging.warning(str(e))
@@ -554,7 +563,8 @@ class ParameterManager(BaseModel):
                 **user_params
             )
             logging.info(
-                "Validated and assigned user-specified parameter for 'ms2query'."
+                "'ParameterManager': validated and assigned parameters "
+                "for 'ms2query'."
             )
         except Exception as e:
             logging.warning(str(e))
