@@ -32,8 +32,8 @@ from fermo_core.data_processing.parser.msms_parser.class_mgf_parser import MgfPa
 from fermo_core.data_processing.parser.group_metadata_parser.class_fermo_metadata_parser import (
     MetadataFermoParser,
 )
-from fermo_core.data_processing.parser.class_spectral_library_parser import (
-    SpectralLibraryParser,
+from fermo_core.data_processing.parser.spec_library_parser.class_spec_lib_mgf_parser import (
+    SpecLibMgfParser,
 )
 from fermo_core.data_processing.parser.phenotype_parser.class_fermo_phenotype_parser import (
     PhenotypeFermoParser,
@@ -172,14 +172,6 @@ class GeneralParser:
             )
             return
 
-        logging.info(
-            "'GeneralParser': started parsing of spectral library file "
-            f"'{params.SpecLibParameters.filepath.name}'."
-        )
-
-        self.stats = SpectralLibraryParser().parse(self.stats, params)
-
-        logging.info(
-            "'GeneralParser': started parsing of spectral library file "
-            f"'{params.SpecLibParameters.filepath.name}'."
-        )
+        match params.SpecLibParameters.format:
+            case "mgf":
+                self.stats = SpecLibMgfParser().parse(self.stats, params)

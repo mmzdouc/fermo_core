@@ -1,4 +1,4 @@
-"""Parses spectral library files depending on file format.
+"""Parses a spectral library file in mgf format.
 
 Copyright (c) 2022-2023 Mitja Maximilian Zdouc, PhD
 
@@ -25,36 +25,17 @@ from pyteomics import mgf
 from typing import Self
 
 from fermo_core.data_processing.class_stats import Stats, SpecLibEntry
+from fermo_core.data_processing.parser.spec_library_parser.abc_spec_lib_parser import (
+    SpecLibParser,
+)
 from fermo_core.input_output.class_parameter_manager import ParameterManager
 
 
-class SpectralLibraryParser:
-    """Interface to parse different spectral library file formats."""
+class SpecLibMgfParser(SpecLibParser):
+    """Interface to parse a spectral library file in mgf format."""
 
     def parse(self: Self, stats: Stats, params: ParameterManager) -> Stats:
-        """Parses a spectral library file based on file format.
-
-        Arguments:
-            stats: Stats object handling spectral library information
-            params: Parameter Object holding user input information
-
-        Returns:
-            (Modified) Stats object.
-
-        Notes:
-            Adjust here for additional spectral library file formats.
-
-        # TODO(MMZ 13.12.23): Cover with tests
-        """
-        match params.SpecLibParameters.format:
-            case "mgf":
-                return self.parse_mgf(stats, params)
-            case _:
-                return stats
-
-    @staticmethod
-    def parse_mgf(stats: Stats, params: ParameterManager) -> Stats:
-        """Parses a spectral library file in mgf format, attributes to Stats.
+        """Parses a spectral library file in mgf format.
 
         Arguments:
             stats: Stats object which handles the entries in the spectral library file
@@ -69,10 +50,35 @@ class SpectralLibraryParser:
         # TODO(MMZ 13.12.23): Cover with tests
         """
         logging.info(
-            f"'SpectralLibraryParser': started parsing of spectral library file "
+            f"'SpecLibMgfParser': started parsing of spectral library file "
             f"'{params.SpecLibParameters.filepath.name}'"
         )
 
+        stats = self.modify_stats(stats, params)
+
+        logging.info(
+            f"'SpecLibMgfParser': completed parsing of spectral library file "
+            f"'{params.SpecLibParameters.filepath.name}'"
+        )
+
+        return stats
+
+    @staticmethod
+    def modify_stats(stats: Stats, params: ParameterManager) -> Stats:
+        """Adds spectral library entries to Stats object.
+
+        Arguments:
+            stats: Stats object which handles the entries in the spectral library file
+            params: Parameter Object holding user input information
+
+        Returns:
+            A (modified) Stats object
+
+        Notes:
+            mgf.read() returns a Numpy array - turned to list for easier handling
+
+        # TODO(MMZ 13.12.23): Cover with tests
+        """
         with open(params.SpecLibParameters.filepath) as infile:
             counter = 1
             stats.spectral_library = dict()
@@ -90,13 +96,9 @@ class SpectralLibraryParser:
                     logging.warning(
                         f"Malformed entry (count: '{counter}') in file"
                         f"'{params.SpecLibParameters.filepath.name}'"
-                        "detected. Missing 'NAME', 'PEPMASS', or MS/MS information. "
-                        "Entry skipped, continue with next entry."
+                        "detected. Missing 'NAME' or 'PEPMASS' or MS/MS information. "
+                        "SKIP - continue with next entry."
                     )
                 counter += 1
 
-        logging.info(
-            f"'SpectralLibraryParser': completed parsing of spectral library file "
-            f"'{params.SpecLibParameters.filepath.name}'"
-        )
         return stats
