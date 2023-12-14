@@ -24,7 +24,10 @@ import logging
 from typing import Tuple, Self, Optional
 
 from fermo_core.input_output.class_parameter_manager import ParameterManager
-from fermo_core.data_processing.parser.class_peaktable_parser import PeaktableParser
+from fermo_core.data_processing.parser.peaktable_parser.class_mzmine3_parser import (
+    PeakMzmine3Parser,
+)
+
 from fermo_core.data_processing.parser.class_msms_parser import MsmsParser
 from fermo_core.data_processing.parser.class_group_metadata_parser import (
     GroupMetadataParser,
@@ -57,7 +60,7 @@ class GeneralParser:
         Returns:
             Tuple containing Stats, Feature Repository and Sample Repository objects.
         """
-        return (self.stats, self.features, self.samples)
+        return self.stats, self.features, self.samples
 
     def parse_parameters(self: Self, params: ParameterManager):
         """Organize calling of specific parser classes.
@@ -85,20 +88,12 @@ class GeneralParser:
             params: ParameterManager holding validated user input
 
         # TODO(MMZ 11.12.23): Cover with tests
-        # TODO(MMZ 13.12.23): Move match/case for format here, rename
-            class_peaktable_parser to class_peaktable_parser_mzmine3
         """
-        logging.info(
-            "'GeneralParser': started parsing of peaktable "
-            f"'{params.PeaktableParameters.filepath.name}'."
-        )
-
-        self.stats, self.features, self.samples = PeaktableParser().parse(params)
-
-        logging.info(
-            "'GeneralParser': completed parsing of peaktable "
-            f"'{params.PeaktableParameters.filepath.name}'."
-        )
+        match params.PeaktableParameters.format:
+            case "mzmine3":
+                self.stats, self.features, self.samples = PeakMzmine3Parser().parse(
+                    params
+                )
 
     def parse_msms(self: Self, params: ParameterManager):
         """Parses user-provided msms and logs process.
