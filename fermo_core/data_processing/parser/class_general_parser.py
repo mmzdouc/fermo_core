@@ -29,8 +29,8 @@ from fermo_core.data_processing.parser.peaktable_parser.class_mzmine3_parser imp
 )
 
 from fermo_core.data_processing.parser.msms_parser.class_mgf_parser import MgfParser
-from fermo_core.data_processing.parser.class_group_metadata_parser import (
-    GroupMetadataParser,
+from fermo_core.data_processing.parser.group_metadata_parser.class_fermo_metadata_parser import (
+    MetadataFermoParser,
 )
 from fermo_core.data_processing.parser.class_spectral_library_parser import (
     SpectralLibraryParser,
@@ -128,19 +128,11 @@ class GeneralParser:
             )
             return
 
-        logging.info(
-            "'GeneralParser': started parsing of group metadata file "
-            f"'{params.GroupMetadataParameters.filepath.name}'."
-        )
-
-        self.stats, self.samples = GroupMetadataParser().parse(
-            self.stats, self.samples, params
-        )
-
-        logging.info(
-            "'GeneralParser': completed parsing of group metadata file "
-            f"'{params.GroupMetadataParameters.filepath.name}'."
-        )
+        match params.GroupMetadataParameters.format:
+            case "fermo":
+                self.stats, self.samples = MetadataFermoParser().parse(
+                    self.stats, self.samples, params
+                )
 
     def parse_phenotype(self: Self, params: ParameterManager):
         """Parses user-provided phenotype/bioactivity data and logs process.

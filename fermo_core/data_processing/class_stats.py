@@ -1,7 +1,5 @@
 """Storage and handling of general stats of analysis run.
 
-***
-
 Copyright (c) 2022-2023 Mitja Maximilian Zdouc, PhD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy

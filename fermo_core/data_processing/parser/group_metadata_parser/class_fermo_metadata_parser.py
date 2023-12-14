@@ -1,4 +1,4 @@
-"""Parses group metadata information files depending on file format.
+"""Parses fermo-style group metadata file
 
 Copyright (c) 2022-2023 Mitja Maximilian Zdouc, PhD
 
@@ -26,48 +26,30 @@ from typing import Self, Tuple
 
 from fermo_core.data_processing.class_stats import Stats
 from fermo_core.data_processing.class_repository import Repository
+from fermo_core.data_processing.parser.group_metadata_parser.abc_group_metadata_parser import (
+    GroupMetadataParser,
+)
 from fermo_core.input_output.class_parameter_manager import ParameterManager
 
 
-class GroupMetadataParser:
-    """Interface to parse different input group metadata files."""
+class MetadataFermoParser(GroupMetadataParser):
+    """Interface to parse fermo-style group metadata file."""
 
     def parse(
-        self: Self, stats: Stats, sample_repo: Repository, params: ParameterManager
-    ) -> Tuple[Stats, Repository]:
-        """Parses the group metadata information based on format.
-
-        Arguments:
-            stats: Stats object holding various information of overall data
-            sample_repo: Repository holding Sample objects
-            params: a ParameterManager instance holding user input data
-
-        Returns:
-            Tuple containing Stats and Sample repository objects with added group info.
-        TODO(MMZ 13.12.23): Cover with tests
-        """
-        match params.GroupMetadataParameters.format:
-            case "fermo":
-                return self.parse_fermo(stats, sample_repo, params)
-            case _:
-                return stats, sample_repo
-
-    def parse_fermo(
         self: Self, stats: Stats, sample_repo: Repository, params: ParameterManager
     ) -> Tuple[Stats, Repository]:
         """Parses a fermo-style group metadata file.
 
         Arguments:
-            stats: Stats object holding various information of overall data
-            sample_repo: Repository holding Sample objects
+            stats: Instance of class Stats, holding summarized information
+            sample_repo: a Repository instance holding Sample objects
             params: a ParameterManager instance holding user input data
 
         Returns:
-            Tuple containing Stats and Sample repository objects with added group info.
-        TODO(MMZ 13.12.23): Cover with tests
+            Tuple of Stats and Sample repository objects with added group info.
         """
         logging.info(
-            f"'GroupMetadataParser': started parsing fermo-style group metadata file "
+            f"'MetadataFermoParser': started parsing fermo-style group metadata file "
             f"'{params.GroupMetadataParameters.filepath.name}'"
         )
 
@@ -89,7 +71,7 @@ class GroupMetadataParser:
                     )
 
         logging.info(
-            f"'GroupMetadataParser': completed parsing fermo-style group metadata file "
+            f"'MetadataFermoParser': completed parsing fermo-style group metadata file "
             f"'{params.GroupMetadataParameters.filepath.name}'"
         )
         return stats, sample_repo
@@ -111,8 +93,8 @@ class GroupMetadataParser:
             return stats_obj
         except KeyError:
             logging.warning(
-                f"'GroupMetadataParser': Could not find sample ID '{sample_id}' in "
-                f"previously processed peaktable file. Have you provided the correct "
+                f"'MetadataFermoParser': Could not find sample ID '{sample_id}' in "
+                f"previously processed peaktable file. Did you provide the correct "
                 f"group metadata file?"
             )
             return stats_obj
@@ -141,8 +123,8 @@ class GroupMetadataParser:
             return sample_repo
         except KeyError:
             logging.warning(
-                f"'GroupMetadataParser': Could not find sample ID '{sample_id}' in "
-                f"previously processed peaktable file. Have you provided the correct "
+                f"'MetadataFermoParser': Could not find sample ID '{sample_id}' in "
+                f"previously processed peaktable file. Did you provide the correct "
                 f"group metadata file?"
             )
             return sample_repo

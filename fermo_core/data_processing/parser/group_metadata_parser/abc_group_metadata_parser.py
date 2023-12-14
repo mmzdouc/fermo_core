@@ -1,4 +1,4 @@
-"""Abstract base class for MS/MS file parser.
+"""Abstract base class for group metadata file parser.
 
 Copyright (c) 2022-2023 Mitja Maximilian Zdouc, PhD
 
@@ -22,42 +22,28 @@ SOFTWARE.
 """
 
 from abc import ABC, abstractmethod
-from typing import Self
+from typing import Tuple, Self
 
 from fermo_core.data_processing.class_repository import Repository
+from fermo_core.data_processing.class_stats import Stats
 from fermo_core.input_output.class_parameter_manager import ParameterManager
 
 
-class MsmsParser(ABC):
-    """Abstract base class for all MS/MS parsers."""
+class GroupMetadataParser(ABC):
+    """Abstract base class for all group metadata file parsers."""
 
     @abstractmethod
     def parse(
-        self: Self, feature_repo: Repository, params: ParameterManager
-    ) -> Repository:
+        self: Self, stats: Stats, sample_repo: Repository, params: ParameterManager
+    ) -> Tuple[Stats, Repository]:
         """Interface for class calling and point of entry. Calls static methods.
 
         Arguments:
-            feature_repo: An instance of Repository class w Feature objects
+            stats: An instance of Stats class for handling of general info
+            sample_repo: A Repository instance holding Sample objects
             params: An instance of the ParameterManager class
 
         Returns:
-            Repository object w modified Feature objects
-        """
-        pass
-
-    @staticmethod
-    @abstractmethod
-    def modify_features(
-        feature_repo: Repository, params: ParameterManager
-    ) -> Repository:
-        """Method to modify Feature objects by adding MS/MS info. Called by 'parse'.
-
-        Arguments:
-            feature_repo: An instance of Repository class w Feature objects
-            params: An instance of the ParameterManager class
-
-        Returns:
-            Repository object w modified Feature objects
+            Tuple of objects: Stats, Repository w Samples
         """
         pass
