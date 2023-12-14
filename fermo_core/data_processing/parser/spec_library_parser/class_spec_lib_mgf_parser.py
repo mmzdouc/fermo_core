@@ -46,8 +46,6 @@ class SpecLibMgfParser(SpecLibParser):
 
         Notes:
             mgf.read() returns a Numpy array - turned to list for easier handling
-
-        # TODO(MMZ 13.12.23): Cover with tests
         """
         logging.info(
             f"'SpecLibMgfParser': started parsing of spectral library file "
@@ -76,8 +74,6 @@ class SpecLibMgfParser(SpecLibParser):
 
         Notes:
             mgf.read() returns a Numpy array - turned to list for easier handling
-
-        # TODO(MMZ 13.12.23): Cover with tests
         """
         with open(params.SpecLibParameters.filepath) as infile:
             counter = 1

@@ -55,8 +55,6 @@ class PhenotypeFermoParser(PhenotypeParser):
             the fermo bioactivity/phenotype data format assumes the same
             concentration of all experiments (1).
             TODO(MMZ 13.12.23): fermo bioactivity format needs to be changed.
-
-        # TODO(MMZ 13.12.23): Cover with tests
         """
         logging.info(
             f"'PhenotypeFermoParser': started parsing fermo-style phenotype data file "
@@ -114,8 +112,6 @@ class PhenotypeFermoParser(PhenotypeParser):
 
         Returns:
             A (modified) Repository object
-
-        # TODO(MMZ 13.12.23): Cover with tests
         """
         try:
             sample = sample_repo.get(sample_id)
