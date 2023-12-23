@@ -15,6 +15,13 @@ def params_manager():
     return params_manager
 
 
+@pytest.fixture
+def general_parser(params_manager):
+    general_parser = GeneralParser()
+    general_parser.parse_parameters(params_manager)
+    return general_parser
+
+
 def test_instantiate_class_valid():
     assert isinstance(GeneralParser(), GeneralParser)
 
@@ -34,12 +41,73 @@ def test_return_attributes_invalid():
     assert stats is None
 
 
-# def test_parse_valid(params_manager):
-#     stats, features, samples = GeneralParser().parse(params_manager)
-#     assert stats is not None
+def test_parse_parameters_valid(params_manager):
+    general_parser = GeneralParser()
+    general_parser.parse_parameters(params_manager)
+    assert isinstance(general_parser.stats, Stats)
 
 
-# def test_parse_peaktable_invalid(params_manager):
-#     params_manager.peaktable["format"] = None
-#     with pytest.raises(RuntimeError):
-#         stats, features, samples = GeneralParser().parse(params_manager)
+def test_parse_parameters_invalid():
+    general_parser = GeneralParser()
+    with pytest.raises(TypeError):
+        general_parser.parse_parameters()
+
+
+def test_parse_peaktable_valid(params_manager):
+    general_parser = GeneralParser()
+    general_parser.parse_peaktable(params_manager)
+    assert len(general_parser.stats.features) == 143
+
+
+def test_parse_peaktable_invalid(params_manager):
+    general_parser = GeneralParser()
+    with pytest.raises(TypeError):
+        general_parser.parse_peaktable()
+
+
+def test_parse_msms_valid(params_manager, general_parser):
+    general_parser.parse_msms(params_manager)
+    assert general_parser.features.entries.get(126).msms is not None
+
+
+def test_parse_msms_invalid(params_manager, general_parser):
+    params_manager.MsmsParameters = None
+    general_parser.features.entries.get(126).msms = None
+    general_parser.parse_msms(params_manager)
+    assert general_parser.features.entries.get(126).msms is None
+
+
+def test_parse_group_metadata_valid(params_manager, general_parser):
+    general_parser.parse_group_metadata(params_manager)
+    assert len(general_parser.stats.groups.get("DEFAULT")) == 0
+
+
+def test_parse_group_metadata_invalid(params_manager, general_parser):
+    params_manager.GroupMetadataParameters = None
+    general_parser.stats.groups = {"DEFAULT": set()}
+    general_parser.parse_group_metadata(params_manager)
+    assert general_parser.stats.groups == {"DEFAULT": set()}
+
+
+def test_parse_phenotype_valid(params_manager, general_parser):
+    general_parser.parse_phenotype(params_manager)
+    assert len(general_parser.stats.phenotypes.get("quant_data")) == 4
+
+
+def test_parse_phenotype_invalid(params_manager, general_parser):
+    params_manager.PhenotypeParameters = None
+    general_parser.stats.phenotypes = None
+    general_parser.parse_phenotype(params_manager)
+    assert general_parser.stats.phenotypes is None
+
+
+def test_parse_spectral_library_valid(params_manager, general_parser):
+    general_parser.parse_spectral_library(params_manager)
+    assert general_parser.stats.spectral_library is not None
+
+
+def test_parse_spectral_library_invalid(params_manager, general_parser):
+    params_manager.SpecLibParameters = None
+    general_parser.stats.spectral_library = None
+    general_parser.parse_spectral_library(params_manager)
+    assert general_parser.stats.spectral_library is None

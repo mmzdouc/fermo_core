@@ -69,9 +69,6 @@ class GeneralParser:
 
         Arguments:
             params: ParameterManager holding validated user input
-
-        Returns:
-            Tuple containing Stats, Feature Repository and Sample Repository objects.
         """
         logging.info("'GeneralParser': started file parsing.")
 
@@ -88,8 +85,6 @@ class GeneralParser:
 
         Arguments:
             params: ParameterManager holding validated user input
-
-        # TODO(MMZ 11.12.23): Cover with tests
         """
         match params.PeaktableParameters.format:
             case "mzmine3":
@@ -102,8 +97,6 @@ class GeneralParser:
 
         Arguments:
             params: ParameterManager holding validated user input
-
-        # TODO(MMZ 11.12.23): Cover with tests
         """
         if params.MsmsParameters is None:
             logging.info(
@@ -120,8 +113,6 @@ class GeneralParser:
 
         Arguments:
             params: ParameterManager holding validated user input
-
-        # TODO(MMZ 11.12.23): Cover with tests
         """
         if params.GroupMetadataParameters is None:
             logging.info(
@@ -141,8 +132,6 @@ class GeneralParser:
 
         Arguments:
             params: ParameterManager holding validated user input
-
-        # TODO(MMZ 11.12.23): Cover with tests
         """
         if params.PhenotypeParameters is None:
             logging.info(
@@ -162,8 +151,6 @@ class GeneralParser:
 
         Arguments:
             params: ParameterManager holding validated user input
-
-        # TODO(MMZ 11.12.23): Cover with tests
         """
         if params.SpecLibParameters is None:
             logging.info(
