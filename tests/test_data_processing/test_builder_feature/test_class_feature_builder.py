@@ -3,46 +3,6 @@ import pytest
 from fermo_core.data_processing.builder_feature.class_feature_builder import (
     FeatureBuilder,
 )
-from fermo_core.data_processing.builder_feature.dataclass_feature import Feature
-
-
-def test_success_init_feature_builder():
-    assert isinstance(
-        FeatureBuilder().get_result(), Feature
-    ), "Could not initialize the object Feature."
-
-
-@pytest.mark.parametrize(
-    "attr",
-    (
-        "f_id",
-        "mz",
-        "rt",
-        "rt_start",
-        "rt_stop",
-        "rt_range",
-        "trace_rt",
-        "trace_int",
-        "fwhm",
-        "intensity",
-        "rel_intensity",
-        "area",
-        "msms",
-        "samples",
-        "blank",
-        "groups",
-        "groups_fold",
-        "phenotypes",
-        "annotations",
-        "networks",
-        "scores",
-    ),
-)
-def test_success_default_values_for_attributes_feature_builder(attr):
-    feature = FeatureBuilder().get_result()
-    assert (
-        getattr(feature, attr) is None
-    ), f"Feature attribute '{attr} is not the default 'None'."
 
 
 def test_success_set_attributes_feature_builder():
@@ -68,3 +28,12 @@ def test_success_init_multiple_instances_feature_builder():
         "Could not build multiple instances with different attributes using the same "
         "builder."
     )
+
+
+def test_type_testing_valid():
+    assert FeatureBuilder.type_testing(1, int) is None
+
+
+def test_type_testing_invalid():
+    with pytest.raises(ValueError):
+        FeatureBuilder.type_testing(1, str)
