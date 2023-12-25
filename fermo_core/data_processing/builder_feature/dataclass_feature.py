@@ -20,17 +20,19 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
+from pydantic import BaseModel
 
-from typing import Optional, Tuple, Self, Dict, Set
+from typing import Optional, Tuple, Dict, Set
 
 
-class Feature:
-    """Organize data belonging to a molecular feature.
+class Feature(BaseModel):
+    """A Pydantic-based class to represent a molecular feature.
 
     Product of the FeatureBuilder class.
 
     Attributes:
         f_id: the integer ID of the molecular feature.
+        active: a bool indicating that f. was not filtered from analysis (default: True)
         mz: the precursor mass to charge ratio (m/z).
         rt: the retention time at peak apex.
         rt_start: the start of the peak in minutes.
@@ -51,30 +53,27 @@ class Feature:
         annotations: dict of objects representing associated annotation data
         networks: dict of objects representing associated networking data
         scores: dict of objects representing associated scores
-
-        TODO(MMZ 13.12.23): Change to pydantic class? Add an "active" field to
-        indicate if it had been filtered out at some point?
     """
 
-    def __init__(self: Self):
-        self.f_id: Optional[int] = None
-        self.mz: Optional[float] = None
-        self.rt: Optional[float] = None
-        self.rt_start: Optional[float] = None
-        self.rt_stop: Optional[float] = None
-        self.rt_range: Optional[float] = None
-        self.trace_rt: Optional[Tuple] = None
-        self.trace_int: Optional[Tuple] = None
-        self.fwhm: Optional[float] = None
-        self.intensity: Optional[int] = None
-        self.rel_intensity: Optional[float] = None
-        self.area: Optional[int] = None
-        self.msms: Optional[Tuple[Tuple[float, ...], Tuple[float, ...]]] = None
-        self.samples: Optional[Tuple] = None
-        self.blank: Optional[bool] = None
-        self.groups: Optional[Set] = None
-        self.groups_fold: Optional[Dict] = None
-        self.phenotypes: Optional[Dict] = None
-        self.annotations: Optional[Dict] = None
-        self.networks: Optional[Dict] = None
-        self.scores: Optional[Dict] = None
+    f_id: Optional[int] = None
+    active: bool = True
+    mz: Optional[float] = None
+    rt: Optional[float] = None
+    rt_start: Optional[float] = None
+    rt_stop: Optional[float] = None
+    rt_range: Optional[float] = None
+    trace_rt: Optional[Tuple] = None
+    trace_int: Optional[Tuple] = None
+    fwhm: Optional[float] = None
+    intensity: Optional[int] = None
+    rel_intensity: Optional[float] = None
+    area: Optional[int] = None
+    msms: Optional[Tuple[Tuple[float, ...], Tuple[float, ...]]] = None
+    samples: Optional[Tuple] = None
+    blank: Optional[bool] = None
+    groups: Optional[Set] = None
+    groups_fold: Optional[Dict] = None
+    phenotypes: Optional[Dict] = None
+    annotations: Optional[Dict] = None
+    networks: Optional[Dict] = None
+    scores: Optional[Dict] = None
