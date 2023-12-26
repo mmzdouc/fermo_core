@@ -1,6 +1,0 @@
-argparse==1.4.0
-jsonschema==4.19.0,
-matchms==0.24.0
-pandas==2.0.3
-pydantic==2.5.2
-pyteomics==4.6.3
