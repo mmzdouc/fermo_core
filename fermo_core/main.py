@@ -27,10 +27,9 @@ SOFTWARE.
 from importlib import metadata
 from pathlib import Path
 from sys import argv
-import coloredlogs
-import logging
 
 #  Internal
+from fermo_core.config.class_logger import LoggerSetup
 from fermo_core.data_processing.parser.class_general_parser import GeneralParser
 from fermo_core.data_analysis.class_analysis_manager import AnalysisManager
 
@@ -41,18 +40,6 @@ from fermo_core.input_output.class_validation_manager import ValidationManager
 
 VERSION = metadata.version("fermo_core")
 ROOT = Path(__file__).resolve().parent
-
-# logging.basicConfig(
-#     # TODO(MMZ): Uncomment before release to allow reading of log from file.
-#     # filename="fermo_core.log",
-#     level=logging.DEBUG,
-#     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-#     filemode="w",
-# )
-
-# TODO(MMZ 14.12.23): add a switch to print log to file
-logging = logging.getLogger(__name__)
-coloredlogs.install(level="DEBUG")
 
 
 def main(params: ParameterManager):
@@ -77,6 +64,8 @@ def main(params: ParameterManager):
 
 
 if __name__ == "__main__":
+    logging = LoggerSetup.init_logger_cli(ROOT)
+
     logging.info(f"Started 'fermo_core' version '{VERSION}' as CLI.")
 
     args = ArgparseManager().run_argparse(VERSION, argv[1:])
