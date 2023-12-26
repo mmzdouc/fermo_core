@@ -101,7 +101,8 @@ class ChromTraceCalculator:
             A Repository containing the modified samples.
         """
         logging.info(
-            "Started calculating pseudo-chromatogram traces for molecular features."
+            "'ChromTraceCalculator': started calculating pseudo-chromatogram traces "
+            "for molecular features."
         )
 
         for sample_id in stats.samples:
@@ -110,7 +111,8 @@ class ChromTraceCalculator:
             samples.modify(sample_id, sample)
 
         logging.info(
-            "Completed calculating pseudo-chromatogram traces for molecular features."
+            "'ChromTraceCalculator': completed calculating pseudo-chromatogram traces "
+            "for molecular features."
         )
         return samples
 

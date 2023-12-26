@@ -52,14 +52,13 @@ def main(params: ParameterManager):
     general_parser.parse_parameters(params)
     stats, features, samples = general_parser.return_attributes()
 
-    # TODO(MMZ 13.12.23): Remove dropout
+    stats, features, samples = AnalysisManager.analyze(params, stats, features, samples)
+
+    # TODO(MMZ 26.12.23): Remove dropout
     logging.critical("DROP OUT OF TEST RUN")
     quit()
 
-    # TODO(MMZ 13.12.23): Reactivate AnalysisManager again
-    # stats, features, samples = AnalysisManager.analyze(params, stats, features, samples)
-
-    # TODO(MMZ): Create a class that exports the processed data (with switch to
+    # TODO(MMZ) 26.12.23: Create a class that exports the processed data (with switch to
     #  return either a fermo_gui compatible JSON or a table).
 
 
