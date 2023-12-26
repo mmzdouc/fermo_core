@@ -26,52 +26,53 @@ SOFTWARE.
 #  External
 from importlib import metadata
 from pathlib import Path
-import logging
+from sys import argv
 
 #  Internal
-from fermo_core.input_output.class_parameter_manager import ParameterManager
+from fermo_core.config.class_logger import LoggerSetup
 from fermo_core.data_processing.parser.class_general_parser import GeneralParser
 from fermo_core.data_analysis.class_analysis_manager import AnalysisManager
+
+from fermo_core.input_output.class_argparse_manager import ArgparseManager
+from fermo_core.input_output.class_file_manager import FileManager
+from fermo_core.input_output.class_parameter_manager import ParameterManager
+from fermo_core.input_output.class_validation_manager import ValidationManager
 
 VERSION = metadata.version("fermo_core")
 ROOT = Path(__file__).resolve().parent
 
-logging.basicConfig(
-    # TODO(MMZ): Uncomment before release to allow reading of log from file.
-    # filename="fermo_core.log",
-    level=logging.DEBUG,
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-    filemode="w",
-)
 
-
-def main(params: ParameterManager) -> None:  # TODO(MMZ 27.11.23): Fix return
+def main(params: ParameterManager):
     """Run fermo_core processing part on input data contained in params.
 
     Args:
         params: Handling input file names and params
-
-    Returns:
-        A data object with methods to export data to a JSON file.
-
-    Notes:
-        TODO(MMZ): 28.08.23 Should return a session object for use in the dashboard
-            or for file export
     """
-    stats, features, samples = GeneralParser.parse(params)
+    general_parser = GeneralParser()
+    general_parser.parse_parameters(params)
+    stats, features, samples = general_parser.return_attributes()
+
     stats, features, samples = AnalysisManager.analyze(params, stats, features, samples)
 
-    # TODO(MMZ): Create a class that exports the processed data (with switch to
+    # TODO(MMZ 26.12.23): Remove dropout
+    logging.critical("DROP OUT OF TEST RUN")
+    quit()
+
+    # TODO(MMZ) 26.12.23: Create a class that exports the processed data (with switch to
     #  return either a fermo_gui compatible JSON or a table).
 
 
 if __name__ == "__main__":
-    logging.info(f"Started 'fermo_core' version '{VERSION}' in command line mode.")
-    params_manager = ParameterManager(VERSION, ROOT)
-    args = params_manager.run_argparse()
-    default_params = params_manager.load_json_file(
-        str(ROOT.joinpath("config", "default_parameters.json"))
-    )
-    user_params = params_manager.load_json_file(args.parameters)
-    params_manager.parse_parameters(user_params, default_params)
-    main(params_manager)
+    logging = LoggerSetup.init_logger_cli(ROOT)
+
+    logging.info(f"Started 'fermo_core' version '{VERSION}' as CLI.")
+
+    args = ArgparseManager().run_argparse(VERSION, argv[1:])
+
+    user_input = FileManager.load_json_file(args.parameters)
+    ValidationManager().validate_file_vs_jsonschema(user_input, args.parameters)
+
+    param_manager = ParameterManager()
+    param_manager.assign_parameters_cli(user_input)
+
+    main(param_manager)

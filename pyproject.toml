@@ -1,22 +1,32 @@
 [build-system]
-requires = ["hatchling", "hatch-requirements-txt"]
+requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
 name = "fermo_core"
 description = "Processing part of program FERMO"
 version = "0.1.0"
-dynamic = ["dependencies"]
+readme = "README.md"
+license = "MIT"
+authors = [
+    { name = "Mitja M. Zdouc", email = "zdoucmm@gmail.com" }
+]
 
-[tool.hatch.metadata.hooks.requirements_txt]
-files = ["requirements.txt"]
+dependencies = [
+    "argparse==1.4.0",
+    "jsonschema==4.19.0",
+    "matchms==0.24.0",
+    "pandas==2.0.3",
+    "pydantic==2.5.2",
+    "pyteomics==4.6.3",
+    "coloredlogs==15.0.1"
+]
 
 [project.optional-dependencies]
 dev = [
     "pre-commit==3.4.0",
     "pytest==7.4.2",
     "pytest-cov==4.1.0",
-    "jsonschema==4.19.0",
     "sphinx==7.1.0"
 ]
 

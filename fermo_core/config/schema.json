@@ -1,475 +1,423 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema#",
-  "$schema_version": "1.0",
-  "type": "object",
-  "properties": {
-    "peaktable": {
-      "type": "object",
-      "properties": {
-        "filename": {
-          "type": "null"
-        },
-        "format": {
-          "type": "null"
-        },
-        "allowed_formats": {
-          "type": "array",
-          "minItems": 1,
-          "items": {
-            "type": "string"
-          }
-        },
-        "polarity": {
-          "type": "string"
-        },
-        "allowed_polarities": {
-          "type": "array",
-          "minItems": 1,
-          "items": {
-            "type": "string"
-          }
-        },
-        "description": {
-          "type": "string"
-        },
-        "mandatory": {
-          "type": "string"
-        }
-      },
-      "required": [
-        "filename",
-        "format",
-        "allowed_formats",
-        "description",
-        "mandatory"
-      ]
-    },
-    "msms": {
-      "type": "object",
-      "properties": {
-        "filename": {
-          "type": "null"
-        },
-        "format": {
-          "type": "null"
-        },
-        "allowed_formats": {
-          "type": "array",
-          "minItems": 1,
-          "items": {
-            "type": "string"
-          }
-        },
-        "description": {
-          "type": "string"
-        },
-        "mandatory": {
-          "type": "string"
-        }
-      },
-      "required": [
-        "filename",
-        "format",
-        "allowed_formats",
-        "description",
-        "mandatory"
-      ]
-    },
-    "phenotype": {
-      "type": "object",
-      "properties": {
-        "filename": {
-          "type": "null"
-        },
-        "format": {
-          "type": "null"
-        },
-        "allowed_formats": {
-          "type": "array",
-          "minItems": 1,
-          "items": {
-            "type": "string"
-          }
-        },
-        "mode": {
-          "type": "string"
-        },
-        "allowed_modes": {
-          "type": "array",
-          "minItems": 1,
-          "items": {
-            "type": "string"
-          }
-        },
-        "algorithm": {
-          "type": "string"
-        },
-        "allowed_algorithms": {
-          "type": "array",
-          "minItems": 1,
-          "items": {
-            "type": "string"
-          }
-        },
-        "description": {
-          "type": "string"
-        },
-        "mandatory": {
-          "type": "string"
-        }
-      },
-      "required": [
-        "filename",
-        "format",
-        "allowed_formats",
-        "mode",
-        "allowed_modes",
-        "algorithm",
-        "allowed_algorithms",
-        "description",
-        "mandatory"
-      ]
-    },
-    "group_metadata": {
-      "type": "object",
-      "properties": {
-        "filename": {
-          "type": "null"
-        },
-        "format": {
-          "type": "null"
-        },
-        "allowed_formats": {
-          "type": "array",
-          "minItems": 1,
-          "items": {
-            "type": "string"
-          }
-        },
-        "description": {
-          "type": "string"
-        },
-        "mandatory": {
-          "type": "string"
-        }
-      },
-      "required": [
-        "filename",
-        "format",
-        "allowed_formats",
-        "description",
-        "mandatory"
-      ]
-    },
-    "spectral_library": {
-      "type": "object",
-      "properties": {
-        "filename": {
-          "type": "null"
-        },
-        "format": {
-          "type": "null"
-        },
-        "allowed_formats": {
-          "type": "array",
-          "minItems": 1,
-          "items": {
-            "type": "string"
-          }
-        },
-        "description": {
-          "type": "string"
-        },
-        "mandatory": {
-          "type": "string"
-        }
-      },
-      "required": [
-        "filename",
-        "format",
-        "allowed_formats",
-        "description",
-        "mandatory"
-      ]
-    },
-    "phenotype_algorithm_settings": {
-      "type": "object",
-      "properties": {
-        "fold_difference": {
-          "type": "object",
-          "properties": {
-            "value": {
-              "type": "integer"
-            },
-            "description": {
-              "type": "string"
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "$schema_version": "1.1.0",
+    "type": "object",
+    "title": "fermo_core input parameter validation form",
+    "additionalProperties": false,
+    "properties": {
+        "files": {
+            "title": "Organizes parameters on input data files.",
+            "additionalProperties": false,
+            "type": "object",
+            "required": [
+                "peaktable"
+            ],
+            "properties": {
+                "peaktable": {
+                    "title": "File containing information of peaks (=molecular features)",
+                    "additionalProperties": false,
+                    "type": "object",
+                    "required": [
+                        "filepath",
+                        "format",
+                        "polarity"
+                    ],
+                    "properties": {
+                        "filepath": {
+                            "title": "Specifies the filepath. Absolute paths are preferred.",
+                            "type": "string"
+                        },
+                        "format": {
+                            "title": "Specifies the format of the file. Must be one of the allowed formats in 'enum'.",
+                            "type": "string",
+                            "enum": [
+                                "mzmine3"
+                            ]
+                        },
+                        "polarity": {
+                            "title": "Specifies the polarity of the peaktable file. Must be one of the allowed formats in 'enum'.",
+                            "type": "string",
+                            "enum": [
+                                "positive",
+                                "negative"
+                            ]
+                        }
+                    }
+                },
+                "msms": {
+                    "title": "(Optional): file containing information of MS/MS spectra of molecular features in peaktable.",
+                    "additionalProperties": false,
+                    "type": "object",
+                    "required": [
+                        "filepath",
+                        "format"
+                    ],
+                    "properties": {
+                        "filepath": {
+                            "title": "Specifies the filepath. Absolute paths are preferred.",
+                            "type": "string"
+                        },
+                        "format": {
+                            "title": "Specifies the format of the file. Must be one of the allowed formats in 'enum'.",
+                            "type": "string",
+                            "enum": [
+                                "mgf"
+                            ]
+                        }
+                    }
+                },
+                "phenotype": {
+                    "title": "(Optional): file containing phenotype information. Also set the specifications for the phenotype module below.",
+                    "additionalProperties": false,
+                    "type": "object",
+                    "required": [
+                        "filepath",
+                        "format"
+                    ],
+                    "properties": {
+                        "filepath": {
+                            "title": "Specifies the filepath. Absolute paths are preferred.",
+                            "type": "string"
+                        },
+                        "format": {
+                            "title": "Specifies the format of the file. Must be one of the allowed formats in 'enum'.",
+                            "type": "string",
+                            "enum": [
+                                "fermo"
+                            ]
+                        }
+                    }
+                },
+                "group_metadata": {
+                    "title": "(Optional): file containing information on group metadata information.",
+                    "additionalProperties": false,
+                    "type": "object",
+                    "required": [
+                        "filepath",
+                        "format"
+                    ],
+                    "properties": {
+                        "filepath": {
+                            "title": "Specifies the filepath. Absolute paths are preferred.",
+                            "type": "string"
+                        },
+                        "format": {
+                            "title": "Specifies the format of the file. Must be one of the allowed formats in 'enum'.",
+                            "type": "string",
+                            "enum": [
+                                "fermo"
+                            ]
+                        }
+                    }
+                },
+                "spectral_library": {
+                    "title": "(Optional): file containing a custom spectral library for spectra similarity matching.",
+                    "additionalProperties": false,
+                    "type": "object",
+                    "required": [
+                        "filepath",
+                        "format"
+                    ],
+                    "properties": {
+                        "filepath": {
+                            "title": "Specifies the filepath. Absolute paths are preferred.",
+                            "type": "string"
+                        },
+                        "format": {
+                            "title": "Specifies the format of the file. Must be one of the allowed formats in 'enum'.",
+                            "type": "string",
+                            "enum": [
+                                "mgf"
+                            ]
+                        }
+                    }
+                }
             }
-          },
-          "required": [
-            "value",
-            "description"
-          ]
-        }
-      },
-      "required": [
-        "fold_difference"
-      ]
-    },
-    "mass_dev_ppm": {
-      "type": "object",
-      "properties": {
-        "value": {
-          "type": "integer"
         },
-        "description": {
-          "type": "string"
-        }
-      },
-      "required": [
-        "value",
-        "description"
-      ]
-    },
-    "msms_frag_min": {
-      "type": "object",
-      "properties": {
-        "value": {
-          "type": "integer"
-        },
-        "description": {
-          "type": "string"
-        }
-      },
-      "required": [
-        "value",
-        "description"
-      ]
-    },
-    "column_ret_fold": {
-      "type": "object",
-      "properties": {
-        "value": {
-          "type": "integer"
-        },
-        "description": {
-          "type": "string"
-        }
-      },
-      "required": [
-        "value",
-        "description"
-      ]
-    },
-    "fragment_tol": {
-      "type": "object",
-      "properties": {
-        "value": {
-          "type": "number"
-        },
-        "description": {
-          "type": "string"
-        }
-      },
-      "required": [
-        "value",
-        "description"
-      ]
-    },
-    "spectral_sim_score_cutoff": {
-      "type": "object",
-      "properties": {
-        "value": {
-          "type": "number"
-        },
-        "description": {
-          "type": "string"
-        }
-      },
-      "required": [
-        "value",
-        "description"
-      ]
-    },
-    "max_nr_links_spec_sim": {
-      "type": "object",
-      "properties": {
-        "value": {
-          "type": "integer"
-        },
-        "description": {
-          "type": "string"
-        }
-      },
-      "required": [
-        "value",
-        "description"
-      ]
-    },
-    "min_nr_matched_peaks": {
-      "type": "object",
-      "properties": {
-        "value": {
-          "type": "integer"
-        },
-        "description": {
-          "type": "string"
-        }
-      },
-      "required": [
-        "value",
-        "description"
-      ]
-    },
-    "spectral_sim_network_alg": {
-      "type": "object",
-      "properties": {
-        "format": {
-          "type": "string"
-        },
-        "allowed_formats": {
-          "type": "array",
-          "minItems": 1,
-          "items": {
-            "type": "string"
-          }
-        },
-        "description": {
-          "type": "string"
-        }
-      },
-      "required": [
-        "format",
-        "allowed_formats",
-        "description"
-      ]
-    },
-    "ms2query": {
-      "type": "object",
-      "properties": {
-        "mode": {
-          "type": "string"
-        },
-        "allowed_modes": {
-          "type": "array",
-          "minItems": 1,
-          "items": {
-            "type": "string"
-          }
-        },
-        "annot_features_from_blanks": {
-          "type": "string"
-        },
-        "allowed_modes_annot_features_from_blanks": {
-          "type": "array",
-          "minItems": 1,
-          "items": {
-            "type": "string"
-          }
-        },
-        "range": {
-          "type": "array",
-          "items": [
-            {
-              "type": "number"
-            },
-            {
-              "type": "number"
+        "core_modules": {
+            "title": "Modules that are executed by default. If not desired, they need to be deactivated explicitly, else they will run with default settings.",
+            "additionalProperties": false,
+            "type": "object",
+            "properties": {
+                "adduct_annotation": {
+                    "title": "(Optional): settings for adduct annotation of molecular features.",
+                    "additionalProperties": false,
+                    "type": "object",
+                    "required": [
+                        "activate_module"
+                    ],
+                    "properties": {
+                        "activate_module": {
+                            "title": "Specifies whether this module should be run.",
+                            "type": "boolean"
+                        },
+                        "mass_dev_ppm": {
+                            "title": "(Optional): expected mass deviation tolerance in parts per million. Default value: 20 ppm.",
+                            "type": "number",
+                            "minimum": 0.0,
+                            "maximum": 100.0
+                        }
+                    }
+                },
+                "spec_sim_networking": {
+                    "title": "(Optional): settings for spectral similarity networking (='molecular networking') with one or more algorithms. By default, the 'modified_cosine' algorithm is executed with default parameters.",
+                    "additionalProperties": false,
+                    "type": "object",
+                    "properties": {
+                        "modified_cosine": {
+                            "title": "(Optional): modified cosine algorithm. Most commonly used, quantifies the similarity between two spectra based on their dot-product. See 'https://matchms.readthedocs.io/en/latest/api/matchms.similarity.ModifiedCosine.html' for details.",
+                            "additionalProperties": false,
+                            "type": "object",
+                            "required": [
+                                "activate_module"
+                            ],
+                            "properties": {
+                                "activate_module": {
+                                    "title": "Specifies whether this module should be run.",
+                                    "type": "boolean"
+                                },
+                                "msms_min_frag_nr": {
+                                    "title": "(Optional): minimum number of fragments a MS/MS fragmentation spectrum must have to be considered in spectral similarity networking. Spectra with a low number of fragments may lead to unspecific matching and so-called 'hairball clusters'. Default value: 5.",
+                                    "type": "integer",
+                                    "minimum": 1
+                                },
+                                "fragment_tol": {
+                                    "title": "(Optional): tolerance for matching two MS/MS fragments, in m/z units. Default value: 0.1",
+                                    "type": "number"
+                                },
+                                "min_nr_matched_peaks": {
+                                    "title": "(Optional): minimum number of fragments that must be matched between two MS/MS fragmentation spectra to consider two spectra related. Default value: 5",
+                                    "type": "integer",
+                                    "minimum": 1
+                                },
+                                "score_cutoff": {
+                                    "title": "(Optional): minimum modified cosine score that must be reached to consider two MS/MS fragmentation spectra to be related. Default value: 0.7",
+                                    "type": "number",
+                                    "minimum": 0.1,
+                                    "maximum": 1.0
+                                },
+                                "max_nr_links": {
+                                    "title": "(Optional): max. number of links to other molecular features any molecular feature is allowed to have. Default value: 10",
+                                    "type": "integer",
+                                    "minimum": 1
+                                },
+                                "max_precursor_mass_diff": {
+                                    "title": "(Optional): maximum difference between the precursor masses of two MS/MS spectra, in m/z units. A high number may lead to serendipitous matching between unrelated spectra, while a low number may exclude possible analogues. Default value: 400 m/z.",
+                                    "type": "integer",
+                                    "minimum": 1
+                                }
+                            }
+                        },
+                        "ms2deepscore": {
+                            "title": "(Optional): MS2Deepscore algorithm. Quantifies the similarity between two spectra based on a spectral embedding (deep learning). See 'https://github.com/matchms/ms2deepscore' for details.",
+                            "additionalProperties": false,
+                            "type": "object",
+                            "required": [
+                                "activate_module"
+                            ],
+                            "properties": {
+                                "activate_module": {
+                                    "title": "Specifies whether this module should be run.",
+                                    "type": "boolean"
+                                },
+                                "directory_path": {
+                                    "title": "(Optional): A path to a directory containing MS2DeepScore files. If not specified, MS2DeepScore files will be downloaded and put into the default directory ('fermo_core/libraries').",
+                                    "type": "string"
+                                },
+                                "score_cutoff": {
+                                    "title": "(Optional): minimum score that must be reached to consider two MS/MS fragmentation spectra to be related. Default value: 0.7",
+                                    "type": "number",
+                                    "minimum": 0.1,
+                                    "maximum": 1.0
+                                },
+                                "max_nr_links": {
+                                    "title": "(Optional): max. number of links to other molecular features any molecular feature is allowed to have. Default value: 10",
+                                    "type": "integer",
+                                    "minimum": 1
+                                }
+                            }
+                        }
+                    }
+                }
             }
-          ]
         },
-        "allowed_range": {
-          "type": "array",
-          "items": [
-            {
-              "type": "number"
-            },
-            {
-              "type": "number"
+        "additional_modules": {
+            "title": "(Optional): modules that are not executed by default and need to be activated explicitly. If not specified, the modules will be skipped.",
+            "additionalProperties": false,
+            "type": "object",
+            "properties": {
+                "peaktable_filtering": {
+                    "title": "(Optional): input peaktable filtering. If not specified, the fermo core processing modules will run with default settings.",
+                    "additionalProperties": false,
+                    "type": "object",
+                    "required": [
+                        "activate_module"
+                    ],
+                    "properties": {
+                        "activate_module": {
+                            "title": "Specifies whether this module should be run.",
+                            "type": "boolean"
+                        },
+                        "filter_rel_int_range": {
+                            "title": "(Optional): filter to restrict processing to molecular features inside the specified range, based on relative intensity. All molecular features outside the range will be ignored. By default, the range is from 0.0-1.0 (all molecular features are considered).",
+                            "type": "array",
+                            "minItems": 2,
+                            "maxItems": 2,
+                            "items": {
+                                "type": "number",
+                                "minimum": 0.0,
+                                "maximum": 1.0
+                            }
+                        }
+                    }
+                },
+                "blank_assignment": {
+                    "title": "(Optional): settings for assignment of (sample/medium-)blank-associated molecular features. Is only executed if a 'group_metadata' file is provided where blank samples are declared.",
+                    "additionalProperties": false,
+                    "type": "object",
+                    "required": [
+                        "activate_module"
+                    ],
+                    "properties": {
+                        "activate_module": {
+                            "title": "Specifies whether this module should be run.",
+                            "type": "boolean"
+                        },
+                        "column_ret_fold": {
+                            "title": "(Optional): factor to retain metabolites that were detected in (sample/medium-)blank due to cross-contamination. Molecular features with an average area across samples that is n-times higher than across blanks will be retained. The higher the value, the more discriminate. Default value: 10.",
+                            "type": "integer",
+                            "minimum": 1
+                        }
+                    }
+                },
+                "phenotype_assignment": {
+                    "title": "(Optional): settings for determination of phenotype-associated molecular features. Is only executed if a 'phenotype' file is provided.",
+                    "additionalProperties": false,
+                    "type": "object",
+                    "properties": {
+                        "fold_difference": {
+                            "title": "Fold-difference algorithm. Molecular features detected in both phenotype positive/negative samples are separated by the fold-difference between the lowest area in positive samples and the highest area in negative samples. If the difference is >= to the fold-change parameter, molecular features are still considered phenotype-associated.",
+                            "additionalProperties": false,
+                            "type": "object",
+                            "required": [
+                                "activate_module"
+                            ],
+                            "properties": {
+                                "activate_module": {
+                                    "title": "Specifies whether this module should be run.",
+                                    "type": "boolean"
+                                },
+                                "fold_diff": {
+                                    "title": "(Optional): fold-change difference to be used for molecular feature differentiation. Default value: 10",
+                                    "type": "integer",
+                                    "minimum": 1
+                                },
+                                "data_type": {
+                                    "title": "(Optional): specifies how the data type is interpreted. Is the data 'percentage-like' ('the higher the better)' or 'concentration-like' ('the lower, the better')? Default value: 'percentage'.",
+                                    "type": "string",
+                                    "enum": [
+                                        "percentage",
+                                        "concentration"
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                },
+                "spectral_library_matching": {
+                    "title": "(Optional): settings for spectral library matching. Will be only executed if a 'spectral_library' file was provided.",
+                    "additionalProperties": false,
+                    "type": "object",
+                    "properties": {
+                        "modified_cosine": {
+                            "title": "(Optional): modified cosine algorithm. Most commonly used, quantifies the similarity between two spectra based on their dot-product. See 'https://matchms.readthedocs.io/en/latest/api/matchms.similarity.ModifiedCosine.html' for details.",
+                            "additionalProperties": false,
+                            "type": "object",
+                            "required": [
+                                "activate_module"
+                            ],
+                            "properties": {
+                                "activate_module": {
+                                    "title": "Specifies whether this module should be run.",
+                                    "type": "boolean"
+                                },
+                                "fragment_tol": {
+                                    "title": "(Optional): tolerance for matching two MS/MS fragments, in m/z units. Default value: 0.1",
+                                    "type": "number"
+                                },
+                                "min_nr_matched_peaks": {
+                                    "title": "(Optional): minimum number of fragments that must be matched between two MS/MS fragmentation spectra to consider two spectra related. Default value: 5",
+                                    "type": "integer",
+                                    "minimum": 1
+                                },
+                                "score_cutoff": {
+                                    "title": "(Optional): minimum modified cosine score that must be reached to consider two MS/MS fragmentation spectra to be related. Default value: 0.7",
+                                    "type": "number",
+                                    "minimum": 0.1,
+                                    "maximum": 1.0
+                                }
+                            }
+                        },
+                        "ms2deepscore": {
+                            "title": "(Optional): MS2Deepscore algorithm. Quantifies the similarity between two spectra based on a spectral embedding (deep learning). See 'https://github.com/matchms/ms2deepscore' for details.",
+                            "additionalProperties": false,
+                            "type": "object",
+                            "required": [
+                                "activate_module"
+                            ],
+                            "properties": {
+                                "activate_module": {
+                                    "title": "Specifies whether this module should be run.",
+                                    "type": "boolean"
+                                },
+                                "directory_path": {
+                                    "title": "(Optional): A path to a directory containing MS2DeepScore files. If not specified, MS2DeepScore files will be downloaded and put into the default directory ('fermo_core/libraries').",
+                                    "type": "string"
+                                },
+                                "score_cutoff": {
+                                    "title": "(Optional): minimum score that must be reached to consider two MS/MS fragmentation spectra to be related. Default value: 0.7",
+                                    "type": "number",
+                                    "minimum": 0.1,
+                                    "maximum": 1.0
+                                }
+                            }
+                        }
+                    }
+                },
+                "ms2query_annotation": {
+                    "title": "(Optional): settings for MS2Query annotation module. For non-specified parameters, default parameters will be used.",
+                    "additionalProperties": false,
+                    "type": "object",
+                    "required": [
+                        "activate_module"
+                    ],
+                    "properties": {
+                        "activate_module": {
+                            "title": "Specifies whether this module should be run.",
+                            "type": "boolean"
+                        },
+                        "directory_path": {
+                            "title": "(Optional): A path to a directory containing MS2Query files. If not specified, MS2Query files will be downloaded and put into the default directory ('fermo_core/libraries').",
+                            "type": "string"
+                        },
+                        "consider_blank": {
+                            "title": "(Optional): Specifies if blank-associated features are also annotated by ms2query (default: false).",
+                            "type": "boolean"
+                        },
+                        "filter_rel_int_range": {
+                            "title": "(Optional): filter to restrict the annotation via MS2Query to molecular features inside the specified range, based on relative intensity. By default, the range is from 0.0-1.0 (all molecular features are annotated).",
+                            "type": "array",
+                            "minItems": 2,
+                            "maxItems": 2,
+                            "items": {
+                                "type": "number",
+                                "minimum": 0.0,
+                                "maximum": 1.0
+                            }
+                        }
+                    }
+                }
             }
-          ]
-        },
-        "description": {
-          "type": "string"
         }
-      },
-      "required": [
-        "mode",
-        "allowed_modes",
-        "annot_features_from_blanks",
-        "allowed_modes_annot_features_from_blanks",
-        "range",
-        "allowed_range",
-        "description"
-      ]
-    },
-    "rel_int_range": {
-      "type": "object",
-      "properties": {
-        "range": {
-          "type": "array",
-          "items": [
-            {
-              "type": "number"
-            },
-            {
-              "type": "number"
-            }
-          ]
-        },
-        "allowed_range": {
-          "type": "array",
-          "items": [
-            {
-              "type": "number"
-            },
-            {
-              "type": "number"
-            }
-          ]
-        },
-        "description": {
-          "type": "string"
-        }
-      },
-      "required": [
-        "range",
-        "allowed_range",
-        "description"
-      ]
-    },
-    "max_library_size": {
-      "type": "object",
-      "properties": {
-        "value": {
-          "type": "integer"
-        },
-        "description": {
-          "type": "string"
-        }
-      },
-      "required": [
-        "value",
-        "description"
-      ]
     }
-  },
-  "required": [
-    "peaktable",
-    "msms",
-    "phenotype",
-    "group_metadata",
-    "spectral_library",
-    "phenotype_algorithm_settings",
-    "mass_dev_ppm",
-    "msms_frag_min",
-    "column_ret_fold",
-    "fragment_tol",
-    "spectral_sim_score_cutoff",
-    "max_nr_links_spec_sim",
-    "min_nr_matched_peaks",
-    "spectral_sim_network_alg",
-    "ms2query",
-    "rel_int_range",
-    "max_library_size"
-  ]
 }

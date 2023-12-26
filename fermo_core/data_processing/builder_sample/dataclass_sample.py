@@ -20,29 +20,29 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
+from typing import Optional, Dict, Union
 
-from typing import Self, Optional, Dict
+from pydantic import BaseModel
 
 
-class Phenotype:
-    """Organize information on phenotype/bioactivity of a Sample
+class Phenotype(BaseModel):
+    """Pydantic-based class to organize phenotype/bioactivity info of Sample object
 
     Attributes:
         value: the measured original value for the sample in an experiment
-        concentration: the concentration of the sample (if all samples were measured
+        conc: the concentration of the sample (if all samples were measured
             at the same concentration, this is 1)
     """
 
-    def __init__(self: Self, value: float | int, concentration: float | int):
-        self.value = value
-        self.concentration = concentration
+    value: Union[int, float]
+    conc: Union[int, float]
 
 
-class Sample:
+class Sample(BaseModel):
     """Organize sample-specific data, including sample-specific mol feature info.
 
     Attributes:
-        s_id: identifier of sample
+        s_id: string identifier of sample
         features: dict of features detected in sample; contain sample-specific data
         feature_ids: tuple of feature ids
         groups: group association of sample (if provided, else default group DEFAULT)
@@ -52,11 +52,10 @@ class Sample:
             dict of condition : Phenotype() pairs.
     """
 
-    def __init__(self: Self):
-        self.s_id: Optional[str] = None
-        self.features: Optional[dict] = None
-        self.feature_ids: Optional[tuple] = None
-        self.groups: Optional[set[str, ...]] = {"DEFAULT"}
-        self.cliques: Optional[dict] = None
-        self.max_intensity: Optional[int] = None
-        self.phenotypes: Optional[Dict[str, Phenotype]] = None
+    s_id: Optional[str] = None
+    features: Optional[dict] = None
+    feature_ids: Optional[tuple] = None
+    groups: Optional[set[str]] = {"DEFAULT"}
+    cliques: Optional[dict] = None
+    max_intensity: Optional[int] = None
+    phenotypes: Optional[Dict[str, Phenotype]] = None

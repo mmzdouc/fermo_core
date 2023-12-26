@@ -1,4 +1,4 @@
-"""Organize the calling of various data analysis modules on the metabolomics data.
+"""Organize the calling of various data analysis modules.
 
 Copyright (c) 2022-2023 Mitja Maximilian Zdouc, PhD
 
@@ -54,8 +54,9 @@ class AnalysisManager:
             Adjust here for additional data analysis steps/methods.
         """
 
-        # TODO(MMZ): proceed with annotations, bioactivity etc.
-        # TODO(MMZ): when calculating fold changes, also add group info to features
+        # TODO(MMZ) 26.12.23: proceed with annotations, bioactivity etc.
+        # TODO(MMZ) 26.12.23: when calculating fold changes, also add group info to
+        #  features
 
         samples = ChromTraceCalculator().modify_samples(samples, stats)
 

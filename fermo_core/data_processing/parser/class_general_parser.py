@@ -21,94 +21,144 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 import logging
-from typing import Tuple
+from typing import Tuple, Self, Optional
 
 from fermo_core.input_output.class_parameter_manager import ParameterManager
-from fermo_core.data_processing.parser.class_peaktable_parser import PeaktableParser
-from fermo_core.data_processing.parser.class_msms_parser import MsmsParser
-from fermo_core.data_processing.parser.class_group_metadata_parser import (
-    GroupMetadataParser,
+from fermo_core.data_processing.parser.peaktable_parser.class_mzmine3_parser import (
+    PeakMzmine3Parser,
 )
-from fermo_core.data_processing.parser.class_spectral_library_parser import (
-    SpectralLibraryParser,
+
+from fermo_core.data_processing.parser.msms_parser.class_mgf_parser import MgfParser
+from fermo_core.data_processing.parser.group_metadata_parser.class_fermo_metadata_parser import (
+    MetadataFermoParser,
 )
-from fermo_core.data_processing.parser.class_phenotype_parser import PhenotypeParser
+from fermo_core.data_processing.parser.spec_library_parser.class_spec_lib_mgf_parser import (
+    SpecLibMgfParser,
+)
+from fermo_core.data_processing.parser.phenotype_parser.class_fermo_phenotype_parser import (
+    PhenotypeFermoParser,
+)
 from fermo_core.data_processing.class_repository import Repository
 from fermo_core.data_processing.class_stats import Stats
 
 
 class GeneralParser:
-    """Interface to organize calling of specific parser classes"""
+    """Interface to organize calling of specific parser classes and their logging
 
-    @staticmethod
-    def parse(params: ParameterManager) -> Tuple[Stats, Repository, Repository]:
-        """Organize calling of specific parser classes (e.g. PeaktableParser).
+    Attributes:
+        stats: Stats object, holds stats on molecular features and samples
+        features: Repository object, holds "General Feature" objects
+        samples: Repository object, holds "Sample" objects
+    """
 
-        Arguments:
-            params: Stats object holding various information of overall data
+    def __init__(self):
+        self.stats: Optional[Stats] = None
+        self.features: Optional[Repository] = None
+        self.samples: Optional[Repository] = None
+
+    def return_attributes(self: Self) -> Tuple[Stats, Repository, Repository]:
+        """Returns created attributes to the calling function
 
         Returns:
-            Tuple containing Stats object, Feature and Sample Repository objects.
-
-        Notes:
-            Adjust here for additional input file types.
+            Tuple containing Stats, Feature Repository and Sample Repository objects.
         """
-        # peaktable file
-        peaktable_parser = PeaktableParser(
-            params.peaktable.get("filename"),
-            params.peaktable.get("format"),
-            params.rel_int_range,
-            (params.ms2query.get("range")[0], params.ms2query.get("range")[1]),
-        )
-        stats, features, samples = peaktable_parser.parse()
+        return self.stats, self.features, self.samples
 
-        # MS/MS information file
-        if params.msms.get("filename") is not None:
-            msms_parser = MsmsParser(
-                params.msms.get("filename"), params.msms.get("format")
-            )
-            features = msms_parser.parse(features)
-        else:
-            logging.warning(
-                "No MS/MS file provided - functionality of FERMO is limited. "
-                "For more information, consult the documentation."
-            )
+    def parse_parameters(self: Self, params: ParameterManager):
+        """Organize calling of specific parser classes.
 
-        # group metadata file
-        if params.group_metadata.get("filename") is not None:
-            group_metadata_parser = GroupMetadataParser(
-                params.group_metadata.get("filename"),
-                params.group_metadata.get("format"),
-            )
-            stats, samples = group_metadata_parser.parse(stats, samples)
-        else:
-            logging.warning(
-                "No group metadata provided - functionality of FERMO is limited. "
-                "For more information, consult the documentation."
-            )
+        Arguments:
+            params: ParameterManager holding validated user input
+        """
+        logging.info("'GeneralParser': started file parsing.")
 
-        # phenotype/bioactivity file
-        if params.phenotype.get("filename") is not None:
-            phenotype_parser = PhenotypeParser(
-                params.phenotype.get("filename"),
-                params.phenotype.get("format"),
-            )
-            stats, samples = phenotype_parser.parse(stats, samples)
-        else:
-            logging.warning(
-                "No phenotype/bioactivity file provided - functionality of FERMO is "
-                "limited. For more information, consult the documentation."
-            )
+        self.parse_peaktable(params)
+        self.parse_msms(params)
+        self.parse_group_metadata(params)
+        self.parse_phenotype(params)
+        self.parse_spectral_library(params)
 
-        # spectral library file
-        if params.spectral_library.get("filename") is not None:
-            spec_lib_parser = SpectralLibraryParser(
-                params.spectral_library.get("filename"),
-                params.spectral_library.get("format"),
-                params.max_library_size,
-            )
-            stats = spec_lib_parser.parse(stats)
-        else:
-            logging.warning("No spectral library file provided - SKIP.")
+        logging.info("'GeneralParser': completed file parsing.")
 
-        return stats, features, samples
+    def parse_peaktable(self: Self, params: ParameterManager):
+        """Parses user-provided peaktable file.
+
+        Arguments:
+            params: ParameterManager holding validated user input
+        """
+        match params.PeaktableParameters.format:
+            case "mzmine3":
+                self.stats, self.features, self.samples = PeakMzmine3Parser().parse(
+                    params
+                )
+
+    def parse_msms(self: Self, params: ParameterManager):
+        """Parses user-provided msms file.
+
+        Arguments:
+            params: ParameterManager holding validated user input
+        """
+        if params.MsmsParameters is None:
+            logging.info(
+                "'GeneralParser': parameters for module 'msms' not specified - SKIP"
+            )
+            return
+
+        match params.MsmsParameters.format:
+            case "mgf":
+                self.features = MgfParser().parse(self.features, params)
+
+    def parse_group_metadata(self: Self, params: ParameterManager):
+        """Parses user-provided group metadata file.
+
+        Arguments:
+            params: ParameterManager holding validated user input
+        """
+        if params.GroupMetadataParameters is None:
+            logging.info(
+                "'GeneralParser': parameters for module 'group_metadata' not specified"
+                " - SKIP"
+            )
+            return
+
+        match params.GroupMetadataParameters.format:
+            case "fermo":
+                self.stats, self.samples = MetadataFermoParser().parse(
+                    self.stats, self.samples, params
+                )
+
+    def parse_phenotype(self: Self, params: ParameterManager):
+        """Parses user-provided phenotype/bioactivity data file.
+
+        Arguments:
+            params: ParameterManager holding validated user input
+        """
+        if params.PhenotypeParameters is None:
+            logging.info(
+                "'GeneralParser': parameters for module 'phenotype' not specified"
+                " - SKIP"
+            )
+            return
+
+        match params.PhenotypeParameters.format:
+            case "fermo":
+                self.stats, self.samples = PhenotypeFermoParser().parse(
+                    self.stats, self.samples, params
+                )
+
+    def parse_spectral_library(self: Self, params: ParameterManager):
+        """Parses user-provided spectral_library file.
+
+        Arguments:
+            params: ParameterManager holding validated user input
+        """
+        if params.SpecLibParameters is None:
+            logging.info(
+                "'GeneralParser': parameters for module 'spectral_library' not "
+                "specified - SKIP"
+            )
+            return
+
+        match params.SpecLibParameters.format:
+            case "mgf":
+                self.stats = SpecLibMgfParser().parse(self.stats, params)
