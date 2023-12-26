@@ -64,8 +64,6 @@ def test_add_phenotype_to_sample_valid(sample_repo):
     )
 
     assert (
-        sample_repo.entries.get("5434_5433_mod.mzXML")
-        .phenotypes.get("bacillus")
-        .concentration
+        sample_repo.entries.get("5434_5433_mod.mzXML").phenotypes.get("bacillus").conc
         == 1
     )

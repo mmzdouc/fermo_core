@@ -121,7 +121,7 @@ class PhenotypeFermoParser(PhenotypeParser):
 
             sample.phenotypes[assay] = Phenotype(
                 value=measurement,
-                concentration=concentration,
+                conc=concentration,
             )
 
             sample_repo.modify(sample_id, sample)
