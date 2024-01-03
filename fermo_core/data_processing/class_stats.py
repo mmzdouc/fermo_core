@@ -22,7 +22,7 @@ SOFTWARE.
 """
 import pandas as pd
 from pydantic import BaseModel
-from typing import Self, Tuple, Optional, Set, Dict, List
+from typing import Self, Tuple, Optional, Set, Dict
 
 from fermo_core.input_output.class_parameter_manager import ParameterManager
 
@@ -41,44 +41,32 @@ class SpecLibEntry(BaseModel):
     msms: Tuple[Tuple[float, ...], Tuple[float, ...]]
 
 
-class Stats:
-    """Extract analysis run stats and organize them.
-
-    Ad method nomenclature: each type of supported peaktable should have a separate
-    parser method attributed to it that has the name of the peaktable in it.
-    All methods addressing a peaktable format should mention it in method name.
+class Stats(BaseModel):
+    """Pydantic-based class to organize stats and general info.
 
     Attributes:
-        rt_min: overall lowest retention time start across all samples, in minutes
-        rt_max: overall highest retention time stop across all samples, in minutes
-        rt_range: range in minutes between min and max rt.
-        samples: all sample ids in analysis run
-        features: all feature ids in analysis run in a tuple
-        groups: a dict of lists containing sample ID strings to indicate membership in
-                groups (if no explicit information, all samples in group "DEFAULT")
+        rt_min: retention time start of the first feature peak, in minutes
+        rt_max: retention time stop of the last feature peak, in minutes
+        rt_range: range in minutes between rt_min and rt_max
+        samples: tuple of all sample ids in analysis run
+        features: tuple of all feature ids in analysis run
+        groups: dict of sets of sample IDs repr. group membership (default in DEFAULT)
         cliques: all similarity cliques in analysis run
-        phenotypes: a dict of tuples of experiments, with associated active samples
+        phenotypes: dict of tuples of active sample IDs
         blank: all blank-associated features in analysis run
-        int_removed: all features that were removed due to intensity range
-        annot_removed: all features that were removed due to annotation range
-        ms2_removed: feature IDs of which MS2 was removed
         spectral_library: a dict of SpecLibEntry instances
     """
 
-    def __init__(self: Self):
-        self.rt_min: Optional[float] = None
-        self.rt_max: Optional[float] = None
-        self.rt_range: Optional[float] = None
-        self.samples: Optional[Tuple] = None
-        self.features: Optional[Tuple] = None
-        self.groups: Optional[Dict[str, Set[str | int]]] = {"DEFAULT": set()}
-        self.cliques: Optional[Tuple] = None
-        self.phenotypes: Optional[Dict[str, Tuple[str, ...]]] = None
-        self.blank: Optional[Tuple] = None
-        self.int_removed: Optional[Tuple] = None
-        self.annot_removed: Optional[Tuple] = None
-        self.ms2_removed: Optional[List] = None
-        self.spectral_library: Optional[Dict[int, SpecLibEntry]] = None
+    rt_min: Optional[float] = None
+    rt_max: Optional[float] = None
+    rt_range: Optional[float] = None
+    samples: Optional[Tuple] = None
+    features: Optional[Tuple] = None
+    groups: Optional[Dict[str, Set]] = {"DEFAULT": set()}
+    cliques: Optional[Tuple] = None
+    phenotypes: Optional[Dict[str, Tuple[str, ...]]] = None
+    blank: Optional[Tuple] = None
+    spectral_library: Optional[Dict[int, SpecLibEntry]] = None
 
     def parse_mzmine3(self: Self, params: ParameterManager):
         """Parse a mzmine3 peaktable for general stats on analysis run.
@@ -99,11 +87,3 @@ class Stats:
         )
         self.groups["DEFAULT"] = set(self.samples)
         self.features = tuple(df["id"].tolist())
-
-        # TODO(MMZ 3.1.24): move to FeatureFilter class
-        # self.features, self.int_removed = self._get_features_in_range_mzmine3(
-        #     df, params.PeaktableFilteringParameters.filter_rel_int_range
-        # )
-        # _, self.annot_removed = self._get_features_in_range_mzmine3(
-        #     df, params.Ms2QueryAnnotationParameters.filter_rel_int_range
-        # )
