@@ -18,7 +18,7 @@ from fermo_core.input_output.core_module_parameter_managers import (
     SpecSimNetworkDeepscoreParameters,
 )
 from fermo_core.input_output.additional_module_parameter_managers import (
-    PeaktableFilteringParameters,
+    FeatureFilteringParameters,
     BlankAssignmentParameters,
     PhenotypeAssignmentFoldParameters,
     SpectralLibMatchingCosineParameters,
@@ -192,18 +192,18 @@ def test_assign_spec_sim_networking_ms2deepscore_invalid():
     assert params.SpecSimNetworkDeepscoreParameters.score_cutoff == 0.7
 
 
-def test_assign_peaktable_filtering_valid():
+def test_assign_feature_filtering_valid():
     params = ParameterManager()
-    params.assign_peaktable_filtering(
+    params.assign_feature_filtering(
         {"activate_module": True, "filter_rel_int_range": [0.0, 1.0]}
     )
-    assert isinstance(params.PeaktableFilteringParameters, PeaktableFilteringParameters)
+    assert isinstance(params.FeatureFilteringParameters, FeatureFilteringParameters)
 
 
-def test_assign_peaktable_filtering_invalid():
+def test_assign_feature_filtering_invalid():
     params = ParameterManager()
-    params.assign_peaktable_filtering({"asdfg": "asdfg"})
-    assert params.PeaktableFilteringParameters.filter_rel_int_range[0] == 0.0
+    params.assign_feature_filtering({"asdfg": "asdfg"})
+    assert params.FeatureFilteringParameters.filter_rel_int_range[0] == 0.0
 
 
 def test_assign_blank_assignment_valid():
@@ -338,10 +338,10 @@ def test_assign_additional_modules_parameters_valid():
     json_in = FileManager.load_json_file("example_data/case_study_parameters.json")
     params = ParameterManager()
     params.assign_additional_modules_parameters(json_in)
-    assert params.PeaktableFilteringParameters.activate_module is True
+    assert params.FeatureFilteringParameters.activate_module is True
 
 
 def test_assign_additional_modules_parameters_invalid():
     params = ParameterManager()
     params.assign_additional_modules_parameters({"adsasd": "dsfaa"})
-    assert params.PeaktableFilteringParameters.activate_module is False
+    assert params.FeatureFilteringParameters.activate_module is False

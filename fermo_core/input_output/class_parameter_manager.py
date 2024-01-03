@@ -40,7 +40,7 @@ from fermo_core.input_output.core_module_parameter_managers import (
     SpecSimNetworkDeepscoreParameters,
 )
 from fermo_core.input_output.additional_module_parameter_managers import (
-    PeaktableFilteringParameters,
+    FeatureFilteringParameters,
     BlankAssignmentParameters,
     PhenotypeAssignmentFoldParameters,
     SpectralLibMatchingCosineParameters,
@@ -68,7 +68,7 @@ class ParameterManager(BaseModel):
             similarity networking module parameter
         SpecSimNetworkDeepscoreParameters: class handling ms2deepscore-based spectral
             similarity networking module parameter
-        PeaktableFilteringParameters: class handling peaktable filter module parameter
+        FeatureFilteringParameters: class handling feature filter module parameter
         BlankAssignmentParameters: class handling blank-assignment module parameter
         PhenotypeAssignmentFoldParameters: class handling phenotype-assignment module
             parameter
@@ -93,8 +93,8 @@ class ParameterManager(BaseModel):
     SpecSimNetworkDeepscoreParameters: SpecSimNetworkDeepscoreParameters = (
         SpecSimNetworkDeepscoreParameters()
     )
-    PeaktableFilteringParameters: PeaktableFilteringParameters = (
-        PeaktableFilteringParameters()
+    FeatureFilteringParameters: FeatureFilteringParameters = (
+        FeatureFilteringParameters()
     )
     BlankAssignmentParameters: BlankAssignmentParameters = BlankAssignmentParameters()
     PhenotypeAssignmentFoldParameters: PhenotypeAssignmentFoldParameters = (
@@ -217,9 +217,9 @@ class ParameterManager(BaseModel):
 
         modules = (
             (
-                user_params.get("peaktable_filtering"),
-                self.assign_peaktable_filtering,
-                "peaktable_filtering",
+                user_params.get("feature_filtering"),
+                self.assign_feature_filtering,
+                "feature_filtering",
             ),
             (
                 user_params.get("blank_assignment"),
@@ -446,24 +446,22 @@ class ParameterManager(BaseModel):
             self.log_malformed_parameters_default("spec_sim_networking/ms2deepscore")
             self.SpecSimNetworkDeepscoreParameters = SpecSimNetworkDeepscoreParameters()
 
-    def assign_peaktable_filtering(self: Self, user_params: dict):
-        """Assign peaktable_filtering parameters to self.PeaktableFilteringParameters.
+    def assign_feature_filtering(self: Self, user_params: dict):
+        """Assign feature_filtering parameters to self.FeatureFilteringParameters.
 
         Parameters:
             user_params: user-provided params, read from json file
         """
         try:
-            self.PeaktableFilteringParameters = PeaktableFilteringParameters(
-                **user_params
-            )
+            self.FeatureFilteringParameters = FeatureFilteringParameters(**user_params)
             logging.info(
                 "'ParameterManager': validated and assigned parameters "
-                "for 'peaktable_filtering'."
+                "for 'feature_filtering'."
             )
         except Exception as e:
             logging.warning(str(e))
-            self.log_malformed_parameters_default("peaktable_filtering")
-            self.PeaktableFilteringParameters = PeaktableFilteringParameters()
+            self.log_malformed_parameters_default("feature_filtering")
+            self.FeatureFilteringParameters = FeatureFilteringParameters()
 
     def assign_blank_assignment(self: Self, user_params: dict):
         """Assign blank_assignment parameters to self.BlankAssignmentParameters.

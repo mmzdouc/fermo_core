@@ -22,7 +22,6 @@ SOFTWARE.
 """
 
 import pandas as pd
-from typing import Tuple
 
 from fermo_core.data_processing.builder_sample.class_sample_builder import SampleBuilder
 from fermo_core.data_processing.builder_sample.dataclass_sample import Sample
@@ -38,20 +37,15 @@ class SamplesDirector:
     def construct_mzmine3(
         s_id: str,
         df: pd.DataFrame,
-        features: Tuple,
     ) -> Sample:
         """Construct the Sample product instance.
 
         Args:
             s_id: the sample identifier
             df: a Pandas dataframe in mzmine3 format
-            features: a tuple containing ids of detected features
 
         Returns:
             An instance of the Sample class.
-
-        Notes:
-            Adds features detected in sample via SpecificFeatureDirector
         """
         sample = (
             SampleBuilder()
@@ -64,13 +58,10 @@ class SamplesDirector:
         )
 
         for _, row in df.iterrows():
-            if row["id"] in features:
-                if row[f"datafile:{s_id}:feature_state"] == "DETECTED":
-                    sample.features[
-                        row["id"]
-                    ] = SpecificFeatureDirector.construct_mzmine3(
-                        row, s_id, sample.max_intensity
-                    )
+            if row[f"datafile:{s_id}:feature_state"] == "DETECTED":
+                sample.features[row["id"]] = SpecificFeatureDirector.construct_mzmine3(
+                    row, s_id, sample.max_intensity
+                )
 
         sample.feature_ids = tuple(sample.features.keys())
 

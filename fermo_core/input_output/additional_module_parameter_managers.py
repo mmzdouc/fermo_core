@@ -34,8 +34,8 @@ from pydantic import (
 from fermo_core.input_output.class_validation_manager import ValidationManager
 
 
-class PeaktableFilteringParameters(BaseModel):
-    """A Pydantic-based class for repr. and valid. of peaktable filtering parameters.
+class FeatureFilteringParameters(BaseModel):
+    """A Pydantic-based class for repr. and valid. of feature filtering parameters.
 
     Attributes:
         activate_module: bool to indicate if module should be executed.

@@ -117,10 +117,6 @@ class PeakMzmine3Parser(PeaktableParser):
         for s_id in stats.samples:
             sample_repo.add(
                 s_id,
-                SamplesDirector.construct_mzmine3(
-                    s_id,
-                    df,
-                    stats.features,
-                ),
+                SamplesDirector.construct_mzmine3(s_id, df),
             )
         return sample_repo

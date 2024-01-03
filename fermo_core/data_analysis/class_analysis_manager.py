@@ -26,7 +26,10 @@ from fermo_core.input_output.class_parameter_manager import ParameterManager
 from fermo_core.data_processing.class_repository import Repository
 from fermo_core.data_processing.class_stats import Stats
 
-from fermo_core.data_analysis.class_chrom_trace_calculator import ChromTraceCalculator
+from fermo_core.data_analysis.chrom_trace_calculator.class_chrom_trace_calculator import (
+    ChromTraceCalculator,
+)
+from fermo_core.data_analysis.feature_filter.class_feature_filter import FeatureFilter
 
 
 class AnalysisManager:
@@ -53,6 +56,14 @@ class AnalysisManager:
         Notes:
             Adjust here for additional data analysis steps/methods.
         """
+
+        # TODO(MMZ 03.01.24): uncomment once fully tested
+        # stats, features, samples = FeatureFilter().filter(
+        #     params,
+        #     stats,
+        #     features,
+        #     samples
+        # )
 
         # TODO(MMZ) 26.12.23: proceed with annotations, bioactivity etc.
         # TODO(MMZ) 26.12.23: when calculating fold changes, also add group info to

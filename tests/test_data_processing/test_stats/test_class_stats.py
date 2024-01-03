@@ -1,5 +1,6 @@
-import pytest
 import pandas as pd
+from pydantic import ValidationError
+import pytest
 
 from fermo_core.data_processing.class_stats import Stats, SpecLibEntry
 
@@ -18,13 +19,20 @@ def stats():
 
 def test_init_spec_lib_entry_valid():
     assert isinstance(
-        SpecLibEntry("entry1", 123.456, ((100.0, 101.0), (20, 40))), SpecLibEntry
+        SpecLibEntry(
+            **{
+                "name": "entry1",
+                "exact_mass": 123.456,
+                "msms": ((100.0, 101.0), (20, 40)),
+            }
+        ),
+        SpecLibEntry,
     )
 
 
-@pytest.fixture
-def spec_lib_entry():
-    return SpecLibEntry("entry1", 123.456, ((100.0, 101.0), (20, 40)))
+def test_init_spec_lib_entry_invalid():
+    with pytest.raises(ValidationError):
+        SpecLibEntry(**{"sda": "Ssdas"})
 
 
 @pytest.fixture
@@ -47,26 +55,6 @@ def test_setattr_stats_valid(stats):
     ), "Could not assign value to attribute of class 'Stats'."
 
 
-def test_success_extract_sample_names_mzmine3(stats, dummy_df):
-    """Extract 'sampleA' and 'sampleB' from headers of fixture 'dummy_df'."""
-    assert set(stats._extract_sample_names_mzmine3(dummy_df)) == {"sampleA", "sampleB"}
-
-
-@pytest.mark.parametrize(
-    "range_results",
-    [
-        [(0.0, 1.0), (1, 2, 3)],
-        [(0.1, 1.0), (2, 3)],
-        [(0.5, 1.0), tuple([3])],
-        [(0.0, 0.2), (1, 2)],
-    ],
-)
-def test_success_get_features_in_range_mzmine3(stats, dummy_df, range_results):
-    stats.samples = ("sampleA", "sampleB")
-    incl, excl = stats._get_features_in_range_mzmine3(dummy_df, range_results[0])
-    assert set(incl) == set(range_results[1])
-
-
 def test_success_parse_mzmine3(stats):
     params = ParameterManager()
     params.assign_parameters_cli(
@@ -74,3 +62,20 @@ def test_success_parse_mzmine3(stats):
     )
     stats.parse_mzmine3(params)
     assert len(stats.features) == 143
+    assert len(stats.samples) == 11
+
+
+# TODO(MMZ 3.1.24): move to FeatureFilter class
+# @pytest.mark.parametrize(
+#     "range_results",
+#     [
+#         [(0.0, 1.0), (1, 2, 3)],
+#         [(0.1, 1.0), (2, 3)],
+#         [(0.5, 1.0), tuple([3])],
+#         [(0.0, 0.2), (1, 2)],
+#     ],
+# )
+# def test_success_get_features_in_range_mzmine3(stats, dummy_df, range_results):
+#     stats.samples = ("sampleA", "sampleB")
+#     incl, excl = stats._get_features_in_range_mzmine3(dummy_df, range_results[0])
+#     assert set(incl) == set(range_results[1])
