@@ -164,7 +164,8 @@ class ChromTraceCalculator:
             self.chrom_trace.fwhm = rt_range
             self.chrom_trace.rt_range = rt_range
             logging.debug(
-                f"feature '{self.chrom_trace.feature_id}' in sample "
+                f"'ChromTraceCalculator': feature '{self.chrom_trace.feature_id}' in "
+                f"sample "
                 f"'{self.chrom_trace.sample_id}': "
                 f"'fwhm' '{fwhm}' is >= 'rt_range' '{rt_range}'. "
                 f"Setting 'fwhm' to 'rt_range'."
@@ -178,7 +179,8 @@ class ChromTraceCalculator:
         else:
             self.chrom_trace.rt_left_fwhm = self.chrom_trace.rt_begin
             logging.debug(
-                f"feature '{self.chrom_trace.feature_id}' in sample "
+                f"'ChromTraceCalculator': feature '{self.chrom_trace.feature_id}' in "
+                f"sample "
                 f"'{self.chrom_trace.sample_id}': "
                 f"'rt_left_fwhm' '{rt_left_fwhm}' is < 'rt_begin' "
                 f"'{self.chrom_trace.rt_begin}'. "
@@ -193,7 +195,8 @@ class ChromTraceCalculator:
         else:
             self.chrom_trace.rt_right_fwhm = self.chrom_trace.rt_end
             logging.debug(
-                f"feature '{self.chrom_trace.feature_id}' in sample "
+                f"'ChromTraceCalculator': feature '{self.chrom_trace.feature_id}' in "
+                f"sample "
                 f"'{self.chrom_trace.sample_id}': "
                 f"'rt_right_fwhm' '{rt_right_fwhm}' is > 'rt_end' "
                 f"'{self.chrom_trace.rt_end}'. "
