@@ -39,7 +39,7 @@
             },
             "ms2deepscore": {
                 "activate_module": true,
-                "directory_path": "fermo_core/libraries",
+                "directory_path": "fermo_core/libraries/ms2deepscore",
                 "score_cutoff": 0.7,
                 "max_nr_links": 10
             }
@@ -73,13 +73,13 @@
             },
             "ms2deepscore": {
                 "activate_module": true,
-                "directory_path": "fermo_core/libraries",
+                "directory_path": "fermo_core/libraries/ms2deepscore",
                 "score_cutoff": 0.7
             }
         },
         "ms2query_annotation": {
             "activate_module": true,
-            "directory_path": "fermo_core/libraries",
+            "directory_path": "fermo_core/libraries/ms2query",
             "consider_blank": true,
             "filter_rel_int_range": [
                 0.0,
