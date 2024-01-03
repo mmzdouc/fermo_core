@@ -25,6 +25,6 @@ def test_init_spec_sim_network_deepscore_parameters_fail():
 
 def test_default_libraries_folder_valid():
     instance = SpecSimNetworkDeepscoreParameters()
-    default_path = instance.directory_path.name
-    assert default_path == "libraries"
+    default_dir_name = instance.directory_path.name
+    assert default_dir_name == "ms2deepscore"
     assert instance.directory_path.exists()

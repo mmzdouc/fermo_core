@@ -98,6 +98,8 @@ class SpecSimNetworkDeepscoreParameters(BaseModel):
     """
 
     activate_module: bool = True
-    directory_path: DirectoryPath = Path(__file__).parent.parent.joinpath("libraries")
+    directory_path: DirectoryPath = Path(__file__).parent.parent.joinpath(
+        "libraries/ms2deepscore"
+    )
     score_cutoff: PositiveFloat = 0.7
     max_nr_links: PositiveInt = 10

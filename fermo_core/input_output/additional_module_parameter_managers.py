@@ -128,7 +128,9 @@ class SpectralLibMatchingDeepscoreParameters(BaseModel):
     """
 
     activate_module: bool = False
-    directory_path: DirectoryPath = Path(__file__).parent.parent.joinpath("libraries")
+    directory_path: DirectoryPath = Path(__file__).parent.parent.joinpath(
+        "libraries/ms2deepscore"
+    )
     score_cutoff: PositiveFloat = 0.7
 
 
@@ -146,7 +148,9 @@ class Ms2QueryAnnotationParameters(BaseModel):
     """
 
     activate_module: bool = False
-    directory_path: DirectoryPath = Path(__file__).parent.parent.joinpath("libraries")
+    directory_path: DirectoryPath = Path(__file__).parent.parent.joinpath(
+        "libraries/ms2query"
+    )
     consider_blank: bool = False
     filter_rel_int_range: List[float] = [0.0, 1.0]
 
