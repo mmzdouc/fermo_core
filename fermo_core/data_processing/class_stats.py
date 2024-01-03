@@ -48,6 +48,8 @@ class Stats(BaseModel):
         rt_min: retention time start of the first feature peak, in minutes
         rt_max: retention time stop of the last feature peak, in minutes
         rt_range: range in minutes between rt_min and rt_max
+        area_min: area under the curve for smallest peak
+        area_max: area under the curve for biggest peak
         samples: tuple of all sample ids in analysis run
         features: tuple of all feature ids in analysis run
         groups: dict of sets of sample IDs repr. group membership (default in DEFAULT)
@@ -60,6 +62,8 @@ class Stats(BaseModel):
     rt_min: Optional[float] = None
     rt_max: Optional[float] = None
     rt_range: Optional[float] = None
+    area_min: Optional[int] = None
+    area_max: Optional[int] = None
     samples: Optional[Tuple] = None
     features: Optional[Tuple] = None
     groups: Optional[Dict[str, Set]] = {"DEFAULT": set()}
@@ -82,6 +86,8 @@ class Stats(BaseModel):
         self.rt_min = df.loc[:, "rt_range:min"].min()
         self.rt_max = df.loc[:, "rt_range:max"].max()
         self.rt_range = self.rt_max - self.rt_min
+        self.area_min = df.loc[:, "area"].min()
+        self.area_max = df.loc[:, "area"].max()
         self.samples = tuple(
             sample.split(":")[1] for sample in df.filter(regex=":feature_state").columns
         )
