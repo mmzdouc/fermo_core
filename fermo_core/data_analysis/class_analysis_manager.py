@@ -21,7 +21,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 import logging
-from typing import Tuple, Self, Any
+from typing import Tuple, Self
 
 from pydantic import BaseModel
 
@@ -47,10 +47,8 @@ class AnalysisManager(BaseModel):
 
     params: ParameterManager
     stats: Stats
-    features: Any  # TODO(MMZ 04.01.24): Change to'Repository'
-    samples: Any  # TODO(MMZ 04.01.24): Change to'Repository'
-    # TODO(MMZ 04.01.24): revisit and change to 'Repository' once the repository
-    #  class is reworked
+    features: Repository
+    samples: Repository
 
     def return_attributes(self: Self) -> Tuple[Stats, Repository, Repository]:
         """Returns modified attributes to the calling function

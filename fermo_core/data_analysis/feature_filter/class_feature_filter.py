@@ -21,11 +21,12 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 import logging
-from typing import Self, Any
+from typing import Self
 
 from pydantic import BaseModel
 
 from fermo_core.input_output.class_parameter_manager import ParameterManager
+from fermo_core.data_processing.class_repository import Repository
 from fermo_core.data_processing.class_stats import Stats
 
 
@@ -41,10 +42,8 @@ class FeatureFilter(BaseModel):
 
     params: ParameterManager
     stats: Stats
-    features: Any  # TODO(MMZ 04.01.24): Change to'Repository'
-    samples: Any  # TODO(MMZ 04.01.24): Change to 'Repository'
-    # TODO(MMZ 04.01.24): revisit and change to 'Repository' once the repository
-    #  class is reworked
+    features: Repository
+    samples: Repository
 
     def return_values(self: Self):
         """Returns modified attributes for further processing."""
