@@ -21,7 +21,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 from pathlib import Path
-from typing import List
+from typing import List, Optional
 
 from pydantic import (
     BaseModel,
@@ -47,15 +47,16 @@ class FeatureFilteringParameters(BaseModel):
     """
 
     activate_module: bool = False
-    filter_rel_int_range: List[float] = [0.0, 1.0]
+    filter_rel_int_range: Optional[List[float]] = None
 
     @model_validator(mode="after")
     def order_and_validate_range(self):
-        r_list = self.filter_rel_int_range
-        r_list = [min(r_list), max(r_list)]
-        ValidationManager.validate_range_zero_one(r_list)
-        self.filter_rel_int_range = r_list
-        return self
+        if self.filter_rel_int_range is not None:
+            r_list = self.filter_rel_int_range
+            r_list = [min(r_list), max(r_list)]
+            ValidationManager.validate_range_zero_one(r_list)
+            self.filter_rel_int_range = r_list
+            return self
 
 
 class BlankAssignmentParameters(BaseModel):

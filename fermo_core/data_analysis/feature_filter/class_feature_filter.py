@@ -20,35 +20,60 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-from typing import Self, Tuple
+import logging
+from typing import Self, Any
+
+from pydantic import BaseModel
 
 from fermo_core.input_output.class_parameter_manager import ParameterManager
-from fermo_core.data_processing.class_repository import Repository
 from fermo_core.data_processing.class_stats import Stats
 
 
-class FeatureFilter:
-    """Interface to organize molecular feature filtering methods."""
+class FeatureFilter(BaseModel):
+    """Pydantic-based class to organize molecular feature filtering methods.
 
-    def filter(
-        self: Self,
-        params: ParameterManager,
-        stats: Stats,
-        features: Repository,
-        samples: Repository,
-    ) -> Tuple[Stats, Repository, Repository]:
-        """Calls feature filtering methods dependent on given parameters
+    Attributes:
+        params: holds user-provided parameters
+        stats: general information about analysis run
+        features: holds Feature objects
+        samples: holds Sample objects
+    """
 
-        Arguments:
-            params: stores parameters for data processing
-            stats: summarizing stats of experiment run
-            features: Repository containing Feature Objects
-            samples: Repository containing Sample Objects
+    params: ParameterManager
+    stats: Stats
+    features: Any  # TODO(MMZ 04.01.24): Change to'Repository'
+    samples: Any  # TODO(MMZ 04.01.24): Change to 'Repository'
+    # TODO(MMZ 04.01.24): revisit and change to 'Repository' once the repository
+    #  class is reworked
 
-        Returns:
-            A tuple with modified Stats, Sample Repository, Feature Repository
-        """
-        return stats, features, samples
+    def return_values(self: Self):
+        """Returns modified attributes for further processing."""
+        return self.stats, self.features, self.samples
+
+    def filter(self: Self):
+        """Call feature filtering methods dependent on given parameters."""
+        logging.info("'FeatureFilter': started filtering of molecular features.")
+
+        modules = (
+            (
+                self.params.FeatureFilteringParameters.filter_rel_int_range,
+                self.filter_rel_int_range,
+            ),
+        )
+
+        for module in modules:
+            if module[0] is not None:
+                module[1]()
+
+        logging.info("'FeatureFilter': completed filtering of molecular features.")
+
+    def filter_rel_int_range(self: Self):
+        """Retain only features in relative intensity range."""
+        logging.info("'FeatureFilter': started filtering for relative intensity.")
+
+        # TODO(MMZ 04.01.24): add code for actual filtering here
+
+        logging.info("'FeatureFilter': completed filtering for relative intensity.")
 
     # TODO(MMZ 03.01.24): move to FeatureFiltering class
     # def _get_features_in_range_mzmine3(

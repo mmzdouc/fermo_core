@@ -23,32 +23,15 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-from abc import ABC, abstractmethod
 import logging
 from fermo_core.data_processing.builder_feature.dataclass_feature import Feature
 from fermo_core.data_processing.builder_sample.dataclass_sample import Sample
 
-
-class IRepository(ABC):
-    """Abstract base class for a Repository design pattern."""
-
-    @abstractmethod
-    def add(self, identifier, entry):
-        """Add a non-existing entry to the repository."""
-        raise NotImplementedError
-
-    @abstractmethod
-    def get(self, identifier):
-        """Retrieve an existing entry from the repository."""
-        raise NotImplementedError
-
-    @abstractmethod
-    def modify(self, identifier, entry):
-        """Modify an existing entry by overwriting it."""
-        raise NotImplementedError
+# TODO(MMZ 04.01.24): perform proper clean-up, switch to
+#  pydantic, rework type hints
 
 
-class Repository(IRepository):
+class Repository:
     """Handles addition, retrieval, and modification of class instances.
 
     Attributes:

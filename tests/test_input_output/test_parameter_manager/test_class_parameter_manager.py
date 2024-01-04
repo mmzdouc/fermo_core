@@ -203,7 +203,7 @@ def test_assign_feature_filtering_valid():
 def test_assign_feature_filtering_invalid():
     params = ParameterManager()
     params.assign_feature_filtering({"asdfg": "asdfg"})
-    assert params.FeatureFilteringParameters.filter_rel_int_range[0] == 0.0
+    assert params.FeatureFilteringParameters.filter_rel_int_range is None
 
 
 def test_assign_blank_assignment_valid():
