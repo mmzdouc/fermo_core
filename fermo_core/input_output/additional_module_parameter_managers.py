@@ -21,7 +21,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 from pathlib import Path
-from typing import List
+from typing import List, Optional
 
 from pydantic import (
     BaseModel,
@@ -34,12 +34,13 @@ from pydantic import (
 from fermo_core.input_output.class_validation_manager import ValidationManager
 
 
-class PeaktableFilteringParameters(BaseModel):
-    """A Pydantic-based class for repr. and valid. of peaktable filtering parameters.
+class FeatureFilteringParameters(BaseModel):
+    """A Pydantic-based class for repr. and valid. of feature filtering parameters.
 
     Attributes:
         activate_module: bool to indicate if module should be executed.
         filter_rel_int_range: A range of relative peak intensity to retain features.
+        filter_rel_area_range: A range of relative area to retain features.
 
     Raise:
         pydantic.ValidationError: Pydantic validation failed during instantiation.
@@ -47,15 +48,36 @@ class PeaktableFilteringParameters(BaseModel):
     """
 
     activate_module: bool = False
-    filter_rel_int_range: List[float] = [0.0, 1.0]
+    filter_rel_int_range: Optional[List[float]] = None
+    filter_rel_area_range: Optional[List[float]] = None
 
     @model_validator(mode="after")
-    def order_and_validate_range(self):
-        r_list = self.filter_rel_int_range
+    def validate_attrs(self):
+        if self.filter_rel_int_range is not None:
+            self.filter_rel_int_range = self.order_and_validate_range(
+                self.filter_rel_int_range
+            )
+
+        if self.filter_rel_area_range is not None:
+            self.filter_rel_area_range = self.order_and_validate_range(
+                self.filter_rel_area_range
+            )
+
+        return self
+
+    @staticmethod
+    def order_and_validate_range(r_list: List[float]) -> List[float]:
+        """Order the list and validate format.
+
+        Attributes:
+            r_list: a range of two floats
+
+        Returns:
+            The modified list of a range of two floats
+        """
         r_list = [min(r_list), max(r_list)]
         ValidationManager.validate_range_zero_one(r_list)
-        self.filter_rel_int_range = r_list
-        return self
+        return r_list
 
 
 class BlankAssignmentParameters(BaseModel):

@@ -20,141 +20,61 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-import logging
-
 import pandas as pd
-from typing import Self, Tuple, Optional, Set, Dict, List
+from pydantic import BaseModel
+from typing import Self, Tuple, Optional, Set, Dict
 
 from fermo_core.input_output.class_parameter_manager import ParameterManager
 
 
-class SpecLibEntry:
-    """Organize information on a spectral library entry
+class SpecLibEntry(BaseModel):
+    """Pydantic-based class to organize information on a spectral library entry
 
     Attributes:
         name: the name of the entry
         exact_mass: the exact mass of the entry
-        msms: a dict of two tuples: [1] fragments, [2] intensities
+        msms: a tuple of two tuples: [1] fragments, [2] intensities
     """
 
-    def __init__(
-        self: Self,
-        name: str,
-        exact_mass: float,
-        msms: Tuple[Tuple[float, ...], Tuple[float, ...]],
-    ):
-        self.name = name
-        self.exact_mass = exact_mass
-        self.msms = msms
+    name: str
+    exact_mass: float
+    msms: Tuple[Tuple[float, ...], Tuple[float, ...]]
 
 
-class Stats:
-    """Extract analysis run stats and organize them.
-
-    Ad method nomenclature: each type of supported peaktable should have a separate
-    parser method attributed to it that has the name of the peaktable in it.
-    All methods addressing a peaktable format should mention it in method name.
+class Stats(BaseModel):
+    """Pydantic-based class to organize stats and general info.
 
     Attributes:
-        rt_min: overall lowest retention time start across all samples, in minutes
-        rt_max: overall highest retention time stop across all samples, in minutes
-        rt_range: range in minutes between min and max rt.
-        samples: all sample ids in analysis run
-        features: all feature ids in analysis run in a tuple
-        groups: a dict of lists containing sample ID strings to indicate membership in
-                groups (if no explicit information, all samples in group "DEFAULT")
+        rt_min: retention time start of the first feature peak, in minutes
+        rt_max: retention time stop of the last feature peak, in minutes
+        rt_range: range in minutes between rt_min and rt_max
+        area_min: area under the curve for smallest peak across all features/samples
+        area_max: area under the curve for biggest peak across all features/samples.
+        samples: tuple of all sample ids in analysis run
+        features: tuple of all feature ids in analysis run
+        active_features: not filtered from analysis run
+        inactive_features: filtered from analysis run
+        groups: dict of sets of sample IDs repr. group membership (default in DEFAULT)
         cliques: all similarity cliques in analysis run
-        phenotypes: a dict of tuples of experiments, with associated active samples
+        phenotypes: dict of tuples of active sample IDs
         blank: all blank-associated features in analysis run
-        int_removed: all features that were removed due to intensity range
-        annot_removed: all features that were removed due to annotation range
-        ms2_removed: feature IDs of which MS2 was removed
         spectral_library: a dict of SpecLibEntry instances
     """
 
-    def __init__(self: Self):
-        self.rt_min: Optional[float] = None
-        self.rt_max: Optional[float] = None
-        self.rt_range: Optional[float] = None
-        self.samples: Optional[Tuple] = None
-        self.features: Optional[Tuple] = None
-        self.groups: Optional[Dict[str, Set[str | int]]] = {"DEFAULT": set()}
-        self.cliques: Optional[Tuple] = None
-        self.phenotypes: Optional[Dict[str, Tuple[str, ...]]] = None
-        self.blank: Optional[Tuple] = None
-        self.int_removed: Optional[Tuple] = None
-        self.annot_removed: Optional[Tuple] = None
-        self.ms2_removed: Optional[List] = None
-        self.spectral_library: Optional[Dict[int, SpecLibEntry]] = None
-
-    def _get_features_in_range_mzmine3(
-        self: Self, df: pd.DataFrame, rng: List[float]
-    ) -> Tuple[Tuple, Tuple]:
-        """Separate features into two sets based on their relative intensity.
-
-        Filter features based on their relative intensity compared against the feature
-        with the highest intensity in the sample. For a range between 0-1,
-        for each feature, test if feature lies inside the given range in at least one
-        sample. Only exclude features that are below the relative intensity in all
-        samples in which they are detected.
-
-        Args:
-            df: pandas DataFrame resulting from mzmine3 style peaktable
-            rng: user-provided range
-
-        Returns:
-            Two tuples: one "included" (features inside of range), one "excluded" (
-            features outside of range)
-        """
-        incl = set()
-        excl = set()
-
-        # Extract overall most intense feature per sample as ref for relative intensity
-        sample_max_int = dict()
-        for sample in self.samples:
-            sample_max_int[sample] = df.loc[
-                :, f"datafile:{sample}:intensity_range:max"
-            ].max()
-
-        # Get feature intensity per sample, prepare for comparison
-        for _, row in df.iterrows():
-            sample_values = row.dropna().filter(regex=":intensity_range:max")
-            feature_int = dict()
-            for index, value in sample_values.items():
-                sample = index.split(":")[1]
-                feature_int[sample] = value
-
-            # Retain features that are inside rel int range for at least one sample
-            if any(
-                (sample_max_int[sample] * rng[0])
-                <= feature_int[sample]
-                <= (sample_max_int[sample] * rng[1])
-                for sample in feature_int
-            ):
-                incl.add(row["id"])
-            else:
-                excl.add(row["id"])
-                logging.debug(
-                    f"Molecular feature with feature ID '{row['id']}' was filtered "
-                    f"from dataset due to range settings."
-                )
-
-        return tuple(incl), tuple(excl)
-
-    @staticmethod
-    def _extract_sample_names_mzmine3(df: pd.DataFrame) -> Tuple[str, ...]:
-        """Extract sample names from mzmine3-style peaktable.
-
-        Args:
-            df: dataframe of mzmine3 style peaktable
-
-        Returns:
-            Tuple containing sample name strings.
-        """
-        samples = set()
-        for sample in df.filter(regex=":feature_state").columns:
-            samples.add(sample.split(":")[1])
-        return tuple(samples)
+    rt_min: Optional[float] = None
+    rt_max: Optional[float] = None
+    rt_range: Optional[float] = None
+    area_min: Optional[int] = None
+    area_max: Optional[int] = None
+    samples: Optional[Tuple] = None
+    features: Optional[Tuple] = None
+    active_features: set = set()
+    inactive_features: set = set()
+    groups: Optional[Dict[str, Set]] = {"DEFAULT": set()}
+    cliques: Optional[Tuple] = None
+    phenotypes: Optional[Dict[str, Tuple[str, ...]]] = None
+    blank: Optional[Tuple] = None
+    spectral_library: Optional[Dict[int, SpecLibEntry]] = None
 
     def parse_mzmine3(self: Self, params: ParameterManager):
         """Parse a mzmine3 peaktable for general stats on analysis run.
@@ -163,17 +83,18 @@ class Stats:
             params: instance of ParameterManager object holding user input data
 
         Notes:
-            All samples are grouped in group "DEFAULT".
+            By default, all samples are grouped in group "DEFAULT".
         """
         df = pd.read_csv(params.PeaktableParameters.filepath)
+
         self.rt_min = df.loc[:, "rt_range:min"].min()
         self.rt_max = df.loc[:, "rt_range:max"].max()
         self.rt_range = self.rt_max - self.rt_min
-        self.samples = self._extract_sample_names_mzmine3(df)
+        self.area_min = df.loc[:, "area"].min()
+        self.area_max = df.loc[:, "area"].max()
+        self.samples = tuple(
+            sample.split(":")[1] for sample in df.filter(regex=":feature_state").columns
+        )
         self.groups["DEFAULT"] = set(self.samples)
-        self.features, self.int_removed = self._get_features_in_range_mzmine3(
-            df, params.PeaktableFilteringParameters.filter_rel_int_range
-        )
-        _, self.annot_removed = self._get_features_in_range_mzmine3(
-            df, params.Ms2QueryAnnotationParameters.filter_rel_int_range
-        )
+        self.features = tuple(df["id"].tolist())
+        self.active_features = set(self.features)

@@ -1,6 +1,10 @@
 import pytest
-from fermo_core.data_analysis.class_chrom_trace_calculator import ChromTraceData
-from fermo_core.data_analysis.class_chrom_trace_calculator import ChromTraceCalculator
+from fermo_core.data_analysis.chrom_trace_calculator.class_chrom_trace_calculator import (
+    ChromTraceData,
+)
+from fermo_core.data_analysis.chrom_trace_calculator.class_chrom_trace_calculator import (
+    ChromTraceCalculator,
+)
 from fermo_core.data_processing.class_repository import Repository
 from fermo_core.data_processing.builder_sample.dataclass_sample import Sample
 from fermo_core.data_processing.class_stats import Stats

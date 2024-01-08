@@ -32,7 +32,6 @@ class Feature(BaseModel):
 
     Attributes:
         f_id: the integer ID of the molecular feature.
-        active: a bool indicating that f. was not filtered from analysis (default: True)
         mz: the precursor mass to charge ratio (m/z).
         rt: the retention time at peak apex.
         rt_start: the start of the peak in minutes.
@@ -42,7 +41,9 @@ class Feature(BaseModel):
         trace_int: the relative intensity data points of the pseudo-chromatogram trace
         fwhm: the feature width at half maximum intensity (peak width).
         intensity: the maximum intensity.
+        rel_intensity: the intensity relative to the highest feature in the sample.
         area: the area of the peak
+        rel_area: the area relative to the feature with the highest area in the sample.
         msms: a tuple of two tuples: [0] ms/ms fragments, [1] ms/ms intensities.
         samples: a tuple of samples to which feature is associated.
         blank: bool to indicate if feature is blank-associated (if provided).
@@ -56,7 +57,6 @@ class Feature(BaseModel):
     """
 
     f_id: Optional[int] = None
-    active: bool = True
     mz: Optional[float] = None
     rt: Optional[float] = None
     rt_start: Optional[float] = None
@@ -68,6 +68,7 @@ class Feature(BaseModel):
     intensity: Optional[int] = None
     rel_intensity: Optional[float] = None
     area: Optional[int] = None
+    rel_area: Optional[float] = None
     msms: Optional[Tuple[Tuple[float, ...], Tuple[float, ...]]] = None
     samples: Optional[Tuple] = None
     blank: Optional[bool] = None

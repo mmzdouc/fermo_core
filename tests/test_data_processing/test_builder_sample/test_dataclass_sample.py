@@ -10,6 +10,12 @@ def test_init_sample_valid():
     )
 
 
+def test_multiple_instances_valid():
+    sample1 = Sample()
+    sample2 = Sample()
+    assert sample1 is not sample2
+
+
 def test_init_phenotype_valid():
     assert isinstance(
         Phenotype(**{"value": 10.0, "conc": 1}), Phenotype

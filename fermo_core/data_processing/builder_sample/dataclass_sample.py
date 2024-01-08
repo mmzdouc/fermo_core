@@ -43,11 +43,12 @@ class Sample(BaseModel):
 
     Attributes:
         s_id: string identifier of sample
-        features: dict of features detected in sample; contain sample-specific data
+        features: dict of features objects with sample-specific information.
         feature_ids: tuple of feature ids
         groups: group association of sample (if provided, else default group DEFAULT)
         cliques: number of cliques in this sample
         max_intensity: the highest intensity of a feature in the sample (absolute)
+        max_area: the highest area of a feature in the sample (absolute)
         phenotypes: indicates the conditions in which the sample showed activity. A
             dict of condition : Phenotype() pairs.
     """
@@ -55,7 +56,8 @@ class Sample(BaseModel):
     s_id: Optional[str] = None
     features: Optional[dict] = None
     feature_ids: Optional[tuple] = None
-    groups: Optional[set[str]] = {"DEFAULT"}
+    groups: set[str] = {"DEFAULT"}
     cliques: Optional[dict] = None
     max_intensity: Optional[int] = None
+    max_area: Optional[int] = None
     phenotypes: Optional[Dict[str, Phenotype]] = None

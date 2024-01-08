@@ -81,12 +81,14 @@ class SpecLibMgfParser(SpecLibParser):
             for spectrum in mgf.read(infile, use_index=False):
                 try:
                     stats.spectral_library[counter] = SpecLibEntry(
-                        spectrum["params"]["name"],
-                        spectrum["params"]["pepmass"][0],
-                        (
-                            tuple(spectrum["m/z array"].tolist()),
-                            tuple(spectrum["intensity array"].tolist()),
-                        ),
+                        **{
+                            "name": spectrum["params"]["name"],
+                            "exact_mass": spectrum["params"]["pepmass"][0],
+                            "msms": (
+                                tuple(spectrum["m/z array"].tolist()),
+                                tuple(spectrum["intensity array"].tolist()),
+                            ),
+                        }
                     )
                 except KeyError:
                     logging.warning(

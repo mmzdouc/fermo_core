@@ -23,42 +23,25 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-from abc import ABC, abstractmethod
 import logging
+from typing import Union
+
+from pydantic import BaseModel
+
 from fermo_core.data_processing.builder_feature.dataclass_feature import Feature
 from fermo_core.data_processing.builder_sample.dataclass_sample import Sample
 
 
-class IRepository(ABC):
-    """Abstract base class for a Repository design pattern."""
-
-    @abstractmethod
-    def add(self, identifier, entry):
-        """Add a non-existing entry to the repository."""
-        raise NotImplementedError
-
-    @abstractmethod
-    def get(self, identifier):
-        """Retrieve an existing entry from the repository."""
-        raise NotImplementedError
-
-    @abstractmethod
-    def modify(self, identifier, entry):
-        """Modify an existing entry by overwriting it."""
-        raise NotImplementedError
-
-
-class Repository(IRepository):
+class Repository(BaseModel):
     """Handles addition, retrieval, and modification of class instances.
 
     Attributes:
         entries: a dict to store instances of the class in repository
     """
 
-    def __init__(self):
-        self.entries: dict = {}
+    entries: dict = dict()
 
-    def add(self, identifier: int | str, entry: Feature | Sample):
+    def add(self, identifier: Union[int, str], entry: Union[Feature, Sample]):
         """Add a new entry to repository dict.
 
         Args:
@@ -77,7 +60,7 @@ class Repository(IRepository):
                 logging.error(str(e))
                 raise e
 
-    def get(self, identifier: int | str) -> Feature | Sample:
+    def get(self, identifier: Union[int, str]) -> Union[Feature, Sample]:
         """Get an entry from the repository dict.
 
         Args:
@@ -98,7 +81,7 @@ class Repository(IRepository):
                 logging.error(str(e))
                 raise e
 
-    def modify(self, identifier: int | str, entry: Feature | Sample):
+    def modify(self, identifier: Union[int, str], entry: Union[Feature, Sample]):
         """Modify an entry by overwriting it.
 
         Args:

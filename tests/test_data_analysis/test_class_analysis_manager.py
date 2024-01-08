@@ -1,35 +1,34 @@
 import pytest
 
 from fermo_core.data_analysis.class_analysis_manager import AnalysisManager
-from fermo_core.data_processing.parser.class_general_parser import GeneralParser
-from fermo_core.input_output.class_file_manager import FileManager
-from fermo_core.input_output.class_parameter_manager import ParameterManager
 
 
 @pytest.fixture
-def params_manager():
-    params_json = FileManager.load_json_file("example_data/case_study_parameters.json")
-    params_manager = ParameterManager()
-    params_manager.assign_parameters_cli(params_json)
-    return params_manager
-
-
-@pytest.fixture
-def general_parser(params_manager):
-    general_parser = GeneralParser()
-    general_parser.parse_parameters(params_manager)
-    return general_parser
-
-
-def test_init_analysis_manager():
-    assert isinstance(AnalysisManager(), AnalysisManager)
-
-
-def test_analyze_valid(params_manager, general_parser):
-    stats, features, samples = general_parser.return_attributes()
-    stats, features, samples = AnalysisManager().analyze(
-        params_manager, stats, features, samples
+def analysis_manager_instance(
+    parameter_instance, stats_instance, feature_instance, sample_instance
+):
+    return AnalysisManager(
+        params=parameter_instance,
+        stats=stats_instance,
+        features=feature_instance,
+        samples=sample_instance,
     )
-    assert (
-        samples.entries.get("5440_5439_mod.mzXML").features.get(1).trace_rt is not None
+
+
+def test_init_valid(analysis_manager_instance):
+    assert isinstance(analysis_manager_instance, AnalysisManager)
+
+
+def test_return_valid(analysis_manager_instance):
+    stats, features, samples = analysis_manager_instance.return_attributes()
+    assert stats is not None
+
+
+def test_analyze_valid(analysis_manager_instance):
+    analysis_manager_instance.analyze()
+    value = (
+        analysis_manager_instance.samples.get("5440_5439_mod.mzXML")
+        .features.get(1)
+        .trace_rt
     )
+    assert isinstance(value, tuple)

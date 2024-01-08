@@ -1,4 +1,4 @@
-"""Organize the calling of various data analysis modules.
+"""Organize the calling of data analysis modules.
 
 Copyright (c) 2022-2023 Mitja Maximilian Zdouc, PhD
 
@@ -20,44 +20,71 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-from typing import Tuple
+import logging
+from typing import Tuple, Self
+
+from pydantic import BaseModel
 
 from fermo_core.input_output.class_parameter_manager import ParameterManager
 from fermo_core.data_processing.class_repository import Repository
 from fermo_core.data_processing.class_stats import Stats
 
-from fermo_core.data_analysis.class_chrom_trace_calculator import ChromTraceCalculator
+from fermo_core.data_analysis.chrom_trace_calculator.class_chrom_trace_calculator import (
+    ChromTraceCalculator,
+)
+from fermo_core.data_analysis.feature_filter.class_feature_filter import FeatureFilter
 
 
-class AnalysisManager:
-    """Interface to organize calling of specific data analysis methods."""
+class AnalysisManager(BaseModel):
+    """Pydantic-based class to organize calling and logging of analysis methods
 
-    @staticmethod
-    def analyze(
-        params: ParameterManager,
-        stats: Stats,
-        features: Repository,
-        samples: Repository,
-    ) -> Tuple[Stats, Repository, Repository]:
-        """Organizes calling of data analysis steps.
+    Attributes:
+        params: ParameterManager object, holds user-provided parameters
+        stats: Stats object, holds stats on molecular features and samples
+        features: Repository object, holds "General Feature" objects
+        samples: Repository object, holds "Sample" objects
+    """
 
-        Arguments:
-            params: stores parameters for data processing
-            stats: summarizing stats of experiment run
-            features: Repository containing Feature Objects
-            samples: Repository containing Sample Objects
+    params: ParameterManager
+    stats: Stats
+    features: Repository
+    samples: Repository
+
+    def return_attributes(self: Self) -> Tuple[Stats, Repository, Repository]:
+        """Returns modified attributes to the calling function
 
         Returns:
-            A tuple with modified Stats, Sample Repository, Feature Repository
-
-        Notes:
-            Adjust here for additional data analysis steps/methods.
+            Tuple containing Stats, Feature Repository and Sample Repository objects.
         """
+        return self.stats, self.features, self.samples
 
-        # TODO(MMZ) 26.12.23: proceed with annotations, bioactivity etc.
-        # TODO(MMZ) 26.12.23: when calculating fold changes, also add group info to
-        #  features
+    def analyze(self: Self):
+        """Organizes calling of data analysis steps."""
+        logging.info("'AnalysisManager': started analysis steps.")
 
-        samples = ChromTraceCalculator().modify_samples(samples, stats)
+        self.run_feature_filter()
 
-        return stats, features, samples
+        self.run_chrom_trace_calculator()
+
+        logging.info("'AnalysisManager': completed analysis steps.")
+
+    def run_feature_filter(self: Self):
+        """Run optional FeatureFilter analysis step"""
+        if self.params.FeatureFilteringParameters.activate_module is False:
+            logging.info(
+                "'FeatureFiltering': module 'feature_filtering' not activated - SKIP."
+            )
+            return
+
+        feature_filter = FeatureFilter(
+            params=self.params,
+            stats=self.stats,
+            features=self.features,
+            samples=self.samples,
+        )
+        feature_filter.filter()
+        self.stats, self.features, self.samples = feature_filter.return_values()
+
+    def run_chrom_trace_calculator(self: Self):
+        """Run mandatory ChromTraceCalculator analysis step."""
+        self.samples = ChromTraceCalculator().modify_samples(self.samples, self.stats)

@@ -20,86 +20,147 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-from typing import Tuple, Any
-from fermo_core.data_processing.builder_feature.dataclass_feature import Feature
 import logging
+from typing import Tuple
+
+from pydantic import BaseModel
+
+from fermo_core.data_processing.builder_feature.dataclass_feature import Feature
 
 
-class FeatureBuilder:
-    """Contains methods to build variants of features based on user input
+class FeatureBuilder(BaseModel):
+    """Pydantic-based class to build variants of Feature objects based on user input."""
 
-    Some product attributes are set only downstream and are therefore not included here.
-    """
+    feature: Feature = Feature()
 
-    def __init__(self):
-        self.feature = Feature()
+    def set_f_id(self, f_id: int):
+        """Set attribute
 
-    @staticmethod
-    def type_testing(var: Any, kind: type):
+        Arguments:
+            f_id: the molecular feature identifier
+        """
+        self.feature.f_id = f_id
+        return self
+
+    def set_mz(self, mz: float):
+        """Set attribute
+
+        Arguments:
+            mz: the molecular feature mass/charge ratio
+        """
+        self.feature.mz = mz
+        return self
+
+    def set_rt(self, rt: float):
+        """Set attribute
+
+        Arguments:
+            rt: the retention time of the peak apex
+        """
+        self.feature.rt = rt
+        return self
+
+    def set_rt_start(self, rt_start: float):
+        """Set attribute
+
+        Arguments:
+            rt_start: the retention time at the start of the peak
+        """
+        self.feature.rt_start = rt_start
+        return self
+
+    def set_rt_stop(self, rt_stop: float):
+        """Set attribute
+
+        Arguments:
+            rt_stop: the retention time at the end of the peak
+        """
+        self.feature.rt_stop = rt_stop
+        return self
+
+    def set_rt_range(self):
+        """Calculate and set attribute for retention time range
+
+        Raises:
+            ValueError: called out of order: self.feature.rt_start or
+            self.feature.rt_stop are not set yet.
+        """
         try:
-            if not isinstance(var, kind):
+            if self.feature.rt_start is None or self.feature.rt_stop is None:
                 raise ValueError(
-                    f"FeatureBuilder: Invalid type for '{var}'. Expected'{kind}', got "
-                    f"'{type(var)}'."
+                    "'FeatureBuilder': self.set_rt_range() called out of order. "
+                    "'self.feature.rt_start' and 'self.feature.rt_stop' must "
+                    "not be 'None'."
                 )
         except ValueError as e:
             logging.error(str(e))
             raise e
 
-    def set_f_id(self, f_id: int):
-        self.type_testing(f_id, int)
-        self.feature.f_id = f_id
-        return self
-
-    def set_mz(self, mz: float):
-        self.type_testing(mz, float)
-        self.feature.mz = mz
-        return self
-
-    def set_rt(self, rt: float):
-        self.type_testing(rt, float)
-        self.feature.rt = rt
-        return self
-
-    def set_rt_start(self, rt_start: float):
-        self.type_testing(rt_start, float)
-        self.feature.rt_start = rt_start
-        return self
-
-    def set_rt_stop(self, rt_stop: float):
-        self.type_testing(rt_stop, float)
-        self.feature.rt_stop = rt_stop
-        return self
-
-    def set_rt_range(self, rt_range: float):
-        self.type_testing(rt_range, float)
-        self.feature.rt_range = rt_range
+        self.feature.rt_range = round(
+            float(self.feature.rt_stop - self.feature.rt_start), 2
+        )
         return self
 
     def set_fwhm(self, fwhm: float):
-        self.type_testing(fwhm, float)
+        """Set attribute
+
+        Arguments:
+            fwhm: the feature with at half maximum intensity of the peak
+        """
         self.feature.fwhm = fwhm
         return self
 
     def set_intensity(self, intensity: int):
-        self.type_testing(intensity, int)
+        """Set attribute
+
+        Arguments:
+            intensity: the (absolute) intensity (=height) of the peak
+        """
         self.feature.intensity = intensity
         return self
 
-    def set_rel_intensity(self, rel_intensity: float):
-        self.type_testing(rel_intensity, float)
-        self.feature.rel_intensity = rel_intensity
+    def set_rel_intensity(self, intensity: int, max_intensity: int):
+        """Calculate and set attribute for relative intensity
+
+        Arguments:
+            intensity: height of feature
+            max_intensity: height of most intense feature per sample
+        """
+        self.feature.rel_intensity = round((intensity / max_intensity), 2)
         return self
 
     def set_area(self, area: int):
-        self.type_testing(area, int)
+        """Set attribute
+
+        Arguments:
+            area: the (absolute) area under the curve of the molecular feature
+        """
         self.feature.area = area
         return self
 
+    def set_rel_area(self, area: int, max_area: int):
+        """Calculate and set attribute for relative area
+
+        Arguments:
+            area: the area under the curve (AUC) of the feature
+            max_area: AUC of the feature with the highest area per sample
+        """
+        self.feature.rel_area = round((area / max_area), 2)
+        return self
+
     def set_samples(self, samples: Tuple):
-        self.type_testing(samples, tuple)
+        """Set attribute
+
+        Arguments:
+            samples: sample identifiers in which feature was detected
+        """
         self.feature.samples = samples
         return self
 
     def get_result(self):
+        """Return object instance.
+
+        Returns:
+            The modified object instance.
+        """
         return self.feature

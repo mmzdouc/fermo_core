@@ -52,7 +52,11 @@ def main(params: ParameterManager):
     general_parser.parse_parameters(params)
     stats, features, samples = general_parser.return_attributes()
 
-    stats, features, samples = AnalysisManager.analyze(params, stats, features, samples)
+    analysis_manager = AnalysisManager(
+        params=params, stats=stats, features=features, samples=samples
+    )
+    analysis_manager.analyze()
+    stats, features, samples = analysis_manager.return_attributes()
 
     # TODO(MMZ 26.12.23): Remove dropout
     logging.critical("DROP OUT OF TEST RUN")
