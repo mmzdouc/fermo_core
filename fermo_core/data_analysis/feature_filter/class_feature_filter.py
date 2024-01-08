@@ -67,64 +67,35 @@ class FeatureFilter(BaseModel):
         logging.info("'FeatureFilter': completed filtering of molecular features.")
 
     def filter_rel_int_range(self: Self):
-        """Retain only features in relative intensity range."""
+        """Retain features inside relative int range in at least one sample."""
         logging.info("'FeatureFilter': started filtering for relative intensity.")
 
-        # TODO(MMZ 04.01.24): add code for actual filtering here
+        inside_range = set()
+        outside_range = set()
+
+        for sample_id in self.stats.samples:
+            sample = self.samples.get(sample_id)
+            for feature_id in sample.feature_ids:
+                feature = sample.features.get(feature_id)
+                if (
+                    self.params.FeatureFilteringParameters.filter_rel_int_range[0]
+                    <= feature.rel_intensity
+                    <= self.params.FeatureFilteringParameters.filter_rel_int_range[1]
+                ):
+                    inside_range.add(feature.f_id)
+                else:
+                    outside_range.add(feature.f_id)
+
+        for feature_id in outside_range:
+            if feature_id not in inside_range:
+                self.stats.inactive_features.add(feature_id)
+                logging.debug(
+                    f"'FeatureFilter': feature with ID '{feature_id}' filtered from"
+                    f" analysis run: outside 'filter_rel_int_range' settings."
+                )
+
+        self.stats.active_features = self.stats.active_features.difference(
+            self.stats.inactive_features
+        )
 
         logging.info("'FeatureFilter': completed filtering for relative intensity.")
-
-    # TODO(MMZ 03.01.24): move to FeatureFiltering class
-    # def _get_features_in_range_mzmine3(
-    #     self: Self, df: pd.DataFrame, rng: List[float]
-    # ) -> Tuple[Tuple, Tuple]:
-    #     """Separate features into two sets based on their relative intensity.
-    #
-    #     Filter features based on their relative intensity compared against the feature
-    #     with the highest intensity in the sample. For a range between 0-1,
-    #     for each feature, test if feature lies inside the given range in at least one
-    #     sample. Only exclude features that are below the relative intensity in all
-    #     samples in which they are detected.
-    #
-    #     Args:
-    #         df: pandas DataFrame resulting from mzmine3 style peaktable
-    #         rng: user-provided range
-    #
-    #     Returns:
-    #         Two tuples: one "included" (features inside of range), one "excluded" (
-    #         features outside of range)
-    #     """
-    #     incl = set()
-    #     excl = set()
-    #
-    #     # Extract overall most intense feature per sample as ref for relative intensity
-    #     sample_max_int = dict()
-    #     for sample in self.samples:
-    #         sample_max_int[sample] = df.loc[
-    #             :, f"datafile:{sample}:intensity_range:max"
-    #         ].max()
-    #
-    #     # Get feature intensity per sample, prepare for comparison
-    #     for _, row in df.iterrows():
-    #         sample_values = row.dropna().filter(regex=":intensity_range:max")
-    #         feature_int = dict()
-    #         for index, value in sample_values.items():
-    #             sample = index.split(":")[1]
-    #             feature_int[sample] = value
-    #
-    #         # Retain features that are inside rel int range for at least one sample
-    #         if any(
-    #             (sample_max_int[sample] * rng[0])
-    #             <= feature_int[sample]
-    #             <= (sample_max_int[sample] * rng[1])
-    #             for sample in feature_int
-    #         ):
-    #             incl.add(row["id"])
-    #         else:
-    #             excl.add(row["id"])
-    #             logging.debug(
-    #                 f"Molecular feature with feature ID '{row['id']}' was filtered "
-    #                 f"from dataset due to range settings."
-    #             )
-    #
-    #     return tuple(incl), tuple(excl)

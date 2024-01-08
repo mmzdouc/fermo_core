@@ -48,10 +48,12 @@ class Stats(BaseModel):
         rt_min: retention time start of the first feature peak, in minutes
         rt_max: retention time stop of the last feature peak, in minutes
         rt_range: range in minutes between rt_min and rt_max
-        area_min: area under the curve for smallest peak
-        area_max: area under the curve for biggest peak
+        area_min: area under the curve for smallest peak across all features/samples
+        area_max: area under the curve for biggest peak across all features/samples.
         samples: tuple of all sample ids in analysis run
         features: tuple of all feature ids in analysis run
+        active_features: not filtered from analysis run
+        inactive_features: filtered from analysis run
         groups: dict of sets of sample IDs repr. group membership (default in DEFAULT)
         cliques: all similarity cliques in analysis run
         phenotypes: dict of tuples of active sample IDs
@@ -66,6 +68,8 @@ class Stats(BaseModel):
     area_max: Optional[int] = None
     samples: Optional[Tuple] = None
     features: Optional[Tuple] = None
+    active_features: set = set()
+    inactive_features: set = set()
     groups: Optional[Dict[str, Set]] = {"DEFAULT": set()}
     cliques: Optional[Tuple] = None
     phenotypes: Optional[Dict[str, Tuple[str, ...]]] = None
@@ -93,3 +97,4 @@ class Stats(BaseModel):
         )
         self.groups["DEFAULT"] = set(self.samples)
         self.features = tuple(df["id"].tolist())
+        self.active_features = set(self.features)

@@ -43,7 +43,7 @@ class Sample(BaseModel):
 
     Attributes:
         s_id: string identifier of sample
-        features: dict of features detected in sample; contain sample-specific data
+        features: dict of features objects with sample-specific information.
         feature_ids: tuple of feature ids
         groups: group association of sample (if provided, else default group DEFAULT)
         cliques: number of cliques in this sample

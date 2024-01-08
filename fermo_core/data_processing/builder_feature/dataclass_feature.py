@@ -32,7 +32,6 @@ class Feature(BaseModel):
 
     Attributes:
         f_id: the integer ID of the molecular feature.
-        active: a bool indicating that f. was not filtered from analysis (default: True)
         mz: the precursor mass to charge ratio (m/z).
         rt: the retention time at peak apex.
         rt_start: the start of the peak in minutes.
@@ -58,7 +57,6 @@ class Feature(BaseModel):
     """
 
     f_id: Optional[int] = None
-    active: bool = True
     mz: Optional[float] = None
     rt: Optional[float] = None
     rt_start: Optional[float] = None

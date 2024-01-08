@@ -24,4 +24,16 @@ def test_return_values_valid(feature_filter_instance):
     assert stats is not None
 
 
-# TODO(MMZ 04.01.24): continue covering methods
+def test_filter_rel_int_range_valid(feature_filter_instance):
+    feature_filter_instance.filter_rel_int_range()
+    assert len(feature_filter_instance.stats.active_features) == 143
+
+
+def test_filter_rel_int_range_cut_grass_valid(feature_filter_instance):
+    feature_filter_instance.params.FeatureFilteringParameters.filter_rel_int_range = [
+        0.1,
+        1.0,
+    ]
+    feature_filter_instance.filter_rel_int_range()
+    assert len(feature_filter_instance.stats.active_features) == 98
+    assert len(feature_filter_instance.stats.inactive_features) == 45
