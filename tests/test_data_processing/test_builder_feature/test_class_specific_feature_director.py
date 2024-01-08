@@ -23,5 +23,5 @@ def dummy_row():
 
 def test_success_construct_mzmine(dummy_row):
     assert isinstance(
-        SpecificFeatureDirector.construct_mzmine3(dummy_row, "s", 5000), Feature
+        SpecificFeatureDirector.construct_mzmine3(dummy_row, "s", 5000, 1000), Feature
     )

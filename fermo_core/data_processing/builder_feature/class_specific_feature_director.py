@@ -37,13 +37,16 @@ class SpecificFeatureDirector:
     """Directs the construction of the sample-specific Feature instance"""
 
     @staticmethod
-    def construct_mzmine3(row: pd.Series, s_id: str, max_intensity: int) -> Feature:
+    def construct_mzmine3(
+        row: pd.Series, s_id: str, max_intensity: int, max_area: int
+    ) -> Feature:
         """Construct the Feature product instance.
 
         Args:
             row: a pandas series containing feature information
             s_id: indicating the sample identifier
             max_intensity: the highest intensity of the molecular feature in sample
+            max_area: the highest area of the molecular feature in sample
 
         Returns:
             An instance of the Feature class.
@@ -66,5 +69,6 @@ class SpecificFeatureDirector:
             .set_rel_intensity(
                 round((row[f"datafile:{s_id}:intensity_range:max"] / max_intensity), 2)
             )
+            .set_rel_area(round((row[f"datafile:{s_id}:area"] / max_area), 2))
             .get_result()
         )

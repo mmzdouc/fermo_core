@@ -42,7 +42,9 @@ class Feature(BaseModel):
         trace_int: the relative intensity data points of the pseudo-chromatogram trace
         fwhm: the feature width at half maximum intensity (peak width).
         intensity: the maximum intensity.
+        rel_intensity: the intensity relative to the highest feature in the sample.
         area: the area of the peak
+        rel_area: the area relative to the feature with the highest area in the sample.
         msms: a tuple of two tuples: [0] ms/ms fragments, [1] ms/ms intensities.
         samples: a tuple of samples to which feature is associated.
         blank: bool to indicate if feature is blank-associated (if provided).
@@ -68,6 +70,7 @@ class Feature(BaseModel):
     intensity: Optional[int] = None
     rel_intensity: Optional[float] = None
     area: Optional[int] = None
+    rel_area: Optional[float] = None
     msms: Optional[Tuple[Tuple[float, ...], Tuple[float, ...]]] = None
     samples: Optional[Tuple] = None
     blank: Optional[bool] = None

@@ -25,9 +25,6 @@ import pandas as pd
 
 from fermo_core.data_processing.builder_sample.class_sample_builder import SampleBuilder
 from fermo_core.data_processing.builder_sample.dataclass_sample import Sample
-from fermo_core.data_processing.builder_feature.class_specific_feature_director import (
-    SpecificFeatureDirector,
-)
 
 
 class SamplesDirector:
@@ -47,22 +44,12 @@ class SamplesDirector:
         Returns:
             An instance of the Sample class.
         """
-        sample = (
+        return (
             SampleBuilder()
             .set_s_id(str(s_id))
-            .set_features()
-            .set_max_intensity(
-                int(df.loc[:, f"datafile:{s_id}:intensity_range:max"].max())
-            )
+            .set_max_intensity_mzmine3(s_id, df)
+            .set_max_area_mzmine3(s_id, df)
+            .set_features_mzmine3(s_id, df)
+            .set_feature_ids()
             .get_result()
         )
-
-        for _, row in df.iterrows():
-            if row[f"datafile:{s_id}:feature_state"] == "DETECTED":
-                sample.features[row["id"]] = SpecificFeatureDirector.construct_mzmine3(
-                    row, s_id, sample.max_intensity
-                )
-
-        sample.feature_ids = tuple(sample.features.keys())
-
-        return sample

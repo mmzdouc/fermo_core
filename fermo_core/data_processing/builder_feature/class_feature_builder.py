@@ -91,6 +91,11 @@ class FeatureBuilder:
         self.feature.rel_intensity = rel_intensity
         return self
 
+    def set_rel_area(self, rel_area: float):
+        self.type_testing(rel_area, float)
+        self.feature.rel_area = rel_area
+        return self
+
     def set_area(self, area: int):
         self.type_testing(area, int)
         self.feature.area = area
