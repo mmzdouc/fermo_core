@@ -89,7 +89,7 @@ class SampleBuilder(BaseModel):
                 raise ValueError(
                     "'SampleBuilder': self.set_features_mzmine3() called out of order. "
                     "'self.sample.max_intensity' and 'self.sample.max_area' must "
-                    "not be 'None'"
+                    "not be 'None'."
                 )
         except ValueError as e:
             logging.error(str(e))
@@ -115,7 +115,7 @@ class SampleBuilder(BaseModel):
             if self.sample.features is None:
                 raise ValueError(
                     "'SampleBuilder': self.set_feature_ids() called out of order. "
-                    "'self.sample.features' must not be 'None'"
+                    "'self.sample.features' must not be 'None'."
                 )
         except ValueError as e:
             logging.error(str(e))

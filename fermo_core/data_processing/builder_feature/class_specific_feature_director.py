@@ -60,15 +60,10 @@ class SpecificFeatureDirector:
             .set_rt_stop(float(row[f"datafile:{s_id}:rt_range:max"]))
             .set_rt(float(row[f"datafile:{s_id}:rt"]))
             .set_area(int(row[f"datafile:{s_id}:area"]))
-            .set_rt_range(
-                float(
-                    row[f"datafile:{s_id}:rt_range:max"]
-                    - row[f"datafile:{s_id}:rt_range:min"]
-                )
-            )
+            .set_rt_range()
             .set_rel_intensity(
-                round((row[f"datafile:{s_id}:intensity_range:max"] / max_intensity), 2)
+                row[f"datafile:{s_id}:intensity_range:max"], max_intensity
             )
-            .set_rel_area(round((row[f"datafile:{s_id}:area"] / max_area), 2))
+            .set_rel_area(row[f"datafile:{s_id}:area"], max_area)
             .get_result()
         )
