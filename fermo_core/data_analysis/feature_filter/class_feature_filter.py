@@ -58,6 +58,10 @@ class FeatureFilter(BaseModel):
                 self.params.FeatureFilteringParameters.filter_rel_int_range,
                 self.filter_rel_int_range,
             ),
+            (
+                self.params.FeatureFilteringParameters.filter_rel_area_range,
+                self.filter_rel_area_range,
+            ),
         )
 
         for module in modules:
@@ -70,32 +74,74 @@ class FeatureFilter(BaseModel):
         """Retain features inside relative int range in at least one sample."""
         logging.info("'FeatureFilter': started filtering for relative intensity.")
 
-        inside_range = set()
-        outside_range = set()
+        inactive = self.filter_features_for_range(
+            self.stats,
+            self.samples,
+            self.params.FeatureFilteringParameters.filter_rel_int_range,
+        )
 
-        for sample_id in self.stats.samples:
-            sample = self.samples.get(sample_id)
-            for feature_id in sample.feature_ids:
-                feature = sample.features.get(feature_id)
-                if (
-                    self.params.FeatureFilteringParameters.filter_rel_int_range[0]
-                    <= feature.rel_intensity
-                    <= self.params.FeatureFilteringParameters.filter_rel_int_range[1]
-                ):
-                    inside_range.add(feature.f_id)
-                else:
-                    outside_range.add(feature.f_id)
+        for feature in inactive:
+            logging.debug(
+                f"'FeatureFilter': feature with ID '{feature}' filtered from"
+                f" analysis run: outside 'filter_rel_int_range' settings."
+            )
 
-        for feature_id in outside_range:
-            if feature_id not in inside_range:
-                self.stats.inactive_features.add(feature_id)
-                logging.debug(
-                    f"'FeatureFilter': feature with ID '{feature_id}' filtered from"
-                    f" analysis run: outside 'filter_rel_int_range' settings."
-                )
+        self.stats.inactive_features.update(inactive)
 
         self.stats.active_features = self.stats.active_features.difference(
             self.stats.inactive_features
         )
 
         logging.info("'FeatureFilter': completed filtering for relative intensity.")
+
+    def filter_rel_area_range(self: Self):
+        """Retain features inside relative area range in at least one sample."""
+        logging.info("'FeatureFilter': started filtering for relative area.")
+
+        inactive = self.filter_features_for_range(
+            self.stats,
+            self.samples,
+            self.params.FeatureFilteringParameters.filter_rel_area_range,
+        )
+
+        for feature in inactive:
+            logging.debug(
+                f"'FeatureFilter': feature with ID '{feature}' filtered from"
+                f" analysis run: outside 'filter_rel_area_range' settings."
+            )
+
+        self.stats.inactive_features.update(inactive)
+
+        self.stats.active_features = self.stats.active_features.difference(
+            self.stats.inactive_features
+        )
+
+        logging.info("'FeatureFilter': completed filtering for relative area.")
+
+    @staticmethod
+    def filter_features_for_range(
+        stats: Stats, samples: Repository, r_list: list
+    ) -> set:
+        """Determine features with values outside of given range
+
+        Arguments:
+            stats: a Stats object
+            samples: a repository object
+            r_list: a list of two floats indicating the range
+
+        Returns:
+            A set of features that have no occurrences inside range.
+        """
+        inside_range = set()
+        outside_range = set()
+
+        for sample_id in stats.samples:
+            sample = samples.get(sample_id)
+            for feature_id in sample.feature_ids:
+                feature = sample.features.get(feature_id)
+                if r_list[0] <= feature.rel_intensity <= r_list[1]:
+                    inside_range.add(feature.f_id)
+                else:
+                    outside_range.add(feature.f_id)
+
+        return outside_range.difference(inside_range)

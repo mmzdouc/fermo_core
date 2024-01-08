@@ -247,7 +247,7 @@
             "type": "object",
             "properties": {
                 "feature_filtering": {
-                    "title": "(Optional): molecular feature filtering. If not specified, the fermo core processing modules will run with default settings.",
+                    "title": "(Optional): molecular feature filtering. If not specified, this module will be skipped.",
                     "additionalProperties": false,
                     "type": "object",
                     "required": [
@@ -259,7 +259,18 @@
                             "type": "boolean"
                         },
                         "filter_rel_int_range": {
-                            "title": "(Optional): filter to restrict processing to molecular features inside the specified range, based on relative intensity. All molecular features outside the range will be ignored. By default, the range is from 0.0-1.0 (all molecular features are considered).",
+                            "title": "(Optional): restrict data analysis to molecular features that have a relative intensity (intensity relative to the highest feature intensity per sample) that is inside the specified range. If a feature is detected in multiple samples, at least one occurrence must be inside the specified range. Else, the feature is not considered.",
+                            "type": "array",
+                            "minItems": 2,
+                            "maxItems": 2,
+                            "items": {
+                                "type": "number",
+                                "minimum": 0.0,
+                                "maximum": 1.0
+                            }
+                        },
+                        "filter_rel_area_range": {
+                            "title": "(Optional): restrict data analysis to molecular features that have a relative area (area relative to the highest feature area per sample that is inside the specified range. If a feature is detected in multiple samples, at least one occurrence must be inside the specified range. Else, the feature is not considered.",
                             "type": "array",
                             "minItems": 2,
                             "maxItems": 2,

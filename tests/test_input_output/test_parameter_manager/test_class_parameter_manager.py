@@ -195,7 +195,11 @@ def test_assign_spec_sim_networking_ms2deepscore_invalid():
 def test_assign_feature_filtering_valid():
     params = ParameterManager()
     params.assign_feature_filtering(
-        {"activate_module": True, "filter_rel_int_range": [0.0, 1.0]}
+        {
+            "activate_module": True,
+            "filter_rel_int_range": [0.0, 1.0],
+            "filter_rel_area_range": [0.0, 1.0],
+        }
     )
     assert isinstance(params.FeatureFilteringParameters, FeatureFilteringParameters)
 

@@ -40,6 +40,7 @@ class FeatureFilteringParameters(BaseModel):
     Attributes:
         activate_module: bool to indicate if module should be executed.
         filter_rel_int_range: A range of relative peak intensity to retain features.
+        filter_rel_area_range: A range of relative area to retain features.
 
     Raise:
         pydantic.ValidationError: Pydantic validation failed during instantiation.
@@ -48,15 +49,35 @@ class FeatureFilteringParameters(BaseModel):
 
     activate_module: bool = False
     filter_rel_int_range: Optional[List[float]] = None
+    filter_rel_area_range: Optional[List[float]] = None
 
     @model_validator(mode="after")
-    def order_and_validate_range(self):
+    def validate_attrs(self):
         if self.filter_rel_int_range is not None:
-            r_list = self.filter_rel_int_range
-            r_list = [min(r_list), max(r_list)]
-            ValidationManager.validate_range_zero_one(r_list)
-            self.filter_rel_int_range = r_list
-            return self
+            self.filter_rel_int_range = self.order_and_validate_range(
+                self.filter_rel_int_range
+            )
+
+        if self.filter_rel_area_range is not None:
+            self.filter_rel_area_range = self.order_and_validate_range(
+                self.filter_rel_area_range
+            )
+
+        return self
+
+    @staticmethod
+    def order_and_validate_range(r_list: List[float]) -> List[float]:
+        """Order the list and validate format.
+
+        Attributes:
+            r_list: a range of two floats
+
+        Returns:
+            The modified list of a range of two floats
+        """
+        r_list = [min(r_list), max(r_list)]
+        ValidationManager.validate_range_zero_one(r_list)
+        return r_list
 
 
 class BlankAssignmentParameters(BaseModel):

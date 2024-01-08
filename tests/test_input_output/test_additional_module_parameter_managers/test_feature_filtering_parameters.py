@@ -9,6 +9,7 @@ def test_init_feature_filtering_parameters_valid():
     json_dict = {
         "activate_module": True,
         "filter_rel_int_range": [0.0, 1.0],
+        "filter_rel_area_range": [0.0, 1.0],
     }
     assert isinstance(
         FeatureFilteringParameters(**json_dict), FeatureFilteringParameters
@@ -29,9 +30,26 @@ def test_rel_int_range_scrambled_valid():
     )
 
 
+def test_rel_area_range_scrambled_valid():
+    json_dict = {
+        "filter_rel_area_range": [1.0, 0.0],
+    }
+    assert isinstance(
+        FeatureFilteringParameters(**json_dict), FeatureFilteringParameters
+    )
+
+
 def test_rel_int_range_invalid():
     with pytest.raises(ValueError):
         json_dict = {
             "filter_rel_int_range": [0.0],
+        }
+        FeatureFilteringParameters(**json_dict)
+
+
+def test_rel_area_range_invalid():
+    with pytest.raises(ValueError):
+        json_dict = {
+            "filter_rel_area_range": [0.0],
         }
         FeatureFilteringParameters(**json_dict)
