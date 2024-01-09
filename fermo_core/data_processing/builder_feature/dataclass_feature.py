@@ -25,10 +25,20 @@ from pydantic import BaseModel
 from typing import Optional, Tuple, Dict, Set
 
 
+class SimNetworks(BaseModel):
+    """A Pydantic-based class to represent spectral similarity network information
+
+    Attributes:
+        algorithm: name of algorithm
+        network_id: an integer indicating the network feature is associated with
+    """
+
+    algorithm: str
+    network_id: int
+
+
 class Feature(BaseModel):
     """A Pydantic-based class to represent a molecular feature.
-
-    Product of the FeatureBuilder class.
 
     Attributes:
         f_id: the integer ID of the molecular feature.
