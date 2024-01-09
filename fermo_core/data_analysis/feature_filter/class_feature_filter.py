@@ -21,13 +21,17 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 import logging
-from typing import Self
+from typing import Self, Tuple
 
 from pydantic import BaseModel
 
 from fermo_core.input_output.class_parameter_manager import ParameterManager
 from fermo_core.data_processing.class_repository import Repository
 from fermo_core.data_processing.class_stats import Stats
+
+
+# TODO(MMZ 9.1.24): Add a clean-up step to exclude features that have been filtered
+#  from analysis run via FeatureFilter class
 
 
 class FeatureFilter(BaseModel):
@@ -45,8 +49,12 @@ class FeatureFilter(BaseModel):
     features: Repository
     samples: Repository
 
-    def return_values(self: Self):
-        """Returns modified attributes for further processing."""
+    def return_values(self: Self) -> Tuple[Stats, Repository, Repository]:
+        """Returns modified attributes for further processing.
+
+        Returns:
+            Tuple containing Stats, Feature Repository and Sample Repository objects.
+        """
         return self.stats, self.features, self.samples
 
     def filter(self: Self):
@@ -67,6 +75,8 @@ class FeatureFilter(BaseModel):
         for module in modules:
             if module[0] is not None:
                 module[1]()
+
+        # TODO(MMZ 9.1.24): add clean-up step here
 
         logging.info("'FeatureFilter': completed filtering of molecular features.")
 
