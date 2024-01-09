@@ -20,9 +20,10 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-from pydantic import BaseModel
-
 from typing import Optional, Tuple, Dict, Set
+
+from matchms import Spectrum
+from pydantic import BaseModel
 
 
 class SimNetworks(BaseModel):
@@ -55,6 +56,7 @@ class Feature(BaseModel):
         area: the area of the peak
         rel_area: the area relative to the feature with the highest area in the sample.
         msms: a tuple of two tuples: [0] ms/ms fragments, [1] ms/ms intensities.
+        Spectrum: a matchms Spectrum object instance using data from msms
         samples: a tuple of samples to which feature is associated.
         blank: bool to indicate if feature is blank-associated (if provided).
         groups: association to groups if such metadata was provided.
@@ -80,6 +82,7 @@ class Feature(BaseModel):
     area: Optional[int] = None
     rel_area: Optional[float] = None
     msms: Optional[Tuple[Tuple[float, ...], Tuple[float, ...]]] = None
+    Spectrum: Optional[Spectrum] = None
     samples: Optional[Tuple] = None
     blank: Optional[bool] = None
     groups: Optional[Set] = None

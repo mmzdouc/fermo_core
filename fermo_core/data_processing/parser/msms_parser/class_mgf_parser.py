@@ -21,8 +21,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 import logging
-from pyteomics import mgf
 from typing import Self
+
+from pyteomics import mgf
 
 from fermo_core.data_processing.class_repository import Repository
 from fermo_core.data_processing.parser.msms_parser.abc_msms_parser import MsmsParser
@@ -30,7 +31,7 @@ from fermo_core.input_output.class_parameter_manager import ParameterManager
 
 
 class MgfParser(MsmsParser):
-    """Interface to parse MS/MS files in mgf format."""
+    """Interface to parse MS/MS files in mgf format based on abstract baseclass."""
 
     def parse(
         self: Self, feature_repo: Repository, params: ParameterManager
@@ -58,9 +59,8 @@ class MgfParser(MsmsParser):
 
         return feature_repo
 
-    @staticmethod
     def modify_features(
-        feature_repo: Repository, params: ParameterManager
+        self: Self, feature_repo: Repository, params: ParameterManager
     ) -> Repository:
         """Modifies Feature objects by adding MS/MS information.
 
@@ -74,16 +74,20 @@ class MgfParser(MsmsParser):
         with open(params.MsmsParameters.filepath) as infile:
             for spectrum in mgf.read(infile, use_index=False):
                 try:
-                    feature = feature_repo.get(
-                        int(spectrum.get("params").get("feature_id"))
-                    )
+                    data = {
+                        "f_id": int(spectrum.get("params").get("feature_id")),
+                        "mz": spectrum.get("m/z array"),
+                        "intens": spectrum.get("intensity array"),
+                        "precursor_mz": spectrum.get("params").get("pepmass")[0],
+                    }
+                    feature = feature_repo.get(data["f_id"])
                     feature.msms = (
-                        tuple(spectrum.get("m/z array").tolist()),
-                        tuple(spectrum.get("intensity array").tolist()),
+                        tuple(data["mz"].tolist()),
+                        tuple(data["intens"].tolist()),
                     )
-                    feature_repo.modify(
-                        int(spectrum.get("params").get("feature_id")), feature
-                    )
+                    feature.Spectrum = self.create_spectrum_object(data)
+                    feature_repo.modify(data["f_id"], feature)
+
                 except KeyError:
                     logging.warning(
                         f"Could not add MS/MS spectrum with the feature ID "

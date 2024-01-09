@@ -21,8 +21,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 import logging
-from typing import Tuple, Self
+from typing import Tuple, Self, Optional
 
+from matchms import Spectrum
 from pydantic import BaseModel
 
 from fermo_core.input_output.class_parameter_manager import ParameterManager
@@ -38,12 +39,17 @@ class SimNetworksManager(BaseModel):
         stats: Stats object, holds stats on molecular features and samples
         features: Repository object, holds "General Feature" objects
         samples: Repository object, holds "Sample" objects
+        spectra: list ot matchms Spectrum objects for matching operations
     """
 
     params: ParameterManager
     stats: Stats
     features: Repository
     samples: Repository
+    spectra: Optional[list] = None
+
+    # TODO(MMZ 9.1.24): remove wrong to-dos; Spectrum object part of GeneralFeature
+    #  object
 
     def return_attributes(self: Self) -> Tuple[Stats, Repository, Repository]:
         """Returns modified attributes from SimNetworksManager to the calling function
@@ -75,7 +81,7 @@ class SimNetworksManager(BaseModel):
             "(=molecular) networking."
         )
 
-        # TODO(MMZ 09.01.24): call static methods from ModCosineNetworker
+        # TODO(MMZ 09.01.24): call static methods from ModCosineNetworker,
 
         logging.info(
             "'SimNetworksManager': completed modified cosine-based spectral similarity "

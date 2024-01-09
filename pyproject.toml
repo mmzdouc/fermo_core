@@ -39,4 +39,6 @@ testpaths = [
 pythonpath = [
   "fermo_core"
 ]
-
+filterwarnings = [
+    'ignore:Please use \`get_index_dtype\` from the \`scipy.sparse\` namespace:DeprecationWarning'
+]

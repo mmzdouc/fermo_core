@@ -87,7 +87,8 @@ class AnalysisManager(BaseModel):
         feature_filter.filter()
         self.stats, self.features, self.samples = feature_filter.return_values()
 
-    # TODO(MMZ 9.1.24): Add method to call SimNetworksManager
+    # TODO(MMZ 9.1.24): Add method to call SimNetworksManager; also handle
+    #  non-activated module (if not there: skip); skip if no MSMS data was given
 
     def run_chrom_trace_calculator(self: Self):
         """Run mandatory ChromTraceCalculator analysis step."""
