@@ -27,6 +27,18 @@ from typing import Self, Tuple, Optional, Set, Dict
 from fermo_core.input_output.class_parameter_manager import ParameterManager
 
 
+class SpecSimNet(BaseModel):
+    """Pydantic-based class to organize information on spectral similarity networks
+
+    Attributes:
+        mod_cosine: network based on modified cosine algorithm
+        ms2deepscore: network based on ms2deepscore algorithm
+    """
+
+    mod_cosine: Optional[Dict[str, list]] = None
+    ms2deepscore: Optional[Dict[str, list]] = None
+
+
 class SpecLibEntry(BaseModel):
     """Pydantic-based class to organize information on a spectral library entry
 
