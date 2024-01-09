@@ -99,3 +99,21 @@ class Repository(BaseModel):
             except KeyError as e:
                 logging.error(str(e))
                 raise e
+
+    def remove(self, identifier: Union[int, str]):
+        """Remove an entry.
+
+        Args:
+            identifier: an identifier found in the repository dict.
+
+        Raises:
+            KeyError: Cannot remove entry because it does not exist in the repository.
+        """
+        if identifier in self.entries:
+            del self.entries[identifier]
+        else:
+            try:
+                raise KeyError(f"Object '{identifier}' does not exist in repository.")
+            except KeyError as e:
+                logging.error(str(e))
+                raise e

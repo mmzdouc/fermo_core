@@ -63,9 +63,9 @@ class Stats(BaseModel):
         area_min: area under the curve for smallest peak across all features/samples
         area_max: area under the curve for biggest peak across all features/samples.
         samples: tuple of all sample ids in analysis run
-        features: tuple of all feature ids in analysis run
-        active_features: not filtered from analysis run
-        inactive_features: filtered from analysis run
+        features: tuple of all feature ids at the beginning of analysis run
+        active_features: retained in analysis run
+        inactive_features: filtered out during analysis run by FeatureFilter module
         groups: dict of sets of sample IDs repr. group membership (default in DEFAULT)
         cliques: all similarity cliques in analysis run
         phenotypes: dict of tuples of active sample IDs

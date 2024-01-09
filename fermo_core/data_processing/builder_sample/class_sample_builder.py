@@ -121,7 +121,7 @@ class SampleBuilder(BaseModel):
             logging.error(str(e))
             raise e
 
-        self.sample.feature_ids = tuple(self.sample.features.keys())
+        self.sample.feature_ids = set(self.sample.features.keys())
         return self
 
     def get_result(self: Self):

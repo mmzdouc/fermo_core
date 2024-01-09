@@ -30,10 +30,6 @@ from fermo_core.data_processing.class_repository import Repository
 from fermo_core.data_processing.class_stats import Stats
 
 
-# TODO(MMZ 9.1.24): Add a clean-up step to exclude features that have been filtered
-#  from analysis run via FeatureFilter class
-
-
 class FeatureFilter(BaseModel):
     """Pydantic-based class to organize molecular feature filtering methods.
 
@@ -42,6 +38,9 @@ class FeatureFilter(BaseModel):
         stats: general information about analysis run
         features: holds Feature objects
         samples: holds Sample objects
+
+    Notes:
+        Should be called as first step in data analysis
     """
 
     params: ParameterManager
@@ -76,12 +75,26 @@ class FeatureFilter(BaseModel):
             if module[0] is not None:
                 module[1]()
 
-        # TODO(MMZ 9.1.24): add clean-up step here
+        self.remove_filtered_features()
 
         logging.info("'FeatureFilter': completed filtering of molecular features.")
 
+    def remove_filtered_features(self: Self):
+        """Remove features that have been filtered out due to the given settings"""
+        if len(self.stats.inactive_features) == 0:
+            return
+
+        for f_id in self.stats.inactive_features:
+            self.features.remove(f_id)
+            for s_id in self.stats.samples:
+                sample = self.samples.get(s_id)
+                if f_id in sample.feature_ids:
+                    sample.feature_ids.remove(f_id)
+                    del sample.features[f_id]
+                    self.samples.modify(s_id, sample)
+
     def filter_rel_int_range(self: Self):
-        """Retain features inside relative int range in at least one sample."""
+        """Retain features inside relative intensity range in at least one sample."""
         logging.info("'FeatureFilter': started filtering for relative intensity.")
 
         inactive = self.filter_features_for_range(
