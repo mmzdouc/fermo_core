@@ -28,19 +28,24 @@ from fermo_core.input_output.class_parameter_manager import ParameterManager
 
 
 class SpecSimNet(BaseModel):
-    """Pydantic-based class to organize information on spectral similarity networks
+    """Pydantic-based class to organize info on a spectral similarity analysis run
 
     Attributes:
-        mod_cosine: network based on modified cosine algorithm
-        ms2deepscore: network based on ms2deepscore algorithm
+        algorithm: the identifier of the algorithm
+        nodes: information on node and their connectivity
+        edges: information on edges between nodes
+
+    Notes:
+        TODO(MMZ 9.1.24): add method to export information as JSON string
     """
 
-    mod_cosine: Optional[Dict[str, list]] = None
-    ms2deepscore: Optional[Dict[str, list]] = None
+    algorithm: str
+    nodes: dict
+    edges: dict
 
 
 class SpecLibEntry(BaseModel):
-    """Pydantic-based class to organize information on a spectral library entry
+    """Pydantic-based class to organize information on a single spectral library entry
 
     Attributes:
         name: the name of the entry
@@ -83,7 +88,7 @@ class Stats(BaseModel):
     active_features: set = set()
     inactive_features: set = set()
     groups: Optional[Dict[str, Set]] = {"DEFAULT": set()}
-    cliques: Optional[Tuple] = None
+    cliques: Optional[Dict[str, SpecSimNet]] = None
     phenotypes: Optional[Dict[str, Tuple[str, ...]]] = None
     blank: Optional[Tuple] = None
     spectral_library: Optional[Dict[int, SpecLibEntry]] = None

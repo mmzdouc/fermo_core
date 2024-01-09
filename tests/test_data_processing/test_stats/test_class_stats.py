@@ -66,7 +66,7 @@ def test_success_parse_mzmine3(stats):
 
 
 def test_init_spec_sim_net_valid():
-    entry = SpecSimNet(mod_cosine={"0": [[1], []]})
+    entry = SpecSimNet(algorithm="xyz", edges={}, nodes={})
     assert isinstance(entry, SpecSimNet)
 
 
