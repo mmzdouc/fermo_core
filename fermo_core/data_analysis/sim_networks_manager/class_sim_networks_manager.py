@@ -23,7 +23,6 @@ SOFTWARE.
 import logging
 from typing import Tuple, Self, Optional
 
-from matchms import Spectrum
 from pydantic import BaseModel
 
 from fermo_core.input_output.class_parameter_manager import ParameterManager
@@ -47,9 +46,6 @@ class SimNetworksManager(BaseModel):
     features: Repository
     samples: Repository
     spectra: Optional[list] = None
-
-    # TODO(MMZ 9.1.24): remove wrong to-dos; Spectrum object part of GeneralFeature
-    #  object
 
     def return_attributes(self: Self) -> Tuple[Stats, Repository, Repository]:
         """Returns modified attributes from SimNetworksManager to the calling function
@@ -81,7 +77,16 @@ class SimNetworksManager(BaseModel):
             "(=molecular) networking."
         )
 
-        # TODO(MMZ 09.01.24): call static methods from ModCosineNetworker,
+        # TODO(MMZ 09.01.24): method 1: filter features based on settings - return a
+        #  list of
+        #  IDs that are being considered for matching, and one of features that are
+        #  filtered out
+
+        # TODO(MMZ 09.01.24): method 2: run the spec sim network with a list of
+        #  spectrum objects as input, do the post-process filtering
+
+        # TODO(MMZ 09.01.24): mehthod 3: post-process data so that it can be stored
+        #  in the respective objects (in General Features and in Stats)
 
         logging.info(
             "'SimNetworksManager': completed modified cosine-based spectral similarity "
