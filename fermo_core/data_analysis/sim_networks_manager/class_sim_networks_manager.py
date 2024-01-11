@@ -21,13 +21,17 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 import logging
-from typing import Tuple, Self, Optional
+import func_timeout
+from typing import Tuple, Self
 
 from pydantic import BaseModel
 
-from fermo_core.input_output.class_parameter_manager import ParameterManager
+from fermo_core.data_analysis.sim_networks_manager.class_mod_cosine_networker import (
+    ModCosineNetworker,
+)
 from fermo_core.data_processing.class_repository import Repository
 from fermo_core.data_processing.class_stats import Stats
+from fermo_core.input_output.class_parameter_manager import ParameterManager
 
 
 class SimNetworksManager(BaseModel):
@@ -38,16 +42,14 @@ class SimNetworksManager(BaseModel):
         stats: Stats object, holds stats on molecular features and samples
         features: Repository object, holds "General Feature" objects
         samples: Repository object, holds "Sample" objects
-        spectra: list ot matchms Spectrum objects for matching operations
     """
 
     params: ParameterManager
     stats: Stats
     features: Repository
     samples: Repository
-    spectra: Optional[list] = None
 
-    def return_attributes(self: Self) -> Tuple[Stats, Repository, Repository]:
+    def return_attrs(self: Self) -> Tuple[Stats, Repository, Repository]:
         """Returns modified attributes from SimNetworksManager to the calling function
 
         Returns:
@@ -60,12 +62,14 @@ class SimNetworksManager(BaseModel):
         logging.info("'SimNetworksManager': started analysis steps.")
 
         modules = (
-            self.params.SpecSimNetworkCosineParameters.activate_module,
-            self.run_modified_cosine_alg,
+            (
+                self.params.SpecSimNetworkCosineParameters.activate_module,
+                self.run_modified_cosine_alg,
+            ),
         )
 
         for module in modules:
-            if module[0] is not None:
+            if module[0]:
                 module[1]()
 
         logging.info("'SimNetworksManager': completed analysis steps.")
@@ -76,16 +80,34 @@ class SimNetworksManager(BaseModel):
             "'SimNetworksManager': started modified cosine-based spectral similarity "
             "(=molecular) networking."
         )
+        mod_cosine_networker = ModCosineNetworker()
+        filtered_features = mod_cosine_networker.filter_input_spectra(
+            tuple(self.stats.active_features),
+            self.features,
+            self.params.SpecSimNetworkCosineParameters,
+        )
 
-        # TODO(MMZ 09.01.24): method 1: filter features based on settings - return a
-        #  list of
-        #  IDs that are being considered for matching, and one of features that are
-        #  filtered out
+        try:
+            scores = mod_cosine_networker.spec_sim_networking(
+                tuple(filtered_features["included"]),
+                self.features,
+                self.params.SpecSimNetworkCosineParameters,
+            )
+        except func_timeout.FunctionTimedOut:
+            logging.warning(
+                f"'SimNetworksManager/ModCosineNetworker': timeout of modified "
+                f"cosine spectral similarity network calculation. Calculation "
+                f"took longer than "
+                f"'{self.params.SpecSimNetworkCosineParameters.maximum_runtime}' "
+                f"seconds. Increase the 'modified_cosine/maximum_runtime' parameter "
+                f"or set it to 0 (zero) for unlimited runtime. Alternatively, "
+                f"filter out low-intensity/area peaks with 'feature_filtering'."
+            )
+            return None
 
-        # TODO(MMZ 09.01.24): method 2: run the spec sim network with a list of
-        #  spectrum objects as input, do the post-process filtering
+        # TODO(MMZ 09.01.24): mehthod 3: create network
 
-        # TODO(MMZ 09.01.24): mehthod 3: post-process data so that it can be stored
+        # TODO(MMZ 09.01.24): mehthod 4: post-process data so that it can be stored
         #  in the respective objects (in General Features and in Stats)
 
         logging.info(
