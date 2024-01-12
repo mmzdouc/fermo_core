@@ -66,8 +66,9 @@ class SpecSimNetworkCosineParameters(BaseModel):
         fragment_tol: the tolerance between matched fragments, in m/z units.
         min_nr_matched_peaks: the min number of peaks two matching spectra must share.
         score_cutoff: the minimum similarity score between two spectra.
-        max_nr_links: max links to a single spectra.
+        max_nr_links: max nr of connections from a node.
         max_precursor_mass_diff: max diff between precursor masses of two spectra
+        maximum_runtime: max runtime of module, in seconds; 0 indicates no runtime limit
 
     Raise:
         pydantic.ValidationError: Pydantic validation failed during instantiation.
@@ -80,6 +81,7 @@ class SpecSimNetworkCosineParameters(BaseModel):
     score_cutoff: PositiveFloat = 0.7
     max_nr_links: PositiveInt = 10
     max_precursor_mass_diff: PositiveInt = 400
+    maximum_runtime: int = 1200
 
 
 class SpecSimNetworkDeepscoreParameters(BaseModel):

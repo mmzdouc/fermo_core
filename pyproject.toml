@@ -19,7 +19,8 @@ dependencies = [
     "pandas==2.0.3",
     "pydantic==2.5.2",
     "pyteomics==4.6.3",
-    "coloredlogs==15.0.1"
+    "coloredlogs==15.0.1",
+    "func-timeout==4.3.5"
 ]
 
 [project.optional-dependencies]
@@ -39,4 +40,6 @@ testpaths = [
 pythonpath = [
   "fermo_core"
 ]
-
+filterwarnings = [
+    'ignore:Please use \`get_index_dtype\` from the \`scipy.sparse\` namespace:DeprecationWarning'
+]

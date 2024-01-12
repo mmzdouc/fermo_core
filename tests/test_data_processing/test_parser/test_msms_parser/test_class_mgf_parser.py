@@ -1,3 +1,5 @@
+import matchms
+import numpy as np
 import pytest
 
 from fermo_core.data_processing.parser.msms_parser.class_mgf_parser import MgfParser
@@ -42,3 +44,15 @@ def test_parse_valid(feature_repo, params):
 def test_modify_features_valid(params, feature_repo):
     feature_repo = MgfParser().modify_features(feature_repo, params)
     assert feature_repo.entries.get(126).msms is not None
+
+
+def test_create_spectrum_object_valid():
+    spectrum = MgfParser().create_spectrum_object(
+        {
+            "mz": np.array([10, 40, 60], dtype=float),
+            "intens": np.array([10, 20, 100], dtype=float),
+            "f_id": 1,
+            "precursor_mz": 100.0,
+        }
+    )
+    assert isinstance(spectrum, matchms.Spectrum)

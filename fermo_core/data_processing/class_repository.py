@@ -31,6 +31,8 @@ from pydantic import BaseModel
 from fermo_core.data_processing.builder_feature.dataclass_feature import Feature
 from fermo_core.data_processing.builder_sample.dataclass_sample import Sample
 
+logger = logging.getLogger("fermo_core")
+
 
 class Repository(BaseModel):
     """Handles addition, retrieval, and modification of class instances.
@@ -57,7 +59,7 @@ class Repository(BaseModel):
             try:
                 raise ValueError(f"Object '{identifier}' already exists in repository.")
             except ValueError as e:
-                logging.error(str(e))
+                logger.error(str(e))
                 raise e
 
     def get(self, identifier: Union[int, str]) -> Union[Feature, Sample]:
@@ -78,7 +80,7 @@ class Repository(BaseModel):
             try:
                 raise KeyError(f"Object '{identifier}' does not exist in repository.")
             except KeyError as e:
-                logging.error(str(e))
+                logger.error(str(e))
                 raise e
 
     def modify(self, identifier: Union[int, str], entry: Union[Feature, Sample]):
@@ -97,5 +99,23 @@ class Repository(BaseModel):
             try:
                 raise KeyError(f"Object '{identifier}' does not exist in repository.")
             except KeyError as e:
-                logging.error(str(e))
+                logger.error(str(e))
+                raise e
+
+    def remove(self, identifier: Union[int, str]):
+        """Remove an entry.
+
+        Args:
+            identifier: an identifier found in the repository dict.
+
+        Raises:
+            KeyError: Cannot remove entry because it does not exist in the repository.
+        """
+        if identifier in self.entries:
+            del self.entries[identifier]
+        else:
+            try:
+                raise KeyError(f"Object '{identifier}' does not exist in repository.")
+            except KeyError as e:
+                logger.error(str(e))
                 raise e

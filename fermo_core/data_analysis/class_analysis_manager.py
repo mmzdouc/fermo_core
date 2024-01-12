@@ -33,6 +33,11 @@ from fermo_core.data_analysis.chrom_trace_calculator.class_chrom_trace_calculato
     ChromTraceCalculator,
 )
 from fermo_core.data_analysis.feature_filter.class_feature_filter import FeatureFilter
+from fermo_core.data_analysis.sim_networks_manager.class_sim_networks_manager import (
+    SimNetworksManager,
+)
+
+logger = logging.getLogger("fermo_core")
 
 
 class AnalysisManager(BaseModel):
@@ -60,19 +65,21 @@ class AnalysisManager(BaseModel):
 
     def analyze(self: Self):
         """Organizes calling of data analysis steps."""
-        logging.info("'AnalysisManager': started analysis steps.")
+        logger.info("'AnalysisManager': started analysis steps.")
 
         self.run_feature_filter()
 
+        self.run_sim_networks_manager()
+
         self.run_chrom_trace_calculator()
 
-        logging.info("'AnalysisManager': completed analysis steps.")
+        logger.info("'AnalysisManager': completed analysis steps.")
 
     def run_feature_filter(self: Self):
         """Run optional FeatureFilter analysis step"""
         if self.params.FeatureFilteringParameters.activate_module is False:
-            logging.info(
-                "'FeatureFiltering': module 'feature_filtering' not activated - SKIP."
+            logger.info(
+                "'FeatureFilter': module 'feature_filtering' not activated - SKIP."
             )
             return
 
@@ -84,6 +91,32 @@ class AnalysisManager(BaseModel):
         )
         feature_filter.filter()
         self.stats, self.features, self.samples = feature_filter.return_values()
+
+    def run_sim_networks_manager(self: Self):
+        """Run optional SimNetworksManager analysis step"""
+        if self.params.MsmsParameters is None:
+            logger.info("'SimNetworksManager': no MS/MS data provided - SKIP.")
+            return
+        elif not any(
+            [
+                self.params.SpecSimNetworkCosineParameters.activate_module,
+                self.params.SpecSimNetworkDeepscoreParameters.activate_module,
+            ]
+        ):
+            logger.info(
+                "'SimNetworksManager': no modules in 'spec_sim_networking' activated - "
+                "SKIP."
+            )
+            return
+
+        sim_networks_manager = SimNetworksManager(
+            params=self.params,
+            stats=self.stats,
+            features=self.features,
+            samples=self.samples,
+        )
+        sim_networks_manager.run_analysis()
+        self.stats, self.features, self.samples = sim_networks_manager.return_attrs()
 
     def run_chrom_trace_calculator(self: Self):
         """Run mandatory ChromTraceCalculator analysis step."""

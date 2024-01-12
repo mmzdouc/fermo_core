@@ -40,6 +40,7 @@ from fermo_core.input_output.class_validation_manager import ValidationManager
 
 VERSION = metadata.version("fermo_core")
 ROOT = Path(__file__).resolve().parent
+logger = LoggerSetup.setup_custom_logger("fermo_core")
 
 
 def main(params: ParameterManager):
@@ -59,7 +60,7 @@ def main(params: ParameterManager):
     stats, features, samples = analysis_manager.return_attributes()
 
     # TODO(MMZ 26.12.23): Remove dropout
-    logging.critical("DROP OUT OF TEST RUN")
+    logger.critical("DROP OUT OF TEST RUN")
     quit()
 
     # TODO(MMZ) 26.12.23: Create a class that exports the processed data (with switch to
@@ -67,9 +68,7 @@ def main(params: ParameterManager):
 
 
 if __name__ == "__main__":
-    logging = LoggerSetup.init_logger_cli(ROOT)
-
-    logging.info(f"Started 'fermo_core' version '{VERSION}' as CLI.")
+    logger.info(f"Started 'fermo_core' version '{VERSION}' as CLI.")
 
     args = ArgparseManager().run_argparse(VERSION, argv[1:])
 

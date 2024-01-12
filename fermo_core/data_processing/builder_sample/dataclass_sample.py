@@ -44,7 +44,7 @@ class Sample(BaseModel):
     Attributes:
         s_id: string identifier of sample
         features: dict of features objects with sample-specific information.
-        feature_ids: tuple of feature ids
+        feature_ids: set of feature ids included in sample
         groups: group association of sample (if provided, else default group DEFAULT)
         cliques: number of cliques in this sample
         max_intensity: the highest intensity of a feature in the sample (absolute)
@@ -55,7 +55,7 @@ class Sample(BaseModel):
 
     s_id: Optional[str] = None
     features: Optional[dict] = None
-    feature_ids: Optional[tuple] = None
+    feature_ids: Optional[set[int]] = None
     groups: set[str] = {"DEFAULT"}
     cliques: Optional[dict] = None
     max_intensity: Optional[int] = None

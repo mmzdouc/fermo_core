@@ -47,3 +47,18 @@ def test_success_multiple_instances_repository(feature):
     repository2 = Repository()
     with pytest.raises(KeyError):
         repository2.get(1)
+
+
+def test_remove_valid():
+    repository1 = Repository()
+    repository1.add(1, Feature())
+    assert repository1.get(1) is not None
+    repository1.remove(1)
+    with pytest.raises(KeyError):
+        repository1.get(1)
+
+
+def test_remove_invalid():
+    repository1 = Repository()
+    with pytest.raises(KeyError):
+        repository1.remove(1)

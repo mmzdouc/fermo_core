@@ -160,7 +160,7 @@
                     }
                 },
                 "spec_sim_networking": {
-                    "title": "(Optional): settings for spectral similarity networking (='molecular networking') with one or more algorithms. By default, the 'modified_cosine' algorithm is executed with default parameters.",
+                    "title": "(Optional): settings for spectral similarity networking (='molecular networking') with one or more algorithms.",
                     "additionalProperties": false,
                     "type": "object",
                     "properties": {
@@ -205,6 +205,11 @@
                                     "title": "(Optional): maximum difference between the precursor masses of two MS/MS spectra, in m/z units. A high number may lead to serendipitous matching between unrelated spectra, while a low number may exclude possible analogues. Default value: 400 m/z.",
                                     "type": "integer",
                                     "minimum": 1
+                                },
+                                "maximum_runtime": {
+                                    "title": "(Optional): maximum running time of module, in seconds. A value of 0 (zero) indicates unlimited running time. Default value: 1200 seconds.",
+                                    "type": "integer",
+                                    "minimum": 0
                                 }
                             }
                         },

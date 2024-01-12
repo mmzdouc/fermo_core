@@ -38,6 +38,8 @@ from fermo_core.data_processing.class_repository import Repository
 from fermo_core.data_processing.class_stats import Stats
 from fermo_core.input_output.class_parameter_manager import ParameterManager
 
+logger = logging.getLogger("fermo_core")
+
 
 class PeakMzmine3Parser(PeaktableParser):
     """Interface to parse MZmine3 style peaktable."""
@@ -54,7 +56,7 @@ class PeakMzmine3Parser(PeaktableParser):
             A tuple with an instance of Stats, a Feature Repository, and a Sample
                 Repository
         """
-        logging.info(
+        logger.info(
             f"'PeakMzmine3Parser': started parsing MZmine3-style peaktable file "
             f"'{params.PeaktableParameters.filepath.name}'"
         )
@@ -65,7 +67,7 @@ class PeakMzmine3Parser(PeaktableParser):
 
         sample_repo = self.extract_samples(stats, params)
 
-        logging.info(
+        logger.info(
             f"'PeakMzmine3Parser': completed parsing MZmine3-style peaktable file "
             f"'{params.PeaktableParameters.filepath.name}'"
         )

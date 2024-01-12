@@ -27,6 +27,8 @@ from fermo_core.data_processing.class_repository import Repository
 from fermo_core.data_processing.builder_sample.dataclass_sample import Sample
 from fermo_core.data_processing.class_stats import Stats
 
+logger = logging.getLogger("fermo_core")
+
 
 class ChromTraceData:
     """Internal class to organize attributes to create a pseudo-chromatogram trace
@@ -100,7 +102,7 @@ class ChromTraceCalculator:
         Returns:
             A Repository containing the modified samples.
         """
-        logging.info(
+        logger.info(
             "'ChromTraceCalculator': started calculating pseudo-chromatogram traces."
         )
 
@@ -109,7 +111,7 @@ class ChromTraceCalculator:
             sample = self.modify_features_in_sample(sample)
             samples.modify(sample_id, sample)
 
-        logging.info(
+        logger.info(
             "'ChromTraceCalculator': completed calculating pseudo-chromatogram traces."
         )
         return samples
@@ -161,7 +163,7 @@ class ChromTraceCalculator:
         else:
             self.chrom_trace.fwhm = rt_range
             self.chrom_trace.rt_range = rt_range
-            logging.debug(
+            logger.debug(
                 f"'ChromTraceCalculator': feature '{self.chrom_trace.feature_id}' in "
                 f"sample "
                 f"'{self.chrom_trace.sample_id}': "
@@ -176,7 +178,7 @@ class ChromTraceCalculator:
             self.chrom_trace.rt_left_fwhm = rt_left_fwhm
         else:
             self.chrom_trace.rt_left_fwhm = self.chrom_trace.rt_begin
-            logging.debug(
+            logger.debug(
                 f"'ChromTraceCalculator': feature '{self.chrom_trace.feature_id}' in "
                 f"sample "
                 f"'{self.chrom_trace.sample_id}': "
@@ -192,7 +194,7 @@ class ChromTraceCalculator:
             self.chrom_trace.rt_right_fwhm = rt_right_fwhm
         else:
             self.chrom_trace.rt_right_fwhm = self.chrom_trace.rt_end
-            logging.debug(
+            logger.debug(
                 f"'ChromTraceCalculator': feature '{self.chrom_trace.feature_id}' in "
                 f"sample "
                 f"'{self.chrom_trace.sample_id}': "

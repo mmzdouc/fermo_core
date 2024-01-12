@@ -24,6 +24,8 @@ SOFTWARE.
 from abc import ABC, abstractmethod
 from typing import Self
 
+import matchms
+
 from fermo_core.data_processing.class_repository import Repository
 from fermo_core.input_output.class_parameter_manager import ParameterManager
 
@@ -46,10 +48,9 @@ class MsmsParser(ABC):
         """
         pass
 
-    @staticmethod
     @abstractmethod
     def modify_features(
-        feature_repo: Repository, params: ParameterManager
+        self: Self, feature_repo: Repository, params: ParameterManager
     ) -> Repository:
         """Method to modify Feature objects by adding MS/MS info. Called by 'parse'.
 
@@ -61,3 +62,25 @@ class MsmsParser(ABC):
             Repository object w modified Feature objects
         """
         pass
+
+    @staticmethod
+    def create_spectrum_object(data: dict) -> matchms.Spectrum:
+        """Create matchms Spectrum instance, add neutral losses and normalize intensity
+
+        Arguments:
+            data: a dict containing data to create a matchms Spectrum object.
+
+        Returns:
+            A matchms Spectrum object
+        """
+        spectrum = matchms.Spectrum(
+            mz=data["mz"],
+            intensities=data["intens"],
+            metadata={"precursor_mz": data["precursor_mz"], "id": data["f_id"]},
+            metadata_harmonization=False,
+        )
+        spectrum = matchms.filtering.add_precursor_mz(spectrum)
+        spectrum = matchms.filtering.add_losses(spectrum)
+        spectrum = matchms.filtering.normalize_intensities(spectrum)
+
+        return spectrum

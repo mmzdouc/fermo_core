@@ -31,6 +31,8 @@ from pathlib import Path
 from pyteomics import mgf
 from typing import List
 
+logger = logging.getLogger("fermo_core")
+
 
 class ValidationManager:
     """Manage methods for user input validation and error-handling logic.
@@ -269,5 +271,5 @@ class ValidationManager:
         except jsonschema.exceptions.ValidationError as err:
             lines = str(err).splitlines()
             msg = f"{filename}: {lines[0]}"
-            logging.critical(msg)
+            logger.critical(msg)
             raise jsonschema.exceptions.ValidationError(msg)

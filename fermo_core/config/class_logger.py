@@ -22,6 +22,7 @@ SOFTWARE.
 """
 import logging
 from pathlib import Path
+import sys
 
 import coloredlogs
 
@@ -30,26 +31,36 @@ class LoggerSetup:
     """Organize settings for process logging"""
 
     @staticmethod
-    def init_logger_cli(root: Path) -> logging.Logger:
+    def setup_custom_logger(name: str) -> logging.Logger:
         """Set logging parameters.
 
         Arguments:
-            root: the root file directory
+            name: the logger name
 
         Returns:
             A Logger object
         """
-        logger = logging.getLogger()
+        logger = logging.getLogger(name)
+        logger.setLevel(logging.DEBUG)
 
-        filehandle = logging.FileHandler(root.joinpath("fermo_core.log"), mode="w")
-        filehandle.setLevel(logging.DEBUG)
+        console_handler = logging.StreamHandler(sys.stdout)
+        console_handler.setLevel(logging.DEBUG)
+
+        log_file_path = Path(__file__).parent.parent.joinpath("fermo_core.log")
+        file_handler = logging.FileHandler(log_file_path, mode="w")
+        file_handler.setLevel(logging.DEBUG)
 
         formatter = coloredlogs.ColoredFormatter(
             "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
         )
-        filehandle.setFormatter(formatter)
-        logger.addHandler(filehandle)
+        console_handler.setFormatter(formatter)
 
-        coloredlogs.install(level="DEBUG")
+        file_formatter = logging.Formatter(
+            "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+        )
+        file_handler.setFormatter(file_formatter)
+
+        logger.addHandler(console_handler)
+        logger.addHandler(file_handler)
 
         return logger

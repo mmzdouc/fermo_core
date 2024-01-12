@@ -22,13 +22,32 @@ SOFTWARE.
 """
 import pandas as pd
 from pydantic import BaseModel
-from typing import Self, Tuple, Optional, Set, Dict
+from typing import Self, Tuple, Optional, Set, Dict, List, Any
 
 from fermo_core.input_output.class_parameter_manager import ParameterManager
 
 
+class SpecSimNet(BaseModel):
+    """Pydantic-based class to organize info on a spectral similarity analysis run
+
+    Attributes:
+        algorithm: the identifier of the algorithm
+        network: a networkx Graph object
+        subnetworks: a list of subnetworks of Graph objects for easier access
+        summary: a dict of clusters and associated features
+
+    Notes:
+        TODO(MMZ 9.1.24): add method to export information as JSON string
+    """
+
+    algorithm: str
+    network: Any
+    subnetworks: List
+    summary: Dict[int, set]
+
+
 class SpecLibEntry(BaseModel):
-    """Pydantic-based class to organize information on a spectral library entry
+    """Pydantic-based class to organize information on a single spectral library entry
 
     Attributes:
         name: the name of the entry
@@ -51,11 +70,11 @@ class Stats(BaseModel):
         area_min: area under the curve for smallest peak across all features/samples
         area_max: area under the curve for biggest peak across all features/samples.
         samples: tuple of all sample ids in analysis run
-        features: tuple of all feature ids in analysis run
-        active_features: not filtered from analysis run
-        inactive_features: filtered from analysis run
+        features: tuple of all feature ids at the beginning of analysis run
+        active_features: retained in analysis run
+        inactive_features: filtered out during analysis run by FeatureFilter module
         groups: dict of sets of sample IDs repr. group membership (default in DEFAULT)
-        cliques: all similarity cliques in analysis run
+        networks: all similarity networks in analysis run
         phenotypes: dict of tuples of active sample IDs
         blank: all blank-associated features in analysis run
         spectral_library: a dict of SpecLibEntry instances
@@ -71,7 +90,7 @@ class Stats(BaseModel):
     active_features: set = set()
     inactive_features: set = set()
     groups: Optional[Dict[str, Set]] = {"DEFAULT": set()}
-    cliques: Optional[Tuple] = None
+    networks: Optional[Dict[str, SpecSimNet]] = None
     phenotypes: Optional[Dict[str, Tuple[str, ...]]] = None
     blank: Optional[Tuple] = None
     spectral_library: Optional[Dict[int, SpecLibEntry]] = None

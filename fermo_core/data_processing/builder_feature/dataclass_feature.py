@@ -20,15 +20,26 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
+from typing import Optional, Tuple, Dict, Set
+
+from matchms import Spectrum
 from pydantic import BaseModel
 
-from typing import Optional, Tuple, Dict, Set
+
+class SimNetworks(BaseModel):
+    """A Pydantic-based class to represent spectral similarity network information
+
+    Attributes:
+        algorithm: name of algorithm
+        network_id: an integer indicating the network feature is associated with
+    """
+
+    algorithm: str
+    network_id: int
 
 
 class Feature(BaseModel):
     """A Pydantic-based class to represent a molecular feature.
-
-    Product of the FeatureBuilder class.
 
     Attributes:
         f_id: the integer ID of the molecular feature.
@@ -45,6 +56,7 @@ class Feature(BaseModel):
         area: the area of the peak
         rel_area: the area relative to the feature with the highest area in the sample.
         msms: a tuple of two tuples: [0] ms/ms fragments, [1] ms/ms intensities.
+        Spectrum: a matchms Spectrum object instance using data from msms
         samples: a tuple of samples to which feature is associated.
         blank: bool to indicate if feature is blank-associated (if provided).
         groups: association to groups if such metadata was provided.
@@ -70,6 +82,7 @@ class Feature(BaseModel):
     area: Optional[int] = None
     rel_area: Optional[float] = None
     msms: Optional[Tuple[Tuple[float, ...], Tuple[float, ...]]] = None
+    Spectrum: Optional[Spectrum] = None
     samples: Optional[Tuple] = None
     blank: Optional[bool] = None
     groups: Optional[Set] = None

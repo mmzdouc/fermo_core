@@ -1,8 +1,9 @@
+import networkx
 import pandas as pd
 from pydantic import ValidationError
 import pytest
 
-from fermo_core.data_processing.class_stats import Stats, SpecLibEntry
+from fermo_core.data_processing.class_stats import Stats, SpecLibEntry, SpecSimNet
 
 from fermo_core.input_output.class_parameter_manager import ParameterManager
 from fermo_core.input_output.class_file_manager import FileManager
@@ -65,17 +66,16 @@ def test_success_parse_mzmine3(stats):
     assert len(stats.samples) == 11
 
 
-# TODO(MMZ 3.1.24): move to FeatureFilter class
-# @pytest.mark.parametrize(
-#     "range_results",
-#     [
-#         [(0.0, 1.0), (1, 2, 3)],
-#         [(0.1, 1.0), (2, 3)],
-#         [(0.5, 1.0), tuple([3])],
-#         [(0.0, 0.2), (1, 2)],
-#     ],
-# )
-# def test_success_get_features_in_range_mzmine3(stats, dummy_df, range_results):
-#     stats.samples = ("sampleA", "sampleB")
-#     incl, excl = stats._get_features_in_range_mzmine3(dummy_df, range_results[0])
-#     assert set(incl) == set(range_results[1])
+def test_init_spec_sim_net_valid():
+    entry = SpecSimNet(
+        algorithm="xyz",
+        network=networkx.Graph(),
+        subnetworks=[networkx.Graph()],
+        summary={1: set([1, 2, 3])},
+    )
+    assert isinstance(entry, SpecSimNet)
+
+
+def test_init_spec_sim_net_invalid():
+    with pytest.raises(ValidationError):
+        SpecSimNet(mod_cosine=[])
