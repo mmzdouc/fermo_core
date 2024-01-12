@@ -30,7 +30,8 @@ from fermo_core.data_analysis.sim_networks_manager.class_mod_cosine_networker im
     ModCosineNetworker,
 )
 from fermo_core.data_processing.class_repository import Repository
-from fermo_core.data_processing.class_stats import Stats
+from fermo_core.data_processing.class_stats import Stats, SpecSimNet
+from fermo_core.data_processing.builder_feature.dataclass_feature import SimNetworks
 from fermo_core.input_output.class_parameter_manager import ParameterManager
 
 
@@ -103,14 +104,56 @@ class SimNetworksManager(BaseModel):
                 f"or set it to 0 (zero) for unlimited runtime. Alternatively, "
                 f"filter out low-intensity/area peaks with 'feature_filtering'."
             )
-            return None
+            return
 
-        # TODO(MMZ 09.01.24): mehthod 3: create network
+        network = mod_cosine_networker.create_network(
+            scores, self.params.SpecSimNetworkCosineParameters
+        )
 
-        # TODO(MMZ 09.01.24): mehthod 4: post-process data so that it can be stored
-        #  in the respective objects (in General Features and in Stats)
+        try:
+            network_data = mod_cosine_networker.format_network_for_storage(
+                network,
+            )
+        except RuntimeError as e:
+            logging.error(str(e))
+            return
+
+        self.store_network_data("modified_cosine", network_data, filtered_features)
 
         logging.info(
             "'SimNetworksManager': completed modified cosine-based spectral similarity "
             "(=molecular) networking."
         )
+
+    def store_network_data(
+        self: Self, network_name: str, network_data: dict, filtered_features: dict
+    ):
+        """Store network data in storage objects for later use
+
+        Arguments:
+            network_name: name of networking algorithm
+            network_data: dict of network, subnetworks, clusters
+            filtered_features: dict features included and excluded from networking
+        """
+        if self.stats.networks is None:
+            self.stats.networks = {}
+
+        self.stats.networks[network_name] = SpecSimNet(
+            algorithm=network_name,
+            network=network_data["network"],
+            subnetworks=network_data["subnetworks"],
+            summary=network_data["summary"],
+        )
+
+        for f_id in filtered_features["included"]:
+            feature = self.features.get(f_id)
+            if feature.networks is None:
+                feature.networks = {}
+
+            for cluster_id in network_data["summary"]:
+                if f_id in network_data["summary"][cluster_id]:
+                    feature.networks[network_name] = SimNetworks(
+                        algorithm=network_name, network_id=cluster_id
+                    )
+
+            self.features.modify(f_id, feature)

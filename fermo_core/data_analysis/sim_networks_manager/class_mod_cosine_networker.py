@@ -21,7 +21,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 import logging
-import networkx as nx
+import networkx
 from typing import Dict, Self, Optional
 
 import matchms
@@ -154,7 +154,7 @@ class ModCosineNetworker:
     @staticmethod
     def create_network(
         scores: matchms.Scores, settings: SpecSimNetworkCosineParameters
-    ):
+    ) -> networkx.Graph:
         """Process scores object and generate network
 
         Arguments:
@@ -162,7 +162,7 @@ class ModCosineNetworker:
             settings: parameter settings
 
         Returns:
-            TBA # TODO(MMZ 11.1.24): add the correct documentation
+            A networkx Graph object of the created network
         """
         network = matchms.networking.SimilarityNetwork(
             identifier_key="id",
@@ -174,32 +174,45 @@ class ModCosineNetworker:
 
         network.create_network(scores, "ModifiedCosine_score")
 
-        network_graph = network.graph
+        return network.graph
 
-        subnetworks = [
-            network_graph.subgraph(c).copy()
-            for c in nx.connected_components(network_graph)
-        ]
+    @staticmethod
+    def format_network_for_storage(
+        graph: networkx.Graph,
+    ) -> Dict:
+        """Process networkx Graph object, remove redundant clusters, extract info
 
-        clusters = {}
-        for i, subnet in enumerate(subnetworks):
-            clusters[i] = len(subnet.nodes)
+        Arguments:
+            graph: holding spectral similarity networking information
 
-        return clusters
+        Returns:
+            dict of full network, subnetworks, dict of clusters and contained features
 
-    # TODO(MMZ 11.1.24): only do data extraction and storage here below
-    # @staticmethod
-    # def store_network_scores(
-    #     features: Repository, stats: Stats, scores: matchms.Scores
-    # ) -> Tuple[Repository, Stats]:
-    #     """Process matchms Scores object and store connectivity data for further use
-    #
-    #     Arguments:
-    #         features: a Repository object holding features with general information
-    #         stats: a Stats object holding general information
-    #         scores: holding spectral similarity networking information
-    #
-    #     Returns:
-    #         A tuple of the modified Repository and Stats objects
-    #     """
-    #     pass
+        Raises:
+            RuntimeError: detected overlap between subclusters in terms of feature IDs
+
+        Notes:
+            Matchms introduces "stringified" feature IDs in network - need to be
+            removed by `networkx.relabel_nodes`
+        """
+        mapping = {node: int(node) for node in graph.nodes}
+        graph = networkx.relabel_nodes(graph, mapping)
+
+        subnetworks = []
+        for component in networkx.connected_components(graph):
+            subnetworks.append(graph.subgraph(component).copy())
+
+        clusters = dict()
+        for i, subnetwork in enumerate(subnetworks):
+            ids = set([int(node) for node in subnetwork.nodes])
+            for cluster in clusters.values():
+                if len(output := ids.intersection(cluster)) != 0:
+                    raise RuntimeError(
+                        f"'ModCosineNetworker': detected overlap between subclusters: "
+                        f"cluster with ids '{ids}' and cluster with ids '{cluster}' "
+                        f"share ids '{output}'. This is unexpected - ABORT."
+                    )
+            clusters[i] = ids
+            subnetworks[i].graph["name"] = i
+
+        return {"network": graph, "subnetworks": subnetworks, "summary": clusters}

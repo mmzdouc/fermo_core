@@ -1,3 +1,4 @@
+import networkx
 import pandas as pd
 from pydantic import ValidationError
 import pytest
@@ -66,7 +67,12 @@ def test_success_parse_mzmine3(stats):
 
 
 def test_init_spec_sim_net_valid():
-    entry = SpecSimNet(algorithm="xyz", edges={}, nodes={})
+    entry = SpecSimNet(
+        algorithm="xyz",
+        network=networkx.Graph(),
+        subnetworks=[networkx.Graph()],
+        summary={1: set([1, 2, 3])},
+    )
     assert isinstance(entry, SpecSimNet)
 
 

@@ -27,5 +27,6 @@ def test_return_valid(sim_networks_manager_instance):
 
 
 def test_run_modified_cosine_alg(sim_networks_manager_instance):
-    scores = sim_networks_manager_instance.run_modified_cosine_alg()
-    # TODO(MMZ 10.1.24): add an assert statement here
+    sim_networks_manager_instance.run_modified_cosine_alg()
+    assert sim_networks_manager_instance.stats.networks is not None
+    assert sim_networks_manager_instance.features.get(33).networks is not None
