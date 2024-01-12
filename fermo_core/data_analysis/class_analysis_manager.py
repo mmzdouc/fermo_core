@@ -37,6 +37,8 @@ from fermo_core.data_analysis.sim_networks_manager.class_sim_networks_manager im
     SimNetworksManager,
 )
 
+logger = logging.getLogger("fermo_core")
+
 
 class AnalysisManager(BaseModel):
     """Pydantic-based class to organize calling and logging of analysis methods
@@ -63,7 +65,7 @@ class AnalysisManager(BaseModel):
 
     def analyze(self: Self):
         """Organizes calling of data analysis steps."""
-        logging.info("'AnalysisManager': started analysis steps.")
+        logger.info("'AnalysisManager': started analysis steps.")
 
         self.run_feature_filter()
 
@@ -71,12 +73,12 @@ class AnalysisManager(BaseModel):
 
         self.run_chrom_trace_calculator()
 
-        logging.info("'AnalysisManager': completed analysis steps.")
+        logger.info("'AnalysisManager': completed analysis steps.")
 
     def run_feature_filter(self: Self):
         """Run optional FeatureFilter analysis step"""
         if self.params.FeatureFilteringParameters.activate_module is False:
-            logging.info(
+            logger.info(
                 "'FeatureFilter': module 'feature_filtering' not activated - SKIP."
             )
             return
@@ -93,7 +95,7 @@ class AnalysisManager(BaseModel):
     def run_sim_networks_manager(self: Self):
         """Run optional SimNetworksManager analysis step"""
         if self.params.MsmsParameters is None:
-            logging.info("'SimNetworksManager': no MS/MS data provided - SKIP.")
+            logger.info("'SimNetworksManager': no MS/MS data provided - SKIP.")
             return
         elif not any(
             [
@@ -101,7 +103,7 @@ class AnalysisManager(BaseModel):
                 self.params.SpecSimNetworkDeepscoreParameters.activate_module,
             ]
         ):
-            logging.info(
+            logger.info(
                 "'SimNetworksManager': no modules in 'spec_sim_networking' activated - "
                 "SKIP."
             )

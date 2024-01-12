@@ -20,9 +20,10 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-import pandas as pd
 import logging
 from typing import Self, Tuple
+
+import pandas as pd
 
 from fermo_core.data_processing.class_repository import Repository
 from fermo_core.data_processing.class_stats import Stats
@@ -32,6 +33,8 @@ from fermo_core.data_processing.parser.phenotype_parser.acb_phenotype_parser imp
 )
 
 from fermo_core.input_output.class_parameter_manager import ParameterManager
+
+logger = logging.getLogger("fermo_core")
 
 
 class PhenotypeFermoParser(PhenotypeParser):
@@ -56,7 +59,7 @@ class PhenotypeFermoParser(PhenotypeParser):
             concentration of all experiments (1).
             TODO(MMZ 13.12.23): fermo bioactivity format needs to be changed.
         """
-        logging.info(
+        logger.info(
             f"'PhenotypeFermoParser': started parsing fermo-style phenotype data file "
             f"'{params.PhenotypeParameters.filepath.name}'"
         )
@@ -86,7 +89,7 @@ class PhenotypeFermoParser(PhenotypeParser):
         for assay in assays:
             stats.phenotypes[assay] = tuple(assays.get(assay))
 
-        logging.info(
+        logger.info(
             f"'PhenotypeFermoParser': completed parsing fermo-style phenotype data file"
             f" '{params.PhenotypeParameters.filepath.name}'"
         )
@@ -128,7 +131,7 @@ class PhenotypeFermoParser(PhenotypeParser):
 
             return sample_repo
         except KeyError:
-            logging.warning(
+            logger.warning(
                 f"Could not find sample ID '{sample_id}' from "
                 "phenotype/bioactivity file "
                 f"in the previously processed peaktable file."

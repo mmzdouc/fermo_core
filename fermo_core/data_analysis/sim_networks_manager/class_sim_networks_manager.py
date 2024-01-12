@@ -34,6 +34,8 @@ from fermo_core.data_processing.class_stats import Stats, SpecSimNet
 from fermo_core.data_processing.builder_feature.dataclass_feature import SimNetworks
 from fermo_core.input_output.class_parameter_manager import ParameterManager
 
+logger = logging.getLogger("fermo_core")
+
 
 class SimNetworksManager(BaseModel):
     """Pydantic-based class to organize calling and logging of networking modules
@@ -60,7 +62,7 @@ class SimNetworksManager(BaseModel):
 
     def run_analysis(self: Self):
         """Organizes calling of data analysis steps."""
-        logging.info("'SimNetworksManager': started analysis steps.")
+        logger.info("'SimNetworksManager': started analysis steps.")
 
         modules = (
             (
@@ -73,11 +75,11 @@ class SimNetworksManager(BaseModel):
             if module[0]:
                 module[1]()
 
-        logging.info("'SimNetworksManager': completed analysis steps.")
+        logger.info("'SimNetworksManager': completed analysis steps.")
 
     def run_modified_cosine_alg(self: Self):
         """Run modified cosine-based spectral similarity networking on features."""
-        logging.info(
+        logger.info(
             "'SimNetworksManager': started modified cosine-based spectral similarity "
             "(=molecular) networking."
         )
@@ -95,7 +97,7 @@ class SimNetworksManager(BaseModel):
                 self.params.SpecSimNetworkCosineParameters,
             )
         except func_timeout.FunctionTimedOut:
-            logging.warning(
+            logger.warning(
                 f"'SimNetworksManager/ModCosineNetworker': timeout of modified "
                 f"cosine spectral similarity network calculation. Calculation "
                 f"took longer than "
@@ -115,12 +117,12 @@ class SimNetworksManager(BaseModel):
                 network,
             )
         except RuntimeError as e:
-            logging.error(str(e))
+            logger.error(str(e))
             return
 
         self.store_network_data("modified_cosine", network_data, filtered_features)
 
-        logging.info(
+        logger.info(
             "'SimNetworksManager': completed modified cosine-based spectral similarity "
             "(=molecular) networking."
         )

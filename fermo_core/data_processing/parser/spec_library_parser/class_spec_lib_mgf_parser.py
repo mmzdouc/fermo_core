@@ -30,6 +30,8 @@ from fermo_core.data_processing.parser.spec_library_parser.abc_spec_lib_parser i
 )
 from fermo_core.input_output.class_parameter_manager import ParameterManager
 
+logger = logging.getLogger("fermo_core")
+
 
 class SpecLibMgfParser(SpecLibParser):
     """Interface to parse a spectral library file in mgf format."""
@@ -47,14 +49,14 @@ class SpecLibMgfParser(SpecLibParser):
         Notes:
             mgf.read() returns a Numpy array - turned to list for easier handling
         """
-        logging.info(
+        logger.info(
             f"'SpecLibMgfParser': started parsing of spectral library file "
             f"'{params.SpecLibParameters.filepath.name}'"
         )
 
         stats = self.modify_stats(stats, params)
 
-        logging.info(
+        logger.info(
             f"'SpecLibMgfParser': completed parsing of spectral library file "
             f"'{params.SpecLibParameters.filepath.name}'"
         )
@@ -91,7 +93,7 @@ class SpecLibMgfParser(SpecLibParser):
                         }
                     )
                 except KeyError:
-                    logging.warning(
+                    logger.warning(
                         f"Malformed entry (count: '{counter}') in file"
                         f"'{params.SpecLibParameters.filepath.name}'"
                         "detected. Missing 'NAME' or 'PEPMASS' or MS/MS information. "

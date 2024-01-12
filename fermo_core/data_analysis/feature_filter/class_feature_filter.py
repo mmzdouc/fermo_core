@@ -29,6 +29,8 @@ from fermo_core.input_output.class_parameter_manager import ParameterManager
 from fermo_core.data_processing.class_repository import Repository
 from fermo_core.data_processing.class_stats import Stats
 
+logger = logging.getLogger("fermo_core")
+
 
 class FeatureFilter(BaseModel):
     """Pydantic-based class to organize molecular feature filtering methods.
@@ -58,7 +60,7 @@ class FeatureFilter(BaseModel):
 
     def filter(self: Self):
         """Call feature filtering methods dependent on given parameters."""
-        logging.info("'FeatureFilter': started filtering of molecular features.")
+        logger.info("'FeatureFilter': started filtering of molecular features.")
 
         modules = (
             (
@@ -77,7 +79,7 @@ class FeatureFilter(BaseModel):
 
         self.remove_filtered_features()
 
-        logging.info("'FeatureFilter': completed filtering of molecular features.")
+        logger.info("'FeatureFilter': completed filtering of molecular features.")
 
     def remove_filtered_features(self: Self):
         """Remove features that have been filtered out due to the given settings"""
@@ -95,7 +97,7 @@ class FeatureFilter(BaseModel):
 
     def filter_rel_int_range(self: Self):
         """Retain features inside relative intensity range in at least one sample."""
-        logging.info("'FeatureFilter': started filtering for relative intensity.")
+        logger.info("'FeatureFilter': started filtering for relative intensity.")
 
         inactive = self.filter_features_for_range(
             self.stats,
@@ -104,7 +106,7 @@ class FeatureFilter(BaseModel):
         )
 
         for feature in inactive:
-            logging.debug(
+            logger.debug(
                 f"'FeatureFilter': feature with ID '{feature}' filtered from"
                 f" analysis run: outside 'filter_rel_int_range' settings."
             )
@@ -115,11 +117,11 @@ class FeatureFilter(BaseModel):
             self.stats.inactive_features
         )
 
-        logging.info("'FeatureFilter': completed filtering for relative intensity.")
+        logger.info("'FeatureFilter': completed filtering for relative intensity.")
 
     def filter_rel_area_range(self: Self):
         """Retain features inside relative area range in at least one sample."""
-        logging.info("'FeatureFilter': started filtering for relative area.")
+        logger.info("'FeatureFilter': started filtering for relative area.")
 
         inactive = self.filter_features_for_range(
             self.stats,
@@ -128,7 +130,7 @@ class FeatureFilter(BaseModel):
         )
 
         for feature in inactive:
-            logging.debug(
+            logger.debug(
                 f"'FeatureFilter': feature with ID '{feature}' filtered from"
                 f" analysis run: outside 'filter_rel_area_range' settings."
             )
@@ -139,7 +141,7 @@ class FeatureFilter(BaseModel):
             self.stats.inactive_features
         )
 
-        logging.info("'FeatureFilter': completed filtering for relative area.")
+        logger.info("'FeatureFilter': completed filtering for relative area.")
 
     @staticmethod
     def filter_features_for_range(

@@ -31,6 +31,8 @@ from fermo_core.data_processing.parser.group_metadata_parser.abc_group_metadata_
 )
 from fermo_core.input_output.class_parameter_manager import ParameterManager
 
+logger = logging.getLogger("fermo_core")
+
 
 class MetadataFermoParser(GroupMetadataParser):
     """Interface to parse fermo-style group metadata file."""
@@ -48,7 +50,7 @@ class MetadataFermoParser(GroupMetadataParser):
         Returns:
             Tuple of Stats and Sample repository objects with added group info.
         """
-        logging.info(
+        logger.info(
             f"'MetadataFermoParser': started parsing fermo-style group metadata file "
             f"'{params.GroupMetadataParameters.filepath.name}'"
         )
@@ -70,7 +72,7 @@ class MetadataFermoParser(GroupMetadataParser):
                         sample_repo, sample_id, group_id
                     )
 
-        logging.info(
+        logger.info(
             f"'MetadataFermoParser': completed parsing fermo-style group metadata file "
             f"'{params.GroupMetadataParameters.filepath.name}'"
         )
@@ -91,7 +93,7 @@ class MetadataFermoParser(GroupMetadataParser):
             stats_obj.groups.get("DEFAULT").remove(sample_id)
             return stats_obj
         except KeyError:
-            logging.warning(
+            logger.warning(
                 f"'MetadataFermoParser': Could not find sample ID '{sample_id}' in "
                 f"previously processed peaktable file. Did you provide the correct "
                 f"group metadata file?"
@@ -120,7 +122,7 @@ class MetadataFermoParser(GroupMetadataParser):
             sample_repo.modify(sample_id, sample)
             return sample_repo
         except KeyError:
-            logging.warning(
+            logger.warning(
                 f"'MetadataFermoParser': Could not find sample ID '{sample_id}' in "
                 f"previously processed peaktable file. Did you provide the correct "
                 f"group metadata file?"

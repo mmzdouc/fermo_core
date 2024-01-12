@@ -32,6 +32,8 @@ from fermo_core.input_output.core_module_parameter_managers import (
     SpecSimNetworkCosineParameters,
 )
 
+logger = logging.getLogger("fermo_core")
+
 
 class ModCosineNetworker:
     """Class for calling and logging modified cosine spect. sim. networking"""
@@ -45,7 +47,7 @@ class ModCosineNetworker:
         Arguments:
             f_id: feature identifier
         """
-        logging.debug(
+        logger.debug(
             f"'ModCosineNetworker': feature ID '{f_id}' filtered from spectral "
             f"similarity networking: has no associated MS/MS."
         )
@@ -59,7 +61,7 @@ class ModCosineNetworker:
             frags: found nr of MS/MS fragments
             min_frags: minimal necessary nr or MS/MS fragments
         """
-        logging.debug(
+        logger.debug(
             f"'ModCosineNetworker': feature ID '{f_id}' filtered from spectral "
             f"similarity networking: min. nr. of MS/MS fragments lower than required "
             f"by parameter 'msms_min_frag_nr' ('{frags}' < '{min_frags}')."

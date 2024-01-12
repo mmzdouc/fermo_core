@@ -41,9 +41,11 @@ from fermo_core.data_processing.parser.phenotype_parser.class_fermo_phenotype_pa
 from fermo_core.data_processing.class_repository import Repository
 from fermo_core.data_processing.class_stats import Stats
 
+logger = logging.getLogger("fermo_core")
+
 
 class GeneralParser:
-    """Interface to organize calling of specific parser classes and their logging
+    """Interface to organize calling of specific parser classes and their logger
 
     Attributes:
         stats: Stats object, holds stats on molecular features and samples
@@ -70,7 +72,7 @@ class GeneralParser:
         Arguments:
             params: ParameterManager holding validated user input
         """
-        logging.info("'GeneralParser': started file parsing.")
+        logger.info("'GeneralParser': started file parsing.")
 
         self.parse_peaktable(params)
         self.parse_msms(params)
@@ -78,7 +80,7 @@ class GeneralParser:
         self.parse_phenotype(params)
         self.parse_spectral_library(params)
 
-        logging.info("'GeneralParser': completed file parsing.")
+        logger.info("'GeneralParser': completed file parsing.")
 
     def parse_peaktable(self: Self, params: ParameterManager):
         """Parses user-provided peaktable file.
@@ -99,7 +101,7 @@ class GeneralParser:
             params: ParameterManager holding validated user input
         """
         if params.MsmsParameters is None:
-            logging.info(
+            logger.info(
                 "'GeneralParser': parameters for module 'msms' not specified - SKIP"
             )
             return
@@ -115,7 +117,7 @@ class GeneralParser:
             params: ParameterManager holding validated user input
         """
         if params.GroupMetadataParameters is None:
-            logging.info(
+            logger.info(
                 "'GeneralParser': parameters for module 'group_metadata' not specified"
                 " - SKIP"
             )
@@ -134,7 +136,7 @@ class GeneralParser:
             params: ParameterManager holding validated user input
         """
         if params.PhenotypeParameters is None:
-            logging.info(
+            logger.info(
                 "'GeneralParser': parameters for module 'phenotype' not specified"
                 " - SKIP"
             )
@@ -153,7 +155,7 @@ class GeneralParser:
             params: ParameterManager holding validated user input
         """
         if params.SpecLibParameters is None:
-            logging.info(
+            logger.info(
                 "'GeneralParser': parameters for module 'spectral_library' not "
                 "specified - SKIP"
             )

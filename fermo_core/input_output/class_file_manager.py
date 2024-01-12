@@ -27,6 +27,8 @@ from pathlib import Path
 
 from fermo_core.input_output.class_validation_manager import ValidationManager
 
+logger = logging.getLogger("fermo_core")
+
 
 class FileManager:
     """Manages exclusively static methods for reading and writing of files."""
@@ -49,11 +51,11 @@ class FileManager:
                 return json.load(infile)
 
         except json.JSONDecodeError as e:
-            logging.error(f"Error decoding JSON file '{json_file}': wrong format.")
+            logger.error(f"Error decoding JSON file '{json_file}': wrong format.")
             raise e
         except FileNotFoundError as e:
-            logging.error(str(e))
+            logger.error(str(e))
             raise e
         except TypeError as e:
-            logging.error(str(e))
+            logger.error(str(e))
             raise e

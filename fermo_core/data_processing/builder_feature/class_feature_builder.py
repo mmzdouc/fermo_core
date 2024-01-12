@@ -27,6 +27,8 @@ from pydantic import BaseModel
 
 from fermo_core.data_processing.builder_feature.dataclass_feature import Feature
 
+logger = logging.getLogger("fermo_core")
+
 
 class FeatureBuilder(BaseModel):
     """Pydantic-based class to build variants of Feature objects based on user input."""
@@ -93,7 +95,7 @@ class FeatureBuilder(BaseModel):
                     "not be 'None'."
                 )
         except ValueError as e:
-            logging.error(str(e))
+            logger.error(str(e))
             raise e
 
         self.feature.rt_range = round(

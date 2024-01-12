@@ -29,6 +29,8 @@ from fermo_core.data_processing.class_repository import Repository
 from fermo_core.data_processing.parser.msms_parser.abc_msms_parser import MsmsParser
 from fermo_core.input_output.class_parameter_manager import ParameterManager
 
+logger = logging.getLogger("fermo_core")
+
 
 class MgfParser(MsmsParser):
     """Interface to parse MS/MS files in mgf format based on abstract baseclass."""
@@ -45,14 +47,14 @@ class MgfParser(MsmsParser):
         Returns:
             A Repository object with modified features
         """
-        logging.info(
+        logger.info(
             f"'MgfParser': started parsing of MS/MS data-containing file "
             f"'{params.MsmsParameters.filepath.name}'"
         )
 
         feature_repo = self.modify_features(feature_repo, params)
 
-        logging.info(
+        logger.info(
             f"'MgfParser': completed parsing of MS/MS data-containing file "
             f"'{params.MsmsParameters.filepath.name}'"
         )
@@ -89,7 +91,7 @@ class MgfParser(MsmsParser):
                     feature_repo.modify(data["f_id"], feature)
 
                 except KeyError:
-                    logging.warning(
+                    logger.warning(
                         f"Could not add MS/MS spectrum with the feature ID "
                         f"'{spectrum.get('params').get('feature_id')}'. "
                         "This feature ID does not exist in the provided peaktable"

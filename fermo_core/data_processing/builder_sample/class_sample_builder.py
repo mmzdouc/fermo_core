@@ -33,6 +33,8 @@ from fermo_core.data_processing.builder_feature.class_specific_feature_director 
 )
 from fermo_core.data_processing.builder_sample.dataclass_sample import Sample
 
+logger = logging.getLogger("fermo_core")
+
 
 class SampleBuilder(BaseModel):
     """Pydantic-based class to build variant of Sample objects based on user input.
@@ -92,7 +94,7 @@ class SampleBuilder(BaseModel):
                     "not be 'None'."
                 )
         except ValueError as e:
-            logging.error(str(e))
+            logger.error(str(e))
             raise e
 
         self.sample.features = dict()
@@ -118,7 +120,7 @@ class SampleBuilder(BaseModel):
                     "'self.sample.features' must not be 'None'."
                 )
         except ValueError as e:
-            logging.error(str(e))
+            logger.error(str(e))
             raise e
 
         self.sample.feature_ids = set(self.sample.features.keys())
