@@ -61,7 +61,7 @@ About
 
 ## Dependencies
 
-A list of dependencies can be found in [requirements.txt](requirements.txt).
+A list of dependencies can be found in the file [pyproject.toml](pyproject.toml).
 
 ## License
 

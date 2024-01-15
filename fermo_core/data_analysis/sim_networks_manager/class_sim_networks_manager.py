@@ -69,6 +69,7 @@ class SimNetworksManager(BaseModel):
                 self.params.SpecSimNetworkCosineParameters.activate_module,
                 self.run_modified_cosine_alg,
             ),
+            # TODO(MMZ 15.1.24): Add a tuple to activate the Ms2deepscore module
         )
 
         for module in modules:
@@ -126,6 +127,9 @@ class SimNetworksManager(BaseModel):
             "'SimNetworksManager': completed modified cosine-based spectral similarity "
             "(=molecular) networking."
         )
+
+    # TODO(MMZ 15.1.24): add method to start the ms2deepscore networker class; must
+    #  check if positive mode true, else skip with log message
 
     def store_network_data(
         self: Self, network_name: str, network_data: dict, filtered_features: dict

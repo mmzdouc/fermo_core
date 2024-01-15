@@ -226,7 +226,15 @@
                                     "type": "boolean"
                                 },
                                 "directory_path": {
-                                    "title": "(Optional): A path to a directory containing MS2DeepScore files. If not specified, MS2DeepScore files will be downloaded and put into the default directory ('fermo_core/libraries').",
+                                    "title": "(Optional): A path to a directory containing the MS2DeepScore file. If not specified, the MS2DeepScore file will be downloaded and put into the default directory ('fermo_core/libraries/ms2deepscore').",
+                                    "type": "string"
+                                },
+                                "filename": {
+                                    "title": "(Optional): The filename of the ms2deepscore reference file. If not specified, the default MS2DeepScore file will be downloaded from Zenodo (https://zenodo.org/doi/10.5281/zenodo.4699355) and put into the default directory ('fermo_core/libraries/ms2deepscore').",
+                                    "type": "string"
+                                },
+                                "url": {
+                                    "title": "(Optional): The url to download the ms2deepscore reference file from. If not specified and if no file provided, the default MS2DeepScore file will be downloaded from Zenodo (https://zenodo.org/doi/10.5281/zenodo.4699355) and put into the default directory ('fermo_core/libraries/ms2deepscore').",
                                     "type": "string"
                                 },
                                 "score_cutoff": {

@@ -38,8 +38,6 @@ logger = logging.getLogger("fermo_core")
 class ModCosineNetworker:
     """Class for calling and logging modified cosine spect. sim. networking"""
 
-    scores: Optional[matchms.Scores] = None
-
     @staticmethod
     def log_filtered_feature_no_msms(f_id: int):
         """Logs feature filtered from selection due to lack of MS/MS
@@ -51,6 +49,7 @@ class ModCosineNetworker:
             f"'ModCosineNetworker': feature ID '{f_id}' filtered from spectral "
             f"similarity networking: has no associated MS/MS."
         )
+        # TODO(MMZ 15.1.24): turn into clss of networksmanager
 
     @staticmethod
     def log_filtered_feature_nr_fragments(f_id: int, frags: int, min_frags: int):
@@ -66,6 +65,7 @@ class ModCosineNetworker:
             f"similarity networking: min. nr. of MS/MS fragments lower than required "
             f"by parameter 'msms_min_frag_nr' ('{frags}' < '{min_frags}')."
         )
+        # TODO(MMZ 15.1.24): turn into clss of networksmanager
 
     def filter_input_spectra(
         self: Self,
@@ -83,6 +83,7 @@ class ModCosineNetworker:
         Returns:
             A dictionary containing included and excluded feature ints in sets.
         """
+        # TODO(MMZ 15.1.24): turn into clss of networksmanager
         included = set()
         excluded = set()
 

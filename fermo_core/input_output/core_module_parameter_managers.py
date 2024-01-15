@@ -91,7 +91,9 @@ class SpecSimNetworkDeepscoreParameters(BaseModel):
 
     Attributes:
         activate_module: bool to indicate if module should be executed.
-        directory_path: pathlib Path object pointing to dir with ms2deepscore files
+        directory_path: pathlib Path object pointing to dir with ms2deepscore files.
+        filename: the name of the ms2deepscore reference file.
+        url: the URL to download the file from
         score_cutoff: the minimum similarity score between two spectra.
         max_nr_links: max links to a single spectra.
 
@@ -102,6 +104,11 @@ class SpecSimNetworkDeepscoreParameters(BaseModel):
     activate_module: bool = True
     directory_path: DirectoryPath = Path(__file__).parent.parent.joinpath(
         "libraries/ms2deepscore"
+    )
+    filename: str = "ms2deepscore_positive_10k_1000_1000_1000_500.hdf5"
+    url: str = (
+        "https://zenodo.org/records/8274763/files/"
+        "ms2deepscore_positive_10k_1000_1000_1000_500.hdf5?download=1"
     )
     score_cutoff: PositiveFloat = 0.7
     max_nr_links: PositiveInt = 10
