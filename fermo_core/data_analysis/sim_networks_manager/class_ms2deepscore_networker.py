@@ -22,12 +22,10 @@ SOFTWARE.
 """
 import logging
 import networkx
-from pathlib import Path
-import shutil
-from typing import Dict, Self, Optional, Union
-import urllib.request
 
 import matchms
+from ms2deepscore import MS2DeepScore
+from ms2deepscore.models import load_model
 import func_timeout
 
 from fermo_core.data_processing.class_repository import Repository
@@ -41,30 +39,80 @@ logger = logging.getLogger("fermo_core")
 class Ms2deepscoreNetworker:
     """Class for calling and logging ms2deepscore spectral similarity networking"""
 
-    # must have MS2
-    # load in the data
-    # what if data not available? Download at beginning
-
     @staticmethod
-    def download_file(url: str, filename_path: Union[Path, str]):
-        """Downloads the required file from the given URL."""
-        with urllib.request.urlopen(url) as response, open(filename_path, "wb") as out:
-            data = response.read()
-            out.write(data)
-
-    def verify_presence_ms2deepscore_file(
-        self: Self, settings: SpecSimNetworkDeepscoreParameters
-    ):
-        """Verify existence of file and download if not present
+    def spec_sim_networking(
+        features: tuple,
+        feature_repo: Repository,
+        settings: SpecSimNetworkDeepscoreParameters,
+    ) -> matchms.Scores:
+        """Calls ms2deepscore based spectral similarity networking.
 
         Arguments:
-            settings: holds the directory path, filename, and url
+            features: a tuple of feature IDs to consider in networking
+            feature_repo: containing GeneralFeature objects with feature info
+            settings: containing given filter parameters
+
+        Returns:
+            A matchms Scores object
+
+        Raises:
+            func_timeout.FunctionTimedOut: function took longer than a user-specified
+             number of seconds
+            FileNotFoundError: could not open model file
+
+        Notes:
+            Timeout can be disabled by user by setting settings.maximum_runtime to 0.
         """
-        filepath = settings.directory_path.joinpath(settings.filename)
+        spectra = list()
 
-        if not filepath.exists():
-            self.download_file(settings.url, filepath)
+        for f_id in features:
+            feature = feature_repo.get(f_id)
+            spectra.append(feature.Spectrum)
 
-        # TODO(MMZ 15.1.24): add a timeout for download, add logging that download
-        #  needs to be performed, add logging that download was completed, add a try
-        #  except to check if URL download fails (needs to befrom network manager class
+        model = load_model(settings.file_path)
+
+        sim_algorithm = MS2DeepScore(model=model, progress_bar=False)
+
+        if settings.maximum_runtime != 0:
+            return func_timeout.func_timeout(
+                timeout=settings.maximum_runtime,
+                func=matchms.calculate_scores,
+                kwargs={
+                    "references": spectra,
+                    "queries": spectra,
+                    "similarity_function": sim_algorithm,
+                    "is_symmetric": True,
+                },
+            )
+        else:
+            return matchms.calculate_scores(
+                references=spectra,
+                queries=spectra,
+                similarity_function=sim_algorithm,
+                is_symmetric=True,
+            )
+
+    @staticmethod
+    def create_network(
+        scores: matchms.Scores, settings: SpecSimNetworkDeepscoreParameters
+    ) -> networkx.Graph:
+        """Process scores object and generate network
+
+        Arguments:
+            scores: holding spectral similarity scores information
+            settings: parameter settings
+
+        Returns:
+            A networkx Graph object of the created network
+        """
+        network = matchms.networking.SimilarityNetwork(
+            identifier_key="id",
+            score_cutoff=settings.score_cutoff,
+            max_links=settings.max_nr_links,
+            top_n=settings.max_nr_links,
+            link_method="mutual",
+        )
+
+        network.create_network(scores, "MS2DeepScore")
+
+        return network.graph

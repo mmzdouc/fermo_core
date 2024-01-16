@@ -22,7 +22,6 @@ SOFTWARE.
 """
 import logging
 import networkx
-from typing import Dict, Self, Optional
 
 import matchms
 import func_timeout
@@ -37,70 +36,6 @@ logger = logging.getLogger("fermo_core")
 
 class ModCosineNetworker:
     """Class for calling and logging modified cosine spect. sim. networking"""
-
-    @staticmethod
-    def log_filtered_feature_no_msms(f_id: int):
-        """Logs feature filtered from selection due to lack of MS/MS
-
-        Arguments:
-            f_id: feature identifier
-        """
-        logger.debug(
-            f"'ModCosineNetworker': feature ID '{f_id}' filtered from spectral "
-            f"similarity networking: has no associated MS/MS."
-        )
-        # TODO(MMZ 15.1.24): turn into clss of networksmanager
-
-    @staticmethod
-    def log_filtered_feature_nr_fragments(f_id: int, frags: int, min_frags: int):
-        """Logs feature filtered from selection due to low number of MS/MS fragments
-
-        Arguments:
-            f_id: feature identifier
-            frags: found nr of MS/MS fragments
-            min_frags: minimal necessary nr or MS/MS fragments
-        """
-        logger.debug(
-            f"'ModCosineNetworker': feature ID '{f_id}' filtered from spectral "
-            f"similarity networking: min. nr. of MS/MS fragments lower than required "
-            f"by parameter 'msms_min_frag_nr' ('{frags}' < '{min_frags}')."
-        )
-        # TODO(MMZ 15.1.24): turn into clss of networksmanager
-
-    def filter_input_spectra(
-        self: Self,
-        features: tuple,
-        feature_repo: Repository,
-        settings: SpecSimNetworkCosineParameters,
-    ) -> Dict[str, set]:
-        """Filter features for spectral similarity analysis based on given restrictions.
-
-        Arguments:
-            features: a tuple of feature IDs
-            feature_repo: containing GeneralFeature objects with feature info
-            settings: containing given filter parameters
-
-        Returns:
-            A dictionary containing included and excluded feature ints in sets.
-        """
-        # TODO(MMZ 15.1.24): turn into clss of networksmanager
-        included = set()
-        excluded = set()
-
-        for f_id in features:
-            feature = feature_repo.get(f_id)
-            if feature.Spectrum is None:
-                excluded.add(f_id)
-                self.log_filtered_feature_no_msms(f_id)
-            elif len(feature.Spectrum.peaks.mz) < settings.msms_min_frag_nr:
-                excluded.add(f_id)
-                self.log_filtered_feature_nr_fragments(
-                    f_id, len(feature.Spectrum.peaks.mz), settings.msms_min_frag_nr
-                )
-            else:
-                included.add(f_id)
-
-        return {"included": included, "excluded": excluded}
 
     @staticmethod
     def spec_sim_networking(
@@ -178,44 +113,3 @@ class ModCosineNetworker:
         network.create_network(scores, "ModifiedCosine_score")
 
         return network.graph
-
-    @staticmethod
-    def format_network_for_storage(
-        graph: networkx.Graph,
-    ) -> Dict:
-        """Process networkx Graph object, remove redundant clusters, extract info
-
-        Arguments:
-            graph: holding spectral similarity networking information
-
-        Returns:
-            dict of full network, subnetworks, dict of clusters and contained features
-
-        Raises:
-            RuntimeError: detected overlap between subclusters in terms of feature IDs
-
-        Notes:
-            Matchms introduces "stringified" feature IDs in network - need to be
-            removed by `networkx.relabel_nodes`
-        """
-        mapping = {node: int(node) for node in graph.nodes}
-        graph = networkx.relabel_nodes(graph, mapping)
-
-        subnetworks = []
-        for component in networkx.connected_components(graph):
-            subnetworks.append(graph.subgraph(component).copy())
-
-        clusters = dict()
-        for i, subnetwork in enumerate(subnetworks):
-            ids = set([int(node) for node in subnetwork.nodes])
-            for cluster in clusters.values():
-                if len(output := ids.intersection(cluster)) != 0:
-                    raise RuntimeError(
-                        f"'ModCosineNetworker': detected overlap between subclusters: "
-                        f"cluster with ids '{ids}' and cluster with ids '{cluster}' "
-                        f"share ids '{output}'. This is unexpected - ABORT."
-                    )
-            clusters[i] = ids
-            subnetworks[i].graph["name"] = i
-
-        return {"network": graph, "subnetworks": subnetworks, "summary": clusters}

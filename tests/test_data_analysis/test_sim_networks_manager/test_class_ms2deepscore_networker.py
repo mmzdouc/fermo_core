@@ -1,5 +1,4 @@
-import os
-from urllib.error import URLError
+from func_timeout import FunctionTimedOut
 
 import pytest
 
@@ -15,32 +14,41 @@ def test_init_valid():
     assert isinstance(Ms2deepscoreNetworker(), Ms2deepscoreNetworker)
 
 
-def test_download_file_valid():
-    Ms2deepscoreNetworker().download_file(
-        "https://api.worldbank.org/v2/en/indicator/NY.GDP.MKTP.CD?downloadformat=csv",
-        os.devnull,
-    )
-
-
-def test_download_file_invalid():
-    with pytest.raises(URLError):
-        Ms2deepscoreNetworker().download_file("https://asdfasdfasdfa", os.devnull)
-
-
-def test_verify_presence_ms2query_file_valid(parameter_instance):
-    ms2deep = Ms2deepscoreNetworker()
-    assert (
-        ms2deep.verify_presence_ms2deepscore_file(
-            parameter_instance.SpecSimNetworkDeepscoreParameters
-        )
-        is None
-    )
-
-
-def test_verify_presence_ms2query_file_invalid():
-    ms2deep = Ms2deepscoreNetworker()
+def test_spec_sim_networking_valid(feature_instance):
+    features = (12, 13)
     settings = SpecSimNetworkDeepscoreParameters()
-    settings.filename = "asfas"
-    settings.url = "https://asdfasdfasdfa"
-    with pytest.raises(URLError):
-        ms2deep.verify_presence_ms2deepscore_file(settings)
+    assert (
+        Ms2deepscoreNetworker().spec_sim_networking(
+            features, feature_instance, settings
+        )
+        is not None
+    )
+
+
+def test_spec_sim_networking_timeout_invalid(feature_instance):
+    features = (12, 13)
+    settings = SpecSimNetworkDeepscoreParameters()
+    settings.maximum_runtime = 0.1
+    with pytest.raises(FunctionTimedOut):
+        Ms2deepscoreNetworker().spec_sim_networking(
+            features, feature_instance, settings
+        )
+
+
+def test_spec_sim_networking_no_model_invalid(feature_instance):
+    features = (12, 13)
+    settings = SpecSimNetworkDeepscoreParameters()
+    settings.file_path = "asfasdfasdfasd"
+    with pytest.raises(FileNotFoundError):
+        Ms2deepscoreNetworker().spec_sim_networking(
+            features, feature_instance, settings
+        )
+
+
+def test_create_network_valid(feature_instance):
+    features = (12, 13)
+    settings = SpecSimNetworkDeepscoreParameters()
+    scores = Ms2deepscoreNetworker().spec_sim_networking(
+        features, feature_instance, settings
+    )
+    assert Ms2deepscoreNetworker().create_network(scores, settings) is not None
