@@ -40,6 +40,7 @@ from fermo_core.input_output.class_validation_manager import ValidationManager
 
 VERSION = metadata.version("fermo_core")
 ROOT = Path(__file__).resolve().parent
+LoggerSetup.suppress_tensorflow_logs()
 logger = LoggerSetup.setup_custom_logger("fermo_core")
 
 
