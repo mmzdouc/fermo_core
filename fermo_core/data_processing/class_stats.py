@@ -20,9 +20,11 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-import pandas as pd
 from pydantic import BaseModel
-from typing import Self, Tuple, Optional, Set, Dict, List, Any
+from typing import Self, Tuple, Optional, Set, Dict, Any
+
+import networkx as nx
+import pandas as pd
 
 from fermo_core.input_output.class_parameter_manager import ParameterManager
 
@@ -32,18 +34,27 @@ class SpecSimNet(BaseModel):
 
     Attributes:
         algorithm: the identifier of the algorithm
-        network: a networkx Graph object
-        subnetworks: a list of subnetworks of Graph objects for easier access
+        network: the full network as networkx Graph object for later cytoscape export
+        subnetworks: a dict of subnetwork Graph objects with subnetwork int id as keys
         summary: a dict of clusters and associated features
-
-    Notes:
-        TODO(MMZ 9.1.24): add method to export information as JSON string
     """
 
     algorithm: str
     network: Any
-    subnetworks: List
+    subnetworks: dict
     summary: Dict[int, set]
+
+    def to_json(self: Self) -> dict:
+        """Convert attributes to json-compatible ones."""
+        return {
+            "algorithm": self.algorithm,
+            "network": nx.cytoscape_data(self.network),
+            "subnetworks": {
+                key: nx.cytoscape_data(value)
+                for (key, value) in self.subnetworks.items()
+            },
+            "summary": {key: list(value) for (key, value) in self.summary.items()},
+        }
 
 
 class SpecLibEntry(BaseModel):
@@ -73,11 +84,12 @@ class Stats(BaseModel):
         features: tuple of all feature ids at the beginning of analysis run
         active_features: retained in analysis run
         inactive_features: filtered out during analysis run by FeatureFilter module
+        blank_features: all blank-associated features in analysis run
         groups: dict of sets of sample IDs repr. group membership (default in DEFAULT)
         networks: all similarity networks in analysis run
         phenotypes: dict of tuples of active sample IDs
-        blank: all blank-associated features in analysis run
         spectral_library: a dict of SpecLibEntry instances
+        analysis_log: a list of performed steps by the AnalysisManager
     """
 
     rt_min: Optional[float] = None
@@ -89,11 +101,12 @@ class Stats(BaseModel):
     features: Optional[Tuple] = None
     active_features: set = set()
     inactive_features: set = set()
-    groups: Optional[Dict[str, Set]] = {"DEFAULT": set()}
+    blank_features: set = set()
+    groups: Dict[str, Set] = {"DEFAULT": set()}
     networks: Optional[Dict[str, SpecSimNet]] = None
     phenotypes: Optional[Dict[str, Tuple[str, ...]]] = None
-    blank: Optional[Tuple] = None
     spectral_library: Optional[Dict[int, SpecLibEntry]] = None
+    analysis_log: list = []
 
     def parse_mzmine3(self: Self, params: ParameterManager):
         """Parse a mzmine3 peaktable for general stats on analysis run.
@@ -117,3 +130,35 @@ class Stats(BaseModel):
         self.groups["DEFAULT"] = set(self.samples)
         self.features = tuple(df["id"].tolist())
         self.active_features = set(self.features)
+
+    def make_json_compatible(self: Self) -> dict:
+        """Export class attributes to json-dump compatible dict."""
+        json_dict = {
+            "rt_min": self.rt_min,
+            "rt_max": self.rt_max,
+            "rt_range": self.rt_range,
+            "area_min": self.area_min,
+            "area_max": self.area_max,
+            "samples": list(self.samples),
+            "all_features": list(self.features),
+            "active_features": list(self.active_features),
+            "inactive_features": list(self.inactive_features),
+            "blank_features": list(self.blank_features),
+            "groups": dict(),
+            "networks": dict(),
+            "phenotypes": dict(),
+            "analysis_log": self.analysis_log,
+        }
+
+        for group in self.groups:
+            json_dict["groups"][group] = list(self.groups[group])
+
+        if self.networks is not None:
+            for network in self.networks:
+                json_dict["networks"][network] = self.networks[network].to_json()
+
+        if self.phenotypes is not None:
+            for entry in self.phenotypes:
+                json_dict["phenotypes"][entry] = list(self.phenotypes[entry])
+
+        return json_dict

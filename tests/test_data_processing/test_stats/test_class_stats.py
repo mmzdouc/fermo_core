@@ -70,12 +70,44 @@ def test_init_spec_sim_net_valid():
     entry = SpecSimNet(
         algorithm="xyz",
         network=networkx.Graph(),
-        subnetworks=[networkx.Graph()],
-        summary={1: set([1, 2, 3])},
+        subnetworks={1: networkx.Graph()},
+        summary={1: {1, 2, 3}},
     )
     assert isinstance(entry, SpecSimNet)
+
+
+def test_specsimnet_to_json_valid():
+    stats = Stats()
+    stats.networks = {
+        "xyz": SpecSimNet(
+            algorithm="xyz",
+            network=networkx.Graph(),
+            subnetworks={1: networkx.Graph()},
+            summary={1: {1, 2, 3}},
+        )
+    }
+    assert stats.networks["xyz"].to_json() is not None
 
 
 def test_init_spec_sim_net_invalid():
     with pytest.raises(ValidationError):
         SpecSimNet(mod_cosine=[])
+
+
+def test_make_json_compatible_valid():
+    stats = Stats()
+    params = ParameterManager()
+    params.assign_parameters_cli(
+        FileManager.load_json_file("example_data/case_study_parameters.json")
+    )
+    stats.parse_mzmine3(params)
+    stats.networks = {
+        "xyz": SpecSimNet(
+            algorithm="xyz",
+            network=networkx.Graph(),
+            subnetworks={1: networkx.Graph()},
+            summary={1: {1, 2, 3}},
+        )
+    }
+    json_dict = stats.make_json_compatible()
+    assert json_dict["networks"] is not None

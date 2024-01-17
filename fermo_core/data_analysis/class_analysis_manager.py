@@ -48,6 +48,9 @@ class AnalysisManager(BaseModel):
         stats: Stats object, holds stats on molecular features and samples
         features: Repository object, holds "General Feature" objects
         samples: Repository object, holds "Sample" objects
+
+    Notes:
+        Every method should append log of completion to `self.stats.analysis_log`
     """
 
     params: ParameterManager
@@ -91,6 +94,9 @@ class AnalysisManager(BaseModel):
         )
         feature_filter.filter()
         self.stats, self.features, self.samples = feature_filter.return_values()
+        self.stats.analysis_log.append(
+            "Ran module 'FeatureFilter'. For parameters, see 'feature_filtering'."
+        )
 
     def run_sim_networks_manager(self: Self):
         """Run optional SimNetworksManager analysis step"""
@@ -117,7 +123,12 @@ class AnalysisManager(BaseModel):
         )
         sim_networks_manager.run_analysis()
         self.stats, self.features, self.samples = sim_networks_manager.return_attrs()
+        self.stats.analysis_log.append(
+            "Ran module 'SimNetworksManager'. For parameters, "
+            "see 'core_modules/spec_sim_networking'."
+        )
 
     def run_chrom_trace_calculator(self: Self):
         """Run mandatory ChromTraceCalculator analysis step."""
         self.samples = ChromTraceCalculator().modify_samples(self.samples, self.stats)
+        self.stats.analysis_log.append("Ran module 'ChromTraceCalculator'.")
