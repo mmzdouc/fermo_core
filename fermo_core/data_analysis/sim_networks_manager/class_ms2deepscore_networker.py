@@ -1,4 +1,4 @@
-"""Organize modified cosine spectral similarity networking methods.
+"""Organize ms2deepscore spectral similarity networking methods.
 
 Copyright (c) 2022-2023 Mitja Maximilian Zdouc, PhD
 
@@ -24,26 +24,28 @@ import logging
 import networkx
 
 import matchms
+from ms2deepscore import MS2DeepScore
+from ms2deepscore.models import load_model
 import func_timeout
 
 from fermo_core.data_processing.class_repository import Repository
 from fermo_core.input_output.core_module_parameter_managers import (
-    SpecSimNetworkCosineParameters,
+    SpecSimNetworkDeepscoreParameters,
 )
 
 logger = logging.getLogger("fermo_core")
 
 
-class ModCosineNetworker:
-    """Class for calling and logging modified cosine spect. sim. networking"""
+class Ms2deepscoreNetworker:
+    """Class for calling and logging ms2deepscore spectral similarity networking"""
 
     @staticmethod
     def spec_sim_networking(
         features: tuple,
         feature_repo: Repository,
-        settings: SpecSimNetworkCosineParameters,
+        settings: SpecSimNetworkDeepscoreParameters,
     ) -> matchms.Scores:
-        """Calls modified cosine based spectral similarity networking.
+        """Calls ms2deepscore based spectral similarity networking.
 
         Arguments:
             features: a tuple of feature IDs to consider in networking
@@ -56,6 +58,7 @@ class ModCosineNetworker:
         Raises:
             func_timeout.FunctionTimedOut: function took longer than a user-specified
              number of seconds
+            FileNotFoundError: could not open model file
 
         Notes:
             Timeout can be disabled by user by setting settings.maximum_runtime to 0.
@@ -66,9 +69,9 @@ class ModCosineNetworker:
             feature = feature_repo.get(f_id)
             spectra.append(feature.Spectrum)
 
-        sim_algorithm = matchms.similarity.ModifiedCosine(
-            tolerance=settings.fragment_tol
-        )
+        model = load_model(settings.file_path)
+
+        sim_algorithm = MS2DeepScore(model=model, progress_bar=False)
 
         if settings.maximum_runtime != 0:
             return func_timeout.func_timeout(
@@ -91,7 +94,7 @@ class ModCosineNetworker:
 
     @staticmethod
     def create_network(
-        scores: matchms.Scores, settings: SpecSimNetworkCosineParameters
+        scores: matchms.Scores, settings: SpecSimNetworkDeepscoreParameters
     ) -> networkx.Graph:
         """Process scores object and generate network
 
@@ -110,6 +113,6 @@ class ModCosineNetworker:
             link_method="mutual",
         )
 
-        network.create_network(scores, "ModifiedCosine_score")
+        network.create_network(scores, "MS2DeepScore")
 
         return network.graph

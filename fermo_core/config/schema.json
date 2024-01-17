@@ -214,7 +214,7 @@
                             }
                         },
                         "ms2deepscore": {
-                            "title": "(Optional): MS2Deepscore algorithm. Quantifies the similarity between two spectra based on a spectral embedding (deep learning). See 'https://github.com/matchms/ms2deepscore' for details.",
+                            "title": "(Optional): MS2Deepscore algorithm. Quantifies the similarity between two spectra based on a spectral embedding (deep learning). Only works fot positive ion mode data. See 'https://github.com/matchms/ms2deepscore' for details.",
                             "additionalProperties": false,
                             "type": "object",
                             "required": [
@@ -225,8 +225,12 @@
                                     "title": "Specifies whether this module should be run.",
                                     "type": "boolean"
                                 },
-                                "directory_path": {
-                                    "title": "(Optional): A path to a directory containing MS2DeepScore files. If not specified, MS2DeepScore files will be downloaded and put into the default directory ('fermo_core/libraries').",
+                                "file_path": {
+                                    "title": "(Optional): A path to a MS2DeepScore embedding file. If not specified, the MS2DeepScore file will be downloaded from Zenodo using the default URL (see https://zenodo.org/doi/10.5281/zenodo.4699355) and put into the default directory ('fermo_core/libraries/ms2deepscore').",
+                                    "type": "string"
+                                },
+                                "url": {
+                                    "title": "(Optional): The url to download the MS2DeepScore embedding file from. If not specified and if no file provided, the default MS2DeepScore file will be downloaded from Zenodo (https://zenodo.org/doi/10.5281/zenodo.4699355) and put into the default directory ('fermo_core/libraries/ms2deepscore').",
                                     "type": "string"
                                 },
                                 "score_cutoff": {
@@ -239,6 +243,16 @@
                                     "title": "(Optional): max. number of links to other molecular features any molecular feature is allowed to have. Default value: 10",
                                     "type": "integer",
                                     "minimum": 1
+                                },
+                                "msms_min_frag_nr": {
+                                    "title": "(Optional): minimum number of fragments a MS/MS fragmentation spectrum must have to be considered in spectral similarity networking. Spectra with a low number of fragments may lead to unspecific matching and so-called 'hairball clusters'. Default value: 5.",
+                                    "type": "integer",
+                                    "minimum": 1
+                                },
+                                "maximum_runtime": {
+                                    "title": "(Optional): maximum running time of module, in seconds. A value of 0 (zero) indicates unlimited running time. Default value: 1200 seconds.",
+                                    "type": "integer",
+                                    "minimum": 0
                                 }
                             }
                         }

@@ -21,6 +21,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 import logging
+import os
 from pathlib import Path
 import sys
 
@@ -64,3 +65,7 @@ class LoggerSetup:
         logger.addHandler(file_handler)
 
         return logger
+
+    @staticmethod
+    def suppress_tensorflow_logs():
+        os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"

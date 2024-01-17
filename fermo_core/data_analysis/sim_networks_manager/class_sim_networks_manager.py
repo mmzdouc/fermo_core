@@ -22,22 +22,27 @@ SOFTWARE.
 """
 import logging
 import func_timeout
-from typing import Tuple, Self
+from typing import Tuple, Self, Dict
+from urllib.error import URLError
 
-from pydantic import BaseModel
+import networkx
 
 from fermo_core.data_analysis.sim_networks_manager.class_mod_cosine_networker import (
     ModCosineNetworker,
+)
+from fermo_core.data_analysis.sim_networks_manager.class_ms2deepscore_networker import (
+    Ms2deepscoreNetworker,
 )
 from fermo_core.data_processing.class_repository import Repository
 from fermo_core.data_processing.class_stats import Stats, SpecSimNet
 from fermo_core.data_processing.builder_feature.dataclass_feature import SimNetworks
 from fermo_core.input_output.class_parameter_manager import ParameterManager
+from fermo_core.utils.utility_method_manager import UtilityMethodManager
 
 logger = logging.getLogger("fermo_core")
 
 
-class SimNetworksManager(BaseModel):
+class SimNetworksManager(UtilityMethodManager):
     """Pydantic-based class to organize calling and logging of networking modules
 
     Attributes:
@@ -45,12 +50,42 @@ class SimNetworksManager(BaseModel):
         stats: Stats object, holds stats on molecular features and samples
         features: Repository object, holds "General Feature" objects
         samples: Repository object, holds "Sample" objects
+
+    Notes:
+        `UtilityMethodManager` baseclass gives additional utility methods.
     """
 
     params: ParameterManager
     stats: Stats
     features: Repository
     samples: Repository
+
+    @staticmethod
+    def log_filtered_feature_no_msms(f_id: int):
+        """Logs feature filtered from selection due to lack of MS/MS
+
+        Arguments:
+            f_id: feature identifier
+        """
+        logger.debug(
+            f"'SimNetworksManager': feature ID '{f_id}' filtered from spectral "
+            f"similarity networking: has no associated MS/MS."
+        )
+
+    @staticmethod
+    def log_filtered_feature_nr_fragments(f_id: int, frags: int, min_frags: int):
+        """Logs feature filtered from selection due to low number of MS/MS fragments
+
+        Arguments:
+            f_id: feature identifier
+            frags: found nr of MS/MS fragments
+            min_frags: minimal necessary nr or MS/MS fragments
+        """
+        logger.debug(
+            f"'SimNetworksManager': feature ID '{f_id}' filtered from spectral "
+            f"similarity networking: min. nr. of MS/MS fragments lower than required "
+            f"by parameter 'msms_min_frag_nr' ('{frags}' < '{min_frags}')."
+        )
 
     def return_attrs(self: Self) -> Tuple[Stats, Repository, Repository]:
         """Returns modified attributes from SimNetworksManager to the calling function
@@ -69,6 +104,10 @@ class SimNetworksManager(BaseModel):
                 self.params.SpecSimNetworkCosineParameters.activate_module,
                 self.run_modified_cosine_alg,
             ),
+            (
+                self.params.SpecSimNetworkDeepscoreParameters.activate_module,
+                self.run_ms2deepscore_alg,
+            ),
         )
 
         for module in modules:
@@ -79,17 +118,18 @@ class SimNetworksManager(BaseModel):
 
     def run_modified_cosine_alg(self: Self):
         """Run modified cosine-based spectral similarity networking on features."""
+        # TODO(MMZ 15.1.24): cover with test
         logger.info(
             "'SimNetworksManager': started modified cosine-based spectral similarity "
             "(=molecular) networking."
         )
-        mod_cosine_networker = ModCosineNetworker()
-        filtered_features = mod_cosine_networker.filter_input_spectra(
+        filtered_features = self.filter_input_spectra(
             tuple(self.stats.active_features),
             self.features,
-            self.params.SpecSimNetworkCosineParameters,
+            self.params.SpecSimNetworkCosineParameters.msms_min_frag_nr,
         )
 
+        mod_cosine_networker = ModCosineNetworker()
         try:
             scores = mod_cosine_networker.spec_sim_networking(
                 tuple(filtered_features["included"]),
@@ -104,7 +144,7 @@ class SimNetworksManager(BaseModel):
                 f"'{self.params.SpecSimNetworkCosineParameters.maximum_runtime}' "
                 f"seconds. Increase the 'modified_cosine/maximum_runtime' parameter "
                 f"or set it to 0 (zero) for unlimited runtime. Alternatively, "
-                f"filter out low-intensity/area peaks with 'feature_filtering'."
+                f"filter out low-intensity/area peaks with 'feature_filtering' - SKIP."
             )
             return
 
@@ -113,29 +153,209 @@ class SimNetworksManager(BaseModel):
         )
 
         try:
-            network_data = mod_cosine_networker.format_network_for_storage(
+            network_data = self.format_network_for_storage(
                 network,
             )
         except RuntimeError as e:
             logger.error(str(e))
             return
 
-        self.store_network_data("modified_cosine", network_data, filtered_features)
+        self.store_network_data(
+            "modified_cosine", network_data, tuple(filtered_features.get("included"))
+        )
 
         logger.info(
             "'SimNetworksManager': completed modified cosine-based spectral similarity "
             "(=molecular) networking."
         )
 
+    def run_ms2deepscore_alg(self: Self):
+        """Run ms2deepscore-based spectral similarity networking on features."""
+        # TODO(MMZ 15.1.24): cover with test
+        logger.info(
+            "'SimNetworksManager': started ms2deepscore-based spectral similarity "
+            "(=molecular) networking."
+        )
+
+        if self.params.PeaktableParameters.polarity != "positive":
+            logger.warning(
+                "'SimNetworksManager': could not run MS2DeepScore-based spectral "
+                "similarity networking: mass spectrometry data polarity not positive "
+                "- SKIP"
+            )
+            return
+
+        if not self.params.SpecSimNetworkDeepscoreParameters.file_path.exists():
+            logger.warning(
+                f"'SimNetworksManager': could not find MS2DeepScore embedding file "
+                f"'{self.params.SpecSimNetworkDeepscoreParameters.file_path.resolve()}'"
+                f". Attempt to download file into default directory "
+                f"'"
+                f"{self.params.SpecSimNetworkDeepscoreParameters.default_file_path.parent.resolve()}'."
+            )
+            self.params.SpecSimNetworkDeepscoreParameters.file_path = (
+                self.params.SpecSimNetworkDeepscoreParameters.default_file_path
+            )
+
+            try:
+                func_timeout.func_timeout(
+                    timeout=self.params.SpecSimNetworkDeepscoreParameters.maximum_runtime,
+                    func=self.download_file,
+                    kwargs={
+                        "url": self.params.SpecSimNetworkDeepscoreParameters.url,
+                        "file": self.params.SpecSimNetworkDeepscoreParameters.file_path,
+                    },
+                )
+            except URLError:
+                logger.error(
+                    f"'SimNetworksManager': could not download MS2DeepScore embedding "
+                    f"file from URL "
+                    f"'{self.params.SpecSimNetworkDeepscoreParameters.url}' to "
+                    f"default location "
+                    f"'{self.params.SpecSimNetworkDeepscoreParameters.file_path}'"
+                    " - SKIP"
+                )
+                return
+            except func_timeout.FunctionTimedOut:
+                logger.error(
+                    f"'SimNetworksManager': download of file took longer than the "
+                    f"maximum allowed time of "
+                    f"'{self.params.SpecSimNetworkDeepscoreParameters.maximum_runtime}'"
+                    f" seconds ('ms2deepscore/maximum_runtime'). Check your internet "
+                    f"connection and try again - SKIP"
+                )
+                return
+
+        filtered_features = self.filter_input_spectra(
+            tuple(self.stats.active_features),
+            self.features,
+            self.params.SpecSimNetworkDeepscoreParameters.msms_min_frag_nr,
+        )
+
+        ms2deepscore_networker = Ms2deepscoreNetworker()
+        try:
+            scores = ms2deepscore_networker.spec_sim_networking(
+                tuple(filtered_features["included"]),
+                self.features,
+                self.params.SpecSimNetworkDeepscoreParameters,
+            )
+        except func_timeout.FunctionTimedOut:
+            logger.warning(
+                f"'SimNetworksManager/Ms2deepscoreNetworker': timeout of "
+                f"ms2deepscore similarity network calculation. Calculation "
+                f"took longer than "
+                f"'{self.params.SpecSimNetworkDeepscoreParameters.maximum_runtime}"
+                f"' seconds. Increase the 'ms2deepscore/maximum_runtime' parameter "
+                f"or set it to 0 (zero) for unlimited runtime. Alternatively, "
+                f"filter out low-intensity/area peaks with 'feature_filtering' - SKIP"
+            )
+            return
+
+        network = ms2deepscore_networker.create_network(
+            scores, self.params.SpecSimNetworkDeepscoreParameters
+        )
+
+        try:
+            network_data = self.format_network_for_storage(
+                network,
+            )
+        except RuntimeError as e:
+            logger.error(str(e))
+            return
+
+        self.store_network_data(
+            "ms2deepscore", network_data, tuple(filtered_features.get("included"))
+        )
+
+        logger.info(
+            "'SimNetworksManager': completed ms2deepscore-based spectral similarity "
+            "(=molecular) networking."
+        )
+
+    def filter_input_spectra(
+        self: Self,
+        features: tuple,
+        feature_repo: Repository,
+        msms_min_frag_nr: int,
+    ) -> Dict[str, set]:
+        """Filter features for spectral similarity analysis based on given restrictions.
+
+        Arguments:
+            features: a tuple of feature IDs
+            feature_repo: containing GeneralFeature objects with feature info
+            msms_min_frag_nr: minimum number of fragments per spectrum to be considered
+
+        Returns:
+            A dictionary containing included and excluded feature ints in sets.
+        """
+        included = set()
+        excluded = set()
+
+        for f_id in features:
+            feature = feature_repo.get(f_id)
+            if feature.Spectrum is None:
+                excluded.add(f_id)
+                self.log_filtered_feature_no_msms(f_id)
+            elif len(feature.Spectrum.peaks.mz) < msms_min_frag_nr:
+                excluded.add(f_id)
+                self.log_filtered_feature_nr_fragments(
+                    f_id, len(feature.Spectrum.peaks.mz), msms_min_frag_nr
+                )
+            else:
+                included.add(f_id)
+
+        return {"included": included, "excluded": excluded}
+
+    @staticmethod
+    def format_network_for_storage(
+        graph: networkx.Graph,
+    ) -> Dict:
+        """Process networkx Graph object, remove redundant clusters, extract info
+
+        Arguments:
+            graph: holding spectral similarity networking information
+
+        Returns:
+            dict of full network, subnetworks, dict of clusters and contained features
+
+        Raises:
+            RuntimeError: detected overlap between subclusters in terms of feature IDs
+
+        Notes:
+            Matchms introduces "stringified" feature IDs in network - need to be
+            removed by `networkx.relabel_nodes`
+        """
+        mapping = {node: int(node) for node in graph.nodes}
+        graph = networkx.relabel_nodes(graph, mapping)
+
+        subnetworks = []
+        for component in networkx.connected_components(graph):
+            subnetworks.append(graph.subgraph(component).copy())
+
+        clusters = dict()
+        for i, subnetwork in enumerate(subnetworks):
+            ids = set([int(node) for node in subnetwork.nodes])
+            for cluster in clusters.values():
+                if len(output := ids.intersection(cluster)) != 0:
+                    raise RuntimeError(
+                        f"'SimNetworksManager': detected overlap between subclusters: "
+                        f"cluster with ids '{ids}' and cluster with ids '{cluster}' "
+                        f"share ids '{output}'. This is unexpected - ABORT."
+                    )
+            clusters[i] = ids
+            subnetworks[i].graph["name"] = i
+
+        return {"network": graph, "subnetworks": subnetworks, "summary": clusters}
+
     def store_network_data(
-        self: Self, network_name: str, network_data: dict, filtered_features: dict
+        self: Self, network_name: str, network_data: dict, features: tuple
     ):
         """Store network data in storage objects for later use
 
         Arguments:
             network_name: name of networking algorithm
-            network_data: dict of network, subnetworks, clusters
-            filtered_features: dict features included and excluded from networking
+            network_data: dict of network, subnetworks, summary
+            features: tuple of features included in networking
         """
         if self.stats.networks is None:
             self.stats.networks = {}
@@ -147,7 +367,7 @@ class SimNetworksManager(BaseModel):
             summary=network_data["summary"],
         )
 
-        for f_id in filtered_features["included"]:
+        for f_id in features:
             feature = self.features.get(f_id)
             if feature.networks is None:
                 feature.networks = {}

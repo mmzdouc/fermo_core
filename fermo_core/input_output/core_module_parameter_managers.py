@@ -27,7 +27,6 @@ from pydantic import (
     model_validator,
     PositiveFloat,
     PositiveInt,
-    DirectoryPath,
 )
 
 from fermo_core.input_output.class_validation_manager import ValidationManager
@@ -91,17 +90,30 @@ class SpecSimNetworkDeepscoreParameters(BaseModel):
 
     Attributes:
         activate_module: bool to indicate if module should be executed.
-        directory_path: pathlib Path object pointing to dir with ms2deepscore files
+        default_file_path: pathlib Path object for reference if file_path does not exist
+        file_path: pathlib Path object pointing to ms2deepscore embedding file.
+        url: the URL to download the file from.
         score_cutoff: the minimum similarity score between two spectra.
         max_nr_links: max links to a single spectra.
+        msms_min_frag_nr: minimum number of fragments in MS2 to run it in analysis
+        maximum_runtime: max runtime of module, in seconds; 0 indicates no runtime limit
 
     Raise:
         pydantic.ValidationError: Pydantic validation failed during instantiation.
     """
 
     activate_module: bool = True
-    directory_path: DirectoryPath = Path(__file__).parent.parent.joinpath(
-        "libraries/ms2deepscore"
+    default_file_path: Path = Path(__file__).parent.parent.joinpath(
+        "libraries/ms2deepscore/ms2deepscore_positive_10k_1000_1000_1000_500.hdf5"
+    )
+    file_path: Path = Path(__file__).parent.parent.joinpath(
+        "libraries/ms2deepscore/ms2deepscore_positive_10k_1000_1000_1000_500.hdf5"
+    )
+    url: str = (
+        "https://zenodo.org/records/8274763/files/"
+        "ms2deepscore_positive_10k_1000_1000_1000_500.hdf5?download=1"
     )
     score_cutoff: PositiveFloat = 0.7
     max_nr_links: PositiveInt = 10
+    msms_min_frag_nr: PositiveInt = 5
+    maximum_runtime: int = 1200

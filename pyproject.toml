@@ -20,7 +20,8 @@ dependencies = [
     "pydantic==2.5.2",
     "pyteomics==4.6.3",
     "coloredlogs==15.0.1",
-    "func-timeout==4.3.5"
+    "func-timeout==4.3.5",
+    "ms2deepscore==0.5.0"
 ]
 
 [project.optional-dependencies]
