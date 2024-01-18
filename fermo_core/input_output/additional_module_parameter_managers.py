@@ -1,4 +1,4 @@
-"""Organizes several classes that hold and validate parameters for additional modules.
+"""Organizes classes that hold and validate parameters for additional modules.
 
 Copyright (c) 2022-2023 Mitja Maximilian Zdouc, PhD
 
@@ -21,7 +21,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 from pathlib import Path
-from typing import List, Optional
+from typing import List, Optional, Self
 
 from pydantic import (
     BaseModel,
@@ -79,6 +79,17 @@ class FeatureFilteringParameters(BaseModel):
         ValidationManager.validate_range_zero_one(r_list)
         return r_list
 
+    def to_json(self: Self) -> dict:
+        """Convert attributes to json-compatible ones."""
+        if self.activate_module:
+            return {
+                "activate_module": self.activate_module,
+                "filter_rel_int_range": self.filter_rel_int_range,
+                "filter_rel_area_range": self.filter_rel_area_range,
+            }
+        else:
+            return {"activate_module": self.activate_module}
+
 
 class BlankAssignmentParameters(BaseModel):
     """A Pydantic-based class for repr. and valid. of blank assignment parameters.
@@ -93,6 +104,16 @@ class BlankAssignmentParameters(BaseModel):
 
     activate_module: bool = False
     column_ret_fold: PositiveInt = 10
+
+    def to_json(self: Self) -> dict:
+        """Convert attributes to json-compatible ones."""
+        if self.activate_module:
+            return {
+                "activate_module": self.activate_module,
+                "column_ret_fold": int(self.column_ret_fold),
+            }
+        else:
+            return {"activate_module": self.activate_module}
 
 
 class PhenotypeAssignmentFoldParameters(BaseModel):
@@ -112,6 +133,17 @@ class PhenotypeAssignmentFoldParameters(BaseModel):
     activate_module: bool = False
     fold_diff: PositiveInt = 10
     data_type: str = "percentage"
+
+    def to_json(self: Self) -> dict:
+        """Convert attributes to json-compatible ones."""
+        if self.activate_module:
+            return {
+                "activate_module": self.activate_module,
+                "fold_diff": int(self.fold_diff),
+                "data_type": str(self.data_type),
+            }
+        else:
+            return {"activate_module": self.activate_module}
 
 
 class SpectralLibMatchingCosineParameters(BaseModel):
@@ -134,6 +166,18 @@ class SpectralLibMatchingCosineParameters(BaseModel):
     min_nr_matched_peaks: PositiveInt = 5
     score_cutoff: PositiveFloat = 0.7
 
+    def to_json(self: Self) -> dict:
+        """Convert attributes to json-compatible ones."""
+        if self.activate_module:
+            return {
+                "activate_module": self.activate_module,
+                "fragment_tol": float(self.fragment_tol),
+                "min_nr_matched_peaks": int(self.min_nr_matched_peaks),
+                "score_cutoff": float(self.score_cutoff),
+            }
+        else:
+            return {"activate_module": self.activate_module}
+
 
 class SpectralLibMatchingDeepscoreParameters(BaseModel):
     """A Pydantic-based class for repr. and valid. of spectral library matching params.
@@ -155,6 +199,17 @@ class SpectralLibMatchingDeepscoreParameters(BaseModel):
     )
     score_cutoff: PositiveFloat = 0.7
 
+    def to_json(self: Self) -> dict:
+        """Convert attributes to json-compatible ones."""
+        if self.activate_module:
+            return {
+                "activate_module": self.activate_module,
+                "directory_path": str(self.directory_path.resolve()),
+                "score_cutoff": float(self.score_cutoff),
+            }
+        else:
+            return {"activate_module": self.activate_module}
+
 
 class Ms2QueryAnnotationParameters(BaseModel):
     """A Pydantic-based class for repr. and valid. of ms2query annotation params.
@@ -174,12 +229,38 @@ class Ms2QueryAnnotationParameters(BaseModel):
         "libraries/ms2query"
     )
     consider_blank: bool = False
-    filter_rel_int_range: List[float] = [0.0, 1.0]
+    filter_rel_int_range: List[float] = None
 
     @model_validator(mode="after")
-    def order_and_validate_range(self):
-        r_list = self.filter_rel_int_range
+    def validate_attrs(self):
+        if self.filter_rel_int_range is not None:
+            self.filter_rel_int_range = self.order_and_validate_range(
+                self.filter_rel_int_range
+            )
+        return self
+
+    @staticmethod
+    def order_and_validate_range(r_list: List[float]) -> List[float]:
+        """Order the list and validate format.
+
+        Attributes:
+            r_list: a range of two floats
+
+        Returns:
+            The modified list of a range of two floats
+        """
         r_list = [min(r_list), max(r_list)]
         ValidationManager.validate_range_zero_one(r_list)
-        self.filter_rel_int_range = r_list
-        return self
+        return r_list
+
+    def to_json(self: Self) -> dict:
+        """Convert attributes to json-compatible ones."""
+        if self.activate_module:
+            return {
+                "activate_module": self.activate_module,
+                "directory_path": str(self.directory_path.resolve()),
+                "consider_blank": self.consider_blank,
+                "filter_rel_int_range": self.filter_rel_int_range,
+            }
+        else:
+            return {"activate_module": self.activate_module}

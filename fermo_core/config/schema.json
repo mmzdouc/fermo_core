@@ -131,6 +131,29 @@
                             ]
                         }
                     }
+                },
+                "output": {
+                    "title": "(Optional): output of fermo_core.",
+                    "additionalProperties": false,
+                    "type": "object",
+                    "required": [
+                        "filepath",
+                        "format"
+                    ],
+                    "properties": {
+                        "filepath": {
+                            "title": "Specifies the filepath. Absolute paths are preferred.",
+                            "type": "string"
+                        },
+                        "format": {
+                            "title": "Specifies the format of the file. Must be one of the allowed formats in 'enum'.",
+                            "type": "string",
+                            "enum": [
+                                "json",
+                                "csv"
+                            ]
+                        }
+                    }
                 }
             }
         },
@@ -227,10 +250,6 @@
                                 },
                                 "file_path": {
                                     "title": "(Optional): A path to a MS2DeepScore embedding file. If not specified, the MS2DeepScore file will be downloaded from Zenodo using the default URL (see https://zenodo.org/doi/10.5281/zenodo.4699355) and put into the default directory ('fermo_core/libraries/ms2deepscore').",
-                                    "type": "string"
-                                },
-                                "url": {
-                                    "title": "(Optional): The url to download the MS2DeepScore embedding file from. If not specified and if no file provided, the default MS2DeepScore file will be downloaded from Zenodo (https://zenodo.org/doi/10.5281/zenodo.4699355) and put into the default directory ('fermo_core/libraries/ms2deepscore').",
                                     "type": "string"
                                 },
                                 "score_cutoff": {

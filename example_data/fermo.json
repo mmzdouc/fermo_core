@@ -1,0 +1,293 @@
+{
+    "stats": {
+        "rt_min": 1.52,
+        "rt_max": 20.7,
+        "rt_range": 19.18,
+        "area_min": 490,
+        "area_max": 44000,
+        "samples": [
+            "5440_5439_mod.mzXML",
+            "5432_5431_mod2.mzXML",
+            "5425_5426_mod.mzXML",
+            "5434_5433_mod.mzXML",
+            "5450_5449_mod.mzXML",
+            "5444_5443_mod.mzXML",
+            "5452_5451_mod.mzXML",
+            "5446_5445_mod.mzXML",
+            "5456_5455_mod.mzXML",
+            "5458_5457_mod.mzXML",
+            "D3_H3_mod.mzXML"
+        ],
+        "all_features": 143,
+        "active_features": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23,
+            30,
+            31,
+            32,
+            33,
+            34,
+            35,
+            36,
+            37,
+            38,
+            39,
+            40,
+            41,
+            42,
+            43,
+            44,
+            45,
+            46,
+            47,
+            48,
+            49,
+            50,
+            51,
+            52,
+            53,
+            54,
+            55,
+            56,
+            57,
+            62,
+            63,
+            64,
+            65,
+            66,
+            67,
+            68,
+            69,
+            70,
+            71,
+            72,
+            73,
+            74,
+            75,
+            76,
+            77,
+            78,
+            79,
+            80,
+            82,
+            83,
+            84,
+            85,
+            88,
+            89,
+            90,
+            91,
+            92,
+            93,
+            94,
+            95,
+            96,
+            97,
+            98,
+            100,
+            101,
+            102,
+            103,
+            104,
+            105,
+            106,
+            107,
+            108,
+            109,
+            110,
+            112,
+            113,
+            114,
+            115,
+            116,
+            117,
+            118,
+            120,
+            121,
+            122,
+            123,
+            124,
+            125,
+            126,
+            127,
+            128,
+            129,
+            130,
+            131,
+            132,
+            133,
+            134,
+            135,
+            136,
+            137,
+            138,
+            139,
+            140,
+            141,
+            142,
+            143,
+            144,
+            145,
+            146,
+            147,
+            148,
+            149,
+            150,
+            151,
+            152,
+            153,
+            154,
+            155,
+            156,
+            157,
+            158,
+            159
+        ],
+        "inactive_features": [],
+        "blank_features": [],
+        "groups": {
+            "DEFAULT": [],
+            "C": [
+                "5458_5457_mod.mzXML",
+                "5444_5443_mod.mzXML",
+                "5425_5426_mod.mzXML"
+            ],
+            "A2": [
+                "5440_5439_mod.mzXML",
+                "5432_5431_mod2.mzXML"
+            ],
+            "S": [
+                "5456_5455_mod.mzXML",
+                "5434_5433_mod.mzXML",
+                "5452_5451_mod.mzXML",
+                "5446_5445_mod.mzXML"
+            ],
+            "V2": [
+                "5450_5449_mod.mzXML"
+            ],
+            "BLANK": [
+                "D3_H3_mod.mzXML"
+            ]
+        },
+        "networks": {},
+        "phenotypes": {
+            "quant_data": [
+                "5434_5433_mod.mzXML",
+                "5446_5445_mod.mzXML",
+                "5452_5451_mod.mzXML",
+                "5456_5455_mod.mzXML"
+            ]
+        },
+        "analysis_log": [
+            "Ran module 'FeatureFilter'. For parameters, see 'feature_filtering'.",
+            "Ran module 'ChromTraceCalculator'."
+        ]
+    },
+    "parameters": {
+        "PeaktableParameters": {
+            "filepath": "/home/mitz/aWageningen/Active/FERMO/fermo_core/fermo_core/example_data/case_study_peak_table_quant_full.csv",
+            "format": "mzmine3",
+            "polarity": "positive"
+        },
+        "MsmsParameters": "No parameters provided.",
+        "PhenotypeParameters": {
+            "filepath": "/home/mitz/aWageningen/Active/FERMO/fermo_core/fermo_core/example_data/case_study_bioactivity.csv",
+            "format": "fermo"
+        },
+        "GroupMetadataParameters": {
+            "filepath": "/home/mitz/aWageningen/Active/FERMO/fermo_core/fermo_core/example_data/case_study_group_metadata.csv",
+            "format": "fermo"
+        },
+        "SpecLibParameters": {
+            "filepath": "/home/mitz/aWageningen/Active/FERMO/fermo_core/fermo_core/example_data/case_study_spectral_library.mgf",
+            "format": "mgf"
+        },
+        "OutputParameters": {
+            "filepath": "/home/mitz/aWageningen/Active/FERMO/fermo_core/fermo_core/example_data/fermo.json",
+            "format": "json"
+        },
+        "AdductAnnotationParameters": {
+            "activate_module": true,
+            "mass_dev_ppm": 20.0
+        },
+        "SpecSimNetworkCosineParameters": {
+            "activate_module": true,
+            "msms_min_frag_nr": 5,
+            "fragment_tol": 0.1,
+            "min_nr_matched_peaks": 5,
+            "score_cutoff": 0.7,
+            "max_nr_links": 10,
+            "max_precursor_mass_diff": 400,
+            "maximum_runtime": 1200
+        },
+        "SpecSimNetworkDeepscoreParameters": {
+            "activate_module": true,
+            "file_path": "/home/mitz/aWageningen/Active/FERMO/fermo_core/fermo_core/fermo_core/libraries/ms2deepscore/ms2deepscore_positive_10k_1000_1000_1000_500.hdf5",
+            "score_cutoff": 0.7,
+            "max_nr_links": 10,
+            "msms_min_frag_nr": 5,
+            "maximum_runtime": 1200
+        },
+        "FeatureFilteringParameters": {
+            "activate_module": true,
+            "filter_rel_int_range": [
+                0.0,
+                1.0
+            ],
+            "filter_rel_area_range": [
+                0.0,
+                1.0
+            ]
+        },
+        "BlankAssignmentParameters": {
+            "activate_module": true,
+            "column_ret_fold": 10
+        },
+        "PhenotypeAssignmentFoldParameters": {
+            "activate_module": true,
+            "fold_diff": 10,
+            "data_type": "percentage"
+        },
+        "SpectralLibMatchingCosineParameters": {
+            "activate_module": true,
+            "fragment_tol": 0.1,
+            "min_nr_matched_peaks": 5,
+            "score_cutoff": 0.7
+        },
+        "SpectralLibMatchingDeepscoreParameters": {
+            "activate_module": true,
+            "directory_path": "/home/mitz/aWageningen/Active/FERMO/fermo_core/fermo_core/fermo_core/libraries/ms2deepscore",
+            "score_cutoff": 0.7
+        },
+        "Ms2QueryAnnotationParameters": {
+            "activate_module": true,
+            "directory_path": "/home/mitz/aWageningen/Active/FERMO/fermo_core/fermo_core/fermo_core/libraries/ms2query",
+            "consider_blank": true,
+            "filter_rel_int_range": [
+                0.0,
+                1.0
+            ]
+        }
+    }
+}

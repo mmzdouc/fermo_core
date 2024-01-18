@@ -21,6 +21,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
+import json
+import logging
 from typing import Self
 
 from pydantic import BaseModel
@@ -28,6 +30,8 @@ from pydantic import BaseModel
 from fermo_core.data_processing.class_repository import Repository
 from fermo_core.data_processing.class_stats import Stats
 from fermo_core.input_output.class_parameter_manager import ParameterManager
+
+logger = logging.getLogger("fermo_core")
 
 
 class ExportManager(BaseModel):
@@ -49,27 +53,51 @@ class ExportManager(BaseModel):
     json_dict: dict = dict()
 
     def write_to_fermo_json(self: Self):
-        """Write collected data in json_dict into a json file on disk"""
-        # check the location to dump to - needs another parameter class and adoption
-        # in json and schema
+        """Write collected data in json_dict into a json file on disk
 
-        # json dump (see mibigger; also, take care of any formatting errors (SMILES))
-        # verify that file was indeed written
-        pass
+        Raises:
+            FileNotFoundError: Could not write or find written json file.
+        """
+        if not self.params.OutputParameters.filepath.parent.exists():
+            logger.warning(
+                f"'ExportManager': Could not find the output directory "
+                f"'{self.params.OutputParameters.filepath.parent.resolve()}'. "
+                f"Fallback to default directory "
+                f"'{self.params.OutputParameters.default_filepath.parent.resolve()}' "
+                f"and default filename "
+                f"'{self.params.OutputParameters.default_filepath.name}'."
+            )
+            self.params.OutputParameters.filepath = (
+                self.params.OutputParameters.default_filepath
+            )
+
+        with open(self.params.OutputParameters.filepath, "w", encoding="utf-8") as outf:
+            outf.write(json.dumps(self.json_dict, indent=4, ensure_ascii=False))
+
+        if self.params.OutputParameters.filepath.exists():
+            logger.info(
+                f"'ExportManager': Successfully wrote file "
+                f"'{self.params.OutputParameters.filepath}'."
+            )
+        else:
+            logger.fatal(
+                f"'ExportManager': Could not write file "
+                f"'{self.params.OutputParameters.filepath}' - ABORT"
+            )
+            raise FileNotFoundError
 
     def build_json_dict(self: Self):
         """Driver method to assemble data for json dump"""
 
-        self.extract_params()
+        # TODO(MMZ 17.1.24): Switch on again
         self.extract_stats()
-        self.extract_features_repo()
-        self.extract_samples_repo()
+        self.extract_params()
+        # self.extract_features_repo()
+        # self.extract_samples_repo()
 
     def extract_params(self: Self):
         """Extract data from params"""
-        # extract data from the object by calling its export function
-        # store in the json dict
-        pass
+        self.json_dict["parameters"] = self.params.make_json_compatible()
 
     def extract_stats(self: Self):
         """Extract data from stats"""
@@ -77,12 +105,14 @@ class ExportManager(BaseModel):
 
     def extract_features_repo(self: Self):
         """Extract data from features repository"""
+        # TODO(MMZ 17.1.24)
         # extract data from the object by calling its export function
         # store in the json dict
         pass
 
     def extract_samples_repo(self: Self):
         """Extract data from samples repository"""
+        # TODO(MMZ 17.1.24)
         # extract data from the object by calling its export function
         # store in the json dict
         pass

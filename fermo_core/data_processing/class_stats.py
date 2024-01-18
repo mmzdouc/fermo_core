@@ -97,8 +97,8 @@ class Stats(BaseModel):
     rt_range: Optional[float] = None
     area_min: Optional[int] = None
     area_max: Optional[int] = None
-    samples: Optional[Tuple] = None
-    features: Optional[Tuple] = None
+    samples: Optional[tuple] = None
+    features: Optional[tuple] = None
     active_features: set = set()
     inactive_features: set = set()
     blank_features: set = set()
@@ -134,20 +134,20 @@ class Stats(BaseModel):
     def make_json_compatible(self: Self) -> dict:
         """Export class attributes to json-dump compatible dict."""
         json_dict = {
-            "rt_min": self.rt_min,
-            "rt_max": self.rt_max,
-            "rt_range": self.rt_range,
-            "area_min": self.area_min,
-            "area_max": self.area_max,
+            "rt_min": float(self.rt_min),
+            "rt_max": float(self.rt_max),
+            "rt_range": float(self.rt_range),
+            "area_min": int(self.area_min),
+            "area_max": int(self.area_max),
             "samples": list(self.samples),
-            "all_features": list(self.features),
+            "all_features": len(self.features),
             "active_features": list(self.active_features),
             "inactive_features": list(self.inactive_features),
             "blank_features": list(self.blank_features),
             "groups": dict(),
             "networks": dict(),
             "phenotypes": dict(),
-            "analysis_log": self.analysis_log,
+            "analysis_log": list(self.analysis_log),
         }
 
         for group in self.groups:

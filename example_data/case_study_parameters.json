@@ -20,6 +20,10 @@
         "spectral_library": {
             "filepath": "example_data/case_study_spectral_library.mgf",
             "format": "mgf"
+        },
+        "output": {
+            "filepath": "example_data/fermo.json",
+            "format": "json"
         }
     },
     "core_modules": {

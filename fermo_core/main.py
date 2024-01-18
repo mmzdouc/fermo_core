@@ -66,7 +66,7 @@ def main(params: ParameterManager):
     export_manager.build_json_dict()
     export_manager.write_to_fermo_json()
 
-    # TODO(MMZ 17.1.24): test if file was dumped successfully
+    # TODO(MMZ 18.1.24): use del to remove instances of stats, features, samples
     # TODO(MMZ 17.1.24): switch to support export as a csv - maybe use the mzmine-one
     #  and only add info to it?
 
