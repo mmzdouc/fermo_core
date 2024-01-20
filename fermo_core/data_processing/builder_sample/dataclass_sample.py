@@ -20,7 +20,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-from typing import Optional, Dict, Union
+from typing import Optional, Dict, Union, Self
 
 from pydantic import BaseModel
 
@@ -46,7 +46,7 @@ class Sample(BaseModel):
         features: dict of features objects with sample-specific information.
         feature_ids: set of feature ids included in sample
         groups: group association of sample (if provided, else default group DEFAULT)
-        cliques: number of cliques in this sample
+        cliques: cliques and their ids found in the sample
         max_intensity: the highest intensity of a feature in the sample (absolute)
         max_area: the highest area of a feature in the sample (absolute)
         phenotypes: indicates the conditions in which the sample showed activity. A
@@ -57,7 +57,44 @@ class Sample(BaseModel):
     features: Optional[dict] = None
     feature_ids: Optional[set[int]] = None
     groups: set[str] = {"DEFAULT"}
-    cliques: Optional[dict] = None
+    cliques: Optional[set[int]] = None
     max_intensity: Optional[int] = None
     max_area: Optional[int] = None
     phenotypes: Optional[Dict[str, Phenotype]] = None
+
+    def to_json(self: Self) -> dict:
+        """Convert class attributes to json-compatible dict.
+
+        Returns:
+            A dictionary with class attributes as keys
+        """
+        attributes = (
+            ("s_id", self.s_id, str),
+            ("feature_ids", self.feature_ids, list),
+            ("groups", self.groups, list),
+            ("cliques", self.cliques, list),
+            ("max_intensity", self.max_intensity, int),
+            ("max_area", self.max_area, int),
+        )
+
+        json_dict = {}
+        for attribute in attributes:
+            if attribute[1] is not None:
+                json_dict[attribute[0]] = attribute[2](attribute[1])
+
+        if self.feature_ids is not None:
+            json_dict["sample_spec_features"] = dict()
+            for feature_id in self.feature_ids:
+                json_dict["sample_spec_features"][feature_id] = self.features[
+                    feature_id
+                ].to_json()
+
+        if self.phenotypes is not None:
+            json_dict["phenotypes"] = dict()
+            for entry in self.phenotypes:
+                json_dict["phenotypes"][entry] = {
+                    "value": float(self.phenotypes[entry].value),
+                    "conc": float(self.phenotypes[entry].conc),
+                }
+
+        return json_dict
