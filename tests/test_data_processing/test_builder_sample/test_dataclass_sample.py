@@ -67,3 +67,10 @@ def test_to_json_phenotypes_valid():
     sample.phenotypes = {"test1": Phenotype(value=10, conc=1)}
     json_dict = sample.to_json()
     assert json_dict["phenotypes"]["test1"]["value"] == 10.0
+
+
+def test_to_json_networks_valid():
+    sample = Sample()
+    sample.networks = {"mod_cos": {0, 1, 2}, "ms2deep": {0, 1}}
+    json_dict = sample.to_json()
+    assert isinstance(json_dict["networks"]["mod_cos"], list)

@@ -46,7 +46,7 @@ class Sample(BaseModel):
         features: dict of features objects with sample-specific information.
         feature_ids: set of feature ids included in sample
         groups: group association of sample (if provided, else default group DEFAULT)
-        cliques: cliques and their ids found in the sample
+        networks: for each network algorithm, a set of subnetwork ids found in sample
         max_intensity: the highest intensity of a feature in the sample (absolute)
         max_area: the highest area of a feature in the sample (absolute)
         phenotypes: indicates the conditions in which the sample showed activity. A
@@ -57,7 +57,7 @@ class Sample(BaseModel):
     features: Optional[dict] = None
     feature_ids: Optional[set[int]] = None
     groups: set[str] = {"DEFAULT"}
-    cliques: Optional[set[int]] = None
+    networks: Optional[Dict[str, set]] = None
     max_intensity: Optional[int] = None
     max_area: Optional[int] = None
     phenotypes: Optional[Dict[str, Phenotype]] = None
@@ -72,7 +72,6 @@ class Sample(BaseModel):
             ("s_id", self.s_id, str),
             ("feature_ids", self.feature_ids, list),
             ("groups", self.groups, list),
-            ("cliques", self.cliques, list),
             ("max_intensity", self.max_intensity, int),
             ("max_area", self.max_area, int),
         )
@@ -81,6 +80,11 @@ class Sample(BaseModel):
         for attribute in attributes:
             if attribute[1] is not None:
                 json_dict[attribute[0]] = attribute[2](attribute[1])
+
+        if self.networks is not None:
+            json_dict["networks"] = dict()
+            for subnet in self.networks:
+                json_dict["networks"][subnet] = list(self.networks[subnet])
 
         if self.feature_ids is not None:
             json_dict["sample_spec_features"] = dict()
