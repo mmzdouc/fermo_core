@@ -88,12 +88,10 @@ class ExportManager(BaseModel):
 
     def build_json_dict(self: Self):
         """Driver method to assemble data for json dump"""
-
-        # TODO(MMZ 17.1.24): Switch on again
         self.export_stats()
         self.export_params()
         self.export_features_repo()
-        # self.export_samples_repo()
+        self.export_samples_repo()
 
     def export_params(self: Self):
         """Export data from params"""
@@ -112,8 +110,7 @@ class ExportManager(BaseModel):
 
     def export_samples_repo(self: Self):
         """Export data from samples repository"""
-        # TODO(MMZ 17.1.24)
-        # extract data from the object by calling its export function
-        # store in the json dict
-
-        pass
+        self.json_dict["samples"] = dict()
+        for sample_id in self.stats.samples:
+            sample = self.samples.get(sample_id)
+            self.json_dict["samples"][sample_id] = sample.to_json()

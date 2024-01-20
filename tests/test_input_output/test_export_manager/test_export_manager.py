@@ -59,3 +59,10 @@ def test_export_features_repo_valid(real_data_export):
         real_data_export.json_dict.get("general_features").get(1).get("spectrum")
         is not None
     )
+
+
+def test_export_samples_repo_valid(real_data_export):
+    real_data_export.export_samples_repo()
+    assert (
+        real_data_export.json_dict.get("samples").get("5425_5426_mod.mzXML") is not None
+    )
