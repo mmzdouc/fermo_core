@@ -90,28 +90,28 @@ class ExportManager(BaseModel):
         """Driver method to assemble data for json dump"""
 
         # TODO(MMZ 17.1.24): Switch on again
-        self.extract_stats()
-        self.extract_params()
-        # self.extract_features_repo()
-        # self.extract_samples_repo()
+        self.export_stats()
+        self.export_params()
+        self.export_features_repo()
+        # self.export_samples_repo()
 
-    def extract_params(self: Self):
-        """Extract data from params"""
+    def export_params(self: Self):
+        """Export data from params"""
         self.json_dict["parameters"] = self.params.make_json_compatible()
 
-    def extract_stats(self: Self):
-        """Extract data from stats"""
+    def export_stats(self: Self):
+        """Export data from stats"""
         self.json_dict["stats"] = self.stats.make_json_compatible()
 
-    def extract_features_repo(self: Self):
-        """Extract data from features repository"""
-        # TODO(MMZ 17.1.24)
-        # extract data from the object by calling its export function
-        # store in the json dict
-        pass
+    def export_features_repo(self: Self):
+        """Export data from features repository"""
+        self.json_dict["general_features"] = dict()
+        for feature_id in self.stats.active_features:
+            feature = self.features.get(feature_id)
+            self.json_dict["general_features"][feature_id] = feature.to_json()
 
-    def extract_samples_repo(self: Self):
-        """Extract data from samples repository"""
+    def export_samples_repo(self: Self):
+        """Export data from samples repository"""
         # TODO(MMZ 17.1.24)
         # extract data from the object by calling its export function
         # store in the json dict

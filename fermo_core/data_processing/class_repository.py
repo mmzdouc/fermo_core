@@ -24,7 +24,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 import logging
-from typing import Union
+from typing import Union, Self
 
 from pydantic import BaseModel
 
@@ -43,7 +43,7 @@ class Repository(BaseModel):
 
     entries: dict = dict()
 
-    def add(self, identifier: Union[int, str], entry: Union[Feature, Sample]):
+    def add(self: Self, identifier: Union[int, str], entry: Union[Feature, Sample]):
         """Add a new entry to repository dict.
 
         Args:
@@ -62,7 +62,7 @@ class Repository(BaseModel):
                 logger.error(str(e))
                 raise e
 
-    def get(self, identifier: Union[int, str]) -> Union[Feature, Sample]:
+    def get(self: Self, identifier: Union[int, str]) -> Union[Feature, Sample]:
         """Get an entry from the repository dict.
 
         Args:
@@ -83,7 +83,7 @@ class Repository(BaseModel):
                 logger.error(str(e))
                 raise e
 
-    def modify(self, identifier: Union[int, str], entry: Union[Feature, Sample]):
+    def modify(self: Self, identifier: Union[int, str], entry: Union[Feature, Sample]):
         """Modify an entry by overwriting it.
 
         Args:
@@ -102,8 +102,8 @@ class Repository(BaseModel):
                 logger.error(str(e))
                 raise e
 
-    def remove(self, identifier: Union[int, str]):
-        """Remove an entry.
+    def remove(self: Self, identifier: Union[int, str]):
+        """Remove an entry from Repository.
 
         Args:
             identifier: an identifier found in the repository dict.

@@ -9,7 +9,7 @@ from fermo_core.data_processing.class_repository import Repository
 
 
 @pytest.fixture
-def export_manager():
+def export_m_dummy():
     return ExportManager(
         params=ParameterManager(),
         stats=Stats(),
@@ -18,9 +18,44 @@ def export_manager():
     )
 
 
-def test_write_to_fermo_json_invalid(export_manager):
-    export_manager.json_dict = {"asdfasdfa": "sdtaesrawe"}
-    export_manager.params.OutputParameters.filepath = Path("dsa/asdas/sdasd")
-    export_manager.params.OutputParameters.default_filepath = Path("dsa/asdas/sdasd")
+@pytest.fixture
+def real_data_export(
+    parameter_instance, stats_instance, feature_instance, sample_instance
+):
+    return ExportManager(
+        params=parameter_instance,
+        stats=stats_instance,
+        features=feature_instance,
+        samples=sample_instance,
+    )
+
+
+def test_write_to_fermo_json_invalid(export_m_dummy):
+    export_m_dummy.json_dict = {"asdfasdfa": "sdtaesrawe"}
+    export_m_dummy.params.OutputParameters.filepath = Path("dsa/asdas/sdasd")
+    export_m_dummy.params.OutputParameters.default_filepath = Path("dsa/asdas/sdasd")
     with pytest.raises(FileNotFoundError):
-        export_manager.write_to_fermo_json()
+        export_m_dummy.write_to_fermo_json()
+
+
+def test_build_json_dict_valid(real_data_export):
+    real_data_export.build_json_dict()
+    assert isinstance(real_data_export.json_dict, dict)
+
+
+def test_export_params_valid(real_data_export):
+    real_data_export.export_params()
+    assert real_data_export.json_dict.get("parameters") is not None
+
+
+def test_export_stats_valid(real_data_export):
+    real_data_export.export_stats()
+    assert isinstance(real_data_export.json_dict.get("stats").get("rt_min"), float)
+
+
+def test_export_features_repo_valid(real_data_export):
+    real_data_export.export_features_repo()
+    assert (
+        real_data_export.json_dict.get("general_features").get(1).get("spectrum")
+        is not None
+    )

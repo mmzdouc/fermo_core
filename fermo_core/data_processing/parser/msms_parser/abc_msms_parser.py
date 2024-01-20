@@ -81,6 +81,5 @@ class MsmsParser(ABC):
         )
         spectrum = matchms.filtering.add_precursor_mz(spectrum)
         spectrum = matchms.filtering.add_losses(spectrum)
-        spectrum = matchms.filtering.normalize_intensities(spectrum)
 
         return spectrum

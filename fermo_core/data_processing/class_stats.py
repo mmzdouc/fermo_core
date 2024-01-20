@@ -133,6 +133,9 @@ class Stats(BaseModel):
 
     def make_json_compatible(self: Self) -> dict:
         """Export class attributes to json-dump compatible dict."""
+
+        # TODO (MMZ 20.1.24): rework as in features; make more resistant against None
+
         json_dict = {
             "rt_min": float(self.rt_min),
             "rt_max": float(self.rt_max),
