@@ -95,11 +95,11 @@ class ExportManager(BaseModel):
 
     def export_params(self: Self):
         """Export data from params"""
-        self.json_dict["parameters"] = self.params.make_json_compatible()
+        self.json_dict["parameters"] = self.params.to_json()
 
     def export_stats(self: Self):
         """Export data from stats"""
-        self.json_dict["stats"] = self.stats.make_json_compatible()
+        self.json_dict["stats"] = self.stats.to_json()
 
     def export_features_repo(self: Self):
         """Export data from features repository"""

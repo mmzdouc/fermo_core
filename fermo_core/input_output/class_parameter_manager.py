@@ -115,21 +115,22 @@ class ParameterManager(BaseModel):
         Ms2QueryAnnotationParameters()
     )
 
-    def make_json_compatible(self: Self) -> dict:
-        """Export class attributes to json-dump compatible dict."""
-        json_dict = {}
+    def to_json(self: Self) -> dict:
+        """Export class attributes to json-dump compatible dict.
 
-        if self.PeaktableParameters is not None:
-            json_dict["PeaktableParameters"] = self.PeaktableParameters.to_json()
-
-        optional_files = (
+        Returns:
+            A dictionary with class attributes as keys
+        """
+        attributes = (
+            (self.PeaktableParameters, "PeaktableParameters"),
             (self.MsmsParameters, "MsmsParameters"),
             (self.PhenotypeParameters, "PhenotypeParameters"),
             (self.GroupMetadataParameters, "GroupMetadataParameters"),
             (self.SpecLibParameters, "SpecLibParameters"),
         )
 
-        for file in optional_files:
+        json_dict = {}
+        for file in attributes:
             if file[0] is not None:
                 json_dict[file[1]] = file[0].to_json()
             else:

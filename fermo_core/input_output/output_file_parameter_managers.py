@@ -31,8 +31,8 @@ class OutputParameters(BaseModel):
 
     Attributes:
         default_filepath: a pathlib Path reference in case filepath is corrupted
-        filepath: a pathlib Path object pointing towards a peaktable file
-        format: indicates the format of the peaktable file
+        filepath: a pathlib Path object pointing toward the output file
+        format: the format of the output file
 
     Raise:
         pydantic.ValidationError: Pydantic validation failed during instantiation.

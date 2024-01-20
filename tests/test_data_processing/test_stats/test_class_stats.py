@@ -94,13 +94,21 @@ def test_init_spec_sim_net_invalid():
         SpecSimNet(mod_cosine=[])
 
 
-def test_make_json_compatible_valid():
+def test_to_json_rt_min_valid():
     stats = Stats()
-    params = ParameterManager()
-    params.assign_parameters_cli(
-        FileManager.load_json_file("example_data/case_study_parameters.json")
-    )
-    stats.parse_mzmine3(params)
+    stats.rt_min = 0
+    json_dict = stats.to_json()
+    assert json_dict["rt_min"] == 0.0
+
+
+def test_to_json_groups_valid():
+    stats = Stats()
+    json_dict = stats.to_json()
+    assert json_dict["groups"] == {"DEFAULT": []}
+
+
+def test_to_json_networks_valid():
+    stats = Stats()
     stats.networks = {
         "xyz": SpecSimNet(
             algorithm="xyz",
@@ -109,5 +117,12 @@ def test_make_json_compatible_valid():
             summary={1: {1, 2, 3}},
         )
     }
-    json_dict = stats.make_json_compatible()
-    assert json_dict["networks"] is not None
+    json_dict = stats.to_json()
+    assert json_dict["networks"]["xyz"]["algorithm"] == "xyz"
+
+
+def test_to_json_phenotypes_valid():
+    stats = Stats()
+    stats.phenotypes = {"test1": ("a", "b"), "test2": ("a", "c")}
+    json_dict = stats.to_json()
+    assert json_dict["phenotypes"]["test1"] == ["a", "b"]

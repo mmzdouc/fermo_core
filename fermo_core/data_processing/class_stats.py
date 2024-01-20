@@ -131,36 +131,47 @@ class Stats(BaseModel):
         self.features = tuple(df["id"].tolist())
         self.active_features = set(self.features)
 
-    def make_json_compatible(self: Self) -> dict:
-        """Export class attributes to json-dump compatible dict."""
+    def to_json(self: Self) -> dict:
+        """Export class attributes to json-dump compatible dict.
 
-        # TODO (MMZ 20.1.24): rework as in features; make more resistant against None
+        Returns:
+            A dictionary with class attributes as keys
 
-        json_dict = {
-            "rt_min": float(self.rt_min),
-            "rt_max": float(self.rt_max),
-            "rt_range": float(self.rt_range),
-            "area_min": int(self.area_min),
-            "area_max": int(self.area_max),
-            "samples": list(self.samples),
-            "all_features": len(self.features),
-            "active_features": list(self.active_features),
-            "inactive_features": list(self.inactive_features),
-            "blank_features": list(self.blank_features),
-            "groups": dict(),
-            "networks": dict(),
-            "phenotypes": dict(),
-            "analysis_log": list(self.analysis_log),
-        }
+        Notes:
+            Attribute spectral library is not exported - matches are stored in
+            feature annotation.
+        """
+        attributes = (
+            ("rt_min", self.rt_min, float),
+            ("rt_max", self.rt_max, float),
+            ("rt_range", self.rt_range, float),
+            ("area_min", self.area_min, int),
+            ("area_max", self.area_max, int),
+            ("samples", self.samples, list),
+            ("features", self.features, list),
+            ("active_features", self.active_features, list),
+            ("inactive_features", self.inactive_features, list),
+            ("blank_features", self.blank_features, list),
+            ("analysis_log", self.analysis_log, list),
+        )
 
-        for group in self.groups:
-            json_dict["groups"][group] = list(self.groups[group])
+        json_dict = {}
+        for attribute in attributes:
+            if attribute[1] is not None:
+                json_dict[attribute[0]] = attribute[2](attribute[1])
+
+        if self.groups is not None:
+            json_dict["groups"] = dict()
+            for group in self.groups:
+                json_dict["groups"][group] = list(self.groups[group])
 
         if self.networks is not None:
+            json_dict["networks"] = dict()
             for network in self.networks:
                 json_dict["networks"][network] = self.networks[network].to_json()
 
         if self.phenotypes is not None:
+            json_dict["phenotypes"] = dict()
             for entry in self.phenotypes:
                 json_dict["phenotypes"][entry] = list(self.phenotypes[entry])
 
