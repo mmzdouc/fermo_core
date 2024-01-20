@@ -71,6 +71,9 @@ class ExportManager(BaseModel):
                 self.params.OutputParameters.default_filepath
             )
 
+        if not self.params.OutputParameters.filepath.suffix == ".json":
+            self.params.OutputParameters.filepath.joinpath(".json")
+
         with open(self.params.OutputParameters.filepath, "w", encoding="utf-8") as outf:
             outf.write(json.dumps(self.json_dict, indent=4, ensure_ascii=False))
 
