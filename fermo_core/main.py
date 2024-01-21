@@ -24,6 +24,7 @@ SOFTWARE.
 """
 
 #  External
+from datetime import datetime
 from importlib import metadata
 from pathlib import Path
 from sys import argv
@@ -40,6 +41,7 @@ from fermo_core.input_output.class_validation_manager import ValidationManager
 
 VERSION = metadata.version("fermo_core")
 ROOT = Path(__file__).resolve().parent
+START_TIME = datetime.now()
 LoggerSetup.suppress_tensorflow_logs()
 logger = LoggerSetup.setup_custom_logger("fermo_core")
 
@@ -63,12 +65,8 @@ def main(params: ParameterManager):
     export_manager = ExportManager(
         params=params, stats=stats, features=features, samples=samples
     )
-    export_manager.build_json_dict()
+    export_manager.build_json_dict(VERSION, START_TIME)
     export_manager.write_to_fermo_json()
-
-    # TODO(MMZ 18.1.24): use del to remove instances of stats, features, samples
-    # TODO(MMZ 17.1.24): switch to support export as a csv - maybe use the mzmine-one
-    #  and only add info to it?
 
     logger.info("'main': completed all steps successfully - DONE")
 

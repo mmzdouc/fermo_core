@@ -21,8 +21,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
+from datetime import datetime
 import json
 import logging
+import platform
 from typing import Self
 
 from pydantic import BaseModel
@@ -89,12 +91,40 @@ class ExportManager(BaseModel):
             )
             raise FileNotFoundError
 
-    def build_json_dict(self: Self):
-        """Driver method to assemble data for json dump"""
+    def build_json_dict(self: Self, version: str, starttime: datetime):
+        """Driver method to assemble data for json dump
+
+        Arguments:
+            version: a str indicating the currently running version of fermo_core
+            starttime: the date and time at start of fermo_core processing
+
+        """
+        self.export_metadata(version, starttime)
         self.export_stats()
         self.export_params()
         self.export_features_repo()
         self.export_samples_repo()
+
+    def export_metadata(self: Self, version: str, starttime: datetime):
+        """Export metadata on analysis run.
+
+        Arguments:
+            version: a str indicating the currently running version of fermo_core
+            starttime: the date and time at start of fermo_core processing
+
+        """
+        self.json_dict["metadata"] = {
+            "fermo_core_version": version,
+            "file_created_isoformat": datetime.now().isoformat(),
+            "runtime_seconds": (datetime.now() - starttime).total_seconds(),
+            "system": platform.system(),
+            "version": platform.version(),
+            "architecture": platform.architecture(),
+            "release": platform.release(),
+            "machine": platform.machine(),
+            "processor": platform.processor(),
+            "python_version": platform.python_version(),
+        }
 
     def export_params(self: Self):
         """Export data from params"""

@@ -1,3 +1,4 @@
+from datetime import datetime
 from pathlib import Path
 
 import pytest
@@ -39,7 +40,7 @@ def test_write_to_fermo_json_invalid(export_m_dummy):
 
 
 def test_build_json_dict_valid(real_data_export):
-    real_data_export.build_json_dict()
+    real_data_export.build_json_dict(version="0.0.0", starttime=datetime.now())
     assert isinstance(real_data_export.json_dict, dict)
 
 
@@ -66,3 +67,8 @@ def test_export_samples_repo_valid(real_data_export):
     assert (
         real_data_export.json_dict.get("samples").get("5425_5426_mod.mzXML") is not None
     )
+
+
+def test_export_metadata_valid(export_m_dummy):
+    export_m_dummy.export_metadata(version="0.0.0", starttime=datetime.now())
+    assert export_m_dummy.json_dict["metadata"]["runtime_seconds"] is not None
