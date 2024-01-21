@@ -65,8 +65,7 @@ def main(params: ParameterManager):
     export_manager = ExportManager(
         params=params, stats=stats, features=features, samples=samples
     )
-    export_manager.build_json_dict(VERSION, START_TIME)
-    export_manager.write_to_fermo_json()
+    export_manager.run(VERSION, START_TIME)
 
     logger.info("'main': completed all steps successfully - DONE")
 

@@ -147,7 +147,7 @@ def test_assign_output_invalid():
             "sasd": "dasdas",
         }
     )
-    assert params.OutputParameters.format == "json"
+    assert params.OutputParameters.format == "all"
 
 
 def test_assign_adduct_annotation_valid():
@@ -384,4 +384,4 @@ def test_to_json_files_valid():
 def test_to_json_output():
     params = ParameterManager()
     json_dict = params.to_json()
-    assert json_dict["OutputParameters"]["format"] == "json"
+    assert json_dict["OutputParameters"]["format"] == "all"
