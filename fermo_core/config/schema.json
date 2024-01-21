@@ -209,11 +209,6 @@
                                     "title": "(Optional): tolerance for matching two MS/MS fragments, in m/z units. Default value: 0.1",
                                     "type": "number"
                                 },
-                                "min_nr_matched_peaks": {
-                                    "title": "(Optional): minimum number of fragments that must be matched between two MS/MS fragmentation spectra to consider two spectra related. Default value: 5",
-                                    "type": "integer",
-                                    "minimum": 1
-                                },
                                 "score_cutoff": {
                                     "title": "(Optional): minimum modified cosine score that must be reached to consider two MS/MS fragmentation spectra to be related. Default value: 0.7",
                                     "type": "number",
@@ -222,11 +217,6 @@
                                 },
                                 "max_nr_links": {
                                     "title": "(Optional): max. number of links to other molecular features any molecular feature is allowed to have. Default value: 10",
-                                    "type": "integer",
-                                    "minimum": 1
-                                },
-                                "max_precursor_mass_diff": {
-                                    "title": "(Optional): maximum difference between the precursor masses of two MS/MS spectra, in m/z units. A high number may lead to serendipitous matching between unrelated spectra, while a low number may exclude possible analogues. Default value: 400 m/z.",
                                     "type": "integer",
                                     "minimum": 1
                                 },
@@ -405,6 +395,11 @@
                                     "type": "number",
                                     "minimum": 0.1,
                                     "maximum": 1.0
+                                },
+                                "max_precursor_mass_diff": {
+                                    "title": "(Optional): maximum difference between the precursor masses of two MS/MS spectra, in m/z units. A high number may lead to serendipitous matching between unrelated spectra, while a low number may exclude possible analogues. Default value: 600 m/z.",
+                                    "type": "integer",
+                                    "minimum": 1
                                 }
                             }
                         },

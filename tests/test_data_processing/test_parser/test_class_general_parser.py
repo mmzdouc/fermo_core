@@ -56,7 +56,7 @@ def test_parse_parameters_invalid():
 def test_parse_peaktable_valid(params_manager):
     general_parser = GeneralParser()
     general_parser.parse_peaktable(params_manager)
-    assert len(general_parser.stats.features) == 143
+    assert general_parser.stats.features == 143
 
 
 def test_parse_peaktable_invalid(params_manager):

@@ -74,10 +74,8 @@ class SpecSimNetworkCosineParameters(BaseModel):
         activate_module: bool to indicate if module should be executed.
         msms_min_frag_nr: minimum nr of fragments a spectrum must have to be considered.
         fragment_tol: the tolerance between matched fragments, in m/z units.
-        min_nr_matched_peaks: the min number of peaks two matching spectra must share.
         score_cutoff: the minimum similarity score between two spectra.
         max_nr_links: max nr of connections from a node.
-        max_precursor_mass_diff: max diff between precursor masses of two spectra
         maximum_runtime: max runtime of module, in seconds; 0 indicates no runtime limit
 
     Raise:
@@ -87,10 +85,8 @@ class SpecSimNetworkCosineParameters(BaseModel):
     activate_module: bool = True
     msms_min_frag_nr: PositiveInt = 5
     fragment_tol: PositiveFloat = 0.1
-    min_nr_matched_peaks: PositiveInt = 5
     score_cutoff: PositiveFloat = 0.7
     max_nr_links: PositiveInt = 10
-    max_precursor_mass_diff: PositiveInt = 400
     maximum_runtime: int = 1200
 
     def to_json(self: Self) -> dict:
@@ -100,10 +96,8 @@ class SpecSimNetworkCosineParameters(BaseModel):
                 "activate_module": self.activate_module,
                 "msms_min_frag_nr": int(self.msms_min_frag_nr),
                 "fragment_tol": float(self.fragment_tol),
-                "min_nr_matched_peaks": int(self.min_nr_matched_peaks),
                 "score_cutoff": float(self.score_cutoff),
                 "max_nr_links": int(self.max_nr_links),
-                "max_precursor_mass_diff": int(self.max_precursor_mass_diff),
                 "maximum_runtime": int(self.maximum_runtime),
             }
         else:

@@ -62,7 +62,7 @@ def test_success_parse_mzmine3(stats):
         FileManager.load_json_file("example_data/case_study_parameters.json")
     )
     stats.parse_mzmine3(params)
-    assert len(stats.features) == 143
+    assert stats.features == 143
     assert len(stats.samples) == 11
 
 

@@ -156,6 +156,7 @@ class SpectralLibMatchingCosineParameters(BaseModel):
         fragment_tol: max tolerable diff to consider two fragments as equal, in m/z
         min_nr_matched_peaks: peak cutoff to consider a match of two MS/MS spectra
         score_cutoff: score cutoff to consider a match of two MS/MS spectra
+        max_precursor_mass_diff: maximum precursor mass difference
 
     Raise:
         pydantic.ValidationError: Pydantic validation failed during instantiation.
@@ -165,6 +166,7 @@ class SpectralLibMatchingCosineParameters(BaseModel):
     fragment_tol: PositiveFloat = 0.1
     min_nr_matched_peaks: PositiveInt = 5
     score_cutoff: PositiveFloat = 0.7
+    max_precursor_mass_diff: PositiveInt = 600
 
     def to_json(self: Self) -> dict:
         """Convert attributes to json-compatible ones."""
