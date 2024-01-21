@@ -44,6 +44,7 @@ ROOT = Path(__file__).resolve().parent
 START_TIME = datetime.now()
 LoggerSetup.suppress_tensorflow_logs()
 logger = LoggerSetup.setup_custom_logger("fermo_core")
+LoggerSetup.log_metadata(logger)
 
 
 def main(params: ParameterManager):
