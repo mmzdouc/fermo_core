@@ -38,12 +38,12 @@ def test_instantiate_parser_valid():
 
 def test_parse_valid(feature_repo, params):
     feature_repo = MgfParser().parse(feature_repo, params)
-    assert feature_repo.entries.get(126).msms is not None
+    assert feature_repo.entries.get(126).Spectrum is not None
 
 
 def test_modify_features_valid(params, feature_repo):
     feature_repo = MgfParser().modify_features(feature_repo, params)
-    assert feature_repo.entries.get(126).msms is not None
+    assert feature_repo.entries.get(126).Spectrum is not None
 
 
 def test_create_spectrum_object_valid():
