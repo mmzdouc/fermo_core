@@ -20,8 +20,9 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-
 from pathlib import Path
+from typing import Self
+
 from pydantic import (
     BaseModel,
     model_validator,
@@ -53,6 +54,16 @@ class AdductAnnotationParameters(BaseModel):
         ValidationManager.validate_mass_deviation_ppm(ppm)
         return self
 
+    def to_json(self: Self) -> dict:
+        """Convert attributes to json-compatible ones."""
+        if self.activate_module:
+            return {
+                "activate_module": self.activate_module,
+                "mass_dev_ppm": float(self.mass_dev_ppm),
+            }
+        else:
+            return {"activate_module": self.activate_module}
+
 
 class SpecSimNetworkCosineParameters(BaseModel):
     """A Pydantic-based class for repr. and valid. of spec. similarity network params.
@@ -82,6 +93,22 @@ class SpecSimNetworkCosineParameters(BaseModel):
     max_precursor_mass_diff: PositiveInt = 400
     maximum_runtime: int = 1200
 
+    def to_json(self: Self) -> dict:
+        """Convert attributes to json-compatible ones."""
+        if self.activate_module:
+            return {
+                "activate_module": self.activate_module,
+                "msms_min_frag_nr": int(self.msms_min_frag_nr),
+                "fragment_tol": float(self.fragment_tol),
+                "min_nr_matched_peaks": int(self.min_nr_matched_peaks),
+                "score_cutoff": float(self.score_cutoff),
+                "max_nr_links": int(self.max_nr_links),
+                "max_precursor_mass_diff": int(self.max_precursor_mass_diff),
+                "maximum_runtime": int(self.maximum_runtime),
+            }
+        else:
+            return {"activate_module": self.activate_module}
+
 
 class SpecSimNetworkDeepscoreParameters(BaseModel):
     """A Pydantic-based class for repr. and valid. of spec. similarity network params.
@@ -92,7 +119,7 @@ class SpecSimNetworkDeepscoreParameters(BaseModel):
         activate_module: bool to indicate if module should be executed.
         default_file_path: pathlib Path object for reference if file_path does not exist
         file_path: pathlib Path object pointing to ms2deepscore embedding file.
-        url: the URL to download the file from.
+        url: the URL to download the file from (default).
         score_cutoff: the minimum similarity score between two spectra.
         max_nr_links: max links to a single spectra.
         msms_min_frag_nr: minimum number of fragments in MS2 to run it in analysis
@@ -117,3 +144,17 @@ class SpecSimNetworkDeepscoreParameters(BaseModel):
     max_nr_links: PositiveInt = 10
     msms_min_frag_nr: PositiveInt = 5
     maximum_runtime: int = 1200
+
+    def to_json(self: Self) -> dict:
+        """Convert attributes to json-compatible ones."""
+        if self.activate_module:
+            return {
+                "activate_module": self.activate_module,
+                "file_path": str(self.file_path.resolve()),
+                "score_cutoff": float(self.score_cutoff),
+                "max_nr_links": int(self.max_nr_links),
+                "msms_min_frag_nr": int(self.msms_min_frag_nr),
+                "maximum_runtime": int(self.maximum_runtime),
+            }
+        else:
+            return {"activate_module": self.activate_module}

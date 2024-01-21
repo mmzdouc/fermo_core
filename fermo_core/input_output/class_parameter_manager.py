@@ -34,6 +34,7 @@ from fermo_core.input_output.input_file_parameter_managers import (
     GroupMetadataParameters,
     SpecLibParameters,
 )
+from fermo_core.input_output.output_file_parameter_managers import OutputParameters
 from fermo_core.input_output.core_module_parameter_managers import (
     AdductAnnotationParameters,
     SpecSimNetworkCosineParameters,
@@ -65,6 +66,7 @@ class ParameterManager(BaseModel):
         PhenotypeParameters: class handling phenotype parameters or None
         GroupMetadataParameters: class handling metadata parameters or None
         SpecLibParameters: class handling spectra library parameters or None
+        OutputParameters: class handling output file parameters
         AdductAnnotationParameters: class handling adduct annotation module parameter
         SpecSimNetworkCosineParameters: class handling cosine-based spectral
             similarity networking module parameter
@@ -86,6 +88,7 @@ class ParameterManager(BaseModel):
     PhenotypeParameters: Optional[PhenotypeParameters] = None
     GroupMetadataParameters: Optional[GroupMetadataParameters] = None
     SpecLibParameters: Optional[SpecLibParameters] = None
+    OutputParameters: OutputParameters = OutputParameters()
     AdductAnnotationParameters: AdductAnnotationParameters = (
         AdductAnnotationParameters()
     )
@@ -111,6 +114,58 @@ class ParameterManager(BaseModel):
     Ms2QueryAnnotationParameters: Ms2QueryAnnotationParameters = (
         Ms2QueryAnnotationParameters()
     )
+
+    def to_json(self: Self) -> dict:
+        """Export class attributes to json-dump compatible dict.
+
+        Returns:
+            A dictionary with class attributes as keys
+        """
+        attributes = (
+            (self.PeaktableParameters, "PeaktableParameters"),
+            (self.MsmsParameters, "MsmsParameters"),
+            (self.PhenotypeParameters, "PhenotypeParameters"),
+            (self.GroupMetadataParameters, "GroupMetadataParameters"),
+            (self.SpecLibParameters, "SpecLibParameters"),
+        )
+
+        json_dict = {}
+        for file in attributes:
+            if file[0] is not None:
+                json_dict[file[1]] = file[0].to_json()
+            else:
+                json_dict[file[1]] = {"filepath": "No file provided."}
+
+        json_dict["OutputParameters"] = self.OutputParameters.to_json()
+        json_dict[
+            "AdductAnnotationParameters"
+        ] = self.AdductAnnotationParameters.to_json()
+        json_dict[
+            "SpecSimNetworkCosineParameters"
+        ] = self.SpecSimNetworkCosineParameters.to_json()
+        json_dict[
+            "SpecSimNetworkDeepscoreParameters"
+        ] = self.SpecSimNetworkDeepscoreParameters.to_json()
+        json_dict[
+            "FeatureFilteringParameters"
+        ] = self.FeatureFilteringParameters.to_json()
+        json_dict[
+            "BlankAssignmentParameters"
+        ] = self.BlankAssignmentParameters.to_json()
+        json_dict[
+            "PhenotypeAssignmentFoldParameters"
+        ] = self.PhenotypeAssignmentFoldParameters.to_json()
+        json_dict[
+            "SpectralLibMatchingCosineParameters"
+        ] = self.SpectralLibMatchingCosineParameters.to_json()
+        json_dict[
+            "SpectralLibMatchingDeepscoreParameters"
+        ] = self.SpectralLibMatchingDeepscoreParameters.to_json()
+        json_dict[
+            "Ms2QueryAnnotationParameters"
+        ] = self.Ms2QueryAnnotationParameters.to_json()
+
+        return json_dict
 
     def assign_parameters_cli(self: Self, user_params: dict):
         """Modifies attributes by calling methods that take user input from CLI.
@@ -159,13 +214,18 @@ class ParameterManager(BaseModel):
                 self.assign_spectral_library,
                 "spectral_library",
             ),
+            (user_params.get("output"), self.assign_output, "output"),
         )
 
         for module in modules:
-            if (info := module[0]) is not None:
-                module[1](info)
+            if (data := module[0]) is not None:
+                module[1](data)
             else:
-                self.log_skipped_modules(module[2])
+                match module[2]:
+                    case "output":
+                        self.log_default_values(module[2])
+                    case _:
+                        self.log_skipped_modules(module[2])
 
     def assign_core_modules_parameters(self: Self, user_params: dict):
         """Assigns user-input on core modules to ParameterManager.
@@ -198,8 +258,8 @@ class ParameterManager(BaseModel):
         )
 
         for module in modules:
-            if (info := module[0]) is not None:
-                module[1](info)
+            if (data := module[0]) is not None:
+                module[1](data)
             else:
                 self.log_default_values(module[2])
 
@@ -249,8 +309,8 @@ class ParameterManager(BaseModel):
         )
 
         for module in modules:
-            if (info := module[0]) is not None:
-                module[1](info)
+            if (data := module[0]) is not None:
+                module[1](data)
             else:
                 self.log_default_values(module[2])
 
@@ -388,6 +448,22 @@ class ParameterManager(BaseModel):
             logger.warning(str(e))
             self.log_malformed_parameters_skip("spectral_library")
             self.SpecLibParameters = None
+
+    def assign_output(self: Self, user_params: dict):
+        """Assign output parameters to self.OutputParameters.
+
+        Parameters:
+            user_params: user-provided params, read from json file
+        """
+        try:
+            self.OutputParameters = OutputParameters(**user_params)
+            logger.info(
+                "'ParameterManager': validated and assigned parameters " "for 'output'."
+            )
+        except Exception as e:
+            logger.warning(str(e))
+            self.log_malformed_parameters_skip("output")
+            self.OutputParameters = OutputParameters()
 
     def assign_adduct_annotation(self: Self, user_params: dict):
         """Assign adduct_annotation parameters to self.AdductAnnotationParameters.

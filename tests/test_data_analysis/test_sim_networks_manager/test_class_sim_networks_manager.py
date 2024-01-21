@@ -126,7 +126,11 @@ def test_format_network_for_storage_ms2deep_valid(
 
 def test_store_network_data_valid(sim_networks_manager_instance):
     network_name = "foo"
-    network_data = {"network": "foo", "subnetworks": ["bar"], "summary": {0: {12, 13}}}
+    network_data = {
+        "network": "foo",
+        "subnetworks": {0: "bar"},
+        "summary": {0: {12, 13}},
+    }
     included = tuple([12, 13])
     sim_networks_manager_instance.store_network_data(
         network_name=network_name, network_data=network_data, features=included

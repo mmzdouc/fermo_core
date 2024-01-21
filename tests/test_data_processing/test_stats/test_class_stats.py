@@ -70,12 +70,59 @@ def test_init_spec_sim_net_valid():
     entry = SpecSimNet(
         algorithm="xyz",
         network=networkx.Graph(),
-        subnetworks=[networkx.Graph()],
-        summary={1: set([1, 2, 3])},
+        subnetworks={1: networkx.Graph()},
+        summary={1: {1, 2, 3}},
     )
     assert isinstance(entry, SpecSimNet)
+
+
+def test_specsimnet_to_json_valid():
+    stats = Stats()
+    stats.networks = {
+        "xyz": SpecSimNet(
+            algorithm="xyz",
+            network=networkx.Graph(),
+            subnetworks={1: networkx.Graph()},
+            summary={1: {1, 2, 3}},
+        )
+    }
+    assert stats.networks["xyz"].to_json() is not None
 
 
 def test_init_spec_sim_net_invalid():
     with pytest.raises(ValidationError):
         SpecSimNet(mod_cosine=[])
+
+
+def test_to_json_rt_min_valid():
+    stats = Stats()
+    stats.rt_min = 0
+    json_dict = stats.to_json()
+    assert json_dict["rt_min"] == 0.0
+
+
+def test_to_json_groups_valid():
+    stats = Stats()
+    json_dict = stats.to_json()
+    assert json_dict["groups"] == {"DEFAULT": []}
+
+
+def test_to_json_networks_valid():
+    stats = Stats()
+    stats.networks = {
+        "xyz": SpecSimNet(
+            algorithm="xyz",
+            network=networkx.Graph(),
+            subnetworks={1: networkx.Graph()},
+            summary={1: {1, 2, 3}},
+        )
+    }
+    json_dict = stats.to_json()
+    assert json_dict["networks"]["xyz"]["algorithm"] == "xyz"
+
+
+def test_to_json_phenotypes_valid():
+    stats = Stats()
+    stats.phenotypes = {"test1": ("a", "b"), "test2": ("a", "c")}
+    json_dict = stats.to_json()
+    assert json_dict["phenotypes"]["test1"] == ["a", "b"]

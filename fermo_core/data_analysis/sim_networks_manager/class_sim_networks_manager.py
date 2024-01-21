@@ -171,7 +171,6 @@ class SimNetworksManager(UtilityMethodManager):
 
     def run_ms2deepscore_alg(self: Self):
         """Run ms2deepscore-based spectral similarity networking on features."""
-        # TODO(MMZ 15.1.24): cover with test
         logger.info(
             "'SimNetworksManager': started ms2deepscore-based spectral similarity "
             "(=molecular) networking."
@@ -316,7 +315,7 @@ class SimNetworksManager(UtilityMethodManager):
             graph: holding spectral similarity networking information
 
         Returns:
-            dict of full network, subnetworks, dict of clusters and contained features
+            dict of full network, subnetworks, dict of clusters/contained features
 
         Raises:
             RuntimeError: detected overlap between subclusters in terms of feature IDs
@@ -328,13 +327,14 @@ class SimNetworksManager(UtilityMethodManager):
         mapping = {node: int(node) for node in graph.nodes}
         graph = networkx.relabel_nodes(graph, mapping)
 
-        subnetworks = []
-        for component in networkx.connected_components(graph):
-            subnetworks.append(graph.subgraph(component).copy())
+        subnetworks = dict()
+        for i, component in enumerate(networkx.connected_components(graph)):
+            subnetworks[i] = graph.subgraph(component).copy()
+            subnetworks[i].graph["name"] = i
 
         clusters = dict()
-        for i, subnetwork in enumerate(subnetworks):
-            ids = set([int(node) for node in subnetwork.nodes])
+        for sub in subnetworks:
+            ids = set([int(node) for node in subnetworks[sub].nodes])
             for cluster in clusters.values():
                 if len(output := ids.intersection(cluster)) != 0:
                     raise RuntimeError(
@@ -342,8 +342,7 @@ class SimNetworksManager(UtilityMethodManager):
                         f"cluster with ids '{ids}' and cluster with ids '{cluster}' "
                         f"share ids '{output}'. This is unexpected - ABORT."
                     )
-            clusters[i] = ids
-            subnetworks[i].graph["name"] = i
+            clusters[sub] = ids
 
         return {"network": graph, "subnetworks": subnetworks, "summary": clusters}
 

@@ -20,7 +20,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-from typing import Optional, Tuple, Dict, Set
+from typing import Optional, Tuple, Dict, Set, Self
 
 from matchms import Spectrum
 from pydantic import BaseModel
@@ -91,3 +91,52 @@ class Feature(BaseModel):
     annotations: Optional[Dict] = None
     networks: Optional[Dict] = None
     scores: Optional[Dict] = None
+
+    def to_json(self: Self) -> dict:
+        """Convert class attributes to json-compatible dict.
+
+        Returns:
+            A dictionary with class attributes as keys
+        """
+        attributes = (
+            ("f_id", self.f_id, int),
+            ("mz", self.mz, float),
+            ("rt", self.rt, float),
+            ("rt_start", self.rt_start, float),
+            ("rt_stop", self.rt_stop, float),
+            ("rt_range", self.rt_range, float),
+            ("trace_rt", self.trace_rt, list),
+            ("trace_int", self.trace_int, list),
+            ("fwhm", self.fwhm, float),
+            ("intensity", self.intensity, int),
+            ("rel_intensity", self.rel_intensity, float),
+            ("area", self.area, int),
+            ("rel_area", self.rel_area, float),
+            ("samples", self.samples, list),
+            ("blank", self.blank, bool),
+            ("groups", self.groups, list),
+        )
+
+        json_dict = {}
+        for attribute in attributes:
+            if attribute[1] is not None:
+                json_dict[attribute[0]] = attribute[2](attribute[1])
+
+        if self.Spectrum is not None:
+            json_dict["spectrum"] = dict()
+            json_dict["spectrum"]["mz"] = list(self.Spectrum.mz)
+            json_dict["spectrum"]["int"] = list(self.Spectrum.intensities)
+            json_dict["spectrum"]["metadata"] = self.Spectrum.metadata
+
+        if self.networks is not None:
+            json_dict["networks"] = dict()
+            for network in self.networks:
+                json_dict["networks"][network] = {
+                    "algorithm": str(self.networks[network].algorithm),
+                    "network_id": int(self.networks[network].network_id),
+                }
+
+        # TODO(MMZ 20.1.24): implement assignment for complex attributes group_folds,
+        #  annotations, phenotypes, scores
+
+        return json_dict

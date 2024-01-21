@@ -12,6 +12,7 @@ from fermo_core.input_output.input_file_parameter_managers import (
     GroupMetadataParameters,
     SpecLibParameters,
 )
+from fermo_core.input_output.output_file_parameter_managers import OutputParameters
 from fermo_core.input_output.core_module_parameter_managers import (
     AdductAnnotationParameters,
     SpecSimNetworkCosineParameters,
@@ -129,6 +130,24 @@ def test_assign_spectral_library_invalid():
         }
     )
     assert params.SpecLibParameters is None
+
+
+def test_assign_output_valid():
+    params = ParameterManager()
+    params.assign_output(
+        {"filepath": "example_data/case_study_fermo.json", "format": "json"}
+    )
+    assert isinstance(params.OutputParameters, OutputParameters)
+
+
+def test_assign_output_invalid():
+    params = ParameterManager()
+    params.assign_output(
+        {
+            "sasd": "dasdas",
+        }
+    )
+    assert params.OutputParameters.format == "json"
 
 
 def test_assign_adduct_annotation_valid():
@@ -296,7 +315,7 @@ def test_assign_ms2query_valid():
 def test_assign_ms2query_invalid():
     params = ParameterManager()
     params.assign_ms2query({"asdfg": "asdfg"})
-    assert params.Ms2QueryAnnotationParameters.filter_rel_int_range[0] == 0.0
+    assert params.Ms2QueryAnnotationParameters.filter_rel_int_range is None
 
 
 def test_assign_parameters_cli_valid():
@@ -349,3 +368,20 @@ def test_assign_additional_modules_parameters_invalid():
     params = ParameterManager()
     params.assign_additional_modules_parameters({"adsasd": "dsfaa"})
     assert params.FeatureFilteringParameters.activate_module is False
+
+
+def test_to_json_files_valid():
+    params = ParameterManager()
+    params.PeaktableParameters = PeaktableParameters(
+        format="mzmine3",
+        filepath="example_data/case_study_peak_table_quant_full.csv",
+        polarity="positive",
+    )
+    json_dict = params.to_json()
+    assert json_dict["PeaktableParameters"]["format"] == "mzmine3"
+
+
+def test_to_json_output():
+    params = ParameterManager()
+    json_dict = params.to_json()
+    assert json_dict["OutputParameters"]["format"] == "json"

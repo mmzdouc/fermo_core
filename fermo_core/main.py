@@ -32,8 +32,8 @@ from sys import argv
 from fermo_core.config.class_logger import LoggerSetup
 from fermo_core.data_processing.parser.class_general_parser import GeneralParser
 from fermo_core.data_analysis.class_analysis_manager import AnalysisManager
-
 from fermo_core.input_output.class_argparse_manager import ArgparseManager
+from fermo_core.input_output.class_export_manager import ExportManager
 from fermo_core.input_output.class_file_manager import FileManager
 from fermo_core.input_output.class_parameter_manager import ParameterManager
 from fermo_core.input_output.class_validation_manager import ValidationManager
@@ -60,12 +60,17 @@ def main(params: ParameterManager):
     analysis_manager.analyze()
     stats, features, samples = analysis_manager.return_attributes()
 
-    # TODO(MMZ 26.12.23): Remove dropout
-    logger.critical("DROP OUT OF TEST RUN")
-    quit()
+    export_manager = ExportManager(
+        params=params, stats=stats, features=features, samples=samples
+    )
+    export_manager.build_json_dict()
+    export_manager.write_to_fermo_json()
 
-    # TODO(MMZ) 26.12.23: Create a class that exports the processed data (with switch to
-    #  return either a fermo_gui compatible JSON or a table).
+    # TODO(MMZ 18.1.24): use del to remove instances of stats, features, samples
+    # TODO(MMZ 17.1.24): switch to support export as a csv - maybe use the mzmine-one
+    #  and only add info to it?
+
+    logger.info("'main': completed all steps successfully - DONE")
 
 
 if __name__ == "__main__":

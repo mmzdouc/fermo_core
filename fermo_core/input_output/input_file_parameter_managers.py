@@ -1,4 +1,4 @@
-"""Organizes several classes that hold and validate input file parameter.
+"""Organizes classes that handle and validate input file parameter.
 
 Copyright (c) 2022-2023 Mitja Maximilian Zdouc, PhD
 
@@ -20,6 +20,8 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
+
+from typing import Self
 
 from pydantic import BaseModel, model_validator, FilePath
 
@@ -59,6 +61,14 @@ class PeaktableParameters(BaseModel):
                 raise ValueError(f"Unsupported peaktable format: '{format_peaktable}'.")
         return self
 
+    def to_json(self: Self) -> dict:
+        """Convert attributes to json-compatible ones."""
+        return {
+            "filepath": str(self.filepath.resolve()),
+            "format": str(self.format),
+            "polarity": str(self.polarity),
+        }
+
 
 class MsmsParameters(BaseModel):
     """A Pydantic-based class for representing and validating MS/MS file parameters.
@@ -86,6 +96,13 @@ class MsmsParameters(BaseModel):
             case _:
                 raise ValueError(f"Unsupported MS/MS format: '{format_msms}'.")
         return self
+
+    def to_json(self: Self) -> dict:
+        """Convert attributes to json-compatible ones."""
+        return {
+            "filepath": str(self.filepath.resolve()),
+            "format": str(self.format),
+        }
 
 
 class PhenotypeParameters(BaseModel):
@@ -134,6 +151,13 @@ class PhenotypeParameters(BaseModel):
                 raise ValueError(f"Unsupported phenotype format: '{format_phenotype}'.")
         return self
 
+    def to_json(self: Self) -> dict:
+        """Convert attributes to json-compatible ones."""
+        return {
+            "filepath": str(self.filepath.resolve()),
+            "format": str(self.format),
+        }
+
 
 class GroupMetadataParameters(BaseModel):
     """A Pydantic-based class for representing and validating group metadata parameters.
@@ -180,9 +204,16 @@ class GroupMetadataParameters(BaseModel):
                 )
         return self
 
+    def to_json(self: Self) -> dict:
+        """Convert attributes to json-compatible ones."""
+        return {
+            "filepath": str(self.filepath.resolve()),
+            "format": str(self.format),
+        }
+
 
 class SpecLibParameters(BaseModel):
-    """A Pydantic-based class for repres. and valid. spectral library files  parameters.
+    """Pydantic-based class for repres. and valid. of spectral library files parameters.
 
     Attributes:
         filepath: a pathlib Path object pointing towards a spectral library file
@@ -209,3 +240,10 @@ class SpecLibParameters(BaseModel):
                     f"Unsupported spectral library format: " f"'{format_speclib}'."
                 )
         return self
+
+    def to_json(self: Self) -> dict:
+        """Convert attributes to json-compatible ones."""
+        return {
+            "filepath": str(self.filepath.resolve()),
+            "format": str(self.format),
+        }
