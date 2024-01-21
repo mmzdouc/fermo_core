@@ -81,7 +81,7 @@ class Stats(BaseModel):
         area_min: area under the curve for smallest peak across all features/samples
         area_max: area under the curve for biggest peak across all features/samples.
         samples: tuple of all sample ids in analysis run
-        features: tuple of all feature ids at the beginning of analysis run
+        features: total number of features
         active_features: retained in analysis run
         inactive_features: filtered out during analysis run by FeatureFilter module
         blank_features: all blank-associated features in analysis run
@@ -128,8 +128,8 @@ class Stats(BaseModel):
             sample.split(":")[1] for sample in df.filter(regex=":feature_state").columns
         )
         self.groups["DEFAULT"] = set(self.samples)
-        self.features = tuple(df["id"].tolist())
-        self.active_features = set(self.features)
+        self.features = len(df["id"].tolist())
+        self.active_features = set(df["id"].tolist())
 
     def to_json(self: Self) -> dict:
         """Export class attributes to json-dump compatible dict.
