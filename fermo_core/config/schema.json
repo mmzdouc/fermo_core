@@ -142,15 +142,16 @@
                     ],
                     "properties": {
                         "filepath": {
-                            "title": "Specifies the filepath. Absolute paths are preferred.",
+                            "title": "Specifies the filepath. Absolute paths are preferred. Default location: 'example_data/fermo.json'",
                             "type": "string"
                         },
                         "format": {
-                            "title": "Specifies the format of the file. Must be one of the allowed formats in 'enum'.",
+                            "title": "Specifies the format of the file. Must be one of the allowed formats in 'enum'. For format 'csv', results are added to input peaktable. Default: 'json'.",
                             "type": "string",
                             "enum": [
                                 "json",
-                                "csv"
+                                "csv",
+                                "all"
                             ]
                         }
                     }

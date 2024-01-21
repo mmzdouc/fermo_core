@@ -22,8 +22,8 @@
             "format": "mgf"
         },
         "output": {
-            "filepath": "example_data/fermo.json",
-            "format": "json"
+            "filepath": "example_data/fermo_session",
+            "format": "all"
         }
     },
     "core_modules": {

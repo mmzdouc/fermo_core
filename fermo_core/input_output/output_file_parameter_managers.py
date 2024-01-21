@@ -39,12 +39,12 @@ class OutputParameters(BaseModel):
     """
 
     default_filepath: Path = Path(__file__).parent.parent.parent.joinpath(
-        "example_data/fermo.json"
+        "example_data/fermo_session"
     )
     filepath: Path = Path(__file__).parent.parent.parent.joinpath(
-        "example_data/fermo.json"
+        "example_data/fermo_session"
     )
-    format: str = "json"
+    format: str = "all"
 
     @model_validator(mode="after")
     def validate_format(self):
@@ -52,6 +52,8 @@ class OutputParameters(BaseModel):
             case "json":
                 pass
             case "csv":
+                pass
+            case "all":
                 pass
             case _:
                 raise ValueError(
