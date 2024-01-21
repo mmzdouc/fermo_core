@@ -118,7 +118,6 @@ class SimNetworksManager(UtilityMethodManager):
 
     def run_modified_cosine_alg(self: Self):
         """Run modified cosine-based spectral similarity networking on features."""
-        # TODO(MMZ 15.1.24): cover with test
         logger.info(
             "'SimNetworksManager': started modified cosine-based spectral similarity "
             "(=molecular) networking."

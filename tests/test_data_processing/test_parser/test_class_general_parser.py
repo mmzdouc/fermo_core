@@ -56,7 +56,7 @@ def test_parse_parameters_invalid():
 def test_parse_peaktable_valid(params_manager):
     general_parser = GeneralParser()
     general_parser.parse_peaktable(params_manager)
-    assert len(general_parser.stats.features) == 143
+    assert general_parser.stats.features == 143
 
 
 def test_parse_peaktable_invalid(params_manager):
@@ -67,14 +67,14 @@ def test_parse_peaktable_invalid(params_manager):
 
 def test_parse_msms_valid(params_manager, general_parser):
     general_parser.parse_msms(params_manager)
-    assert general_parser.features.entries.get(126).msms is not None
+    assert general_parser.features.entries.get(126).Spectrum is not None
 
 
 def test_parse_msms_invalid(params_manager, general_parser):
     params_manager.MsmsParameters = None
-    general_parser.features.entries.get(126).msms = None
+    general_parser.features.entries.get(126).Spectrum = None
     general_parser.parse_msms(params_manager)
-    assert general_parser.features.entries.get(126).msms is None
+    assert general_parser.features.entries.get(126).Spectrum is None
 
 
 def test_parse_group_metadata_valid(params_manager, general_parser):

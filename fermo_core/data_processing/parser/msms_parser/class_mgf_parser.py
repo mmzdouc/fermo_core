@@ -83,10 +83,6 @@ class MgfParser(MsmsParser):
                         "precursor_mz": spectrum.get("params").get("pepmass")[0],
                     }
                     feature = feature_repo.get(data["f_id"])
-                    feature.msms = (
-                        tuple(data["mz"].tolist()),
-                        tuple(data["intens"].tolist()),
-                    )
                     feature.Spectrum = self.create_spectrum_object(data)
                     feature_repo.modify(data["f_id"], feature)
 

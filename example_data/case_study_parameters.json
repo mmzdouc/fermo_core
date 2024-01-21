@@ -36,10 +36,8 @@
                 "activate_module": true,
                 "msms_min_frag_nr": 5,
                 "fragment_tol": 0.1,
-                "min_nr_matched_peaks": 5,
                 "score_cutoff": 0.7,
                 "max_nr_links": 10,
-                "max_precursor_mass_diff": 400,
                 "maximum_runtime": 1200
             },
             "ms2deepscore": {
@@ -80,7 +78,8 @@
                 "activate_module": true,
                 "fragment_tol": 0.1,
                 "min_nr_matched_peaks": 5,
-                "score_cutoff": 0.7
+                "score_cutoff": 0.7,
+                "max_precursor_mass_diff": 600
             },
             "ms2deepscore": {
                 "activate_module": true,

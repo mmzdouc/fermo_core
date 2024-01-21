@@ -55,7 +55,6 @@ class Feature(BaseModel):
         rel_intensity: the intensity relative to the highest feature in the sample.
         area: the area of the peak
         rel_area: the area relative to the feature with the highest area in the sample.
-        msms: a tuple of two tuples: [0] ms/ms fragments, [1] ms/ms intensities.
         Spectrum: a matchms Spectrum object instance using data from msms
         samples: a tuple of samples to which feature is associated.
         blank: bool to indicate if feature is blank-associated (if provided).
@@ -81,7 +80,6 @@ class Feature(BaseModel):
     rel_intensity: Optional[float] = None
     area: Optional[int] = None
     rel_area: Optional[float] = None
-    msms: Optional[Tuple[Tuple[float, ...], Tuple[float, ...]]] = None
     Spectrum: Optional[Spectrum] = None
     samples: Optional[Tuple] = None
     blank: Optional[bool] = None
@@ -125,7 +123,9 @@ class Feature(BaseModel):
         if self.Spectrum is not None:
             json_dict["spectrum"] = dict()
             json_dict["spectrum"]["mz"] = list(self.Spectrum.mz)
-            json_dict["spectrum"]["int"] = list(self.Spectrum.intensities)
+            json_dict["spectrum"]["int"] = [
+                round(i, 3) for i in self.Spectrum.intensities
+            ]
             json_dict["spectrum"]["metadata"] = self.Spectrum.metadata
 
         if self.networks is not None:

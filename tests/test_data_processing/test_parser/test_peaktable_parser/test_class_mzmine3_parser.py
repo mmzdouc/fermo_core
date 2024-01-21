@@ -26,12 +26,12 @@ def test_instantiate_parser_valid():
 
 def test_parse_valid(params):
     stats, feature_repo, sample_repo = PeakMzmine3Parser().parse(params)
-    assert len(stats.features) == 143
+    assert stats.features == 143
 
 
 def test_extract_stats_valid(params):
     stats = PeakMzmine3Parser().extract_stats(params)
-    assert len(stats.features) == 143
+    assert stats.features == 143
 
 
 def test_extract_features_valid(params):
