@@ -142,14 +142,14 @@
                     ],
                     "properties": {
                         "filepath": {
-                            "title": "Specifies the filepath. Absolute paths are preferred. Default location: 'example_data/fermo.json'",
+                            "title": "Specifies the filepath. Absolute paths are preferred. Default location: 'example_data/fermo.session.json'",
                             "type": "string"
                         },
                         "format": {
-                            "title": "Specifies the format of the file. Must be one of the allowed formats in 'enum'. For format 'csv', results are added to input peaktable. Default: 'json'.",
+                            "title": "Specifies the format of the file. Must be one of the allowed formats in 'enum'. For format 'csv', results are added to input peaktable. Default: 'session.json'.",
                             "type": "string",
                             "enum": [
-                                "json",
+                                "session.json",
                                 "csv",
                                 "all"
                             ]

@@ -49,7 +49,7 @@ class OutputParameters(BaseModel):
     @model_validator(mode="after")
     def validate_format(self):
         match self.format:
-            case "json":
+            case "session.json":
                 pass
             case "csv":
                 pass

@@ -67,7 +67,7 @@ class ExportManager(BaseModel):
         self.validate_output_filepath()
 
         match self.params.OutputParameters.format:
-            case "json":
+            case "session.json":
                 self.build_json_dict(version, starttime)
                 self.write_fermo_json()
             case "csv":
@@ -95,9 +95,9 @@ class ExportManager(BaseModel):
                 self.params.OutputParameters.default_filepath
             )
 
-        if not self.params.OutputParameters.filepath.suffix == '':
+        if not self.params.OutputParameters.filepath.suffix == "":
             self.params.OutputParameters.filepath = (
-                self.params.OutputParameters.filepath.with_suffix('')
+                self.params.OutputParameters.filepath.with_suffix("")
             )
 
     @staticmethod
@@ -112,8 +112,7 @@ class ExportManager(BaseModel):
         """
         if filepath.exists():
             logger.info(
-                f"'ExportManager': Successfully wrote file "
-                f"'{filepath.resolve()}'."
+                f"'ExportManager': Successfully wrote file " f"'{filepath.resolve()}'."
             )
         else:
             logger.fatal(
@@ -128,7 +127,7 @@ class ExportManager(BaseModel):
         Raises:
             FileNotFoundError: Could not write or find written json file.
         """
-        filepath = self.params.OutputParameters.filepath.with_suffix('.json')
+        filepath = self.params.OutputParameters.filepath.with_suffix(".session.json")
 
         with open(filepath, "w", encoding="utf-8") as outfile:
             outfile.write(json.dumps(self.json_dict, indent=4, ensure_ascii=False))
@@ -231,8 +230,8 @@ class ExportManager(BaseModel):
         Raises:
             FileNotFoundError: Could not write or find written csv output file.
         """
-        filepath = self.params.OutputParameters.filepath.with_suffix('.csv')
+        filepath = self.params.OutputParameters.filepath.with_suffix(".csv")
 
-        self.df.to_csv(filepath, encoding='utf-8', index=False, sep=',')
+        self.df.to_csv(filepath, encoding="utf-8", index=False, sep=",")
 
         self.validate_output_created(filepath)
