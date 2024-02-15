@@ -4,8 +4,7 @@
 from pathlib import Path
 import json
 from sys import argv
-
-# import pandas as pd
+import pandas as pd
 
 
 class ParseMibigEntries:
@@ -104,13 +103,40 @@ class ParseMibigEntries:
                 if item.suffix == ".json":
                     self.bgc_files.append(str(item))
 
+    def write_outfiles(self):
+        """Uses pandas to write space delimited .csv files from the MIBiG data
+
+        Attributes:
+            self.prepped_cfmid_file: Path of output file containing metabolite name, SMILES.
+            self.prepped_metadata_file: Path of output file containing metabolite name, SMILES, chemical formula,
+            molecular mass, database IDs, MIBiG entry ID.
+            self.bgc_dict: Dictionary with metabolite_name as key and metadata in a list as values: SMILES,
+            chemical formula, molecular mass, database IDs, MIBiG entry ID.
+        """
+        metadataframe = pd.DataFrame(
+            self.bgc_dict,
+            index=[
+                "SMILES",
+                "chemical formula",
+                "molecular mass",
+                "database IDs",
+                "MIBiG entry ID",
+            ],
+        )
+        metadataframe = metadataframe.T
+        metadataframe.to_csv(
+            self.prepped_metadata_file, sep=" ", index_label="metabolite name"
+        )
+        metadataframe[["SMILES"]].to_csv(self.prepped_cfmid_file, sep=" ", header=False)
+
 
 # testing
 if __name__ == "__main__":
-    testje = ParseMibigEntries(argv[1], "1", "1")
+    testje = ParseMibigEntries(argv[1], "cfm_id_input.csv", "metadata.csv")
     testje.extract_filenames()
     for path_file in testje.bgc_files:
         testje.extract_metadata(path_file)
     # print(testje.bgc_files)
     # testje.extract_metadata()
     print(testje.bgc_dict)
+    testje.write_outfiles()
