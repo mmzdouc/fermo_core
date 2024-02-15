@@ -88,6 +88,25 @@ class ParseMibigEntries:
                     metadata_table[5],
                 ]
 
+    def cleanup_output(self):
+        """Removes double quotes from output files of pandas
+
+        Attributes:
+            self.prepped_cfmid_file: Path of output file containing metabolite name, SMILES.
+            self.prepped_metadata_file: Path of output file containing metabolite name, SMILES, chemical formula,
+            molecular mass, database IDs, MIBiG entry ID.
+        """
+        with open(self.prepped_cfmid_file, "r+") as file:
+            text = file.read().replace('"', "")
+            file.truncate(0)
+            file.seek(0)
+            file.write(text)
+        with open(self.prepped_metadata_file, "r+") as file:
+            text = file.read().replace('"', "")
+            file.truncate(0)
+            file.seek(0)
+            file.write(text)
+
     def extract_filenames(self):
         """Extracts the filenames of all .json files from a folder and adds them to self.bcg_files
 
@@ -136,7 +155,9 @@ if __name__ == "__main__":
     testje.extract_filenames()
     for path_file in testje.bgc_files:
         testje.extract_metadata(path_file)
+    # testje.cleanup_dictionary()
     # print(testje.bgc_files)
     # testje.extract_metadata()
     print(testje.bgc_dict)
     testje.write_outfiles()
+    testje.cleanup_output()
