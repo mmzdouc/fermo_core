@@ -3,7 +3,6 @@
 
 from pathlib import Path
 import json
-from sys import argv
 import pandas as pd
 
 
@@ -30,7 +29,6 @@ class ParseMibigEntries:
         self.mibig_folder = mibig_folder
         self.prepped_cfmid_file = prepped_cfmid_file
         self.prepped_metadata_file = prepped_metadata_file
-        # Will later make method to handle file delivery to extract_metadata
         self.bgc_files = []
         self.bgc_dict = {}
 
@@ -147,17 +145,3 @@ class ParseMibigEntries:
             self.prepped_metadata_file, sep=" ", index_label="metabolite name"
         )
         metadataframe[["SMILES"]].to_csv(self.prepped_cfmid_file, sep=" ", header=False)
-
-
-# testing
-if __name__ == "__main__":
-    testje = ParseMibigEntries(argv[1], "cfm_id_input.csv", "metadata.csv")
-    testje.extract_filenames()
-    for path_file in testje.bgc_files:
-        testje.extract_metadata(path_file)
-    # testje.cleanup_dictionary()
-    # print(testje.bgc_files)
-    # testje.extract_metadata()
-    print(testje.bgc_dict)
-    testje.write_outfiles()
-    testje.cleanup_output()
