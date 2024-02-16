@@ -1,3 +1,4 @@
+import pandas as pd
 import pytest
 
 from fermo_core.data_processing.builder_feature.class_feature_builder import (
@@ -93,8 +94,15 @@ def test_set_rel_area_valid():
 
 
 def test_set_samples_valid():
-    feature1 = FeatureBuilder().set_samples(("a", "b", "c")).get_result()
-    assert feature1.samples == ("a", "b", "c")
+    series = pd.Series(
+        {
+            "datafile:5440_5439_mod.mzXML:feature_state": "DETECTED",
+            "datafile:5432_5431_mod2.mzXML:feature_state": "DETECTED",
+            "datafile:5434_5433_mod.mzXML:feature_state": "UNKNOWN",
+        }
+    )
+    feature1 = FeatureBuilder().set_samples(series).get_result()
+    assert feature1.samples == ("5440_5439_mod.mzXML", "5432_5431_mod2.mzXML")
 
 
 def test_get_result_valid():

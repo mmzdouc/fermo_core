@@ -1,5 +1,6 @@
 # Local files
 *.hdf5
+example_data/fermo.backup.session.json
 example_data/fermo.session.json
 example_data/fermo.csv
 
