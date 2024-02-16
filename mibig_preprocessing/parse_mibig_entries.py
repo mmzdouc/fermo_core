@@ -106,6 +106,7 @@ class ParseMibigEntries:
                     metadata_table[5],
                 ]
 
+    # Not used cleanup later
     def cleanup_output(self):
         """Removes double quotes from output files of pandas
 
@@ -141,7 +142,7 @@ class ParseMibigEntries:
                     self.bgc_files.append(str(item))
 
     def write_outfiles(self):
-        """Uses pandas to write space delimited .csv files from the MIBiG data
+        """Uses pandas to write space delimited .csv style files from the MIBiG data
 
         Attributes:
             self.prepped_cfmid_file: Path of output file containing metabolite name, SMILES.
@@ -154,14 +155,16 @@ class ParseMibigEntries:
             self.bgc_dict,
             index=[
                 "SMILES",
-                "chemical formula",
-                "molecular mass",
-                "database IDs",
-                "MIBiG entry ID",
+                "chemical_formula",
+                "molecular_mass",
+                "database_IDs",
+                "MIBiG_entry_ID",
             ],
         )
+        columns = metadataframe.columns.str.replace(" ", "_", regex=True)
+        metadataframe.columns = columns
         metadataframe = metadataframe.T
         metadataframe.to_csv(
-            self.prepped_metadata_file, sep=" ", index_label="metabolite name"
+            self.prepped_metadata_file, sep=" ", index_label="metabolite_name"
         )
         metadataframe[["SMILES"]].to_csv(self.prepped_cfmid_file, sep=" ", header=False)
