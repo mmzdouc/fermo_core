@@ -61,8 +61,6 @@ class LibraryPrep:
         for file_path in preprocessed_data.bgc_files:
             preprocessed_data.extract_metadata(file_path)
         preprocessed_data.write_outfiles()
-        # This step should probably take place after CFm-ID processing
-        # preprocessed_data.cleanup_output()
 
 
 # Will later do better and flexible input handling using argparse
