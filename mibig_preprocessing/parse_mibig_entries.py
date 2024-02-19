@@ -78,14 +78,12 @@ class ParseMibigEntries:
             for metabolite in complete_bgc_dict["cluster"]["compounds"]:
                 try:
                     metadata_table[0] = metabolite["compound"]
-                except KeyError as e:
-                    print("Keyerror:", e, "No metabolite name found in file", file_path)
-                    exit()
+                except KeyError:
+                    break
                 try:
                     metadata_table[1] = metabolite["chem_struct"]
-                except KeyError as e:
-                    print("Keyerror:", e, "No SMILES found in file", file_path)
-                    exit()
+                except KeyError:
+                    break
                 try:
                     metadata_table[2] = metabolite["molecular_formula"]
                 except KeyError:
