@@ -57,9 +57,21 @@ class AddMibigMetadata:
             else:
                 if item.suffix == ".log":
                     self.log_files.append(str(item))
-        print(self.log_files)
+
+    def extract_metadata(self):
+        with open(self.prepped_metadata_file, "r") as file:
+            for line in file:
+                metadata_table = line.strip("\n").split(" ")
+                self.metadata[metadata_table[0]] = [
+                    metadata_table[1],
+                    metadata_table[2],
+                    metadata_table[3],
+                    metadata_table[4],
+                    metadata_table[5],
+                ]
 
 
 if __name__ == "__main__":
     metadata = AddMibigMetadata("s_output", "s_meta.csv")
     metadata.extract_filenames()
+    metadata.extract_metadata()
