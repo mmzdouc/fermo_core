@@ -63,6 +63,7 @@ class LibraryPrep:
             self.prepped_metadata_file: Path of output file containing metabolite name, SMILES, chemical formula,
             molecular mass, database IDs, MIBiG entry ID.
         """
+        print("Processing the .json files from MIBiG into input for CFM-ID")
         preprocessed_data = ParseMibigEntries(
             self.mibig_folder, self.prepped_cfmid_file, self.prepped_metadata_file
         )
@@ -93,6 +94,7 @@ class LibraryPrep:
             self.prepped_metadata_file: Path of output file containing metabolite name, SMILES, chemical formula,
              molecular mass, database IDs, MIBiG entry ID.
         """
+        print("Adding metadata to the CFM-ID output")
         metadata = AddMibigMetadata(self.output_folder, self.prepped_metadata_file)
         metadata.extract_filenames()
         metadata.extract_metadata()
@@ -141,8 +143,47 @@ def run_parser():
         help="Probability below which metabolite fragments will be excluded"
         " from predictions.",
     )
-    # metadata_parser = subparsers.add_parser("metadata", help="fill later")
-    # all_cfm_parser = subparsers.add_parser("all_cfm_id", help="fill later")
+    metadata_parser = subparsers.add_parser(
+        "metadata",
+        help="Adds real mass, publication IDs"
+        " and MIBiG cluster IDs to CFM-ID output.",
+    )
+    metadata_parser.add_argument(
+        "o_folder",
+        help="Path of cfm-id output folder where it will create 1"
+        " fragmentation spectrum file per metabolite.",
+    )
+    metadata_parser.add_argument(
+        "m_file",
+        help="Path of output file containing metabolite name, SMILES, "
+        "chemical formula,molecular mass, database IDs, MIBiG entry ID.",
+    )
+    all_cfm_parser = subparsers.add_parser(
+        "all_cfm_id",
+        help="Performs all above actions using CFM-ID as a predictor"
+        " of fragmentation",
+    )
+    all_cfm_parser.add_argument(
+        "mibig", help="Path of the mibig.json folder containing .json files."
+    )
+    all_cfm_parser.add_argument(
+        "c_file", help="Path of input file containing metabolite name, SMILES."
+    )
+    all_cfm_parser.add_argument(
+        "m_file",
+        help="Path of output file containing metabolite name, SMILES, "
+        "chemical formula,molecular mass, database IDs, MIBiG entry ID.",
+    )
+    all_cfm_parser.add_argument(
+        "o_folder",
+        help="Path of cfm-id output folder where it will create 1"
+        " fragmentation spectrum file per metabolite.",
+    )
+    all_cfm_parser.add_argument(
+        "prune",
+        help="Probability below which metabolite fragments will be excluded"
+        " from predictions.",
+    )
     args = parser.parse_args()
     if args.mode == "preprocessing":
         data = LibraryPrep(args.mibig, args.c_file, args.m_file, "0", "0")
@@ -150,9 +191,18 @@ def run_parser():
     if args.mode == "cfm_id":
         data = LibraryPrep("0", args.c_file, "0", args.o_folder, args.prune)
         data.run_cfmid()
+    if args.mode == "metadata":
+        data = LibraryPrep("0", "0", args.m_file, args.o_folder, "0")
+        data.run_metadata()
+    if args.mode == "all_cfm_id":
+        data = LibraryPrep(
+            args.mibig, args.c_file, args.m_file, args.o_folder, args.prune
+        )
+        data.process_mibig()
+        data.run_cfmid()
+        data.run_metadata()
 
 
 if __name__ == "__main__":
-    # run_parser()
-    data = LibraryPrep("0", "0", "s_meta.csv", "s_output", "0")
-    data.run_metadata()
+    run_parser()
+    print("All actions completed successfully!")
