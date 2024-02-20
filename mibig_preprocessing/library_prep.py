@@ -23,6 +23,7 @@ SOFTWARE.
 
 from parse_mibig_entries import ParseMibigEntries
 from run_cfmid import RunCfmid
+from add_mibig_metadata import AddMibigMetadata
 from argparse import ArgumentParser
 
 
@@ -84,8 +85,22 @@ class LibraryPrep:
         )
         spectra.run_program()
 
+    def run_metadata(self):
+        """Adds real mass, publication IDs and MIBiG cluster IDs to CFM-ID output.
+        Attributes:
+            self.output_folder: Path of cfm-id output folder where it will create 1 fragmentation spectrum file
+             per metabolite
+            self.prepped_metadata_file: Path of output file containing metabolite name, SMILES, chemical formula,
+             molecular mass, database IDs, MIBiG entry ID.
+        """
+        metadata = AddMibigMetadata(self.output_folder, self.prepped_metadata_file)
+        metadata.extract_filenames()
+        metadata.extract_metadata()
+        metadata.add_metadata_cfmid_files()
+
 
 def run_parser():
+    """Parses user input and determines which class(es) are used from library_prep"""
     parser = ArgumentParser(
         description="Generates a spectral library from a folder of MIBiG entries using CFM-ID"
     )
@@ -138,4 +153,6 @@ def run_parser():
 
 
 if __name__ == "__main__":
-    run_parser()
+    # run_parser()
+    data = LibraryPrep("0", "0", "s_meta.csv", "s_output", "0")
+    data.run_metadata()
