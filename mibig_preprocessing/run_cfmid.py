@@ -58,14 +58,10 @@ class RunCfmid:
             + self.prepped_cfmid_file
             + " "
             + self.prune_probability
+            + " "
             + "/trained_models_cfmid4.0/[M+H]+/param_output.log "
             + "/trained_models_cfmid4.0/[M+H]+/param_config.txt 1 "
             + self.output_folder
             + '"'
         )
         run(command, shell=True, executable="/bin/bash")
-
-
-if __name__ == "__main__":
-    sample = RunCfmid("input.txt", "output_here", "0.0001")
-    sample.run_program()
