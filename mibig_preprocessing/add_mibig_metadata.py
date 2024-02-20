@@ -130,10 +130,3 @@ class AddMibigMetadata:
             with open(filename, "w") as file:
                 for line in lines:
                     file.write(line)
-
-
-if __name__ == "__main__":
-    metadata = AddMibigMetadata("s_output", "s_meta.csv")
-    metadata.extract_filenames()
-    metadata.extract_metadata()
-    metadata.add_metadata_cfmid_files()
