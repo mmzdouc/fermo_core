@@ -24,12 +24,15 @@ from pathlib import Path
 
 
 class AddMibigMetadata:
-    """Adds real mass, database IDs and MIBiG cluster IDs to CFM-ID output.
+    """Adds real mass, publication IDs and MIBiG cluster IDs to CFM-ID output.
 
     Attributes:
         output_folder: Path of cfm-id output folder where it will create 1 fragmentation spectrum file per metabolite
         prepped_metadata_file: Path of output file containing metabolite name, SMILES, chemical formula,
         molecular mass, database IDs, MIBiG entry ID.
+        log_files: Table of file paths of the CFM-ID log files output
+        metadata: Dictionary with metabolite_name as key and metadata in a list as values: SMILES,
+             chemical formula, molecular mass, database IDs, MIBiG entry ID.
 
     """
 
@@ -44,7 +47,7 @@ class AddMibigMetadata:
         self.metadata = {}
 
     def extract_filenames(self):
-        """Extracts the filenames of all .log files from a folder and adds them to self.bcg_files
+        """Extracts the filenames of all .log files from a folder and adds them to self.log_files
 
         Attributes:
             self.output_folder: Path of the CFM-ID output folder containing the spectral library
@@ -78,8 +81,59 @@ class AddMibigMetadata:
                     metadata_table[5],
                 ]
 
+    def add_metadata_cfmid_files(self):
+        """Adds the missing metadata to all files in the CFM-ID output folder
+
+        Attributes:
+            self.metadata: Dictionary with metabolite_name as key and metadata in a list as values: SMILES,
+             chemical formula, molecular mass, database IDs, MIBiG entry ID.
+             self.log_files: Table of file paths of the CFM-ID log files output
+        """
+
+        for filename in self.log_files:
+            with open(filename, "r") as file:
+                lines = file.readlines()
+                for linenr in range(len(lines)):
+                    if lines[linenr].startswith("#RealMass"):
+                        print(
+                            "File "
+                            + filename
+                            + " already contains metadata, exiting now."
+                        )
+                        exit()
+                    if lines[linenr].startswith("#PMass"):
+                        lines[linenr] = (
+                            lines[linenr]
+                            + "#RealMass="
+                            + self.metadata[
+                                filename.strip(".log")
+                                .strip(self.output_folder)
+                                .strip("\\")
+                                .strip("/")
+                            ][2]
+                            + "\n#Publications="
+                            + self.metadata[
+                                filename.strip(".log")
+                                .strip(self.output_folder)
+                                .strip("\\")
+                                .strip("/")
+                            ][3]
+                            + "\n#MibigAccession="
+                            + self.metadata[
+                                filename.strip(".log")
+                                .strip(self.output_folder)
+                                .strip("\\")
+                                .strip("/")
+                            ][4]
+                            + "\n"
+                        )
+            with open(filename, "w") as file:
+                for line in lines:
+                    file.write(line)
+
 
 if __name__ == "__main__":
     metadata = AddMibigMetadata("s_output", "s_meta.csv")
     metadata.extract_filenames()
     metadata.extract_metadata()
+    metadata.add_metadata_cfmid_files()
