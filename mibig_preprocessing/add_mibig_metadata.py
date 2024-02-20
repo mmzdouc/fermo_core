@@ -59,6 +59,14 @@ class AddMibigMetadata:
                     self.log_files.append(str(item))
 
     def extract_metadata(self):
+        """Extracts the relevant metadata from the metadata .csv file and
+        adds a new entry to self_metadata for every metabolite found.
+
+        Attributes:
+            self.prepped_metadata_file: Path of the .csv file containing the metadata
+            self.metadata: Dictionary with metabolite_name as key and metadata in a list as values: SMILES,
+             chemical formula, molecular mass, database IDs, MIBiG entry ID.
+        """
         with open(self.prepped_metadata_file, "r") as file:
             for line in file:
                 metadata_table = line.strip("\n").split(" ")
