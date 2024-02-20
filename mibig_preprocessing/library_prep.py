@@ -23,7 +23,7 @@ SOFTWARE.
 
 from parse_mibig_entries import ParseMibigEntries
 from run_cfmid import RunCfmid
-from sys import argv
+from argparse import ArgumentParser
 
 
 class LibraryPrep:
@@ -85,8 +85,57 @@ class LibraryPrep:
         spectra.run_program()
 
 
-# Will later do better and flexible input handling using argparse
+def run_parser():
+    parser = ArgumentParser(
+        description="Generates a spectral library from a folder of MIBiG entries using CFM-ID"
+    )
+    subparsers = parser.add_subparsers(
+        help="See mode -h for required arguments per mode.", required=True, dest="mode"
+    )
+    pre_parser = subparsers.add_parser(
+        "preprocessing",
+        help="Processes the .json files from MIBiG into input"
+        " for CFM-ID and metadata file.",
+    )
+    pre_parser.add_argument(
+        "mibig", help="Path of the mibig.json folder containing .json files."
+    )
+    pre_parser.add_argument(
+        "c_file", help="Path of input file containing metabolite name, SMILES."
+    )
+    pre_parser.add_argument(
+        "m_file",
+        help="Path of output file containing metabolite name, SMILES, "
+        "chemical formula,molecular mass, database IDs, MIBiG entry ID.",
+    )
+    cfm_parser = subparsers.add_parser(
+        "cfm_id",
+        help="Builds and executes the command to run CFM-ID "
+        "in dockerized environment using nice -16",
+    )
+    cfm_parser.add_argument(
+        "c_file", help="Path of input file containing metabolite name, SMILES."
+    )
+    cfm_parser.add_argument(
+        "o_folder",
+        help="Path of cfm-id output folder where it will create 1"
+        " fragmentation spectrum file per metabolite.",
+    )
+    cfm_parser.add_argument(
+        "prune",
+        help="Probability below which metabolite fragments will be excluded"
+        " from predictions.",
+    )
+    # metadata_parser = subparsers.add_parser("metadata", help="fill later")
+    # all_cfm_parser = subparsers.add_parser("all_cfm_id", help="fill later")
+    args = parser.parse_args()
+    if args.mode == "preprocessing":
+        data = LibraryPrep(args.mibig, args.c_file, args.m_file, "0", "0")
+        data.process_mibig()
+    if args.mode == "cfm_id":
+        data = LibraryPrep("0", args.c_file, "0", args.o_folder, args.prune)
+        data.run_cfmid()
+
+
 if __name__ == "__main__":
-    data = LibraryPrep(argv[1], argv[2], argv[3], argv[4], argv[5])
-    data.process_mibig()
-    data.run_cfmid()
+    run_parser()
