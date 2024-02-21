@@ -96,6 +96,7 @@ class ParseMibigEntries:
                     metadata_table[4] = metabolite["database_id"]
                 except KeyError:
                     metadata_table[4] = ""
+                metadata_table[4] = str(metadata_table[4]).replace(" ", "")
                 self.bgc_dict[metadata_table[0]] = [
                     metadata_table[1],
                     metadata_table[2],
