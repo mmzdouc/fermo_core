@@ -22,6 +22,7 @@ SOFTWARE.
 """
 
 from subprocess import run
+from typing import Self
 
 
 class RunCfmid:
@@ -43,15 +44,8 @@ class RunCfmid:
         self.output_folder = output_folder
         self.prune_probability = prune_probability
 
-    def run_program(self):
-        """Builds and executes the command to run CFM-ID in dockerized environment using nice -16
-
-        Attributes:
-            self.prepped_cfmid_file: Path of input file containing metabolite name, SMILES.
-            self.output_folder: Path of cfm-id output folder where it will create 1 fragmentation spectrum file per
-            metabolite.
-            self.prune_probability: Probability below which metabolite fragments will be excluded from predictions.
-        """
+    def run_program(self: Self):
+        """Builds and executes the command to run CFM-ID in dockerized environment using nice -16"""
         command = (
             "nice -16 docker run --rm=true -v $(pwd):/cfmid/public/ -i wishartlab/cfmid:latest "
             + 'sh -c "cd /cfmid/public/; cfm-predict '

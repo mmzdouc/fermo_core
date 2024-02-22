@@ -20,11 +20,13 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
+from typing import Self
 
+from argparse import ArgumentParser
+
+from add_mibig_metadata import AddMibigMetadata
 from parse_mibig_entries import ParseMibigEntries
 from run_cfmid import RunCfmid
-from add_mibig_metadata import AddMibigMetadata
-from argparse import ArgumentParser
 
 
 class LibraryPrep:
@@ -54,15 +56,8 @@ class LibraryPrep:
         self.output_folder = output_folder
         self.prune_probability = prune_probability
 
-    def process_mibig(self):
-        """Processes the .json files from MIBiG into input for CFM-ID and metadata file.
-
-        Attributes:
-            self.mibig_folder: Path of the mibig.json folder containing .json files.
-            self.prepped_cfmid_file: Path of output file containing metabolite name, SMILES.
-            self.prepped_metadata_file: Path of output file containing metabolite name, SMILES, chemical formula,
-            molecular mass, database IDs, MIBiG entry ID.
-        """
+    def process_mibig(self: Self):
+        """Processes the .json files from MIBiG into input for CFM-ID and metadata file."""
         print("Processing the .json files from MIBiG into input for CFM-ID")
         preprocessed_data = ParseMibigEntries(
             self.mibig_folder, self.prepped_cfmid_file, self.prepped_metadata_file
@@ -72,28 +67,15 @@ class LibraryPrep:
             preprocessed_data.extract_metadata(file_path)
         preprocessed_data.write_outfiles()
 
-    def run_cfmid(self):
-        """Builds and executes the command to run CFM-ID in dockerized environment using nice -16
-
-        Attributes:
-            self.prepped_cfmid_file: Path of input file containing metabolite name, SMILES.
-            self.output_folder: Path of cfm-id output folder where it will create 1 fragmentation spectrum file per
-            metabolite.
-            self.prune_probability: Probability below which metabolite fragments will be excluded from predictions.
-        """
+    def run_cfmid(self: Self):
+        """Builds and executes the command to run CFM-ID in dockerized environment using nice -16"""
         spectra = RunCfmid(
             self.prepped_cfmid_file, self.output_folder, self.prune_probability
         )
         spectra.run_program()
 
-    def run_metadata(self):
-        """Adds real mass, publication IDs and MIBiG cluster IDs to CFM-ID output.
-        Attributes:
-            self.output_folder: Path of cfm-id output folder where it will create 1 fragmentation spectrum file
-             per metabolite
-            self.prepped_metadata_file: Path of output file containing metabolite name, SMILES, chemical formula,
-             molecular mass, database IDs, MIBiG entry ID.
-        """
+    def run_metadata(self: Self):
+        """Adds real mass, publication IDs and MIBiG cluster IDs to CFM-ID output."""
         print("Adding metadata to the CFM-ID output")
         metadata = AddMibigMetadata(self.output_folder, self.prepped_metadata_file)
         metadata.extract_filenames()
@@ -118,7 +100,8 @@ def run_parser():
         "mibig", help="Path of the mibig.json folder containing .json files."
     )
     pre_parser.add_argument(
-        "c_file", help="Path of input file containing metabolite name, SMILES."
+        "c_file",
+        help="Path of CFM-ID input file containing metabolite name, SMILES. NEEDS .txt EXTENSION!",
     )
     pre_parser.add_argument(
         "m_file",

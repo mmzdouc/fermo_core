@@ -23,6 +23,8 @@ SOFTWARE.
 
 from pathlib import Path
 import json
+from typing import Self
+
 import pandas as pd
 
 
@@ -52,17 +54,9 @@ class ParseMibigEntries:
         self.bgc_files = []
         self.bgc_dict = {}
 
-    def extract_metadata(self, file_path):
+    def extract_metadata(self: Self, file_path: str):
         """Extracts the relevant metadata from a .json file and
         adds a new entry to bgc_dict for every metabolite found.
-
-        Attributes:
-            file_path: Path of a .json file containing the information on a single BCG cluster from MIBiG database.
-            self.bgc_dict: Dictionary with metabolite_name as key and metadata in a list as values: SMILES,
-             chemical formula, molecular mass, database IDs, MIBiG entry ID.
-
-        Raises:
-            KeyError: If .json file doesn't contain either a metabolite name or SMILES.
         """
 
         with open(file_path) as file:
@@ -105,13 +99,8 @@ class ParseMibigEntries:
                     metadata_table[5],
                 ]
 
-    def extract_filenames(self):
-        """Extracts the filenames of all .json files from a folder and adds them to self.bcg_files
-
-        Attributes:
-            self.mibig_folder: Path of the mibig.json folder containing .json files.
-            self.bcg_files: A list containing all file paths of the MIBiG entries .json files
-        """
+    def extract_filenames(self: Self):
+        """Extracts the filenames of all .json files from a folder and adds them to self.bcg_files"""
         folder = Path(self.mibig_folder)
         for item in folder.iterdir():
             if item.is_dir():
@@ -120,16 +109,8 @@ class ParseMibigEntries:
                 if item.suffix == ".json":
                     self.bgc_files.append(str(item))
 
-    def write_outfiles(self):
-        """Uses pandas to write space delimited .csv style files from the MIBiG data
-
-        Attributes:
-            self.prepped_cfmid_file: Path of output file containing metabolite name, SMILES.
-            self.prepped_metadata_file: Path of output file containing metabolite name, SMILES, chemical formula,
-            molecular mass, database IDs, MIBiG entry ID.
-            self.bgc_dict: Dictionary with metabolite_name as key and metadata in a list as values: SMILES,
-            chemical formula, molecular mass, database IDs, MIBiG entry ID.
-        """
+    def write_outfiles(self: Self):
+        """Uses pandas to write space delimited .csv style files from the MIBiG data"""
         metadataframe = pd.DataFrame(
             self.bgc_dict,
             index=[

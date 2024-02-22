@@ -21,6 +21,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 from pathlib import Path
+from typing import Self
 
 
 class AddMibigMetadata:
@@ -46,13 +47,8 @@ class AddMibigMetadata:
         self.log_files = []
         self.metadata = {}
 
-    def extract_filenames(self):
-        """Extracts the filenames of all .log files from a folder and adds them to self.log_files
-
-        Attributes:
-            self.output_folder: Path of the CFM-ID output folder containing the spectral library
-            self.log_files: A list containing all file paths of the CFM-ID output spectra
-        """
+    def extract_filenames(self: Self):
+        """Extracts the filenames of all .log files from a folder and adds them to self.log_files"""
         folder = Path(self.output_folder)
         for item in folder.iterdir():
             if item.is_dir():
@@ -61,14 +57,9 @@ class AddMibigMetadata:
                 if item.suffix == ".log":
                     self.log_files.append(str(item))
 
-    def extract_metadata(self):
+    def extract_metadata(self: Self):
         """Extracts the relevant metadata from the metadata .csv file and
         adds a new entry to self_metadata for every metabolite found.
-
-        Attributes:
-            self.prepped_metadata_file: Path of the .csv file containing the metadata
-            self.metadata: Dictionary with metabolite_name as key and metadata in a list as values: SMILES,
-             chemical formula, molecular mass, database IDs, MIBiG entry ID.
         """
         with open(self.prepped_metadata_file, "r") as file:
             for line in file:
@@ -81,14 +72,8 @@ class AddMibigMetadata:
                     metadata_table[5],
                 ]
 
-    def add_metadata_cfmid_files(self):
-        """Adds the missing metadata to all files in the CFM-ID output folder
-
-        Attributes:
-            self.metadata: Dictionary with metabolite_name as key and metadata in a list as values: SMILES,
-             chemical formula, molecular mass, database IDs, MIBiG entry ID.
-             self.log_files: Table of file paths of the CFM-ID log files output
-        """
+    def add_metadata_cfmid_files(self: Self):
+        """Adds the missing metadata to all files in the CFM-ID output folder"""
 
         for filename in self.log_files:
             with open(filename, "r") as file:
