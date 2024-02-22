@@ -21,13 +21,14 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 from typing import Self
+from sys import argv
 
-from argparse import ArgumentParser
 from pydantic import BaseModel
 
 from add_mibig_metadata import AddMibigMetadata
 from parse_mibig_entries import ParseMibigEntries
 from run_cfmid import RunCfmid
+from class_parsing_manager import ParsingManager
 
 
 class LibraryPrep(BaseModel):
@@ -88,126 +89,22 @@ class LibraryPrep(BaseModel):
         metadata.extract_metadata()
         metadata.add_metadata_cfmid_files()
 
-
-def run_parser():
-    """Parses user input and determines which class(es) are used from library_prep"""
-    parser = ArgumentParser(
-        description="Generates a spectral library from a folder of MIBiG entries using CFM-ID"
-    )
-    subparsers = parser.add_subparsers(
-        help="See mode -h for required arguments per mode.", required=True, dest="mode"
-    )
-    pre_parser = subparsers.add_parser(
-        "preprocessing",
-        help="Processes the .json files from MIBiG into input"
-        " for CFM-ID and metadata file.",
-    )
-    pre_parser.add_argument(
-        "mibig", help="Path of the mibig.json folder containing .json files."
-    )
-    pre_parser.add_argument(
-        "c_file",
-        help="Path of CFM-ID input file containing metabolite name, SMILES. NEEDS .txt EXTENSION!",
-    )
-    pre_parser.add_argument(
-        "m_file",
-        help="Path of output file containing metabolite name, SMILES, "
-        "chemical formula,molecular mass, database IDs, MIBiG entry ID.",
-    )
-    cfm_parser = subparsers.add_parser(
-        "cfm_id",
-        help="Builds and executes the command to run CFM-ID "
-        "in dockerized environment using nice -16",
-    )
-    cfm_parser.add_argument(
-        "c_file", help="Path of input file containing metabolite name, SMILES."
-    )
-    cfm_parser.add_argument(
-        "o_folder",
-        help="Path of cfm-id output folder where it will create 1"
-        " fragmentation spectrum file per metabolite.",
-    )
-    cfm_parser.add_argument(
-        "prune",
-        help="Probability below which metabolite fragments will be excluded"
-        " from predictions.",
-    )
-    metadata_parser = subparsers.add_parser(
-        "metadata",
-        help="Adds real mass, publication IDs"
-        " and MIBiG cluster IDs to CFM-ID output.",
-    )
-    metadata_parser.add_argument(
-        "o_folder",
-        help="Path of cfm-id output folder where it will create 1"
-        " fragmentation spectrum file per metabolite.",
-    )
-    metadata_parser.add_argument(
-        "m_file",
-        help="Path of output file containing metabolite name, SMILES, "
-        "chemical formula,molecular mass, database IDs, MIBiG entry ID.",
-    )
-    all_cfm_parser = subparsers.add_parser(
-        "all_cfm_id",
-        help="Performs all above actions using CFM-ID as a predictor"
-        " of fragmentation",
-    )
-    all_cfm_parser.add_argument(
-        "mibig", help="Path of the mibig.json folder containing .json files."
-    )
-    all_cfm_parser.add_argument(
-        "c_file", help="Path of input file containing metabolite name, SMILES."
-    )
-    all_cfm_parser.add_argument(
-        "m_file",
-        help="Path of output file containing metabolite name, SMILES, "
-        "chemical formula,molecular mass, database IDs, MIBiG entry ID.",
-    )
-    all_cfm_parser.add_argument(
-        "o_folder",
-        help="Path of cfm-id output folder where it will create 1"
-        " fragmentation spectrum file per metabolite.",
-    )
-    all_cfm_parser.add_argument(
-        "prune",
-        help="Probability below which metabolite fragments will be excluded"
-        " from predictions.",
-    )
-    args = parser.parse_args()
-    args_dict = {}
-    try:
-        args_dict["mibig_folder"] = args.mibig
-    except AttributeError:
-        pass
-    try:
-        args_dict["prepped_cfmid_file"] = args.c_file
-    except AttributeError:
-        pass
-    try:
-        args_dict["prepped_metadata_file"] = args.m_file
-    except AttributeError:
-        pass
-    try:
-        args_dict["output_folder"] = args.o_folder
-    except AttributeError:
-        pass
-    try:
-        args_dict["prune_probability"] = args.prune
-    except AttributeError:
-        pass
-    data = LibraryPrep(**args_dict)
-    if args.mode == "preprocessing":
-        data.process_mibig()
-    if args.mode == "cfm_id":
-        data.run_cfmid()
-    if args.mode == "metadata":
-        data.run_metadata()
-    if args.mode == "all_cfm_id":
-        data.process_mibig()
-        data.run_cfmid()
-        data.run_metadata()
+    @staticmethod
+    def run_library_prep(mode):
+        if mode == "preprocessing":
+            data.process_mibig()
+        if mode == "cfm_id":
+            data.run_cfmid()
+        if mode == "metadata":
+            data.run_metadata()
+        if mode == "all_cfm_id":
+            data.process_mibig()
+            data.run_cfmid()
+            data.run_metadata()
 
 
 if __name__ == "__main__":
-    run_parser()
+    arguments_dictionary, mode_operation = ParsingManager.run_parser(argv[1:])
+    data = LibraryPrep(**arguments_dictionary)
+    data.run_library_prep(mode_operation)
     print("All actions completed successfully!")
