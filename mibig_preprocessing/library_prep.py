@@ -46,18 +46,21 @@ class LibraryPrep(BaseModel):
         pydantic.ValidationError: Pydantic validation failed during instantiation.
     """
 
-    mibig_folder: str
-    prepped_cfmid_file: str
-    prepped_metadata_file: str
-    output_folder: str
-    prune_probability: str
+    mibig_folder: str = ""
+    prepped_cfmid_file: str = ""
+    prepped_metadata_file: str = ""
+    output_folder: str = ""
+    prune_probability: str = ""
 
     def process_mibig(self: Self):
         """Processes the .json files from MIBiG into input for CFM-ID and metadata file."""
         print("Processing the .json files from MIBiG into input for CFM-ID")
-        preprocessed_data = ParseMibigEntries(
-            self.mibig_folder, self.prepped_cfmid_file, self.prepped_metadata_file
-        )
+        args_dict = {
+            "mibig_folder": self.mibig_folder,
+            "prepped_cfmid_file": self.prepped_cfmid_file,
+            "prepped_metadata_file": self.prepped_metadata_file,
+        }
+        preprocessed_data = ParseMibigEntries(**args_dict)
         preprocessed_data.extract_filenames()
         for file_path in preprocessed_data.bgc_files:
             preprocessed_data.extract_metadata(file_path)
@@ -65,15 +68,22 @@ class LibraryPrep(BaseModel):
 
     def run_cfmid(self: Self):
         """Builds and executes the command to run CFM-ID in dockerized environment using nice -16"""
-        spectra = RunCfmid(
-            self.prepped_cfmid_file, self.output_folder, self.prune_probability
-        )
+        args_dict = {
+            "prepped_cfmid_file": self.prepped_cfmid_file,
+            "output_folder": self.output_folder,
+            "prune_probability": self.prune_probability,
+        }
+        spectra = RunCfmid(**args_dict)
         spectra.run_program()
 
     def run_metadata(self: Self):
         """Adds real mass, publication IDs and MIBiG cluster IDs to CFM-ID output."""
         print("Adding metadata to the CFM-ID output")
-        metadata = AddMibigMetadata(self.output_folder, self.prepped_metadata_file)
+        args_dict = {
+            "output_folder": self.output_folder,
+            "prepped_metadata_file": self.prepped_metadata_file,
+        }
+        metadata = AddMibigMetadata(**args_dict)
         metadata.extract_filenames()
         metadata.extract_metadata()
         metadata.add_metadata_cfmid_files()
@@ -164,19 +174,35 @@ def run_parser():
         " from predictions.",
     )
     args = parser.parse_args()
+    args_dict = {}
+    try:
+        args_dict["mibig_folder"] = args.mibig
+    except AttributeError:
+        pass
+    try:
+        args_dict["prepped_cfmid_file"] = args.c_file
+    except AttributeError:
+        pass
+    try:
+        args_dict["prepped_metadata_file"] = args.m_file
+    except AttributeError:
+        pass
+    try:
+        args_dict["output_folder"] = args.o_folder
+    except AttributeError:
+        pass
+    try:
+        args_dict["prune_probability"] = args.prune
+    except AttributeError:
+        pass
+    data = LibraryPrep(**args_dict)
     if args.mode == "preprocessing":
-        data = LibraryPrep(args.mibig, args.c_file, args.m_file, "0", "0")
         data.process_mibig()
     if args.mode == "cfm_id":
-        data = LibraryPrep("0", args.c_file, "0", args.o_folder, args.prune)
         data.run_cfmid()
     if args.mode == "metadata":
-        data = LibraryPrep("0", "0", args.m_file, args.o_folder, "0")
         data.run_metadata()
     if args.mode == "all_cfm_id":
-        data = LibraryPrep(
-            args.mibig, args.c_file, args.m_file, args.o_folder, args.prune
-        )
         data.process_mibig()
         data.run_cfmid()
         data.run_metadata()
