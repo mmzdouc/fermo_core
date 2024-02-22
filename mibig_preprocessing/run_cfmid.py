@@ -24,25 +24,24 @@ SOFTWARE.
 from subprocess import run
 from typing import Self
 
+from pydantic import BaseModel
 
-class RunCfmid:
+
+class RunCfmid(BaseModel):
     """Class that runs the program CFM-ID in a dockerized environment
 
     Attributes:
         prepped_cfmid_file: Path of input file containing metabolite name, SMILES.
         output_folder: Path of cfm-id output folder where it will create 1 fragmentation spectrum file per metabolite
         prune_probability: Probability below which metabolite fragments will be excluded from predictions
+
+    Raise:
+        pydantic.ValidationError: Pydantic validation failed during instantiation.
     """
 
-    def __init__(
-        self,
-        prepped_cfmid_file: str,
-        output_folder: str,
-        prune_probability: str,
-    ):
-        self.prepped_cfmid_file = prepped_cfmid_file
-        self.output_folder = output_folder
-        self.prune_probability = prune_probability
+    prepped_cfmid_file: str
+    output_folder: str
+    prune_probability: str
 
     def run_program(self: Self):
         """Builds and executes the command to run CFM-ID in dockerized environment using nice -16"""

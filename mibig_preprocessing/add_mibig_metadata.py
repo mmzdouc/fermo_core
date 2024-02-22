@@ -21,10 +21,12 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 from pathlib import Path
-from typing import Self
+from typing import Self, List, Dict, Optional
+
+from pydantic import BaseModel
 
 
-class AddMibigMetadata:
+class AddMibigMetadata(BaseModel):
     """Adds real mass, publication IDs and MIBiG cluster IDs to CFM-ID output.
 
     Attributes:
@@ -35,17 +37,14 @@ class AddMibigMetadata:
         metadata: Dictionary with metabolite_name as key and metadata in a list as values: SMILES,
              chemical formula, molecular mass, database IDs, MIBiG entry ID.
 
+    Raise:
+        pydantic.ValidationError: Pydantic validation failed during instantiation.
     """
 
-    def __init__(
-        self,
-        output_folder: str,
-        prepped_metadata_file: str,
-    ):
-        self.output_folder = output_folder
-        self.prepped_metadata_file = prepped_metadata_file
-        self.log_files = []
-        self.metadata = {}
+    output_folder: str
+    prepped_metadata_file: str
+    log_files: Optional[List] = []
+    metadata: Optional[Dict] = {}
 
     def extract_filenames(self: Self):
         """Extracts the filenames of all .log files from a folder and adds them to self.log_files"""

@@ -23,12 +23,13 @@ SOFTWARE.
 
 from pathlib import Path
 import json
-from typing import Self
+from typing import Self, List, Dict, Optional
 
 import pandas as pd
+from pydantic import BaseModel
 
 
-class ParseMibigEntries:
+class ParseMibigEntries(BaseModel):
     """
     Class that parses the MIBiG .json files and outputs 2 space delimited .csv files.
 
@@ -40,19 +41,17 @@ class ParseMibigEntries:
         bgc_files: A list containing all file paths of the MIBiG entries .json files
         bgc_dict: Dictionary with metabolite_name as key and metadata in a list as values: SMILES, chemical formula,
         molecular mass, database IDs, MIBiG entry ID.
+
+    Raise:
+        pydantic.ValidationError: Pydantic validation failed during instantiation.
+
     """
 
-    def __init__(
-        self,
-        mibig_folder: str,
-        prepped_cfmid_file: str,
-        prepped_metadata_file: str,
-    ):
-        self.mibig_folder = mibig_folder
-        self.prepped_cfmid_file = prepped_cfmid_file
-        self.prepped_metadata_file = prepped_metadata_file
-        self.bgc_files = []
-        self.bgc_dict = {}
+    mibig_folder: str
+    prepped_cfmid_file: str
+    prepped_metadata_file: str
+    bgc_files: Optional[List] = []
+    bgc_dict: Optional[Dict] = {}
 
     def extract_metadata(self: Self, file_path: str):
         """Extracts the relevant metadata from a .json file and

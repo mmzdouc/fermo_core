@@ -23,13 +23,14 @@ SOFTWARE.
 from typing import Self
 
 from argparse import ArgumentParser
+from pydantic import BaseModel
 
 from add_mibig_metadata import AddMibigMetadata
 from parse_mibig_entries import ParseMibigEntries
 from run_cfmid import RunCfmid
 
 
-class LibraryPrep:
+class LibraryPrep(BaseModel):
     """Class that manages the other MIBiG spectral library classes.
 
     Attributes:
@@ -40,21 +41,16 @@ class LibraryPrep:
         output_folder: Path of cfm-id output folder where it will create 1 fragmentation spectrum file per
         metabolite.
         prune_probability: Probability below which metabolite fragments will be excluded from predictions.
+
+    Raise:
+        pydantic.ValidationError: Pydantic validation failed during instantiation.
     """
 
-    def __init__(
-        self,
-        mibig_folder: str,
-        prepped_cfmid_file: str,
-        prepped_metadata_file: str,
-        output_folder: str,
-        prune_probability: str,
-    ):
-        self.mibig_folder = mibig_folder
-        self.prepped_cfmid_file = prepped_cfmid_file
-        self.prepped_metadata_file = prepped_metadata_file
-        self.output_folder = output_folder
-        self.prune_probability = prune_probability
+    mibig_folder: str
+    prepped_cfmid_file: str
+    prepped_metadata_file: str
+    output_folder: str
+    prune_probability: str
 
     def process_mibig(self: Self):
         """Processes the .json files from MIBiG into input for CFM-ID and metadata file."""
