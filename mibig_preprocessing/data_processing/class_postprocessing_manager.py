@@ -26,7 +26,7 @@ from typing import Self, List, Dict, Optional
 from pydantic import BaseModel
 
 
-class AddMibigMetadata(BaseModel):
+class PostprocessingManager(BaseModel):
     """Adds real mass, publication IDs and MIBiG cluster IDs to CFM-ID output.
 
     Attributes:

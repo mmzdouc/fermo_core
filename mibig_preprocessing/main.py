@@ -1,4 +1,4 @@
-"""Drives the different classes of the MIBiG spectral library pipeline
+"""Main entry point to the MIBiG spectral library preparation
 
 Copyright (c) 2022 to present Mitja M. Zdouc, PhD and individual contributors.
 
@@ -25,10 +25,10 @@ from sys import argv
 
 from pydantic import BaseModel
 
-from add_mibig_metadata import AddMibigMetadata
-from parse_mibig_entries import ParseMibigEntries
-from run_cfmid import RunCfmid
-from class_parsing_manager import ParsingManager
+from data_processing.class_cfmid_manager import CfmidManager
+from data_processing.class_preprocessing_manager import PreprocessingManager
+from data_processing.class_postprocessing_manager import PostprocessingManager
+from data_processing.class_parsing_manager import ParsingManager
 
 
 class LibraryPrep(BaseModel):
@@ -61,7 +61,7 @@ class LibraryPrep(BaseModel):
             "prepped_cfmid_file": self.prepped_cfmid_file,
             "prepped_metadata_file": self.prepped_metadata_file,
         }
-        preprocessed_data = ParseMibigEntries(**args_dict)
+        preprocessed_data = PreprocessingManager(**args_dict)
         preprocessed_data.extract_filenames()
         for file_path in preprocessed_data.bgc_files:
             preprocessed_data.extract_metadata(file_path)
@@ -74,7 +74,7 @@ class LibraryPrep(BaseModel):
             "output_folder": self.output_folder,
             "prune_probability": self.prune_probability,
         }
-        spectra = RunCfmid(**args_dict)
+        spectra = CfmidManager(**args_dict)
         spectra.run_program()
 
     def run_metadata(self: Self):
@@ -84,7 +84,7 @@ class LibraryPrep(BaseModel):
             "output_folder": self.output_folder,
             "prepped_metadata_file": self.prepped_metadata_file,
         }
-        metadata = AddMibigMetadata(**args_dict)
+        metadata = PostprocessingManager(**args_dict)
         metadata.extract_filenames()
         metadata.extract_metadata()
         metadata.add_metadata_cfmid_files()

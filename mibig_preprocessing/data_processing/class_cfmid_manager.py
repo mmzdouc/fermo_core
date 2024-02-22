@@ -27,7 +27,7 @@ from typing import Self
 from pydantic import BaseModel
 
 
-class RunCfmid(BaseModel):
+class CfmidManager(BaseModel):
     """Class that runs the program CFM-ID in a dockerized environment
 
     Attributes:

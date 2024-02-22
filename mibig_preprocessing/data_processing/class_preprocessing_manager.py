@@ -29,7 +29,7 @@ import pandas as pd
 from pydantic import BaseModel
 
 
-class ParseMibigEntries(BaseModel):
+class PreprocessingManager(BaseModel):
     """
     Class that parses the MIBiG .json files and outputs 2 space delimited .csv files.
 
