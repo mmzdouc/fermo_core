@@ -31,11 +31,14 @@ class PostprocessingManager(BaseModel):
 
     Attributes:
         output_folder: Path of cfm-id output folder where it will create 1 fragmentation spectrum file per metabolite
-        prepped_metadata_file: Path of output file containing metabolite name, SMILES, chemical formula,
+        prepped_metadata_file: Path of parsing_manager output file containing metabolite name, SMILES, chemical formula,
         molecular mass, database IDs, MIBiG entry ID.
         log_files: Table of file paths of the CFM-ID log files output
         metadata: Dictionary with metabolite_name as key and metadata in a list as values: SMILES,
              chemical formula, molecular mass, database IDs, MIBiG entry ID.
+        log_dict: Dictionary with metabolite_name as key and with value a list of .log file lines, now with metadata.
+        preprocessed_mgf_list: A triple nested list containing the data on file, lines and different columns within
+        those lines respectively.
 
     Raise:
         pydantic.ValidationError: Pydantic validation failed during instantiation.
@@ -43,8 +46,11 @@ class PostprocessingManager(BaseModel):
 
     output_folder: str
     prepped_metadata_file: str
+    # mgf_file: str
     log_files: Optional[List] = []
     metadata: Optional[Dict] = {}
+    log_dict: Optional[Dict] = {}
+    preprocessed_mgf_list: Optional[List] = []
 
     def extract_filenames(self: Self):
         """Extracts the filenames of all .log files from a folder and adds them to self.log_files"""
@@ -72,45 +78,72 @@ class PostprocessingManager(BaseModel):
                 ]
 
     def add_metadata_cfmid_files(self: Self):
-        """Adds the missing metadata to all files in the CFM-ID output folder"""
-
+        """Adds the missing metadata to all files in the CFM-ID output folder and saves result in mgf_dict."""
         for filename in self.log_files:
             with open(filename, "r") as file:
                 lines = file.readlines()
                 for linenr in range(len(lines)):
-                    if lines[linenr].startswith("#RealMass"):
-                        print(
-                            "File "
-                            + filename
-                            + " already contains metadata, exiting now."
-                        )
-                        exit()
                     if lines[linenr].startswith("#PMass"):
-                        lines[linenr] = (
-                            lines[linenr]
-                            + "#RealMass="
-                            + self.metadata[
-                                filename.strip(".log")
-                                .strip(self.output_folder)
-                                .strip("\\")
-                                .strip("/")
-                            ][2]
-                            + "\n#Publications="
-                            + self.metadata[
-                                filename.strip(".log")
-                                .strip(self.output_folder)
-                                .strip("\\")
-                                .strip("/")
-                            ][3]
-                            + "\n#MibigAccession="
-                            + self.metadata[
-                                filename.strip(".log")
-                                .strip(self.output_folder)
-                                .strip("\\")
-                                .strip("/")
-                            ][4]
-                            + "\n"
+                        lines = (
+                            lines[0 : linenr + 1]
+                            + [
+                                "PUBLICATIONS="
+                                + self.metadata[
+                                    filename.strip(".log")
+                                    .strip(self.output_folder)
+                                    .strip("\\")
+                                    .strip("/")
+                                ][3]
+                                + "\n",
+                                "MIBIGACCESSION="
+                                + self.metadata[
+                                    filename.strip(".log")
+                                    .strip(self.output_folder)
+                                    .strip("\\")
+                                    .strip("/")
+                                ][4]
+                                + "\n",
+                            ]
+                            + lines[linenr + 2 :]
                         )
-            with open(filename, "w") as file:
-                for line in lines:
-                    file.write(line)
+
+                        break
+            self.log_dict[
+                filename.strip(".log").strip(self.output_folder).strip("\\").strip("/")
+            ] = lines
+
+    def cleanup_log_dict(self: Self):
+        """Formats the .log files in log_dict to an .mgf like format in preprocessed_mgf_list."""
+        for metabolite, lines in self.log_dict.items():
+            for linenr in range(len(lines)):
+                if lines[linenr].startswith("0 "):
+                    lines = lines[0 : linenr - 1]
+                    break
+            for linenr in range(len(lines)):
+                if lines[linenr].startswith("energy1"):
+                    lines = lines[0:linenr] + lines[linenr + 1 :]
+                    break
+            for linenr in range(len(lines)):
+                if lines[linenr].startswith("energy2"):
+                    lines = lines[0:linenr] + lines[linenr + 1 :]
+                    break
+            for linenr in range(len(lines)):
+                if lines[linenr].startswith("#In-silico"):
+                    lines[linenr] = "INSILICO=" + lines[linenr][10:].replace(" ", "")
+                if lines[linenr].startswith("#PREDICTED BY"):
+                    lines[linenr] = "PREDICTEDBY=" + lines[linenr][13:].replace(" ", "")
+                if lines[linenr].startswith("#ID="):
+                    lines[linenr] = "ID=" + lines[linenr][4:].replace(" ", "")
+                if lines[linenr].startswith("#SMILES="):
+                    lines[linenr] = "SMILES=" + lines[linenr][8:].replace(" ", "")
+                if lines[linenr].startswith("#InChiKey="):
+                    lines[linenr] = "INCHIKEY=" + lines[linenr][10:].replace(" ", "")
+                if lines[linenr].startswith("#Formula="):
+                    lines[linenr] = "FORMULA=" + lines[linenr][9:].replace(" ", "")
+                if lines[linenr].startswith("#PMass="):
+                    lines[linenr] = "PMass=" + lines[linenr][7:].replace(" ", "")
+            entry_list = []
+            for line in lines:
+                entries = line.replace("\n", "").split(" ")
+                entry_list.append(entries)
+            self.preprocessed_mgf_list.append(entry_list)
