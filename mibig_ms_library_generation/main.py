@@ -48,20 +48,20 @@ class LibraryPrep(BaseModel):
         pydantic.ValidationError: Pydantic validation failed during instantiation.
     """
 
-    mibig_folder: str = ""
-    prepped_cfmid_file: str = ""
-    prepped_metadata_file: str = ""
-    output_folder: str = ""
-    prune_probability: str = ""
+    mibig: str = ""
+    c_file: str = ""
+    m_file: str = ""
+    o_folder: str = ""
+    prune: str = ""
     mgf_file: str = ""
 
     def process_mibig(self: Self):
         """Processes the .json files from MIBiG into input for CFM-ID and metadata file."""
         print("Processing the .json files from MIBiG into input for CFM-ID")
         args_dict = {
-            "mibig_folder": self.mibig_folder,
-            "prepped_cfmid_file": self.prepped_cfmid_file,
-            "prepped_metadata_file": self.prepped_metadata_file,
+            "mibig_folder": self.mibig,
+            "prepped_cfmid_file": self.c_file,
+            "prepped_metadata_file": self.m_file,
         }
         preprocessed_data = PreprocessingManager(**args_dict)
         preprocessed_data.extract_filenames()
@@ -72,9 +72,9 @@ class LibraryPrep(BaseModel):
     def run_cfmid(self: Self):
         """Builds and executes the command to run CFM-ID in dockerized environment using nice -16"""
         args_dict = {
-            "prepped_cfmid_file": self.prepped_cfmid_file,
-            "output_folder": self.output_folder,
-            "prune_probability": self.prune_probability,
+            "prepped_cfmid_file": self.c_file,
+            "output_folder": self.o_folder,
+            "prune_probability": self.prune,
         }
         spectra = CfmidManager(**args_dict)
         spectra.run_program()
@@ -83,8 +83,8 @@ class LibraryPrep(BaseModel):
         """Adds real mass, publication IDs and MIBiG cluster IDs to CFM-ID output."""
         print("Adding metadata to the CFM-ID output")
         args_dict = {
-            "output_folder": self.output_folder,
-            "prepped_metadata_file": self.prepped_metadata_file,
+            "output_folder": self.o_folder,
+            "prepped_metadata_file": self.m_file,
             "mgf_file": self.mgf_file,
         }
         metadata = PostprocessingManager(**args_dict)

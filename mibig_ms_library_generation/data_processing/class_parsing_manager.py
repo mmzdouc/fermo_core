@@ -132,28 +132,7 @@ class ParsingManager:
         )
         args = parser.parse_args(commandline_args)
         args_dict = {}
-        try:
-            args_dict["mibig_folder"] = args.mibig
-        except AttributeError:
-            pass
-        try:
-            args_dict["prepped_cfmid_file"] = args.c_file
-        except AttributeError:
-            pass
-        try:
-            args_dict["prepped_metadata_file"] = args.m_file
-        except AttributeError:
-            pass
-        try:
-            args_dict["output_folder"] = args.o_folder
-        except AttributeError:
-            pass
-        try:
-            args_dict["prune_probability"] = args.prune
-        except AttributeError:
-            pass
-        try:
-            args_dict["mgf_file"] = args.mgf_file
-        except AttributeError:
-            pass
+        for arg_name, arg_value in vars(args).items():
+            if arg_name != "mode":
+                args_dict[arg_name] = arg_value
         return args_dict, args.mode
