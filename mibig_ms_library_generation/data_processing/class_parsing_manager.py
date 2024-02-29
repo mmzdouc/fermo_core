@@ -1,6 +1,6 @@
 """Manages methods related to argparse-based command line argument parsing.
 
-Copyright (c) 2022-2023 Mitja Maximilian Zdouc, PhD
+Copyright (c) 2022 to present Koen van Ingen, Mitja M. Zdouc, PhD and individual contributors.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

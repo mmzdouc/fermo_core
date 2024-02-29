@@ -1,6 +1,6 @@
 """Main entry point to the MIBiG spectral library preparation
 
-Copyright (c) 2022 to present Mitja M. Zdouc, PhD and individual contributors.
+Copyright (c) 2022 to present Koen van Ingen, Mitja M. Zdouc, PhD and individual contributors.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
