@@ -70,38 +70,42 @@ class PostprocessingManager(BaseModel):
 
     def add_metadata_cfmid_files(self: Self, file_list):
         """Adds the missing metadata to all files in the CFM-ID output folder and saves result in mgf_dict."""
-        for filename in file_list:
-            with open(filename, "r") as file:
-                lines = file.readlines()
-                for linenr in range(len(lines)):
-                    if lines[linenr].startswith("#PMass"):
-                        lines = (
-                            lines[0 : linenr + 1]
-                            + [
-                                "PUBLICATIONS="
-                                + self.metadata[
-                                    filename.strip(".log")
-                                    .strip(self.output_folder)
-                                    .strip("\\")
-                                    .strip("/")
-                                ]["database ID"]
-                                + "\n",
-                                "MIBIGACCESSION="
-                                + self.metadata[
-                                    filename.strip(".log")
-                                    .strip(self.output_folder)
-                                    .strip("\\")
-                                    .strip("/")
-                                ]["MIBiG ID"]
-                                + "\n",
-                            ]
-                            + lines[linenr + 2 :]
-                        )
 
-                        break
+        def _subroutine(filename):
+            lines = file.readlines()
+            for linenr in range(len(lines)):
+                if lines[linenr].startswith("#PMass"):
+                    lines = (
+                        lines[0 : linenr + 1]
+                        + [
+                            "PUBLICATIONS="
+                            + self.metadata[
+                                filename.strip(".log")
+                                .strip(self.output_folder)
+                                .strip("\\")
+                                .strip("/")
+                            ]["database ID"]
+                            + "\n",
+                            "MIBIGACCESSION="
+                            + self.metadata[
+                                filename.strip(".log")
+                                .strip(self.output_folder)
+                                .strip("\\")
+                                .strip("/")
+                            ]["MIBiG ID"]
+                            + "\n",
+                        ]
+                        + lines[linenr + 2 :]
+                    )
+
+                    break
             self.log_dict[
                 filename.strip(".log").strip(self.output_folder).strip("\\").strip("/")
             ] = lines
+
+        for file_name in file_list:
+            with open(file_name, "r") as file:
+                _subroutine(file_name)
 
     def cleanup_log_dict(self: Self):
         """Formats the .log files in log_dict to an .mgf like format in preprocessed_mgf_list."""
