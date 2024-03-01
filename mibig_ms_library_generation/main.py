@@ -87,7 +87,6 @@ class LibraryPrep(BaseModel):
             "mgf_file": self.mgf_file,
         }
         metadata = PostprocessingManager(**args_dict)
-        print(self.o_folder)
         file_list = PreprocessingManager.extract_filenames(self.o_folder, ".log")
         metadata.extract_metadata()
         metadata.add_metadata_cfmid_files(file_list)

@@ -35,7 +35,7 @@ class PostprocessingManager(BaseModel):
         metabolite.
         prepped_metadata_file: Path of parsing_manager output file containing metabolite name, SMILES, chemical formula,
         molecular mass, database IDs, MIBiG entry ID.
-        metadata: Dictionary with metabolite_name as key and metadata in a list as values: SMILES,
+        metadata: Dictionary with metabolite_name as key and metadata in a dict of values: SMILES,
              chemical formula, molecular mass, database IDs, MIBiG entry ID.
         log_dict: Dictionary with metabolite_name as key and with value a list of .log file lines, now with metadata.
         preprocessed_mgf_list: A triple nested list containing the data on file, lines and different columns within
@@ -60,13 +60,13 @@ class PostprocessingManager(BaseModel):
         with open(self.prepped_metadata_file, "r") as file:
             for line in file:
                 metadata_table = line.strip("\n").split(" ")
-                self.metadata[metadata_table[0]] = [
-                    metadata_table[1],
-                    metadata_table[2],
-                    metadata_table[3],
-                    metadata_table[4],
-                    metadata_table[5],
-                ]
+                self.metadata[metadata_table[0]] = {
+                    "SMILES": metadata_table[1],
+                    "chemical formula": metadata_table[2],
+                    "molecular mass": metadata_table[3],
+                    "database ID": metadata_table[4],
+                    "MIBiG ID": metadata_table[5],
+                }
 
     def add_metadata_cfmid_files(self: Self, file_list):
         """Adds the missing metadata to all files in the CFM-ID output folder and saves result in mgf_dict."""
@@ -84,7 +84,7 @@ class PostprocessingManager(BaseModel):
                                     .strip(self.output_folder)
                                     .strip("\\")
                                     .strip("/")
-                                ][3]
+                                ]["database ID"]
                                 + "\n",
                                 "MIBIGACCESSION="
                                 + self.metadata[
@@ -92,7 +92,7 @@ class PostprocessingManager(BaseModel):
                                     .strip(self.output_folder)
                                     .strip("\\")
                                     .strip("/")
-                                ][4]
+                                ]["MIBiG ID"]
                                 + "\n",
                             ]
                             + lines[linenr + 2 :]
