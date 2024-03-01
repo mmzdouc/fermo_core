@@ -114,7 +114,10 @@ class PostprocessingManager(BaseModel):
             new_lines = []
             for line in lines:
                 if not line.startswith("energy"):
-                    new_lines.append(line)
+                    if line.startswith("\n"):
+                        break
+                    else:
+                        new_lines.append(line)
             for linenr in range(len(new_lines)):
                 if new_lines[linenr].startswith("#In-silico"):
                     new_lines[
@@ -146,7 +149,18 @@ class PostprocessingManager(BaseModel):
 
     def write_mgf_to_file(self: Self):
         """Removes duplicate peaks from spectra and writes the spectral library .mgf file."""
+        output_table = []
+
+        def _subroutine(dataframe_string):
+            """Removes the leading spaces that panda adds"""
+            df_list = dataframe_string.split("\n")
+            new_list = []
+            for line in df_list:
+                new_list.append(line.strip())
+            return "\n".join(new_list)
+
         for file in self.preprocessed_mgf_list:
+            # We want to do modification on only the peaks
             rows = []
             for entry in file[9:]:
                 rows.append(entry[0])
@@ -159,20 +173,22 @@ class PostprocessingManager(BaseModel):
             peaks_dataframe.drop_duplicates(
                 subset="F1", keep="first", ignore_index=False, inplace=True
             )
-            header = file[0:9]
-            for entrynr in range(len(header)):
-                header[entrynr] = [header[entrynr][0], ""]
-            rows = []
-            for entry in header[0:9]:
-                rows.append(entry[0])
-            header_dataframe = pd.DataFrame(header, index=rows, columns=["F1", "F2"])
-            with open(self.mgf_file, "a") as f:
-                f.write("BEGIN IONS\n")
-            header_dataframe[["F1", "F2"]].to_csv(
-                self.mgf_file, index=False, header=False, mode="a", sep=" "
+
+            # Unpack the header lines from the nested list
+            lines = []
+            for entry in file[0:9]:
+                lines.append(entry[0])
+            header = "\n".join(lines)
+
+            output_table.append(
+                "BEGIN IONS\n"
+                + header
+                + "\n"
+                + _subroutine(
+                    peaks_dataframe[["F1", "F2"]].to_string(index=False, header=False)
+                )
+                + "\nEND IONS\n\n"
             )
-            peaks_dataframe[["F1", "F2"]].to_csv(
-                self.mgf_file, index=False, header=False, mode="a", sep=" "
-            )
-            with open(self.mgf_file, "a") as f:
-                f.write("END IONS\n\n\n")
+        with open(self.mgf_file, "w") as f:
+            for entry in output_table:
+                f.write(entry)
