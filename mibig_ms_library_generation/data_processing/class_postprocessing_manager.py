@@ -109,36 +109,37 @@ class PostprocessingManager(BaseModel):
 
     def format_log_dict(self: Self):
         """Formats the .log files in log_dict to an .mgf like format in preprocessed_mgf_list."""
+
         for metabolite, lines in self.log_dict.items():
-            for linenr in range(len(lines)):
-                if lines[linenr].startswith("0 "):
-                    lines = lines[0 : linenr - 1]
-                    break
-            for linenr in range(len(lines)):
-                if lines[linenr].startswith("energy1"):
-                    lines = lines[0:linenr] + lines[linenr + 1 :]
-                    break
-            for linenr in range(len(lines)):
-                if lines[linenr].startswith("energy2"):
-                    lines = lines[0:linenr] + lines[linenr + 1 :]
-                    break
-            for linenr in range(len(lines)):
-                if lines[linenr].startswith("#In-silico"):
-                    lines[linenr] = "INSILICO=" + lines[linenr][10:].replace(" ", "")
-                if lines[linenr].startswith("#PREDICTED BY"):
-                    lines[linenr] = "PREDICTEDBY=" + lines[linenr][13:].replace(" ", "")
-                if lines[linenr].startswith("#ID="):
-                    lines[linenr] = "ID=" + lines[linenr][4:].replace(" ", "")
-                if lines[linenr].startswith("#SMILES="):
-                    lines[linenr] = "SMILES=" + lines[linenr][8:].replace(" ", "")
-                if lines[linenr].startswith("#InChiKey="):
-                    lines[linenr] = "INCHIKEY=" + lines[linenr][10:].replace(" ", "")
-                if lines[linenr].startswith("#Formula="):
-                    lines[linenr] = "FORMULA=" + lines[linenr][9:].replace(" ", "")
-                if lines[linenr].startswith("#PMass="):
-                    lines[linenr] = "PMass=" + lines[linenr][7:].replace(" ", "")
-            entry_list = []
+            new_lines = []
             for line in lines:
+                if not line.startswith("energy"):
+                    new_lines.append(line)
+            for linenr in range(len(new_lines)):
+                if new_lines[linenr].startswith("#In-silico"):
+                    new_lines[
+                        linenr
+                    ] = f'INSILICO={lines[linenr][10:].replace(" ", "")}\n'
+                if new_lines[linenr].startswith("#PREDICTED BY"):
+                    new_lines[
+                        linenr
+                    ] = f'PREDICTEDBY={lines[linenr][13:].replace(" ", "")}\n'
+                if new_lines[linenr].startswith("#ID="):
+                    new_lines[linenr] = f'ID={lines[linenr][4:].replace(" ", "")}\n'
+                if new_lines[linenr].startswith("#SMILES="):
+                    new_lines[linenr] = f'SMILES={lines[linenr][8:].replace(" ", "")}\n'
+                if new_lines[linenr].startswith("#InChiKey="):
+                    new_lines[
+                        linenr
+                    ] = f'INCHIKEY={lines[linenr][10:].replace(" ", "")}\n'
+                if new_lines[linenr].startswith("#Formula="):
+                    new_lines[
+                        linenr
+                    ] = f'FORMULA={lines[linenr][9:].replace(" ", "")}\n'
+                if new_lines[linenr].startswith("#PMass="):
+                    new_lines[linenr] = f'PMASS={lines[linenr][7:].replace(" ", "")}\n'
+            entry_list = []
+            for line in new_lines:
                 entries = line.replace("\n", "").split(" ")
                 entry_list.append(entries)
             self.preprocessed_mgf_list.append(entry_list)
