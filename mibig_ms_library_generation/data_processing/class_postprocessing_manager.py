@@ -69,7 +69,7 @@ class PostprocessingManager(BaseModel):
                 }
 
     def add_metadata_cfmid_files(self: Self, file_list):
-        """Adds the missing metadata to all files in the CFM-ID output folder and saves result in mgf_dict."""
+        """Adds the missing metadata to all files in the CFM-ID output folder and saves result in log_dict."""
 
         def _subroutine(filename):
             lines = file.readlines()
@@ -107,7 +107,7 @@ class PostprocessingManager(BaseModel):
             with open(file_name, "r") as file:
                 _subroutine(file_name)
 
-    def cleanup_log_dict(self: Self):
+    def format_log_dict(self: Self):
         """Formats the .log files in log_dict to an .mgf like format in preprocessed_mgf_list."""
         for metabolite, lines in self.log_dict.items():
             for linenr in range(len(lines)):

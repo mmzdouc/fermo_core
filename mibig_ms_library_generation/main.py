@@ -90,7 +90,7 @@ class LibraryPrep(BaseModel):
         file_list = PreprocessingManager.extract_filenames(self.o_folder, ".log")
         metadata.extract_metadata()
         metadata.add_metadata_cfmid_files(file_list)
-        metadata.cleanup_log_dict()
+        metadata.format_log_dict()
         metadata.write_mgf_to_file()
 
     @staticmethod
