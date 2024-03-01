@@ -23,7 +23,7 @@ SOFTWARE.
 
 from pathlib import Path
 import json
-from typing import Self, List, Dict, Optional
+from typing import Self, Dict, Optional
 
 import pandas as pd
 from pydantic import BaseModel
@@ -34,11 +34,9 @@ class PreprocessingManager(BaseModel):
     Class that parses the MIBiG .json files and outputs 2 space delimited .csv files.
 
     Attributes:
-        mibig_folder: Path of the mibig.json folder containing .json files.
         prepped_cfmid_file: Path of output file containing metabolite name, SMILES.
         prepped_metadata_file: Path of output file containing metabolite name, SMILES, chemical formula,
         molecular mass, database IDs, MIBiG entry ID.
-        bgc_files: A list containing all file paths of the MIBiG entries .json files
         bgc_dict: Dictionary with metabolite_name as key and metadata in a list as values: SMILES, chemical formula,
         molecular mass, database IDs, MIBiG entry ID.
 
@@ -47,10 +45,8 @@ class PreprocessingManager(BaseModel):
 
     """
 
-    mibig_folder: str
     prepped_cfmid_file: str
     prepped_metadata_file: str
-    bgc_files: Optional[List] = []
     bgc_dict: Optional[Dict] = {}
 
     def extract_metadata(self: Self, file_path: str):
@@ -98,15 +94,23 @@ class PreprocessingManager(BaseModel):
                     metadata_table[5],
                 ]
 
-    def extract_filenames(self: Self):
-        """Extracts the filenames of all .json files from a folder and adds them to self.bcg_files"""
-        folder = Path(self.mibig_folder)
+    @staticmethod
+    def extract_filenames(folder_path, extension):
+        """Extracts the filenames of all files from a certain extension in a folder and returns them in a list
+
+        Attributes:
+            folder_path: Path to the folder containing the files.
+            extension: File extension in str format like ".str"
+
+        Returns:
+            files_list: List of all file paths in the folder meeting the extension criteria
+        """
+        files_list = []
+        folder = Path(folder_path)
         for item in folder.iterdir():
-            if item.is_dir():
-                pass
-            else:
-                if item.suffix == ".json":
-                    self.bgc_files.append(str(item))
+            if not item.is_dir() and item.suffix == extension:
+                files_list.append(str(item))
+        return files_list
 
     def write_outfiles(self: Self):
         """Uses pandas to write space delimited .csv style files from the MIBiG data"""

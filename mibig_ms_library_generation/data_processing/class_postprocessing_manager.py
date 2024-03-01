@@ -20,7 +20,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-from pathlib import Path
+
 from typing import Self, List, Dict, Optional
 
 from pydantic import BaseModel
@@ -31,10 +31,10 @@ class PostprocessingManager(BaseModel):
     """Creates a spectral library .mgf file from CFM-ID input combined with metadata from preprocessing_manager.py
 
     Attributes:
-        output_folder: Path of cfm-id output folder where it will create 1 fragmentation spectrum file per metabolite
+        output_folder: Path of cfm-id output folder where it will create 1 fragmentation spectrum file per
+        metabolite.
         prepped_metadata_file: Path of parsing_manager output file containing metabolite name, SMILES, chemical formula,
         molecular mass, database IDs, MIBiG entry ID.
-        log_files: Table of file paths of the CFM-ID log files output
         metadata: Dictionary with metabolite_name as key and metadata in a list as values: SMILES,
              chemical formula, molecular mass, database IDs, MIBiG entry ID.
         log_dict: Dictionary with metabolite_name as key and with value a list of .log file lines, now with metadata.
@@ -49,20 +49,9 @@ class PostprocessingManager(BaseModel):
     output_folder: str
     prepped_metadata_file: str
     mgf_file: str
-    log_files: Optional[List] = []
     metadata: Optional[Dict] = {}
     log_dict: Optional[Dict] = {}
     preprocessed_mgf_list: Optional[List] = []
-
-    def extract_filenames(self: Self):
-        """Extracts the filenames of all .log files from a folder and adds them to self.log_files"""
-        folder = Path(self.output_folder)
-        for item in folder.iterdir():
-            if item.is_dir():
-                pass
-            else:
-                if item.suffix == ".log":
-                    self.log_files.append(str(item))
 
     def extract_metadata(self: Self):
         """Extracts the relevant metadata from the metadata .csv file and
@@ -79,9 +68,9 @@ class PostprocessingManager(BaseModel):
                     metadata_table[5],
                 ]
 
-    def add_metadata_cfmid_files(self: Self):
+    def add_metadata_cfmid_files(self: Self, file_list):
         """Adds the missing metadata to all files in the CFM-ID output folder and saves result in mgf_dict."""
-        for filename in self.log_files:
+        for filename in file_list:
             with open(filename, "r") as file:
                 lines = file.readlines()
                 for linenr in range(len(lines)):
