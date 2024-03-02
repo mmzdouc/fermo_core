@@ -21,8 +21,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 import logging
-from typing import Tuple
 
+import pandas as pd
 from pydantic import BaseModel
 
 from fermo_core.data_processing.builder_feature.dataclass_feature import Feature
@@ -150,13 +150,19 @@ class FeatureBuilder(BaseModel):
         self.feature.rel_area = round((area / max_area), 2)
         return self
 
-    def set_samples(self, samples: Tuple):
+    def set_samples(self, row: pd.Series):
         """Set attribute
 
         Arguments:
-            samples: sample identifiers in which feature was detected
+            row: a pandas Series to extract IDs of samples in which feature was detected
         """
-        self.feature.samples = samples
+        samples = []
+        for sample in row.filter(regex=":feature_state").index:
+            sample_id = sample.split(":")[1]
+            if row[f"datafile:{sample_id}:feature_state"] == "DETECTED":
+                samples.append(sample_id)
+
+        self.feature.samples = tuple(samples)
         return self
 
     def get_result(self):

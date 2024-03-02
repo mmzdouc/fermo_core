@@ -103,6 +103,7 @@ class FeatureFilter(BaseModel):
             self.stats,
             self.samples,
             self.params.FeatureFilteringParameters.filter_rel_int_range,
+            "rel_intensity",
         )
 
         for feature in inactive:
@@ -127,6 +128,7 @@ class FeatureFilter(BaseModel):
             self.stats,
             self.samples,
             self.params.FeatureFilteringParameters.filter_rel_area_range,
+            "rel_area",
         )
 
         for feature in inactive:
@@ -145,7 +147,7 @@ class FeatureFilter(BaseModel):
 
     @staticmethod
     def filter_features_for_range(
-        stats: Stats, samples: Repository, r_list: list
+        stats: Stats, samples: Repository, r_list: list, param: str
     ) -> set:
         """Determine features with values outside of given range
 
@@ -153,6 +155,7 @@ class FeatureFilter(BaseModel):
             stats: a Stats object
             samples: a repository object
             r_list: a list of two floats indicating the range
+            param: the parameter to check against range
 
         Returns:
             A set of features that have no occurrences inside range.
@@ -164,7 +167,7 @@ class FeatureFilter(BaseModel):
             sample = samples.get(sample_id)
             for feature_id in sample.feature_ids:
                 feature = sample.features.get(feature_id)
-                if r_list[0] <= feature.rel_intensity <= r_list[1]:
+                if r_list[0] <= getattr(feature, param) <= r_list[1]:
                     inside_range.add(feature.f_id)
                 else:
                     outside_range.add(feature.f_id)

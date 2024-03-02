@@ -50,10 +50,6 @@ class GeneralFeatureDirector:
             .set_rt(float(row["rt"]))
             .set_rt_start(float(row["rt_range:min"]))
             .set_rt_stop(float(row["rt_range:max"]))
-            .set_samples(
-                tuple(
-                    [s.split(":")[1] for s in row.filter(regex=":feature_state").index]
-                )
-            )
+            .set_samples(row)
             .get_result()
         )

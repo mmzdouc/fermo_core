@@ -1,7 +1,8 @@
 # Local files
 *.hdf5
-example_data/fermo_session.json
-example_data/fermo_session.csv
+example_data/fermo.backup.session.json
+example_data/fermo.session.json
+example_data/fermo.csv
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

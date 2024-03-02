@@ -81,13 +81,13 @@ def test_filter_rel_area_range_mod_valid(feature_filter_instance):
         1.0,
     ]
     feature_filter_instance.filter_rel_area_range()
-    assert len(feature_filter_instance.stats.active_features) == 140
-    assert len(feature_filter_instance.stats.inactive_features) == 3
+    assert len(feature_filter_instance.stats.active_features) == 104
+    assert len(feature_filter_instance.stats.inactive_features) == 39
 
 
 def test_filter_features_for_range_valid(dummy_data):
     filtered = FeatureFilter.filter_features_for_range(
-        dummy_data["stats"], dummy_data["samples"], [0.0, 0.5]
+        dummy_data["stats"], dummy_data["samples"], [0.0, 0.5], "rel_intensity"
     )
     assert filtered == {2}
 

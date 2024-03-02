@@ -22,7 +22,7 @@
             "format": "mgf"
         },
         "output": {
-            "filepath": "example_data/fermo_session",
+            "filepath": "example_data/fermo.session.json",
             "format": "all"
         }
     },
