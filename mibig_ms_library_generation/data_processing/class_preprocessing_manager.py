@@ -56,36 +56,40 @@ class PreprocessingManager(BaseModel):
 
         with open(file_path) as file:
             complete_bgc_dict = json.load(file)
-            metadata_table = [
-                None,
-                None,
-                None,
-                None,
-                None,
-                complete_bgc_dict["cluster"]["mibig_accession"],
-            ]
             for metabolite in complete_bgc_dict["cluster"]["compounds"]:
-                try:
-                    metadata_table[0] = metabolite["compound"]
-                except KeyError:
+                if "compound" in metabolite.keys():
+                    metadata_table = [metabolite["compound"]]
+                else:
                     break
-                try:
-                    metadata_table[1] = metabolite["chem_struct"]
-                except KeyError:
+                if "chem_struct" in metabolite.keys():
+                    metadata_table.append(metabolite["chem_struct"])
+                else:
                     break
-                try:
-                    metadata_table[2] = metabolite["molecular_formula"]
-                except KeyError:
-                    metadata_table[2] = ""
-                try:
-                    metadata_table[3] = metabolite["mol_mass"]
-                except KeyError:
-                    metadata_table[3] = ""
-                try:
-                    metadata_table[4] = metabolite["database_id"]
-                except KeyError:
-                    metadata_table[4] = ""
-                metadata_table[4] = str(metadata_table[4]).replace(" ", "")
+                if "molecular_formula" in metabolite.keys():
+                    metadata_table.append(metabolite["molecular_formula"])
+                else:
+                    metadata_table.append("")
+                if "mol_mass" in metabolite.keys():
+                    metadata_table.append(metabolite["mol_mass"])
+                else:
+                    metadata_table.append("")
+                if "database_id" in metabolite.keys():
+                    metadata_table.append(
+                        str(metabolite["database_id"]).replace(" ", "")
+                    )
+                else:
+                    metadata_table.append("")
+                if metabolite["compound"] in self.bgc_dict.keys():
+                    metadata_table.append(
+                        complete_bgc_dict["cluster"]["mibig_accession"]
+                        + ","
+                        + self.bgc_dict[metabolite["compound"]][4]
+                    )
+
+                else:
+                    metadata_table.append(
+                        complete_bgc_dict["cluster"]["mibig_accession"]
+                    )
                 self.bgc_dict[metadata_table[0]] = [
                     metadata_table[1],
                     metadata_table[2],
