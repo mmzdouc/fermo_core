@@ -74,7 +74,14 @@ class PostprocessingManager(BaseModel):
         def _subroutine(filename):
             lines = file.readlines()
             for linenr in range(len(lines)):
-                if lines[linenr].startswith("#PMass"):
+                if (
+                    lines[linenr].startswith("#PMass")
+                    and filename.strip(".log")
+                    .strip(self.output_folder)
+                    .strip("\\")
+                    .strip("/")
+                    in self.metadata.keys()
+                ):
                     lines = (
                         lines[0 : linenr + 1]
                         + [
