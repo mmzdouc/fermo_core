@@ -78,14 +78,6 @@ class PostprocessingManager(BaseModel):
                     lines = (
                         lines[0 : linenr + 1]
                         + [
-                            "PUBLICATIONS="
-                            + self.metadata[
-                                filename.strip(".log")
-                                .strip(self.output_folder)
-                                .strip("\\")
-                                .strip("/")
-                            ]["database ID"]
-                            + "\n",
                             "MIBIGACCESSION="
                             + self.metadata[
                                 filename.strip(".log")
@@ -95,7 +87,7 @@ class PostprocessingManager(BaseModel):
                             ]["MIBiG ID"]
                             + "\n",
                         ]
-                        + lines[linenr + 2 :]
+                        + lines[linenr + 1 :]
                     )
 
                     break
@@ -162,9 +154,9 @@ class PostprocessingManager(BaseModel):
         for file in self.preprocessed_mgf_list:
             # We want to do modification on only the peaks
             rows = []
-            for entry in file[9:]:
+            for entry in file[8:]:
                 rows.append(entry[0])
-            peaks_dataframe = pd.DataFrame(file[9:], index=rows)
+            peaks_dataframe = pd.DataFrame(file[8:], index=rows)
             peaks_dataframe.columns = [
                 "F" + str(i + 1) for i in range(peaks_dataframe.shape[1])
             ]
@@ -176,7 +168,7 @@ class PostprocessingManager(BaseModel):
 
             # Unpack the header lines from the nested list
             lines = []
-            for entry in file[0:9]:
+            for entry in file[0:8]:
                 lines.append(entry[0])
             header = "\n".join(lines)
 
