@@ -66,6 +66,9 @@ class MgfParser(MsmsParser):
     ) -> Repository:
         """Modifies Feature objects by adding MS/MS information.
 
+        Data is read using pyteomics.mgf() and only then converted to
+        matchms.Spectrum object to have better control over data import and filtering.
+
         Arguments:
             feature_repo: Repository holding individual features
             params: instance of ParameterManager holding user input
