@@ -26,6 +26,7 @@ from typing import Tuple, Self, Dict
 from urllib.error import URLError
 
 import networkx
+from pydantic import BaseModel
 
 from fermo_core.data_analysis.sim_networks_manager.class_mod_cosine_networker import (
     ModCosineNetworker,
@@ -42,7 +43,7 @@ from fermo_core.utils.utility_method_manager import UtilityMethodManager
 logger = logging.getLogger("fermo_core")
 
 
-class SimNetworksManager(UtilityMethodManager):
+class SimNetworksManager(BaseModel):
     """Pydantic-based class to organize calling and logging of networking modules
 
     Attributes:
@@ -198,7 +199,7 @@ class SimNetworksManager(UtilityMethodManager):
             try:
                 func_timeout.func_timeout(
                     timeout=self.params.SpecSimNetworkDeepscoreParameters.maximum_runtime,
-                    func=self.download_file,
+                    func=UtilityMethodManager().download_file,
                     kwargs={
                         "url": self.params.SpecSimNetworkDeepscoreParameters.url,
                         "file": self.params.SpecSimNetworkDeepscoreParameters.file_path,
