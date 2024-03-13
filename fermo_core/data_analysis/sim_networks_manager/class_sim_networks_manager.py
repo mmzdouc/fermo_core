@@ -142,7 +142,8 @@ class SimNetworksManager(BaseModel):
                 f"cosine spectral similarity network calculation. Calculation "
                 f"took longer than "
                 f"'{self.params.SpecSimNetworkCosineParameters.maximum_runtime}' "
-                f"seconds. Increase the 'modified_cosine/maximum_runtime' parameter "
+                f"seconds. Increase the "
+                f"'spec_sim_networking/modified_cosine/maximum_runtime' parameter "
                 f"or set it to 0 (zero) for unlimited runtime. Alternatively, "
                 f"filter out low-intensity/area peaks with 'feature_filtering' - SKIP."
             )
@@ -217,10 +218,9 @@ class SimNetworksManager(BaseModel):
                 return
             except func_timeout.FunctionTimedOut:
                 logger.error(
-                    f"'SimNetworksManager': download of file took longer than the "
-                    f"maximum allowed time of "
+                    f"'SimNetworksManager': download of file took longer than "
                     f"'{self.params.SpecSimNetworkDeepscoreParameters.maximum_runtime}'"
-                    f" seconds ('ms2deepscore/maximum_runtime'). Check your internet "
+                    f" seconds. Check your internet "
                     f"connection and try again - SKIP"
                 )
                 return
@@ -244,7 +244,8 @@ class SimNetworksManager(BaseModel):
                 f"ms2deepscore similarity network calculation. Calculation "
                 f"took longer than "
                 f"'{self.params.SpecSimNetworkDeepscoreParameters.maximum_runtime}"
-                f"' seconds. Increase the 'ms2deepscore/maximum_runtime' parameter "
+                f"' seconds. Increase the "
+                f"'spec_sim_networking/ms2deepscore/maximum_runtime' parameter "
                 f"or set it to 0 (zero) for unlimited runtime. Alternatively, "
                 f"filter out low-intensity/area peaks with 'feature_filtering' - SKIP"
             )

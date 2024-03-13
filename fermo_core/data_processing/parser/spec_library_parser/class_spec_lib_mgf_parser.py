@@ -21,15 +21,15 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 import logging
-from pyteomics import mgf
 from typing import Self
 
-from fermo_core.data_processing.class_stats import Stats, SpecLibEntry
+import matchms
+
+from fermo_core.data_processing.class_stats import Stats
 from fermo_core.data_processing.parser.spec_library_parser.abc_spec_lib_parser import (
     SpecLibParser,
 )
 from fermo_core.input_output.class_parameter_manager import ParameterManager
-from fermo_core.utils.utility_method_manager import UtilityMethodManager as Utils
 
 logger = logging.getLogger("fermo_core")
 
@@ -81,27 +81,10 @@ class SpecLibMgfParser(SpecLibParser):
         Notes:
             mgf.read() returns a Numpy array - turned to list for easier handling
         """
-        with open(params.SpecLibParameters.filepath) as infile:
-            stats.spectral_library = dict()
-            for num, spectrum in enumerate(mgf.read(infile, use_index=False)):
-                try:
-                    data = {
-                        "f_id": num,
-                        "mz": spectrum.get("m/z array"),
-                        "intens": spectrum.get("intensity array"),
-                        "precursor_mz": spectrum.get("params").get("pepmass")[0],
-                    }
-                    stats.spectral_library[num] = SpecLibEntry(
-                        name=spectrum["params"]["name"],
-                        exact_mass=spectrum["params"]["pepmass"][0],
-                        Spectrum=Utils.create_spectrum_object(data),
-                    )
-                except KeyError:
-                    logger.warning(
-                        f"Malformed entry (count: '{num + 1} from top') in file"
-                        f"'{params.SpecLibParameters.filepath.name}'"
-                        "detected. Missing 'NAME' or 'PEPMASS' or MS/MS information. "
-                        "SKIP - continue with next entry."
-                    )
-
+        spectra = list(
+            matchms.importing.load_from_mgf(params.SpecLibParameters.filepath)
+        )
+        spectra = [matchms.filtering.add_precursor_mz(i) for i in spectra]
+        spectra = [matchms.filtering.normalize_intensities(i) for i in spectra]
+        stats.spectral_library = {num: value for num, value in enumerate(spectra)}
         return stats

@@ -157,6 +157,7 @@ class SpectralLibMatchingCosineParameters(BaseModel):
         min_nr_matched_peaks: peak cutoff to consider a match of two MS/MS spectra
         score_cutoff: score cutoff to consider a match of two MS/MS spectra
         max_precursor_mass_diff: maximum precursor mass difference
+        maximum_runtime: maximum runtime in seconds
 
     Raise:
         pydantic.ValidationError: Pydantic validation failed during instantiation.
@@ -167,6 +168,7 @@ class SpectralLibMatchingCosineParameters(BaseModel):
     min_nr_matched_peaks: PositiveInt = 5
     score_cutoff: PositiveFloat = 0.7
     max_precursor_mass_diff: PositiveInt = 600
+    maximum_runtime: int = 600
 
     def to_json(self: Self) -> dict:
         """Convert attributes to json-compatible ones."""
@@ -176,6 +178,7 @@ class SpectralLibMatchingCosineParameters(BaseModel):
                 "fragment_tol": float(self.fragment_tol),
                 "min_nr_matched_peaks": int(self.min_nr_matched_peaks),
                 "score_cutoff": float(self.score_cutoff),
+                "maximum_runtime": int(self.maximum_runtime),
             }
         else:
             return {"activate_module": self.activate_module}
@@ -190,6 +193,7 @@ class SpectralLibMatchingDeepscoreParameters(BaseModel):
         activate_module: bool to indicate if module should be executed.
         directory_path: pathlib Path object pointing to dir with ms2deepscore files.
         score_cutoff: score cutoff to consider a match of two MS/MS spectra.
+        maximum_runtime: maximum runtime in seconds
 
     Raise:
         pydantic.ValidationError: Pydantic validation failed during instantiation.
@@ -200,6 +204,7 @@ class SpectralLibMatchingDeepscoreParameters(BaseModel):
         "libraries/ms2deepscore"
     )
     score_cutoff: PositiveFloat = 0.7
+    maximum_runtime: int = 600
 
     def to_json(self: Self) -> dict:
         """Convert attributes to json-compatible ones."""
@@ -208,6 +213,7 @@ class SpectralLibMatchingDeepscoreParameters(BaseModel):
                 "activate_module": self.activate_module,
                 "directory_path": str(self.directory_path.resolve()),
                 "score_cutoff": float(self.score_cutoff),
+                "maximum_runtime": int(self.maximum_runtime),
             }
         else:
             return {"activate_module": self.activate_module}

@@ -71,7 +71,6 @@ def test_to_json_matches_valid():
             score=0.99,
             mz=1234.5,
             diff_mz=300.2,
-            misc="A hypothetical example.",
         )
     ]
     f_dict = feature.to_json()

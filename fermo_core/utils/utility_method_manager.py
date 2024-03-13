@@ -80,3 +80,5 @@ class UtilityMethodManager(BaseModel):
         spectrum = matchms.filtering.normalize_intensities(spectrum)
 
         return spectrum
+
+        # TODO (MMZ 13.03.24): remove this utility function

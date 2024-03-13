@@ -20,9 +20,8 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-from typing import Optional, Tuple, Dict, Set, Self, List
+from typing import Optional, Tuple, Dict, Set, Self, List, Any
 
-from matchms import Spectrum
 from pydantic import BaseModel
 
 
@@ -54,16 +53,14 @@ class Match(BaseModel):
         score: score that led to a matching between feature and matched molecule
         mz: m/z ratio of matched molecule
         diff_mz: difference between m/z ratios of feature and matched molecule
-        misc: any specifics can be written in this field
     """
 
-    id: str
+    id: Any
     library: str
     algorithm: str
     score: float
     mz: float
     diff_mz: float
-    misc: str
 
 
 class Annotations(BaseModel):
@@ -132,7 +129,7 @@ class Feature(BaseModel):
     rel_intensity: Optional[float] = None
     area: Optional[int] = None
     rel_area: Optional[float] = None
-    Spectrum: Optional[Spectrum] = None
+    Spectrum: Optional[Any] = None
     samples: Optional[Tuple] = None
     blank: Optional[bool] = None
     groups: Optional[Set] = None
@@ -214,7 +211,6 @@ class Feature(BaseModel):
                             "score": match.score,
                             "mz": match.mz,
                             "diff_mz": match.diff_mz,
-                            "misc": match.misc,
                         }
                     )
 
