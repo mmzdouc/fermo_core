@@ -20,10 +20,62 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-from typing import Optional, Tuple, Dict, Set, Self
+from typing import Optional, Tuple, Dict, Set, Self, List
 
 from matchms import Spectrum
 from pydantic import BaseModel
+
+
+class Adduct(BaseModel):
+    """A Pydantic-based class to represent adduct annotation information
+
+    Attributes:
+        adduct_type: describes type of adduct
+        partner: partner feature based on which the adduct was found
+        diff_expected: the expected diff between features for this adduct, in m/z
+        diff_observed: the observed diff between features for this adduct, in m/z
+        diff_ppm: the difference in ppm between the two features
+    """
+
+    adduct_type: str
+    partner: int
+    diff_expected: float
+    diff_observed: float
+    diff_ppm: float
+
+
+class Match(BaseModel):
+    """A Pydantic-based class to represent library matching information
+
+    Attributes:
+        id: identifier of matched molecule
+        library: name of library file matched molecule is from
+        algorithm: algorithm used for matching
+        score: score that led to a matching between feature and matched molecule
+        mz: m/z ratio of matched molecule
+        diff_mz: difference between m/z ratios of feature and matched molecule
+        misc: any specifics can be written in this field
+    """
+
+    id: str
+    library: str
+    algorithm: str
+    score: float
+    mz: float
+    diff_mz: float
+    misc: str
+
+
+class Annotations(BaseModel):
+    """A Pydantic-based class to represent annotation information
+
+    Attributes:
+        adducts: list of Adduct objects representing putative adducts of this feature
+        matches: list of Match objects repr. putative library matching hits
+    """
+
+    adducts: Optional[List[Adduct]] = None
+    matches: Optional[List[Match]] = None
 
 
 class SimNetworks(BaseModel):
@@ -62,7 +114,7 @@ class Feature(BaseModel):
         groups_fold: indicates the fold differences between groups if provided. Should
             be sorted from highest to lowest.
         phenotypes: dict of objects representing associated phenotype data
-        annotations: dict of objects representing associated annotation data
+        Annotations: objects summarizing associated annotation data
         networks: dict of objects representing associated networking data
         scores: dict of objects representing associated scores
     """
@@ -86,7 +138,7 @@ class Feature(BaseModel):
     groups: Optional[Set] = None
     groups_fold: Optional[Dict] = None
     phenotypes: Optional[Dict] = None
-    annotations: Optional[Dict] = None
+    Annotations: Optional[Annotations] = None
     networks: Optional[Dict] = None
     scores: Optional[Dict] = None
 
@@ -135,6 +187,36 @@ class Feature(BaseModel):
                     "algorithm": str(self.networks[network].algorithm),
                     "network_id": int(self.networks[network].network_id),
                 }
+
+        if self.Annotations is not None:
+            json_dict["annotations"] = dict()
+
+            if self.Annotations.adducts is not None:
+                json_dict["annotations"]["adducts"] = []
+                for adduct in self.Annotations.adducts:
+                    json_dict["annotations"]["adducts"].append(
+                        {
+                            "adduct_type": adduct.adduct_type,
+                            "partner": adduct.partner,
+                            "diff_expected": adduct.diff_expected,
+                            "diff_observed": adduct.diff_observed,
+                            "diff_ppm": adduct.diff_ppm,
+                        }
+                    )
+            if self.Annotations.matches is not None:
+                json_dict["annotations"]["matches"] = []
+                for match in self.Annotations.matches:
+                    json_dict["annotations"]["matches"].append(
+                        {
+                            "id": match.id,
+                            "library": match.library,
+                            "algorithm": match.algorithm,
+                            "score": match.score,
+                            "mz": match.mz,
+                            "diff_mz": match.diff_mz,
+                            "misc": match.misc,
+                        }
+                    )
 
         # TODO(MMZ 20.1.24): implement assignment for complex attributes group_folds,
         #  annotations, phenotypes, scores
