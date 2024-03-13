@@ -1,12 +1,14 @@
 import networkx
+import numpy as np
 import pandas as pd
 from pydantic import ValidationError
 import pytest
 
 from fermo_core.data_processing.class_stats import Stats, SpecLibEntry, SpecSimNet
-
 from fermo_core.input_output.class_parameter_manager import ParameterManager
 from fermo_core.input_output.class_file_manager import FileManager
+
+from fermo_core.utils.utility_method_manager import UtilityMethodManager as Utils
 
 
 def test_init_stats_valid():
@@ -24,7 +26,14 @@ def test_init_spec_lib_entry_valid():
             **{
                 "name": "entry1",
                 "exact_mass": 123.456,
-                "msms": ((100.0, 101.0), (20, 40)),
+                "Spectrum": Utils.create_spectrum_object(
+                    {
+                        "mz": np.array([10, 40, 60], dtype=float),
+                        "intens": np.array([10, 20, 100], dtype=float),
+                        "f_id": 0,
+                        "precursor_mz": 100.0,
+                    }
+                ),
             }
         ),
         SpecLibEntry,

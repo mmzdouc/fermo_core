@@ -29,6 +29,7 @@ from fermo_core.data_processing.parser.spec_library_parser.abc_spec_lib_parser i
     SpecLibParser,
 )
 from fermo_core.input_output.class_parameter_manager import ParameterManager
+from fermo_core.utils.utility_method_manager import UtilityMethodManager as Utils
 
 logger = logging.getLogger("fermo_core")
 
@@ -67,6 +68,9 @@ class SpecLibMgfParser(SpecLibParser):
     def modify_stats(stats: Stats, params: ParameterManager) -> Stats:
         """Adds spectral library entries to Stats object.
 
+        Data is read using pyteomics.mgf() and only then converted to
+        matchms.Spectrum object to have better control over data import and filtering.
+
         Arguments:
             stats: Stats object which handles the entries in the spectral library file
             params: Parameter Object holding user input information
@@ -78,27 +82,26 @@ class SpecLibMgfParser(SpecLibParser):
             mgf.read() returns a Numpy array - turned to list for easier handling
         """
         with open(params.SpecLibParameters.filepath) as infile:
-            counter = 1
             stats.spectral_library = dict()
-            for spectrum in mgf.read(infile, use_index=False):
+            for num, spectrum in enumerate(mgf.read(infile, use_index=False)):
                 try:
-                    stats.spectral_library[counter] = SpecLibEntry(
-                        **{
-                            "name": spectrum["params"]["name"],
-                            "exact_mass": spectrum["params"]["pepmass"][0],
-                            "msms": (
-                                tuple(spectrum["m/z array"].tolist()),
-                                tuple(spectrum["intensity array"].tolist()),
-                            ),
-                        }
+                    data = {
+                        "f_id": num,
+                        "mz": spectrum.get("m/z array"),
+                        "intens": spectrum.get("intensity array"),
+                        "precursor_mz": spectrum.get("params").get("pepmass")[0],
+                    }
+                    stats.spectral_library[num] = SpecLibEntry(
+                        name=spectrum["params"]["name"],
+                        exact_mass=spectrum["params"]["pepmass"][0],
+                        Spectrum=Utils.create_spectrum_object(data),
                     )
                 except KeyError:
                     logger.warning(
-                        f"Malformed entry (count: '{counter}') in file"
+                        f"Malformed entry (count: '{num + 1} from top') in file"
                         f"'{params.SpecLibParameters.filepath.name}'"
                         "detected. Missing 'NAME' or 'PEPMASS' or MS/MS information. "
                         "SKIP - continue with next entry."
                     )
-                counter += 1
 
         return stats

@@ -60,15 +60,17 @@ class SpecSimNet(BaseModel):
 class SpecLibEntry(BaseModel):
     """Pydantic-based class to organize information on a single spectral library entry
 
+    Not supposed to be exported to session.json, therefore no to_json() method
+
     Attributes:
         name: the name of the entry
         exact_mass: the exact mass of the entry
-        msms: a tuple of two tuples: [1] fragments, [2] intensities
+        Spectrum: a matchms Spectrum object
     """
 
     name: str
     exact_mass: float
-    msms: Tuple[Tuple[float, ...], Tuple[float, ...]]
+    Spectrum: Any
 
 
 class Stats(BaseModel):
