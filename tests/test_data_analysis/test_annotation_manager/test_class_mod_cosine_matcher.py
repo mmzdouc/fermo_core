@@ -6,7 +6,7 @@ from fermo_core.data_analysis.annotation_manager.class_mod_cosine_matcher import
     ModCosineMatcher,
 )
 from fermo_core.data_processing.class_repository import Repository
-from fermo_core.data_processing.class_stats import Stats, SpecLibEntry
+from fermo_core.data_processing.class_stats import Stats
 from fermo_core.data_processing.builder_feature.dataclass_feature import Feature
 from fermo_core.input_output.class_parameter_manager import ParameterManager
 from fermo_core.input_output.input_file_parameter_managers import SpecLibParameters
@@ -20,28 +20,26 @@ from fermo_core.utils.utility_method_manager import UtilityMethodManager as Util
 def mod_cosine_matcher():
     stats = Stats(
         active_features={1},
-        spectral_library={
-            0: SpecLibEntry(
-                name="fakeomycin",
-                exact_mass=100.0,
-                Spectrum=Utils.create_spectrum_object(
-                    {
-                        "mz": np.array([10, 40, 60], dtype=float),
-                        "intens": np.array([10, 20, 100], dtype=float),
-                        "f_id": 0,
-                        "precursor_mz": 105.0,
-                    }
-                ),
+        spectral_library=[
+            matchms.Spectrum(
+                mz=np.array([10, 45, 60], dtype=float),
+                intensities=np.array([10, 30, 100], dtype=float),
+                metadata={
+                    "precursor_mz": 105.0,
+                    "id": 0,
+                    "compound_name": "fakeomycin",
+                },
+                metadata_harmonization=True,
             )
-        },
+        ],
     )
     feature1 = Feature(
         f_id=1,
         mz=100.0,
         Spectrum=Utils.create_spectrum_object(
             {
-                "mz": np.array([10, 40, 60], dtype=float),
-                "intens": np.array([10, 20, 100], dtype=float),
+                "mz": np.array([10, 40, 60, 80, 100], dtype=float),
+                "intens": np.array([10, 20, 100, 15, 55], dtype=float),
                 "f_id": 1,
                 "precursor_mz": 100.0,
             }
@@ -59,22 +57,40 @@ def mod_cosine_matcher():
     return ModCosineMatcher(params=params, stats=stats, features=features)
 
 
-def test_subset_spectral_library_valid(mod_cosine_matcher):
-    subset = mod_cosine_matcher.subset_spectral_library(Feature(mz=100.0))
-    assert subset == {0}
+def test_run_analysis(mod_cosine_matcher):
+    features = mod_cosine_matcher.run_analysis()
+    assert features.get(1).Annotations.matches[0].id == "fakeomycin"
 
 
-def test_subset_spectral_library_invalid(mod_cosine_matcher):
-    subset = mod_cosine_matcher.subset_spectral_library(Feature(mz=1000.0))
-    assert subset == set()
+def test_prepare_query_spectra_valid(mod_cosine_matcher):
+    query_spectra = mod_cosine_matcher.prepare_query_spectra()
+    assert query_spectra[0].metadata.get("id") == 1
 
 
-def test_assign_matches_valid(mod_cosine_matcher):
+def test_annotate_feature_valid(mod_cosine_matcher):
     feature = mod_cosine_matcher.features.get(1)
     scores = matchms.calculate_scores(
-        references=[mod_cosine_matcher.stats.spectral_library[0].Spectrum],
+        references=[mod_cosine_matcher.stats.spectral_library[0]],
         queries=[feature.Spectrum],
-        similarity_function=matchms.similarity.ModifiedCosine(tolerance=0.7),
+        similarity_function=matchms.similarity.ModifiedCosine(tolerance=0.1),
     )
-    feature = mod_cosine_matcher.assign_matches(feature, scores)
-    assert feature.Annotations.matches[0].score == 1.0
+    sorted_matches = scores.scores_by_query(
+        feature.Spectrum, name="ModifiedCosine_score", sort=True
+    )
+    feature = mod_cosine_matcher.annotate_feature(feature, sorted_matches[0])
+    assert feature.Annotations.matches[0].id == "fakeomycin"
+
+
+def test_annotate_feature_invalid(mod_cosine_matcher):
+    feature = mod_cosine_matcher.features.get(1)
+    scores = matchms.calculate_scores(
+        references=[mod_cosine_matcher.stats.spectral_library[0]],
+        queries=[feature.Spectrum],
+        similarity_function=matchms.similarity.ModifiedCosine(tolerance=0.1),
+    )
+    sorted_matches = scores.scores_by_query(
+        feature.Spectrum, name="ModifiedCosine_score", sort=True
+    )
+    mod_cosine_matcher.params.SpectralLibMatchingCosineParameters.score_cutoff = 1.0
+    feature = mod_cosine_matcher.annotate_feature(feature, sorted_matches[0])
+    assert feature.Annotations is None

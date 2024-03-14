@@ -22,7 +22,7 @@ SOFTWARE.
 """
 
 import logging
-from typing import Self
+from typing import Self, List, Tuple
 
 import matchms
 from pydantic import BaseModel
@@ -52,13 +52,41 @@ class ModCosineMatcher(BaseModel):
     stats: Stats
     features: Repository
 
-    def run_analysis(self: Self):
+    def run_analysis(self: Self) -> Repository:
         """Run filtering and library matching."""
+
+        query_spectra = self.prepare_query_spectra()
 
         algorithm = matchms.similarity.ModifiedCosine(
             tolerance=self.params.SpectralLibMatchingCosineParameters.fragment_tol
         )
 
+        scores = matchms.calculate_scores(
+            references=self.stats.spectral_library,
+            queries=query_spectra,
+            similarity_function=algorithm,
+        )
+
+        for spectrum in query_spectra:
+            feature = self.features.get(int(spectrum.metadata.get("id")))
+
+            sorted_matches = scores.scores_by_query(
+                spectrum, name="ModifiedCosine_score", sort=True
+            )
+            for match in sorted_matches:
+                feature = self.annotate_feature(feature, match)
+
+            self.features.modify(int(spectrum.metadata.get("id")), feature)
+
+        return self.features
+
+    def prepare_query_spectra(self: Self) -> List[matchms.Spectrum]:
+        """Prepare a filtred list of query spectra for matching
+
+        Returns:
+            A list of matchms.Spectrum objects
+        """
+        query_spectra = []
         for f_id in self.stats.active_features:
             feature = self.features.get(f_id)
 
@@ -68,84 +96,44 @@ class ModCosineMatcher(BaseModel):
                     f"associated MS2 spectrum - SKIP"
                 )
                 continue
+            else:
+                query_spectra.append(feature.Spectrum)
+        return query_spectra
 
-            subset_ids = self.subset_spectral_library(feature)
-            if len(subset_ids) == 0:
-                continue
-            subset = [self.stats.spectral_library[i].Spectrum for i in subset_ids]
-
-            scores = matchms.calculate_scores(
-                references=subset,
-                queries=[feature.Spectrum],
-                similarity_function=algorithm,
-            )
-
-            feature = self.assign_matches(feature, scores)
-            self.features.modify(f_id, feature)
-
-        return self.features
-
-    def subset_spectral_library(self: Self, feature: Feature) -> set:
-        """Based on mod cosine filters, create a subset of lib spectra to match against
+    def annotate_feature(self: Self, feature: Feature, match: Tuple) -> Feature:
+        """Filter matches for user-specified params and assign annotation to feature
 
         Arguments:
-            feature: the feature in question
-
-        Returns:
-             A set of library ids to match against
+            feature: a Feature object
+            match: a Tuple of library reference spectrum and the score
         """
-        subset = set()
-        for key, spectrum in self.stats.spectral_library.items():
-            if (
-                abs(spectrum.exact_mass - feature.mz)
-                <= self.params.SpectralLibMatchingCosineParameters.max_precursor_mass_diff
-            ):
-                subset.add(key)
-
-        return subset
-
-    def assign_matches(self: Self, feature: Feature, scores: matchms.Scores) -> Feature:
-        """Add spectral library match information to Feature
-
-        Arguments:
-            feature: the feature in question
-            scores: a matchms score object with spectral library matches
-
-        Returns:
-             The modified feature
-        """
-        matches = scores.scores_by_query(
-            feature.Spectrum, name="ModifiedCosine_score", sort=True
-        )
-
-        filtered = []
-        for match in matches:
-            if (
-                match[1][0]
-                >= self.params.SpectralLibMatchingCosineParameters.score_cutoff
-                and match[1][1]
-                >= self.params.SpectralLibMatchingCosineParameters.min_nr_matched_peaks
-            ):
-                filtered.append(match)
-
-        if len(filtered) > 0:
+        if match[1][0] < self.params.SpectralLibMatchingCosineParameters.score_cutoff:
+            return feature
+        elif (
+            match[1][1]
+            < self.params.SpectralLibMatchingCosineParameters.min_nr_matched_peaks
+        ):
+            return feature
+        elif (
+            abs(match[0].metadata.get("precursor_mz") - feature.mz)
+            > self.params.SpectralLibMatchingCosineParameters.max_precursor_mass_diff
+        ):
+            return feature
+        else:
             if feature.Annotations is None:
                 feature.Annotations = Annotations()
 
             if feature.Annotations.matches is None:
                 feature.Annotations.matches = []
 
-            for match in filtered:
-                feature.Annotations.matches.append(
-                    Match(
-                        id=match[0].metadata.get("id"),
-                        library=str(self.params.SpecLibParameters.filepath.resolve()),
-                        algorithm="modified cosine",
-                        score=float(match[1][0].round(2)),
-                        mz=match[0].metadata.get("precursor_mz"),
-                        diff_mz=abs(match[0].metadata.get("precursor_mz") - feature.mz),
-                    )
+            feature.Annotations.matches.append(
+                Match(
+                    id=match[0].metadata.get("compound_name"),
+                    library=str(self.params.SpecLibParameters.filepath.resolve()),
+                    algorithm="modified cosine",
+                    score=float(match[1][0].round(2)),
+                    mz=match[0].metadata.get("precursor_mz"),
+                    diff_mz=abs(match[0].metadata.get("precursor_mz") - feature.mz),
                 )
-            return feature
-        else:
-            return feature
+            )
+        return feature

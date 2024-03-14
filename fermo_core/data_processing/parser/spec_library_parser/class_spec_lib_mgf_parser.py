@@ -68,23 +68,17 @@ class SpecLibMgfParser(SpecLibParser):
     def modify_stats(stats: Stats, params: ParameterManager) -> Stats:
         """Adds spectral library entries to Stats object.
 
-        Data is read using pyteomics.mgf() and only then converted to
-        matchms.Spectrum object to have better control over data import and filtering.
-
         Arguments:
             stats: Stats object which handles the entries in the spectral library file
             params: Parameter Object holding user input information
 
         Returns:
             A (modified) Stats object
-
-        Notes:
-            mgf.read() returns a Numpy array - turned to list for easier handling
         """
         spectra = list(
             matchms.importing.load_from_mgf(params.SpecLibParameters.filepath)
         )
         spectra = [matchms.filtering.add_precursor_mz(i) for i in spectra]
         spectra = [matchms.filtering.normalize_intensities(i) for i in spectra]
-        stats.spectral_library = {num: value for num, value in enumerate(spectra)}
+        stats.spectral_library = spectra
         return stats
