@@ -23,7 +23,6 @@ SOFTWARE.
 import logging
 from typing import Self, Tuple
 
-import func_timeout
 from pydantic import BaseModel
 
 from fermo_core.data_analysis.annotation_manager.class_mod_cosine_matcher import (
@@ -68,10 +67,10 @@ class AnnotationManager(BaseModel):
                 self.params.SpectralLibMatchingCosineParameters.activate_module,
                 self.run_modified_cosine_matching,
             ),
-            (
-                self.params.SpectralLibMatchingDeepscoreParameters.activate_module,
-                self.run_ms2deepscore_matching,
-            )
+            # (
+            #     self.params.SpectralLibMatchingDeepscoreParameters.activate_module,
+            #     self.run_ms2deepscore_matching,
+            # )
             # TODO(MMZ 13.03.24): Add additional annotation modules e.g. adduct,
             #  ms2query
         )
@@ -89,10 +88,18 @@ class AnnotationManager(BaseModel):
             "matching."
         )
 
-        if self.stats.spectral_library is None:
+        if self.params.SpecLibParameters is None:
             logger.warning(
                 "'AnnotationManager': could not run modified cosine-based library "
-                "matching: no spectral library file provided "
+                "matching: no spectral library parameters provided "
+                "- SKIP"
+            )
+            return
+
+        if self.stats.spectral_library is None or len(self.stats.spectral_library) == 0:
+            logger.warning(
+                "'AnnotationManager': could not run modified cosine-based library "
+                "matching: no spectral library file provided or library file empty "
                 "- SKIP"
             )
             return
@@ -103,21 +110,7 @@ class AnnotationManager(BaseModel):
             features=self.features,
         )
 
-        try:
-            # TODO(MMZ 13.03.24): put this into the timeout function right away here
-            self.features = mod_cosine_matcher.run_analysis()
-        except func_timeout.FunctionTimedOut:
-            logger.warning(
-                f"'AnnotationManager/ModCosineMatcher': timeout of modified "
-                f"cosine spectral library matching calculation. Calculation "
-                f"took longer than "
-                f"'{self.params.SpectralLibMatchingCosineParameters.maximum_runtime}' "
-                f"seconds. Increase the "
-                f"'spectral_library_matching/modified_cosine/maximum_runtime' parameter"
-                f" or set it to 0 (zero) for unlimited runtime. Alternatively, "
-                f"filter out low-intensity/area peaks with 'feature_filtering' - SKIP."
-            )
-            return
+        self.features = mod_cosine_matcher.run_analysis()
 
         logger.info(
             "'AnnotationManager': completed modified cosine-based spectral library "

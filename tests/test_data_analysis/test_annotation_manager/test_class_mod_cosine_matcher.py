@@ -57,7 +57,8 @@ def mod_cosine_matcher():
     return ModCosineMatcher(params=params, stats=stats, features=features)
 
 
-def test_run_analysis(mod_cosine_matcher):
+@pytest.mark.slow
+def test_run_analysis_valid(mod_cosine_matcher):
     features = mod_cosine_matcher.run_analysis()
     assert features.get(1).Annotations.matches[0].id == "fakeomycin"
 
@@ -67,6 +68,7 @@ def test_prepare_query_spectra_valid(mod_cosine_matcher):
     assert query_spectra[0].metadata.get("id") == 1
 
 
+@pytest.mark.slow
 def test_annotate_feature_valid(mod_cosine_matcher):
     feature = mod_cosine_matcher.features.get(1)
     scores = matchms.calculate_scores(
@@ -81,6 +83,7 @@ def test_annotate_feature_valid(mod_cosine_matcher):
     assert feature.Annotations.matches[0].id == "fakeomycin"
 
 
+@pytest.mark.slow
 def test_annotate_feature_invalid(mod_cosine_matcher):
     feature = mod_cosine_matcher.features.get(1)
     scores = matchms.calculate_scores(

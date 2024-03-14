@@ -24,6 +24,7 @@ SOFTWARE.
 import logging
 from typing import Self, List, Tuple
 
+import func_timeout
 import matchms
 from pydantic import BaseModel
 
@@ -57,13 +58,41 @@ class ModCosineMatcher(BaseModel):
 
         query_spectra = self.prepare_query_spectra()
 
-        scores = matchms.calculate_scores(
-            references=self.stats.spectral_library,
-            queries=query_spectra,
-            similarity_function=matchms.similarity.ModifiedCosine(
-                tolerance=self.params.SpectralLibMatchingCosineParameters.fragment_tol
-            ),
-        )
+        if self.params.SpectralLibMatchingCosineParameters.maximum_runtime == 0:
+            scores = matchms.calculate_scores(
+                references=self.stats.spectral_library,
+                queries=query_spectra,
+                similarity_function=matchms.similarity.ModifiedCosine(
+                    tolerance=self.params.SpectralLibMatchingCosineParameters.fragment_tol
+                ),
+            )
+        else:
+            try:
+                scores = func_timeout.func_timeout(
+                    timeout=self.params.SpectralLibMatchingCosineParameters.maximum_runtime,
+                    func=matchms.calculate_scores,
+                    kwargs={
+                        "references": self.stats.spectral_library,
+                        "queries": query_spectra,
+                        "similarity_function": matchms.similarity.ModifiedCosine(
+                            tolerance=self.params.SpectralLibMatchingCosineParameters.fragment_tol
+                        ),
+                    },
+                )
+            except func_timeout.FunctionTimedOut:
+                logger.warning(
+                    f"'AnnotationManager/ModCosineMatcher': timeout of modified "
+                    f"cosine spectral library matching calculation. Calculation "
+                    f"took longer than "
+                    f"'{self.params.SpectralLibMatchingCosineParameters.maximum_runtime}' "
+                    f"seconds. Increase the "
+                    f"'spectral_library_matching/modified_cosine/maximum_runtime' "
+                    f"parameter"
+                    f" or set it to 0 (zero) for unlimited runtime. Alternatively, "
+                    f"filter out low-intensity/area peaks with 'feature_filtering' - "
+                    f"SKIP."
+                )
+                return self.features
 
         for spectrum in query_spectra:
             feature = self.features.get(int(spectrum.metadata.get("id")))
@@ -89,7 +118,7 @@ class ModCosineMatcher(BaseModel):
             feature = self.features.get(f_id)
 
             if feature.Spectrum is None:
-                logger.info(
+                logger.debug(
                     f"'ModCosineMatcher': feature with id '{feature.f_id}' has no "
                     f"associated MS2 spectrum - SKIP"
                 )
@@ -131,7 +160,9 @@ class ModCosineMatcher(BaseModel):
                     algorithm="modified cosine",
                     score=float(match[1][0].round(2)),
                     mz=match[0].metadata.get("precursor_mz"),
-                    diff_mz=abs(match[0].metadata.get("precursor_mz") - feature.mz),
+                    diff_mz=round(
+                        abs(match[0].metadata.get("precursor_mz") - feature.mz), 4
+                    ),
                 )
             )
             return feature
