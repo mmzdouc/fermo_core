@@ -57,14 +57,12 @@ class ModCosineMatcher(BaseModel):
 
         query_spectra = self.prepare_query_spectra()
 
-        algorithm = matchms.similarity.ModifiedCosine(
-            tolerance=self.params.SpectralLibMatchingCosineParameters.fragment_tol
-        )
-
         scores = matchms.calculate_scores(
             references=self.stats.spectral_library,
             queries=query_spectra,
-            similarity_function=algorithm,
+            similarity_function=matchms.similarity.ModifiedCosine(
+                tolerance=self.params.SpectralLibMatchingCosineParameters.fragment_tol
+            ),
         )
 
         for spectrum in query_spectra:
@@ -136,4 +134,4 @@ class ModCosineMatcher(BaseModel):
                     diff_mz=abs(match[0].metadata.get("precursor_mz") - feature.mz),
                 )
             )
-        return feature
+            return feature
