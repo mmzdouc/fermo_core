@@ -3,8 +3,7 @@ import pandas as pd
 from pydantic import ValidationError
 import pytest
 
-from fermo_core.data_processing.class_stats import Stats, SpecLibEntry, SpecSimNet
-
+from fermo_core.data_processing.class_stats import Stats, SpecSimNet
 from fermo_core.input_output.class_parameter_manager import ParameterManager
 from fermo_core.input_output.class_file_manager import FileManager
 
@@ -16,24 +15,6 @@ def test_init_stats_valid():
 @pytest.fixture
 def stats():
     return Stats()
-
-
-def test_init_spec_lib_entry_valid():
-    assert isinstance(
-        SpecLibEntry(
-            **{
-                "name": "entry1",
-                "exact_mass": 123.456,
-                "msms": ((100.0, 101.0), (20, 40)),
-            }
-        ),
-        SpecLibEntry,
-    )
-
-
-def test_init_spec_lib_entry_invalid():
-    with pytest.raises(ValidationError):
-        SpecLibEntry(**{"sda": "Ssdas"})
 
 
 @pytest.fixture

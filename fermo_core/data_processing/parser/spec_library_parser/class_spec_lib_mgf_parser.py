@@ -21,10 +21,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 import logging
-from pyteomics import mgf
 from typing import Self
 
-from fermo_core.data_processing.class_stats import Stats, SpecLibEntry
+import matchms
+
+from fermo_core.data_processing.class_stats import Stats
 from fermo_core.data_processing.parser.spec_library_parser.abc_spec_lib_parser import (
     SpecLibParser,
 )
@@ -73,32 +74,11 @@ class SpecLibMgfParser(SpecLibParser):
 
         Returns:
             A (modified) Stats object
-
-        Notes:
-            mgf.read() returns a Numpy array - turned to list for easier handling
         """
-        with open(params.SpecLibParameters.filepath) as infile:
-            counter = 1
-            stats.spectral_library = dict()
-            for spectrum in mgf.read(infile, use_index=False):
-                try:
-                    stats.spectral_library[counter] = SpecLibEntry(
-                        **{
-                            "name": spectrum["params"]["name"],
-                            "exact_mass": spectrum["params"]["pepmass"][0],
-                            "msms": (
-                                tuple(spectrum["m/z array"].tolist()),
-                                tuple(spectrum["intensity array"].tolist()),
-                            ),
-                        }
-                    )
-                except KeyError:
-                    logger.warning(
-                        f"Malformed entry (count: '{counter}') in file"
-                        f"'{params.SpecLibParameters.filepath.name}'"
-                        "detected. Missing 'NAME' or 'PEPMASS' or MS/MS information. "
-                        "SKIP - continue with next entry."
-                    )
-                counter += 1
-
+        spectra = list(
+            matchms.importing.load_from_mgf(params.SpecLibParameters.filepath)
+        )
+        spectra = [matchms.filtering.add_precursor_mz(i) for i in spectra]
+        spectra = [matchms.filtering.normalize_intensities(i) for i in spectra]
+        stats.spectral_library = spectra
         return stats

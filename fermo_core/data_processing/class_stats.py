@@ -57,20 +57,6 @@ class SpecSimNet(BaseModel):
         }
 
 
-class SpecLibEntry(BaseModel):
-    """Pydantic-based class to organize information on a single spectral library entry
-
-    Attributes:
-        name: the name of the entry
-        exact_mass: the exact mass of the entry
-        msms: a tuple of two tuples: [1] fragments, [2] intensities
-    """
-
-    name: str
-    exact_mass: float
-    msms: Tuple[Tuple[float, ...], Tuple[float, ...]]
-
-
 class Stats(BaseModel):
     """Pydantic-based class to organize stats and general info.
 
@@ -88,7 +74,7 @@ class Stats(BaseModel):
         groups: dict of sets of sample IDs repr. group membership (default in DEFAULT)
         networks: all similarity networks in analysis run
         phenotypes: dict of tuples of active sample IDs
-        spectral_library: a dict of SpecLibEntry instances
+        spectral_library: a list of matchms.Spectrum instances
         analysis_log: a list of performed steps by the AnalysisManager
     """
 
@@ -105,7 +91,7 @@ class Stats(BaseModel):
     groups: Dict[str, Set] = {"DEFAULT": set()}
     networks: Optional[Dict[str, SpecSimNet]] = None
     phenotypes: Optional[Dict[str, Tuple[str, ...]]] = None
-    spectral_library: Optional[Dict[int, SpecLibEntry]] = None
+    spectral_library: Optional[list] = None
     analysis_log: list = []
 
     def parse_mzmine3(self: Self, params: ParameterManager):

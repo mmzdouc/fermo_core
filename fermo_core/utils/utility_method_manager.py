@@ -26,6 +26,7 @@ from typing import Union
 import urllib.request
 import urllib.error
 
+import matchms
 from pydantic import BaseModel
 
 logger = logging.getLogger("fermo_core")
@@ -57,3 +58,27 @@ class UtilityMethodManager(BaseModel):
                 f"'UtilityMethodManager': could not download from url 'f{url}' - SKIP"
             )
             raise e
+
+    @staticmethod
+    def create_spectrum_object(data: dict) -> matchms.Spectrum:
+        """Create matchms Spectrum instance, add neutral losses and normalize intensity
+
+        Arguments:
+            data: a dict containing data to create a matchms Spectrum object.
+
+        Returns:
+            A matchms Spectrum object
+        """
+        spectrum = matchms.Spectrum(
+            mz=data["mz"],
+            intensities=data["intens"],
+            metadata={"precursor_mz": data["precursor_mz"], "id": data["f_id"]},
+            metadata_harmonization=False,
+        )
+        spectrum = matchms.filtering.add_precursor_mz(spectrum)
+        spectrum = matchms.filtering.add_losses(spectrum)
+        spectrum = matchms.filtering.normalize_intensities(spectrum)
+
+        return spectrum
+
+        # TODO (MMZ 13.03.24): remove this utility function

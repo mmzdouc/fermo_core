@@ -79,12 +79,14 @@
                 "fragment_tol": 0.1,
                 "min_nr_matched_peaks": 5,
                 "score_cutoff": 0.7,
-                "max_precursor_mass_diff": 600
+                "max_precursor_mass_diff": 600,
+                "maximum_runtime": 1200
             },
             "ms2deepscore": {
                 "activate_module": true,
                 "directory_path": "fermo_core/libraries/ms2deepscore",
-                "score_cutoff": 0.7
+                "score_cutoff": 0.7,
+                "maximum_runtime": 1200
             }
         },
         "ms2query_annotation": {

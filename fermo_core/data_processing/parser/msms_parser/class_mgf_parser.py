@@ -28,6 +28,7 @@ from pyteomics import mgf
 from fermo_core.data_processing.class_repository import Repository
 from fermo_core.data_processing.parser.msms_parser.abc_msms_parser import MsmsParser
 from fermo_core.input_output.class_parameter_manager import ParameterManager
+from fermo_core.utils.utility_method_manager import UtilityMethodManager as Utils
 
 logger = logging.getLogger("fermo_core")
 
@@ -66,6 +67,9 @@ class MgfParser(MsmsParser):
     ) -> Repository:
         """Modifies Feature objects by adding MS/MS information.
 
+        Data is read using pyteomics.mgf() and only then converted to
+        matchms.Spectrum object to have better control over data import and filtering.
+
         Arguments:
             feature_repo: Repository holding individual features
             params: instance of ParameterManager holding user input
@@ -83,7 +87,7 @@ class MgfParser(MsmsParser):
                         "precursor_mz": spectrum.get("params").get("pepmass")[0],
                     }
                     feature = feature_repo.get(data["f_id"])
-                    feature.Spectrum = self.create_spectrum_object(data)
+                    feature.Spectrum = Utils.create_spectrum_object(data)
                     feature_repo.modify(data["f_id"], feature)
 
                 except KeyError:

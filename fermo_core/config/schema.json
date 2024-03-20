@@ -400,6 +400,11 @@
                                     "title": "(Optional): maximum difference between the precursor masses of two MS/MS spectra, in m/z units. A high number may lead to serendipitous matching between unrelated spectra, while a low number may exclude possible analogues. Default value: 600 m/z.",
                                     "type": "integer",
                                     "minimum": 1
+                                },
+                                "maximum_runtime": {
+                                    "title": "(Optional): maximum running time of module, in seconds. A value of 0 (zero) indicates unlimited running time. Default value: 600 seconds.",
+                                    "type": "integer",
+                                    "minimum": 0
                                 }
                             }
                         },
@@ -424,6 +429,11 @@
                                     "type": "number",
                                     "minimum": 0.1,
                                     "maximum": 1.0
+                                },
+                                "maximum_runtime": {
+                                    "title": "(Optional): maximum running time of module, in seconds. A value of 0 (zero) indicates unlimited running time. Default value: 600 seconds.",
+                                    "type": "integer",
+                                    "minimum": 0
                                 }
                             }
                         }

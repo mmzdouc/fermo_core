@@ -3,6 +3,9 @@ import numpy as np
 
 from fermo_core.data_processing.builder_feature.dataclass_feature import Feature
 from fermo_core.data_processing.builder_feature.dataclass_feature import SimNetworks
+from fermo_core.data_processing.builder_feature.dataclass_feature import Annotations
+from fermo_core.data_processing.builder_feature.dataclass_feature import Adduct
+from fermo_core.data_processing.builder_feature.dataclass_feature import Match
 
 
 def test_init_feature_valid():
@@ -39,3 +42,36 @@ def test_to_json_networks_valid():
     feature.networks = {0: SimNetworks(algorithm="xyz", network_id=0)}
     f_dict = feature.to_json()
     assert f_dict.get("networks").get(0).get("algorithm") == "xyz"
+
+
+def test_to_json_adducts_valid():
+    feature = Feature()
+    feature.Annotations = Annotations()
+    feature.Annotations.adducts = [
+        Adduct(
+            adduct_type="[M+Na]+",
+            partner=2,
+            diff_expected=100.01,
+            diff_observed=100.5,
+            diff_ppm=5.5,
+        )
+    ]
+    f_dict = feature.to_json()
+    assert f_dict["annotations"]["adducts"][0]["adduct_type"] == "[M+Na]+"
+
+
+def test_to_json_matches_valid():
+    feature = Feature()
+    feature.Annotations = Annotations()
+    feature.Annotations.matches = [
+        Match(
+            id="fakeomycin",
+            library="default_library",
+            algorithm="modified cosine",
+            score=0.99,
+            mz=1234.5,
+            diff_mz=300.2,
+        )
+    ]
+    f_dict = feature.to_json()
+    assert f_dict["annotations"]["matches"][0]["id"] == "fakeomycin"

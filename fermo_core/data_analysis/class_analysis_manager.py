@@ -29,6 +29,9 @@ from fermo_core.input_output.class_parameter_manager import ParameterManager
 from fermo_core.data_processing.class_repository import Repository
 from fermo_core.data_processing.class_stats import Stats
 
+from fermo_core.data_analysis.annotation_manager.class_annotation_manager import (
+    AnnotationManager,
+)
 from fermo_core.data_analysis.chrom_trace_calculator.class_chrom_trace_calculator import (
     ChromTraceCalculator,
 )
@@ -73,6 +76,8 @@ class AnalysisManager(BaseModel):
         self.run_feature_filter()
 
         self.run_sim_networks_manager()
+
+        self.run_annotation_manager()
 
         self.run_chrom_trace_calculator()
 
@@ -126,6 +131,21 @@ class AnalysisManager(BaseModel):
         self.stats.analysis_log.append(
             "Ran module 'SimNetworksManager'. For parameters, "
             "see 'core_modules/spec_sim_networking'."
+        )
+
+    def run_annotation_manager(self: Self):
+        """Run optional AnnotationManager analysis step"""
+        annotation_manager = AnnotationManager(
+            params=self.params,
+            stats=self.stats,
+            features=self.features,
+            samples=self.samples,
+        )
+        annotation_manager.run_analysis()
+        self.stats, self.features, self.samples = annotation_manager.return_attrs()
+        self.stats.analysis_log.append(
+            "Ran module 'AnnotationManager'. For parameters, "
+            "see 'core_modules' and 'additional_modules'."
         )
 
     def run_chrom_trace_calculator(self: Self):
