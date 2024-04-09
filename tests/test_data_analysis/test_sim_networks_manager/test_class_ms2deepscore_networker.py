@@ -35,16 +35,6 @@ def test_spec_sim_networking_timeout_invalid(feature_instance):
         )
 
 
-def test_spec_sim_networking_no_model_invalid(feature_instance):
-    features = (12, 13)
-    settings = SpecSimNetworkDeepscoreParameters()
-    settings.file_path = "asfasdfasdfasd"
-    with pytest.raises(FileNotFoundError):
-        Ms2deepscoreNetworker().spec_sim_networking(
-            features, feature_instance, settings
-        )
-
-
 def test_create_network_valid(feature_instance):
     features = (12, 13)
     settings = SpecSimNetworkDeepscoreParameters()

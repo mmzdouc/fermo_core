@@ -42,7 +42,6 @@
             },
             "ms2deepscore": {
                 "activate_module": true,
-                "file_path": "fermo_core/libraries/ms2deepscore/ms2deepscore_positive_10k_1000_1000_1000_500.hdf5",
                 "score_cutoff": 0.7,
                 "max_nr_links": 10,
                 "msms_min_frag_nr": 5,

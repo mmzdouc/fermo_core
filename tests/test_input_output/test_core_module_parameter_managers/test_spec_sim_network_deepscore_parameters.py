@@ -23,10 +23,3 @@ def test_init_spec_sim_network_deepscore_parameters_valid():
 def test_init_spec_sim_network_deepscore_parameters_fail():
     with pytest.raises(TypeError):
         SpecSimNetworkDeepscoreParameters(None)
-
-
-def test_default_libraries_folder_valid():
-    instance = SpecSimNetworkDeepscoreParameters()
-    default_dir_name = instance.default_file_path.parent.resolve()
-    assert default_dir_name.name == "ms2deepscore"
-    assert default_dir_name.exists()
