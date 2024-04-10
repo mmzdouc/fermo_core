@@ -83,8 +83,8 @@
             },
             "ms2deepscore": {
                 "activate_module": true,
-                "directory_path": "fermo_core/libraries/ms2deepscore",
                 "score_cutoff": 0.7,
+                "max_precursor_mass_diff": 600,
                 "maximum_runtime": 1200
             }
         },

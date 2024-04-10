@@ -18,12 +18,22 @@ def annotation_manager_instance(
     )
 
 
+@pytest.mark.slow
 def test_init_valid(annotation_manager_instance):
     assert isinstance(annotation_manager_instance, AnnotationManager)
 
 
+@pytest.mark.slow
 def test_run_analysis_valid(annotation_manager_instance):
     annotation_manager_instance.run_modified_cosine_matching()
+    assert isinstance(
+        annotation_manager_instance.features.get(79).Annotations.matches[0], Match
+    )
+
+
+@pytest.mark.slow
+def test_run_ms2deepscore_matching_valid(annotation_manager_instance):
+    annotation_manager_instance.run_ms2deepscore_matching()
     assert isinstance(
         annotation_manager_instance.features.get(79).Annotations.matches[0], Match
     )

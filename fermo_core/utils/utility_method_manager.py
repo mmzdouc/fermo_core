@@ -37,6 +37,29 @@ logger = logging.getLogger("fermo_core")
 class UtilityMethodManager(BaseModel):
     """Pydantic-based base class to organize general utility methods for subclasses."""
 
+    @staticmethod
+    def check_ms2deepscore_req() -> bool:
+        """Checks and logs if file required for MS2DeepScore functionality are present
+
+        Returns:
+            True - file present; False - file not present
+        """
+        if (
+            not DefaultSettings()
+            .dirpath_ms2deepscore.joinpath(DefaultSettings().filename_ms2deepscore)
+            .exists()
+        ):
+            logger.warning(
+                f"'MS2DeepScore embedding file "
+                f"'{DefaultSettings().filename_ms2deepscore}' not found. "
+                f"Attempting to download file to default directory"
+                f"{DefaultSettings().dirpath_ms2deepscore.resolve()}'. This may take "
+                f"some time."
+            )
+            return False
+        else:
+            return True
+
     def download_ms2deepscore_req(self: Self, max_runtime: int):
         """Download ms2deepscore required files as specified in DefaultSettings class
 
@@ -44,25 +67,22 @@ class UtilityMethodManager(BaseModel):
             max_runtime: maximum time to download in seconds
 
         """
-        try:
-            if max_runtime != 0:
-                self.download_file(
-                    url=DefaultSettings().url_ms2deepscore,
-                    location=DefaultSettings().dirpath_ms2deepscore.joinpath(
-                        DefaultSettings().filename_ms2deepscore
-                    ),
-                    timeout=max_runtime,
-                )
-            else:
-                self.download_file(
-                    url=DefaultSettings().url_ms2deepscore,
-                    location=DefaultSettings().dirpath_ms2deepscore.joinpath(
-                        DefaultSettings().filename_ms2deepscore
-                    ),
-                    timeout=3600,
-                )
-        except urllib.error.URLError:
-            return
+        if max_runtime != 0:
+            self.download_file(
+                url=DefaultSettings().url_ms2deepscore,
+                location=DefaultSettings().dirpath_ms2deepscore.joinpath(
+                    DefaultSettings().filename_ms2deepscore
+                ),
+                timeout=max_runtime,
+            )
+        else:
+            self.download_file(
+                url=DefaultSettings().url_ms2deepscore,
+                location=DefaultSettings().dirpath_ms2deepscore.joinpath(
+                    DefaultSettings().filename_ms2deepscore
+                ),
+                timeout=3600,
+            )
 
     @staticmethod
     def download_file(url: str, location: Path, timeout: int):

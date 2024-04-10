@@ -69,13 +69,17 @@ def test_prepare_query_spectra_valid(mod_cosine_matcher):
 
 
 @pytest.mark.slow
+def test_calculate_scores_mod_cosine_valid(mod_cosine_matcher):
+    query_spectra = mod_cosine_matcher.prepare_query_spectra()
+    scores = mod_cosine_matcher.calculate_scores_mod_cosine(query_spectra)
+    assert isinstance(scores, matchms.Scores)
+
+
+@pytest.mark.slow
 def test_annotate_feature_valid(mod_cosine_matcher):
     feature = mod_cosine_matcher.features.get(1)
-    scores = matchms.calculate_scores(
-        references=[mod_cosine_matcher.stats.spectral_library[0]],
-        queries=[feature.Spectrum],
-        similarity_function=matchms.similarity.ModifiedCosine(tolerance=0.1),
-    )
+    query_spectra = mod_cosine_matcher.prepare_query_spectra()
+    scores = mod_cosine_matcher.calculate_scores_mod_cosine(query_spectra)
     sorted_matches = scores.scores_by_query(
         feature.Spectrum, name="ModifiedCosine_score", sort=True
     )
@@ -86,14 +90,11 @@ def test_annotate_feature_valid(mod_cosine_matcher):
 @pytest.mark.slow
 def test_annotate_feature_invalid(mod_cosine_matcher):
     feature = mod_cosine_matcher.features.get(1)
-    scores = matchms.calculate_scores(
-        references=[mod_cosine_matcher.stats.spectral_library[0]],
-        queries=[feature.Spectrum],
-        similarity_function=matchms.similarity.ModifiedCosine(tolerance=0.1),
-    )
+    query_spectra = mod_cosine_matcher.prepare_query_spectra()
+    mod_cosine_matcher.params.SpectralLibMatchingCosineParameters.score_cutoff = 1.0
+    scores = mod_cosine_matcher.calculate_scores_mod_cosine(query_spectra)
     sorted_matches = scores.scores_by_query(
         feature.Spectrum, name="ModifiedCosine_score", sort=True
     )
-    mod_cosine_matcher.params.SpectralLibMatchingCosineParameters.score_cutoff = 1.0
     feature = mod_cosine_matcher.annotate_feature(feature, sorted_matches[0])
     assert feature.Annotations is None

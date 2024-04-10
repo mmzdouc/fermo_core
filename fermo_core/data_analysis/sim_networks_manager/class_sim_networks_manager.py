@@ -23,11 +23,11 @@ SOFTWARE.
 import logging
 import func_timeout
 from typing import Tuple, Self, Dict
+import urllib.error
 
 import networkx
 from pydantic import BaseModel
 
-from fermo_core.config.class_default_settings import DefaultSettings
 from fermo_core.data_analysis.sim_networks_manager.class_mod_cosine_networker import (
     ModCosineNetworker,
 )
@@ -199,21 +199,13 @@ class SimNetworksManager(BaseModel):
             )
             return
 
-        if (
-            not DefaultSettings()
-            .dirpath_ms2deepscore.joinpath(DefaultSettings().filename_ms2deepscore)
-            .exists()
-        ):
-            logger.warning(
-                f"'SimNetworksManager/Ms2deepscoreNetworker': embedding file "
-                f"'{DefaultSettings().filename_ms2deepscore}' not found. "
-                f"Attempt to download file to default directory"
-                f"{DefaultSettings().dirpath_ms2deepscore.resolve()}'. This may take "
-                f"some time."
-            )
-            UtilityMethodManager().download_ms2deepscore_req(
-                self.params.SpecSimNetworkDeepscoreParameters.maximum_runtime
-            )
+        try:
+            if not UtilityMethodManager().check_ms2deepscore_req():
+                UtilityMethodManager().download_ms2deepscore_req(
+                    self.params.SpecSimNetworkDeepscoreParameters.maximum_runtime
+                )
+        except urllib.error.URLError:
+            return
 
         filtered_features = self.filter_input_spectra(
             tuple(self.stats.active_features),

@@ -1,4 +1,4 @@
-"""Runs the modified cosine library matching module.
+"""Runs the ms2deepscore library matching module.
 
 Copyright (c) 2022-2023 Mitja Maximilian Zdouc, PhD
 
@@ -23,11 +23,15 @@ SOFTWARE.
 
 import logging
 from typing import Self, List
+import urllib.error
 
 import func_timeout
 import matchms
+from ms2deepscore import MS2DeepScore
+from ms2deepscore.models import load_model
 from pydantic import BaseModel
 
+from fermo_core.config.class_default_settings import DefaultSettings
 from fermo_core.data_processing.class_repository import Repository
 from fermo_core.data_processing.class_stats import Stats
 from fermo_core.data_processing.builder_feature.dataclass_feature import (
@@ -36,12 +40,13 @@ from fermo_core.data_processing.builder_feature.dataclass_feature import (
     Match,
 )
 from fermo_core.input_output.class_parameter_manager import ParameterManager
+from fermo_core.utils.utility_method_manager import UtilityMethodManager
 
 logger = logging.getLogger("fermo_core")
 
 
-class ModCosineMatcher(BaseModel):
-    """Pydantic-based class to organize calling and logging of mod cosine matching
+class Ms2deepscoreMatcher(BaseModel):
+    """Pydantic-based class to organize calling and logging of ms2deepscore matching
 
     Attributes:
         params: ParameterManager object, holds user-provided parameters
@@ -54,17 +59,17 @@ class ModCosineMatcher(BaseModel):
     features: Repository
 
     @staticmethod
-    def log_mod_cosine_timeout(max_time: str):
-        """Logs timeout due to long-running modified cosine library matching
+    def log_ms2deepscore_timeout(max_time: str):
+        """Logs timeout due to long-running ms2deepscore library matching
 
         Arguments:
             max_time: the set maximum calculation time
         """
         logger.warning(
-            f"'AnnotationManager/ModCosineMatcher': timeout of modified "
-            f"cosine spectral library matching calculation. Calculation "
+            f"'AnnotationManager/Ms2deepscoreMatcher': timeout of MS2DeepScore-based "
+            f"spectral library matching calculation. Calculation "
             f"took longer than '{max_time}' seconds. Increase the "
-            f"'spectral_library_matching/modified_cosine/maximum_runtime' parameter"
+            f"'spectral_library_matching/ms2deepscore/maximum_runtime' parameter"
             f" or set it to 0 (zero) for unlimited runtime. Alternatively, "
             f"filter out low-intensity/area peaks with 'feature_filtering' - "
             f"SKIP."
@@ -72,17 +77,33 @@ class ModCosineMatcher(BaseModel):
 
     def run_analysis(self: Self) -> Repository:
         """Run filtering and library matching."""
-        query_spectra = self.prepare_query_spectra()
 
-        if len(query_spectra) == 0:
+        if self.params.PeaktableParameters.polarity != "positive":
             logger.warning(
-                "'AnnotationManager/ModCosineMatcher': no features with MS2 spectra "
-                "available for library matching - SKIP"
+                "'AnnotationManager/Ms2deepscoreMatcher': data polarity not "
+                "positive. Currently, only positive ion mode is supported - SKIP"
             )
             return self.features
 
         try:
-            scores = self.calculate_scores_mod_cosine(query_spectra=query_spectra)
+            if not UtilityMethodManager().check_ms2deepscore_req():
+                UtilityMethodManager().download_ms2deepscore_req(
+                    self.params.SpectralLibMatchingDeepscoreParameters.maximum_runtime
+                )
+        except urllib.error.URLError:
+            return self.features
+
+        query_spectra = self.prepare_query_spectra()
+
+        if len(query_spectra) == 0:
+            logger.warning(
+                "'AnnotationManager/Ms2deepscoreMatcher': no features with MS2 spectra"
+                " available for library matching - SKIP"
+            )
+            return self.features
+
+        try:
+            scores = self.calculate_scores_ms2deepscore(query_spectra=query_spectra)
         except func_timeout.FunctionTimedOut:
             return self.features
 
@@ -90,7 +111,7 @@ class ModCosineMatcher(BaseModel):
             feature = self.features.get(int(spectrum.metadata.get("id")))
 
             sorted_matches = scores.scores_by_query(
-                spectrum, name="ModifiedCosine_score", sort=True
+                spectrum, name="MS2DeepScore", sort=True
             )
             for match in sorted_matches:
                 feature = self.annotate_feature(feature, match)
@@ -111,7 +132,7 @@ class ModCosineMatcher(BaseModel):
 
             if feature.Spectrum is None:
                 logger.debug(
-                    f"'AnnotationManager/ModCosineMatcher': feature with id "
+                    f"'AnnotationManager/Ms2deepscoreMatcher': feature with id "
                     f"'{feature.f_id}' has no associated MS2 spectrum - SKIP"
                 )
                 continue
@@ -119,11 +140,11 @@ class ModCosineMatcher(BaseModel):
                 query_spectra.append(feature.Spectrum)
         return query_spectra
 
-    def calculate_scores_mod_cosine(
+    def calculate_scores_ms2deepscore(
         self: Self,
         query_spectra: list,
     ) -> matchms.Scores:
-        """Calculate matchms scores based on modified cosine
+        """Calculate matchms scores with ms2deepscore model
 
         Arguments:
             query_spectra: a list of matchms Spectrum objects
@@ -132,13 +153,17 @@ class ModCosineMatcher(BaseModel):
             A matchms Scores object
 
         Raises:
-            func_timeout.FunctionTimedOut: mod cosine calc takes too long.
+            func_timeout.FunctionTimedOut: ms2deepscore calc takes too long.
         """
-        sim_algorithm = matchms.similarity.ModifiedCosine(
-            tolerance=self.params.SpectralLibMatchingCosineParameters.fragment_tol
+        model = load_model(
+            DefaultSettings().dirpath_ms2deepscore.joinpath(
+                DefaultSettings().filename_ms2deepscore
+            )
         )
 
-        if self.params.SpectralLibMatchingCosineParameters.maximum_runtime == 0:
+        sim_algorithm = MS2DeepScore(model=model, progress_bar=False)
+
+        if self.params.SpectralLibMatchingDeepscoreParameters.maximum_runtime == 0:
             return matchms.calculate_scores(
                 references=self.stats.spectral_library,
                 queries=query_spectra,
@@ -147,7 +172,7 @@ class ModCosineMatcher(BaseModel):
         else:
             try:
                 return func_timeout.func_timeout(
-                    timeout=self.params.SpectralLibMatchingCosineParameters.maximum_runtime,
+                    timeout=self.params.SpectralLibMatchingDeepscoreParameters.maximum_runtime,
                     func=matchms.calculate_scores,
                     kwargs={
                         "references": self.stats.spectral_library,
@@ -156,8 +181,10 @@ class ModCosineMatcher(BaseModel):
                     },
                 )
             except func_timeout.FunctionTimedOut as e:
-                self.log_mod_cosine_timeout(
-                    str(self.params.SpectralLibMatchingCosineParameters.maximum_runtime)
+                self.log_ms2deepscore_timeout(
+                    str(
+                        self.params.SpectralLibMatchingDeepscoreParameters.maximum_runtime
+                    )
                 )
                 raise e
 
@@ -168,16 +195,11 @@ class ModCosineMatcher(BaseModel):
             feature: a Feature object
             match: a Tuple of library reference spectrum and the score
         """
-        if match[1][0] < self.params.SpectralLibMatchingCosineParameters.score_cutoff:
-            return feature
-        elif (
-            match[1][1]
-            < self.params.SpectralLibMatchingCosineParameters.min_nr_matched_peaks
-        ):
+        if match[1] < self.params.SpectralLibMatchingDeepscoreParameters.score_cutoff:
             return feature
         elif (
             abs(match[0].metadata.get("precursor_mz") - feature.mz)
-            > self.params.SpectralLibMatchingCosineParameters.max_precursor_mass_diff
+            > self.params.SpectralLibMatchingDeepscoreParameters.max_precursor_mass_diff
         ):
             return feature
         else:
@@ -191,8 +213,8 @@ class ModCosineMatcher(BaseModel):
                 Match(
                     id=match[0].metadata.get("compound_name"),
                     library=str(self.params.SpecLibParameters.filepath.resolve()),
-                    algorithm="modified cosine",
-                    score=float(match[1][0].round(2)),
+                    algorithm="ms2deepscore",
+                    score=float(match[1].round(2)),
                     mz=match[0].metadata.get("precursor_mz"),
                     diff_mz=round(
                         abs(match[0].metadata.get("precursor_mz") - feature.mz), 4

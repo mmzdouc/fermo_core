@@ -178,6 +178,7 @@ class SpectralLibMatchingCosineParameters(BaseModel):
                 "fragment_tol": float(self.fragment_tol),
                 "min_nr_matched_peaks": int(self.min_nr_matched_peaks),
                 "score_cutoff": float(self.score_cutoff),
+                "max_precursor_mass_diff": int(self.max_precursor_mass_diff),
                 "maximum_runtime": int(self.maximum_runtime),
             }
         else:
@@ -191,8 +192,8 @@ class SpectralLibMatchingDeepscoreParameters(BaseModel):
 
     Attributes:
         activate_module: bool to indicate if module should be executed.
-        directory_path: pathlib Path object pointing to dir with ms2deepscore files.
         score_cutoff: score cutoff to consider a match of two MS/MS spectra.
+        max_precursor_mass_diff: max allowed precursor mz difference to accept a match
         maximum_runtime: maximum runtime in seconds
 
     Raise:
@@ -200,10 +201,8 @@ class SpectralLibMatchingDeepscoreParameters(BaseModel):
     """
 
     activate_module: bool = False
-    directory_path: DirectoryPath = Path(__file__).parent.parent.joinpath(
-        "libraries/ms2deepscore"
-    )
     score_cutoff: PositiveFloat = 0.7
+    max_precursor_mass_diff: PositiveInt = 600
     maximum_runtime: int = 600
 
     def to_json(self: Self) -> dict:
@@ -211,8 +210,8 @@ class SpectralLibMatchingDeepscoreParameters(BaseModel):
         if self.activate_module:
             return {
                 "activate_module": self.activate_module,
-                "directory_path": str(self.directory_path.resolve()),
                 "score_cutoff": float(self.score_cutoff),
+                "max_precursor_mass_diff": int(self.max_precursor_mass_diff),
                 "maximum_runtime": int(self.maximum_runtime),
             }
         else:
