@@ -255,10 +255,7 @@ class SimNetworksManager(BaseModel):
             "ms2deepscore", network_data, tuple(filtered_features.get("included"))
         )
 
-        logger.info(
-            "'SimNetworksManager': completed ms2deepscore-based spectral similarity "
-            "(=molecular) networking."
-        )
+        logger.info("'SimNetworksManager/Ms2deepscoreNetworker': completed calculation")
 
     def filter_input_spectra(
         self: Self,
