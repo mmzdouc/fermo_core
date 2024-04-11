@@ -29,3 +29,11 @@ def test_run_user_lib_mod_cosine_matching_valid(annotation_manager_instance):
     assert isinstance(
         annotation_manager_instance.features.get(79).Annotations.matches[0], Match
     )
+
+
+@pytest.mark.slow
+def test_run_user_lib_ms2deepscore_matching_valid(annotation_manager_instance):
+    annotation_manager_instance.run_user_lib_ms2deepscore_matching()
+    assert isinstance(
+        annotation_manager_instance.features.get(79).Annotations.matches[0], Match
+    )

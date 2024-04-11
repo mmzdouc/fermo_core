@@ -50,11 +50,13 @@ def mod_cos_annotator():
     )
 
 
+@pytest.mark.slow
 def test_prepare_queries_valid(mod_cos_annotator):
     mod_cos_annotator.prepare_queries()
     assert mod_cos_annotator.queries is not None
 
 
+@pytest.mark.slow
 def test_prepare_queries_invalid(mod_cos_annotator):
     mod_cos_annotator.active_features = set()
     with pytest.raises(RuntimeError):
@@ -82,7 +84,7 @@ def test_filter_match_valid(mod_cos_annotator):
     sorted_matches = scores.scores_by_query(
         mod_cos_annotator.queries[0], name="ModifiedCosine_score", sort=True
     )
-    assert mod_cos_annotator.filter_match(sorted_matches[0], 0.0)
+    assert mod_cos_annotator.filter_match(sorted_matches[0], 100.0)
 
 
 @pytest.mark.slow
@@ -94,4 +96,4 @@ def test_filter_match_invalid(mod_cos_annotator):
     sorted_matches = scores.scores_by_query(
         mod_cos_annotator.queries[0], name="ModifiedCosine_score", sort=True
     )
-    assert mod_cos_annotator.filter_match(sorted_matches[0], 0.0) is False
+    assert mod_cos_annotator.filter_match(sorted_matches[0], 100.0) is False

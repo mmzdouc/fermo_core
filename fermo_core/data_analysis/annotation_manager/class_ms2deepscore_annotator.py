@@ -1,4 +1,4 @@
-"""Runs the modified cosine library annotation module.
+"""Runs the ms2deepscore library annotation module.
 
 Copyright (c) 2022-2023 Mitja Maximilian Zdouc, PhD
 
@@ -22,48 +22,51 @@ SOFTWARE.
 """
 import logging
 from typing import Self, Optional, Any
+import urllib.error
 
 import func_timeout
 import matchms
+from ms2deepscore import MS2DeepScore
+from ms2deepscore.models import load_model
 from pydantic import BaseModel
 
+from fermo_core.config.class_default_settings import DefaultSettings
+from fermo_core.utils.utility_method_manager import UtilityMethodManager
 from fermo_core.data_processing.class_repository import Repository
 
 logger = logging.getLogger("fermo_core")
 
 
-class ModCosAnnotator(BaseModel):
-    """Pydantic-based class to organize calling and logging of mod cosine matching
+class Ms2deepscoreAnnotator(BaseModel):
+    """Pydantic-based class to organize calling and logging of ms2deepscore lib matching
 
     Attributes:
         features: Repository object, holds "General Feature" objects
         active_features: a set of active features
+        polarity: the ion mode polarity
         library: a list of Spectrum object representing the library to match against
         queries: a list of Spectra for which to perform matching
         scores: a matchms.Scores object storing the raw results of the matching
         max_time: maximum allowed calculation time of individual steps
-        fragment_tol: fragment tolerance for modified cosine algorithm
         score_cutoff: minimum score for a match
-        min_nr_matched_peaks: minimum number of matched peaks
         max_precursor_mass_diff: maximum precursor mass difference
     """
 
     features: Repository
     active_features: set
+    polarity: str
     library: list
     queries: Optional[list] = None
     scores: Optional[Any] = None
-    max_time: float
-    fragment_tol: float
+    max_time: int
     score_cutoff: float
-    min_nr_matched_peaks: int
     max_precursor_mass_diff: float
 
-    def log_mod_cosine_timeout(self: Self):
-        """Logs timeout due to long-running modified cosine library matching"""
+    def log_ms2deepscore_timeout(self: Self):
+        """Logs timeout due to long-running ms2deepscore library matching"""
         logger.warning(
-            f"'AnnotationManager/ModCosAnnotator': timeout of modified "
-            f"cosine-based calculation "
+            f"'AnnotationManager/Ms2deepscoreAnnotator': timeout of "
+            f"ms2deepscore-based calculation "
             f"- took longer than maximum set time of '{self.max_time}' seconds.  "
             f"For unlimited runtime, set 'maximum_runtime' parameter to 0 (zero) - SKIP"
         )
@@ -87,7 +90,7 @@ class ModCosAnnotator(BaseModel):
             feature = self.features.get(f_id)
             if feature.Spectrum is None:
                 logger.debug(
-                    f"'AnnotationManager/ModCosAnnotator': feature with id "
+                    f"'AnnotationManager/Ms2deepscoreAnnotator': feature with id "
                     f"'{feature.f_id}' has no associated MS2 spectrum - SKIP"
                 )
                 continue
@@ -98,25 +101,46 @@ class ModCosAnnotator(BaseModel):
             self.queries = query_spectra
         else:
             logger.warning(
-                "'AnnotationManager/ModCosAnnotator': no query spectra could be "
+                "'AnnotationManager/Ms2deepscoreAnnotator': no query spectra could be "
                 "collected for matching - SKIP "
             )
             raise RuntimeError
 
-    def calculate_scores_mod_cosine(self: Self):
-        """Calculate matchms scores using modified cosine algorithm
+    def calculate_scores_ms2deepscore(self: Self):
+        """Calculate matchms scores using ms2deepscore algorithm
 
         Raises:
-            RuntimeError: queries attribute is empty
-            func_timeout.FunctionTimedOut: mod cosine calc takes too long.
+            RuntimeError: fatal error preventing successful execution of module - abort
+            func_timeout.FunctionTimedOut: ms2deepscore calc takes too long.
+            urllib.error.URLError: download failed
         """
-        if self.queries is None or len(self.queries) == 0:
+        if self.polarity != "positive":
             logger.warning(
-                "'AnnotationManager/ModCosAnnotator': no query spectra - SKIP "
+                "'AnnotationManager/Ms2deepscoreMatcher': specified ionization "
+                "polarity invalid. This MS2DeepScore version only supports positive "
+                "ion mode - SKIP."
             )
             raise RuntimeError
 
-        sim_algorithm = matchms.similarity.ModifiedCosine(tolerance=self.fragment_tol)
+        try:
+            if not UtilityMethodManager().check_ms2deepscore_req():
+                UtilityMethodManager().download_ms2deepscore_req(self.max_time)
+        except urllib.error.URLError as e:
+            raise e
+
+        if self.queries is None or len(self.queries) == 0:
+            logger.warning(
+                "'AnnotationManager/Ms2deepscoreMatcher': no query spectra - SKIP "
+            )
+            raise RuntimeError
+
+        model = load_model(
+            DefaultSettings().dirpath_ms2deepscore.joinpath(
+                DefaultSettings().filename_ms2deepscore
+            )
+        )
+
+        sim_algorithm = MS2DeepScore(model=model, progress_bar=False)
 
         if self.max_time == 0:
             self.scores = matchms.calculate_scores(
@@ -136,22 +160,20 @@ class ModCosAnnotator(BaseModel):
                     },
                 )
             except func_timeout.FunctionTimedOut as e:
-                self.log_mod_cosine_timeout()
+                self.log_ms2deepscore_timeout()
                 raise e
 
     def filter_match(self: Self, match: tuple, f_mz: float) -> bool:
         """Filter matches for user-specified params
 
         Arguments:
-            match: a tuple of (matchms.Spectrum, List[score, nr_matched_peaks])
+            match: a tuple of (matchms.Spectrum, score)
             f_mz: the m/z of the matched feature
 
         Returns:
             A bool indicating if match is inside the settings (True) or not (False)
         """
-        if match[1][0] < self.score_cutoff:
-            return False
-        elif match[1][1] < self.min_nr_matched_peaks:
+        if match[1] < self.score_cutoff:
             return False
         elif (
             abs(match[0].metadata.get("precursor_mz") - f_mz)
