@@ -53,6 +53,7 @@ class Match(BaseModel):
         score: score that led to a matching between feature and matched molecule
         mz: m/z ratio of matched molecule
         diff_mz: difference between m/z ratios of feature and matched molecule
+        module: responsible for matching operation
     """
 
     id: Any
@@ -61,6 +62,7 @@ class Match(BaseModel):
     score: float
     mz: float
     diff_mz: float
+    module: str
 
 
 class Annotations(BaseModel):
@@ -211,6 +213,7 @@ class Feature(BaseModel):
                             "score": match.score,
                             "mz": match.mz,
                             "diff_mz": match.diff_mz,
+                            "module": match.module,
                         }
                     )
 

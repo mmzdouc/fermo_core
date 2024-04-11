@@ -156,6 +156,7 @@ class AnnotationManager(BaseModel):
                                     ),
                                     4,
                                 ),
+                                module="user-library-matching",
                             )
                         )
                 self.features.modify(int(spectrum.metadata.get("id")), feature)
@@ -235,6 +236,7 @@ class AnnotationManager(BaseModel):
                                     ),
                                     4,
                                 ),
+                                module="user-library-matching",
                             )
                         )
                 self.features.modify(int(spectrum.metadata.get("id")), feature)
