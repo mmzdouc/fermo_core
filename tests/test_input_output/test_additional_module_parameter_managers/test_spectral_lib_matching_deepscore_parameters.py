@@ -20,10 +20,3 @@ def test_init_spec_lib_matching_deepscore_parameters_valid():
 def test_init_spec_lib_matching_deepscore_parameters_fail():
     with pytest.raises(TypeError):
         SpectralLibMatchingDeepscoreParameters(None)
-
-
-def test_default_libraries_folder_valid():
-    instance = SpectralLibMatchingDeepscoreParameters()
-    default_dir_name = instance.directory_path.name
-    assert default_dir_name == "ms2deepscore"
-    assert instance.directory_path.exists()

@@ -28,6 +28,7 @@ from ms2deepscore import MS2DeepScore
 from ms2deepscore.models import load_model
 import func_timeout
 
+from fermo_core.config.class_default_settings import DefaultSettings
 from fermo_core.data_processing.class_repository import Repository
 from fermo_core.input_output.core_module_parameter_managers import (
     SpecSimNetworkDeepscoreParameters,
@@ -69,7 +70,11 @@ class Ms2deepscoreNetworker:
             feature = feature_repo.get(f_id)
             spectra.append(feature.Spectrum)
 
-        model = load_model(settings.file_path)
+        model = load_model(
+            DefaultSettings().dirpath_ms2deepscore.joinpath(
+                DefaultSettings().filename_ms2deepscore
+            )
+        )
 
         sim_algorithm = MS2DeepScore(model=model, progress_bar=False)
 

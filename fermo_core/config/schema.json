@@ -239,10 +239,6 @@
                                     "title": "Specifies whether this module should be run.",
                                     "type": "boolean"
                                 },
-                                "file_path": {
-                                    "title": "(Optional): A path to a MS2DeepScore embedding file. If not specified, the MS2DeepScore file will be downloaded from Zenodo using the default URL (see https://zenodo.org/doi/10.5281/zenodo.4699355) and put into the default directory ('fermo_core/libraries/ms2deepscore').",
-                                    "type": "string"
-                                },
                                 "score_cutoff": {
                                     "title": "(Optional): minimum score that must be reached to consider two MS/MS fragmentation spectra to be related. Default value: 0.7",
                                     "type": "number",
@@ -420,15 +416,16 @@
                                     "title": "Specifies whether this module should be run.",
                                     "type": "boolean"
                                 },
-                                "directory_path": {
-                                    "title": "(Optional): A path to a directory containing MS2DeepScore files. If not specified, MS2DeepScore files will be downloaded and put into the default directory ('fermo_core/libraries').",
-                                    "type": "string"
-                                },
                                 "score_cutoff": {
                                     "title": "(Optional): minimum score that must be reached to consider two MS/MS fragmentation spectra to be related. Default value: 0.7",
                                     "type": "number",
                                     "minimum": 0.1,
                                     "maximum": 1.0
+                                },
+                                "max_precursor_mass_diff": {
+                                    "title": "(Optional): maximum difference between the precursor masses of two MS/MS spectra, in m/z units. A high number may lead to serendipitous matching between unrelated spectra, while a low number may exclude possible analogues. Default value: 600 m/z.",
+                                    "type": "integer",
+                                    "minimum": 1
                                 },
                                 "maximum_runtime": {
                                     "title": "(Optional): maximum running time of module, in seconds. A value of 0 (zero) indicates unlimited running time. Default value: 600 seconds.",

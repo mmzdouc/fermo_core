@@ -22,12 +22,14 @@ SOFTWARE.
 """
 import logging
 from pathlib import Path
-from typing import Union
+from typing import Self
 import urllib.request
 import urllib.error
 
 import matchms
 from pydantic import BaseModel
+
+from fermo_core.config.class_default_settings import DefaultSettings
 
 logger = logging.getLogger("fermo_core")
 
@@ -36,26 +38,80 @@ class UtilityMethodManager(BaseModel):
     """Pydantic-based base class to organize general utility methods for subclasses."""
 
     @staticmethod
-    def download_file(url: str, file: Union[Path, str]):
-        """Downloads from given URL into the designated filename/path.
+    def check_ms2deepscore_req() -> bool:
+        """Checks and logs if file required for MS2DeepScore functionality are present
+
+        Returns:
+            True - file present; False - file not present
+        """
+        if (
+            not DefaultSettings()
+            .dirpath_ms2deepscore.joinpath(DefaultSettings().filename_ms2deepscore)
+            .exists()
+        ):
+            logger.warning(
+                f"'MS2DeepScore embedding file "
+                f"'{DefaultSettings().filename_ms2deepscore}' not found. "
+                f"Attempting to download file to default directory"
+                f"{DefaultSettings().dirpath_ms2deepscore.resolve()}'. This may take "
+                f"some time."
+            )
+            return False
+        else:
+            return True
+
+    def download_ms2deepscore_req(self: Self, max_runtime: int):
+        """Download ms2deepscore required files as specified in DefaultSettings class
+
+        Arguments:
+            max_runtime: maximum time to download in seconds
+
+        """
+        if max_runtime != 0:
+            self.download_file(
+                url=DefaultSettings().url_ms2deepscore,
+                location=DefaultSettings().dirpath_ms2deepscore.joinpath(
+                    DefaultSettings().filename_ms2deepscore
+                ),
+                timeout=max_runtime,
+            )
+        else:
+            self.download_file(
+                url=DefaultSettings().url_ms2deepscore,
+                location=DefaultSettings().dirpath_ms2deepscore.joinpath(
+                    DefaultSettings().filename_ms2deepscore
+                ),
+                timeout=3600,
+            )
+
+    @staticmethod
+    def download_file(url: str, location: Path, timeout: int):
+        """Downloads from given URL into the designated location.
 
         Arguments:
             url: A URL string to download from
-            file: A string or Path pointing towards the designated file location
+            location: A Path pointing towards the designated file location
+            timeout: A timeout for the download
 
         Raises:
-            urllib.error.URLError: cannot resolve the URL
+            URLError
 
         Notes:
             `urlretrieve` considered legacy, therefore not used
         """
         try:
-            with urllib.request.urlopen(url) as response, open(file, "wb") as out_file:
+            with urllib.request.urlopen(url=url, timeout=timeout) as response, open(
+                location, "wb"
+            ) as out:
                 data = response.read()
-                out_file.write(data)
+                out.write(data)
+            logger.info(
+                f"'UtilityMethodManager': successfully downloaded file from "
+                f"'{url}' to location '{location}'."
+            )
         except urllib.error.URLError as e:
-            logging.error(
-                f"'UtilityMethodManager': could not download from url 'f{url}' - SKIP"
+            logger.error(
+                f"'UtilityMethodManager': could not download from url '{url}' - SKIP"
             )
             raise e
 

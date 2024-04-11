@@ -20,7 +20,6 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-from pathlib import Path
 from typing import Self
 
 from pydantic import (
@@ -111,9 +110,6 @@ class SpecSimNetworkDeepscoreParameters(BaseModel):
 
     Attributes:
         activate_module: bool to indicate if module should be executed.
-        default_file_path: pathlib Path object for reference if file_path does not exist
-        file_path: pathlib Path object pointing to ms2deepscore embedding file.
-        url: the URL to download the file from (default).
         score_cutoff: the minimum similarity score between two spectra.
         max_nr_links: max links to a single spectra.
         msms_min_frag_nr: minimum number of fragments in MS2 to run it in analysis
@@ -124,16 +120,6 @@ class SpecSimNetworkDeepscoreParameters(BaseModel):
     """
 
     activate_module: bool = True
-    default_file_path: Path = Path(__file__).parent.parent.joinpath(
-        "libraries/ms2deepscore/ms2deepscore_positive_10k_1000_1000_1000_500.hdf5"
-    )
-    file_path: Path = Path(__file__).parent.parent.joinpath(
-        "libraries/ms2deepscore/ms2deepscore_positive_10k_1000_1000_1000_500.hdf5"
-    )
-    url: str = (
-        "https://zenodo.org/records/8274763/files/"
-        "ms2deepscore_positive_10k_1000_1000_1000_500.hdf5?download=1"
-    )
     score_cutoff: PositiveFloat = 0.7
     max_nr_links: PositiveInt = 10
     msms_min_frag_nr: PositiveInt = 5
@@ -144,7 +130,6 @@ class SpecSimNetworkDeepscoreParameters(BaseModel):
         if self.activate_module:
             return {
                 "activate_module": self.activate_module,
-                "file_path": str(self.file_path.resolve()),
                 "score_cutoff": float(self.score_cutoff),
                 "max_nr_links": int(self.max_nr_links),
                 "msms_min_frag_nr": int(self.msms_min_frag_nr),
