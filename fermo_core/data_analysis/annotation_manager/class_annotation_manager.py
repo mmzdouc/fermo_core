@@ -27,12 +27,6 @@ import urllib.error
 import func_timeout
 from pydantic import BaseModel
 
-from fermo_core.data_analysis.annotation_manager.class_mod_cosine_matcher import (
-    ModCosineMatcher,
-)
-from fermo_core.data_analysis.annotation_manager.class_ms2deepscore_matcher import (
-    Ms2deepscoreMatcher,
-)
 from fermo_core.data_analysis.annotation_manager.class_mod_cos_annotator import (
     ModCosAnnotator,
 )
@@ -86,14 +80,6 @@ class AnnotationManager(BaseModel):
                 self.params.SpectralLibMatchingDeepscoreParameters.activate_module,
                 self.run_user_lib_ms2deepscore_matching,
             )
-            # (
-            #     self.params.SpectralLibMatchingCosineParameters.activate_module,
-            #     self.run_modified_cosine_matching,
-            # ),
-            # (
-            #     self.params.SpectralLibMatchingDeepscoreParameters.activate_module,
-            #     self.run_ms2deepscore_matching,
-            # )
             # TODO(MMZ 13.03.24): Add additional annotation modules e.g. adduct,
             #  ms2query
         )
@@ -262,72 +248,4 @@ class AnnotationManager(BaseModel):
         logger.info(
             "'AnnotationManager': completed matching of features against a "
             "user-provided spectral library using the ms2deepscore algorithm."
-        )
-
-    def run_modified_cosine_matching(self: Self):
-        """Run modified cosine-based spectral library search on features."""
-        logger.info(
-            "'AnnotationManager': started modified cosine-based spectral library "
-            "matching."
-        )
-
-        if self.params.SpecLibParameters is None:
-            logger.warning(
-                "'AnnotationManager': no spectral library parameters provided - SKIP"
-            )
-            return
-        elif self.stats.spectral_library is None:
-            logger.warning(
-                "'AnnotationManager': no spectral library file provided - SKIP"
-            )
-            return
-        elif len(self.stats.spectral_library) == 0:
-            logger.warning("'AnnotationManager': spectral library file is empty - SKIP")
-            return
-
-        mod_cosine_matcher = ModCosineMatcher(
-            params=self.params,
-            stats=self.stats,
-            features=self.features,
-        )
-
-        self.features = mod_cosine_matcher.run_analysis()
-
-        logger.info(
-            "'AnnotationManager': completed modified cosine-based spectral library "
-            "matching."
-        )
-
-    def run_ms2deepscore_matching(self: Self):
-        """Run ms2deepscore-based spectral library search on features."""
-        logger.info(
-            "'AnnotationManager': started ms2deepscore-based spectral library "
-            "matching."
-        )
-
-        if self.params.SpecLibParameters is None:
-            logger.warning(
-                "'AnnotationManager': no spectral library parameters provided - SKIP"
-            )
-            return
-        elif self.stats.spectral_library is None:
-            logger.warning(
-                "'AnnotationManager': no spectral library file provided - SKIP"
-            )
-            return
-        elif len(self.stats.spectral_library) == 0:
-            logger.warning("'AnnotationManager': spectral library file is empty - SKIP")
-            return
-
-        ms2deepscore_matcher = Ms2deepscoreMatcher(
-            params=self.params,
-            stats=self.stats,
-            features=self.features,
-        )
-
-        self.features = ms2deepscore_matcher.run_analysis()
-
-        logger.info(
-            "'AnnotationManager': completed ms2deepscore-based spectral library "
-            "matching."
         )
