@@ -11,6 +11,7 @@ def dummy_row():
     return pd.Series(
         {
             "id": 1,
+            "mz": 123.456,
             "datafile:s:fwhm": 0.5,
             "datafile:s:intensity_range:max": 1000,
             "datafile:s:area": 200,
