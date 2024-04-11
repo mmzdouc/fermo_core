@@ -22,7 +22,7 @@ dependencies = [
     "coloredlogs==15.0.1",
     "func-timeout==4.3.5",
     "ms2deepscore==0.5.0",
-    "keras==3.0.0"
+    "keras==2.15.0"
 ]
 
 [project.optional-dependencies]
