@@ -26,7 +26,7 @@ from pathlib import Path
 from pydantic import BaseModel, DirectoryPath
 
 
-class DefaultSettings(BaseModel):
+class DefaultPaths(BaseModel):
     """A Pydantic-based class for storing shared hardcoded default settings.
 
     Attributes:
@@ -86,3 +86,29 @@ class DefaultSettings(BaseModel):
         "https://zenodo.org/records/10528030/files/negative_mode_15_12_2021.sqlite"
         "?download=1",
     )
+
+
+class DefaultMasses(BaseModel):
+    """A Pydantic-based class for storing atom and ion masses
+
+    Sources:
+        https://fiehnlab.ucdavis.edu/staff/kind/Metabolomics/MS-Adduct-Calculator/
+        https://media.iupac.org/publications/pac/2003/pdf/7506x0683.pdf
+
+    Attributes:
+        Na: sodium monoisotopic mass
+        H: proton monoisotopic mass
+        C13_12: mass difference between 13C and 12C isotopes
+        Fe56: monoisotopic mass of 56Fe
+        NH4: monoisotopic mass ammonium
+        K: monoisotopic mass potassium
+        H2O: monoisotopic mass water
+    """
+
+    Na: float = 22.989218
+    H: float = 1.007276
+    C13_12: float = 1.0033548
+    Fe56: float = 55.934941
+    NH4: float = 18.033823
+    K: float = 38.963158
+    H2O: float = 18.011114

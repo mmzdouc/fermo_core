@@ -29,7 +29,7 @@ import urllib.error
 import matchms
 from pydantic import BaseModel
 
-from fermo_core.config.class_default_settings import DefaultSettings
+from fermo_core.config.class_default_settings import DefaultPaths
 
 logger = logging.getLogger("fermo_core")
 
@@ -45,15 +45,15 @@ class UtilityMethodManager(BaseModel):
             True - file present; False - file not present
         """
         if (
-            not DefaultSettings()
-            .dirpath_ms2deepscore.joinpath(DefaultSettings().filename_ms2deepscore)
+            not DefaultPaths()
+            .dirpath_ms2deepscore.joinpath(DefaultPaths().filename_ms2deepscore)
             .exists()
         ):
             logger.warning(
                 f"'MS2DeepScore embedding file "
-                f"'{DefaultSettings().filename_ms2deepscore}' not found. "
+                f"'{DefaultPaths().filename_ms2deepscore}' not found. "
                 f"Attempting to download file to default directory"
-                f"{DefaultSettings().dirpath_ms2deepscore.resolve()}'. This may take "
+                f"{DefaultPaths().dirpath_ms2deepscore.resolve()}'. This may take "
                 f"some time."
             )
             return False
@@ -69,17 +69,17 @@ class UtilityMethodManager(BaseModel):
         """
         if max_runtime != 0:
             self.download_file(
-                url=DefaultSettings().url_ms2deepscore,
-                location=DefaultSettings().dirpath_ms2deepscore.joinpath(
-                    DefaultSettings().filename_ms2deepscore
+                url=DefaultPaths().url_ms2deepscore,
+                location=DefaultPaths().dirpath_ms2deepscore.joinpath(
+                    DefaultPaths().filename_ms2deepscore
                 ),
                 timeout=max_runtime,
             )
         else:
             self.download_file(
-                url=DefaultSettings().url_ms2deepscore,
-                location=DefaultSettings().dirpath_ms2deepscore.joinpath(
-                    DefaultSettings().filename_ms2deepscore
+                url=DefaultPaths().url_ms2deepscore,
+                location=DefaultPaths().dirpath_ms2deepscore.joinpath(
+                    DefaultPaths().filename_ms2deepscore
                 ),
                 timeout=3600,
             )

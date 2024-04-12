@@ -30,17 +30,19 @@ class Adduct(BaseModel):
 
     Attributes:
         adduct_type: describes type of adduct
-        partner: partner feature based on which the adduct was found
-        diff_expected: the expected diff between features for this adduct, in m/z
-        diff_observed: the observed diff between features for this adduct, in m/z
+        partner_adduct: adduct of partner feature
+        partner_id: partner feature id based on which the adduct was found
+        partner_mz: partner feature mz
         diff_ppm: the difference in ppm between the two features
+        sample: the sample identifier
     """
 
     adduct_type: str
-    partner: int
-    diff_expected: float
-    diff_observed: float
+    partner_adduct: str
+    partner_id: int
+    partner_mz: float
     diff_ppm: float
+    sample: str
 
 
 class Match(BaseModel):
@@ -196,10 +198,11 @@ class Feature(BaseModel):
                     json_dict["annotations"]["adducts"].append(
                         {
                             "adduct_type": adduct.adduct_type,
-                            "partner": adduct.partner,
-                            "diff_expected": adduct.diff_expected,
-                            "diff_observed": adduct.diff_observed,
+                            "partner_adduct": adduct.partner_adduct,
+                            "partner_id": adduct.partner_id,
+                            "partner_mz": adduct.partner_mz,
                             "diff_ppm": adduct.diff_ppm,
+                            "sample": adduct.sample,
                         }
                     )
             if self.Annotations.matches is not None:
