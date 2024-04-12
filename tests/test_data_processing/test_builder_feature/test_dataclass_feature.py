@@ -50,10 +50,11 @@ def test_to_json_adducts_valid():
     feature.Annotations.adducts = [
         Adduct(
             adduct_type="[M+Na]+",
-            partner=2,
-            diff_expected=100.01,
-            diff_observed=100.5,
+            partner_id=2,
+            partner_mz=123.4,
+            partner_adduct="[M+H]+",
             diff_ppm=5.5,
+            sample="sample1",
         )
     ]
     f_dict = feature.to_json()

@@ -54,6 +54,7 @@ class SpecificFeatureDirector:
         return (
             FeatureBuilder()
             .set_f_id(int(row["id"]))
+            .set_mz(float(row["mz"]))
             .set_fwhm(float(row[f"datafile:{s_id}:fwhm"]))
             .set_intensity(int(row[f"datafile:{s_id}:intensity_range:max"]))
             .set_rt_start(float(row[f"datafile:{s_id}:rt_range:min"]))

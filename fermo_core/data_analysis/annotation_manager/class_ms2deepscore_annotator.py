@@ -30,7 +30,7 @@ from ms2deepscore import MS2DeepScore
 from ms2deepscore.models import load_model
 from pydantic import BaseModel
 
-from fermo_core.config.class_default_settings import DefaultSettings
+from fermo_core.config.class_default_settings import DefaultPaths
 from fermo_core.utils.utility_method_manager import UtilityMethodManager
 from fermo_core.data_processing.class_repository import Repository
 
@@ -135,8 +135,8 @@ class Ms2deepscoreAnnotator(BaseModel):
             raise RuntimeError
 
         model = load_model(
-            DefaultSettings().dirpath_ms2deepscore.joinpath(
-                DefaultSettings().filename_ms2deepscore
+            DefaultPaths().dirpath_ms2deepscore.joinpath(
+                DefaultPaths().filename_ms2deepscore
             )
         )
 

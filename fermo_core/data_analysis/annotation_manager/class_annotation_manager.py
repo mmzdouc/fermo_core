@@ -27,6 +27,9 @@ import urllib.error
 import func_timeout
 from pydantic import BaseModel
 
+from fermo_core.data_analysis.annotation_manager.class_adduct_annotator import (
+    AdductAnnotator,
+)
 from fermo_core.data_analysis.annotation_manager.class_mod_cos_annotator import (
     ModCosAnnotator,
 )
@@ -34,6 +37,7 @@ from fermo_core.data_analysis.annotation_manager.class_ms2deepscore_annotator im
     Ms2deepscoreAnnotator,
 )
 from fermo_core.data_processing.builder_feature.dataclass_feature import (
+    Feature,
     Annotations,
     Match,
 )
@@ -79,6 +83,10 @@ class AnnotationManager(BaseModel):
             (
                 self.params.SpectralLibMatchingDeepscoreParameters.activate_module,
                 self.run_user_lib_ms2deepscore_matching,
+            ),
+            (
+                self.params.AdductAnnotationParameters.activate_module,
+                self.run_feature_adduct_annotation,
             )
             # TODO(MMZ 13.03.24): Add additional annotation modules e.g. adduct,
             #  ms2query
@@ -89,6 +97,22 @@ class AnnotationManager(BaseModel):
                 module[1]()
 
         logger.info("'AnnotationManager': completed analysis steps.")
+
+    @staticmethod
+    def add_match_info(feature: Feature) -> Feature:
+        """Check annotation object instances if necessary
+
+        Arguments:
+            feature: feature object in modification
+
+        Returns:
+            (modified) feature object
+        """
+        if feature.Annotations is None:
+            feature.Annotations = Annotations()
+        if feature.Annotations.matches is None:
+            feature.Annotations.matches = []
+        return feature
 
     def run_user_lib_mod_cosine_matching(self: Self):
         """Match features against a user-provided spectral library using mod cosine."""
@@ -134,12 +158,7 @@ class AnnotationManager(BaseModel):
 
                 for match in sorted_matches:
                     if mod_cosine_annotator.filter_match(match, feature.mz):
-                        if feature.Annotations is None:
-                            feature.Annotations = Annotations()
-
-                        if feature.Annotations.matches is None:
-                            feature.Annotations.matches = []
-
+                        feature = self.add_match_info(feature)
                         feature.Annotations.matches.append(
                             Match(
                                 id=match[0].metadata.get("compound_name"),
@@ -171,7 +190,7 @@ class AnnotationManager(BaseModel):
         )
 
     def run_user_lib_ms2deepscore_matching(self: Self):
-        """Match features against a user-provided spectral library using ms2deepscor."""
+        """Match features against user-provided spectral library using ms2deepscore."""
         logger.info(
             "'AnnotationManager': started matching of features against a "
             "user-provided spectral library using the ms2deepscore algorithm."
@@ -214,12 +233,7 @@ class AnnotationManager(BaseModel):
 
                 for match in sorted_matches:
                     if ms2deepscore_annotator.filter_match(match, feature.mz):
-                        if feature.Annotations is None:
-                            feature.Annotations = Annotations()
-
-                        if feature.Annotations.matches is None:
-                            feature.Annotations.matches = []
-
+                        feature = self.add_match_info(feature)
                         feature.Annotations.matches.append(
                             Match(
                                 id=match[0].metadata.get("compound_name"),
@@ -251,3 +265,28 @@ class AnnotationManager(BaseModel):
             "'AnnotationManager': completed matching of features against a "
             "user-provided spectral library using the ms2deepscore algorithm."
         )
+
+    def run_feature_adduct_annotation(self: Self):
+        """Perform feature adduct annotation"""
+        logger.info("'AnnotationManager': started feature adduct annotation.")
+
+        adduct_annotator = AdductAnnotator(
+            params=self.params,
+            stats=self.stats,
+            features=self.features,
+            samples=self.samples,
+        )
+
+        try:
+            adduct_annotator.run_analysis()
+        except ZeroDivisionError as e:
+            logger.error(e)
+            logger.error(
+                "'AnnotationManager/AdductAnnotator': Attempted division through "
+                "zero when calculating mass deviation - SKIP"
+            )
+            return
+
+        self.features = adduct_annotator.return_features()
+
+        logger.info("'AnnotationManager': completed feature adduct annotation.")

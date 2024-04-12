@@ -3,7 +3,7 @@ import pytest
 from fermo_core.data_analysis.annotation_manager.class_annotation_manager import (
     AnnotationManager,
 )
-from fermo_core.data_processing.builder_feature.dataclass_feature import Match
+from fermo_core.data_processing.builder_feature.dataclass_feature import Match, Adduct
 
 
 @pytest.fixture
@@ -36,4 +36,12 @@ def test_run_user_lib_ms2deepscore_matching_valid(annotation_manager_instance):
     annotation_manager_instance.run_user_lib_ms2deepscore_matching()
     assert isinstance(
         annotation_manager_instance.features.get(79).Annotations.matches[0], Match
+    )
+
+
+@pytest.mark.slow
+def test_run_feature_adduct_annotation_valid(annotation_manager_instance):
+    annotation_manager_instance.run_feature_adduct_annotation()
+    assert isinstance(
+        annotation_manager_instance.features.get(131).Annotations.adducts[0], Adduct
     )
