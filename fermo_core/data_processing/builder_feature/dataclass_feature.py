@@ -83,17 +83,31 @@ class NeutralLoss(BaseModel):
     diff: float
 
 
-class Peptide(BaseModel):
-    """A Pydantic-based class to represent peptide-specific information
+class Ribosomal(BaseModel):
+    """A Pydantic-based class to represent ribosomal peptide-specific information
 
     Attributes:
         chem_class: the peptide class identifier
-        aa_tags: detected amino acids, derived from neutral losses, one-letter AA code
+        aa_tags: detected losses corresp. to ribosomal amino acids, one-letter code
         evidence: a list of evidences pointing toward the class
     """
 
-    chem_class: str = "peptidic"
+    chem_class: str = "ribosomal"
     aa_tags: List = []
+    evidence: List = []
+
+
+class NonRibosomal(BaseModel):
+    """A Pydantic-based class to represent nonribosomal peptide-specific information
+
+    Attributes:
+        chem_class: the peptide class identifier
+        monomer_tags: detected losses corresp. to nonribosomal amino acids, NORINE code
+        evidence: a list of evidences pointing toward the class
+    """
+
+    chem_class: str = "nonribosomal"
+    monomer_tags: List = []
     evidence: List = []
 
 
@@ -269,11 +283,19 @@ class Feature(BaseModel):
             if self.Annotations.classes is not None:
                 json_dict["annotations"]["classes"] = []
                 for cla in self.Annotations.classes:
-                    if isinstance(cla, Peptide):
+                    if isinstance(cla, Ribosomal):
                         json_dict["annotations"]["classes"].append(
                             {
                                 "chem_class": cla.chem_class,
                                 "aa_tags": sorted(cla.aa_tags, reverse=False),
+                                "evidence": sorted(cla.evidence, reverse=False),
+                            }
+                        )
+                    elif isinstance(cla, NonRibosomal):
+                        json_dict["annotations"]["classes"].append(
+                            {
+                                "chem_class": cla.chem_class,
+                                "monomer_tags": sorted(cla.monomer_tags, reverse=False),
                                 "evidence": sorted(cla.evidence, reverse=False),
                             }
                         )
