@@ -172,7 +172,27 @@
                     ],
                     "properties": {
                         "activate_module": {
-                            "title": "Specifies whether this module should be run.",
+                            "title": "Specifies whether this module should be run. Default: True",
+                            "type": "boolean"
+                        },
+                        "mass_dev_ppm": {
+                            "title": "(Optional): expected mass deviation tolerance in parts per million. Default value: 20 ppm.",
+                            "type": "number",
+                            "minimum": 0.0,
+                            "maximum": 100.0
+                        }
+                    }
+                },
+                "neutral_loss_annotation": {
+                    "title": "(Optional): settings for neutral loss annotation of MS/MS fragments.",
+                    "additionalProperties": false,
+                    "type": "object",
+                    "required": [
+                        "activate_module"
+                    ],
+                    "properties": {
+                        "activate_module": {
+                            "title": "Specifies whether this module should be run. Default: True",
                             "type": "boolean"
                         },
                         "mass_dev_ppm": {
@@ -197,7 +217,7 @@
                             ],
                             "properties": {
                                 "activate_module": {
-                                    "title": "Specifies whether this module should be run.",
+                                    "title": "Specifies whether this module should be run. Default: True",
                                     "type": "boolean"
                                 },
                                 "msms_min_frag_nr": {
@@ -236,7 +256,7 @@
                             ],
                             "properties": {
                                 "activate_module": {
-                                    "title": "Specifies whether this module should be run.",
+                                    "title": "Specifies whether this module should be run. Default: True",
                                     "type": "boolean"
                                 },
                                 "score_cutoff": {
@@ -280,7 +300,7 @@
                     ],
                     "properties": {
                         "activate_module": {
-                            "title": "Specifies whether this module should be run.",
+                            "title": "Specifies whether this module should be run. Default: False",
                             "type": "boolean"
                         },
                         "filter_rel_int_range": {
@@ -316,7 +336,7 @@
                     ],
                     "properties": {
                         "activate_module": {
-                            "title": "Specifies whether this module should be run.",
+                            "title": "Specifies whether this module should be run. Default: False",
                             "type": "boolean"
                         },
                         "column_ret_fold": {
@@ -340,7 +360,7 @@
                             ],
                             "properties": {
                                 "activate_module": {
-                                    "title": "Specifies whether this module should be run.",
+                                    "title": "Specifies whether this module should be run. Default: False",
                                     "type": "boolean"
                                 },
                                 "fold_diff": {
@@ -374,7 +394,7 @@
                             ],
                             "properties": {
                                 "activate_module": {
-                                    "title": "Specifies whether this module should be run.",
+                                    "title": "Specifies whether this module should be run. Default: False",
                                     "type": "boolean"
                                 },
                                 "fragment_tol": {
@@ -413,7 +433,7 @@
                             ],
                             "properties": {
                                 "activate_module": {
-                                    "title": "Specifies whether this module should be run.",
+                                    "title": "Specifies whether this module should be run. Default: False",
                                     "type": "boolean"
                                 },
                                 "score_cutoff": {
@@ -445,7 +465,7 @@
                     ],
                     "properties": {
                         "activate_module": {
-                            "title": "Specifies whether this module should be run.",
+                            "title": "Specifies whether this module should be run. Default: False",
                             "type": "boolean"
                         },
                         "directory_path": {

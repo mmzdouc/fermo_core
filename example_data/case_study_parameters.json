@@ -31,6 +31,10 @@
             "activate_module": true,
             "mass_dev_ppm": 20.0
         },
+        "neutral_loss_annotation": {
+            "activate_module": true,
+            "mass_dev_ppm": 20.0
+        },
         "spec_sim_networking": {
             "modified_cosine": {
                 "activate_module": true,
