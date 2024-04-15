@@ -15,6 +15,7 @@ from fermo_core.input_output.input_file_parameter_managers import (
 from fermo_core.input_output.output_file_parameter_managers import OutputParameters
 from fermo_core.input_output.core_module_parameter_managers import (
     AdductAnnotationParameters,
+    NeutralLossParameters,
     SpecSimNetworkCosineParameters,
     SpecSimNetworkDeepscoreParameters,
 )
@@ -158,12 +159,22 @@ def test_assign_adduct_annotation_valid():
 
 def test_assign_adduct_annotation_invalid():
     params = ParameterManager()
-    params.assign_adduct_annotation(
-        {
-            "activate_module": True,
-        }
-    )
+    params.assign_adduct_annotation({"activate_module": True})
     assert params.AdductAnnotationParameters.mass_dev_ppm == 20.0
+
+
+def test_assign_neutral_loss_valid():
+    params = ParameterManager()
+    params.assign_neutral_loss_annotation(
+        {"activate_module": True, "mass_dev_ppm": 20.0}
+    )
+    assert isinstance(params.NeutralLossParameters, NeutralLossParameters)
+
+
+def test_assign_neutral_loss_invalid():
+    params = ParameterManager()
+    params.assign_neutral_loss_annotation({"activate_module": True})
+    assert params.NeutralLossParameters.mass_dev_ppm == 20.0
 
 
 def test_assign_spec_sim_networking_cosine_valid():

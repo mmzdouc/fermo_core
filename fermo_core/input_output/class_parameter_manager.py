@@ -37,6 +37,7 @@ from fermo_core.input_output.input_file_parameter_managers import (
 from fermo_core.input_output.output_file_parameter_managers import OutputParameters
 from fermo_core.input_output.core_module_parameter_managers import (
     AdductAnnotationParameters,
+    NeutralLossParameters,
     SpecSimNetworkCosineParameters,
     SpecSimNetworkDeepscoreParameters,
 )
@@ -68,6 +69,7 @@ class ParameterManager(BaseModel):
         SpecLibParameters: class handling spectra library parameters or None
         OutputParameters: class handling output file parameters
         AdductAnnotationParameters: class handling adduct annotation module parameter
+        NeutralLossParameters: class handling neutral loss annotation module parameters
         SpecSimNetworkCosineParameters: class handling cosine-based spectral
             similarity networking module parameter
         SpecSimNetworkDeepscoreParameters: class handling ms2deepscore-based spectral
@@ -92,6 +94,7 @@ class ParameterManager(BaseModel):
     AdductAnnotationParameters: AdductAnnotationParameters = (
         AdductAnnotationParameters()
     )
+    NeutralLossParameters: NeutralLossParameters = NeutralLossParameters()
     SpecSimNetworkCosineParameters: SpecSimNetworkCosineParameters = (
         SpecSimNetworkCosineParameters()
     )
@@ -140,6 +143,7 @@ class ParameterManager(BaseModel):
         json_dict[
             "AdductAnnotationParameters"
         ] = self.AdductAnnotationParameters.to_json()
+        json_dict["NeutralLossParameters"] = self.NeutralLossParameters.to_json()
         json_dict[
             "SpecSimNetworkCosineParameters"
         ] = self.SpecSimNetworkCosineParameters.to_json()
@@ -244,6 +248,11 @@ class ParameterManager(BaseModel):
                 user_params.get("adduct_annotation"),
                 self.assign_adduct_annotation,
                 "adduct_annotation",
+            ),
+            (
+                user_params.get("neutral_loss_annotation"),
+                self.assign_neutral_loss_annotation,
+                "neutral_loss_annotation",
             ),
             (
                 user_params.get("spec_sim_networking", {}).get("modified_cosine"),
@@ -481,6 +490,23 @@ class ParameterManager(BaseModel):
             logger.warning(str(e))
             self.log_malformed_parameters_default("adduct_annotation")
             self.AdductAnnotationParameters = AdductAnnotationParameters()
+
+    def assign_neutral_loss_annotation(self: Self, user_params: dict):
+        """Assign neutral_loss_annotation parameters to self.NeutralLossParameters.
+
+        Parameters:
+            user_params: user-provided params, read from json file
+        """
+        try:
+            self.NeutralLossParameters = NeutralLossParameters(**user_params)
+            logger.info(
+                "'ParameterManager': validated and assigned parameters "
+                "for 'neutral_loss_annotation'."
+            )
+        except Exception as e:
+            logger.warning(str(e))
+            self.log_malformed_parameters_default("neutral_loss_annotation")
+            self.NeutralLossParameters = NeutralLossParameters()
 
     def assign_spec_sim_networking_cosine(self: Self, user_params: dict):
         """Assign spec_sim_networking/modified_cosine parameters to
