@@ -20,7 +20,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-from typing import Optional, Tuple, Dict, Set, Self, List, Any
+from typing import Optional, Tuple, Dict, Set, Self, List, Any, Type
 
 from pydantic import BaseModel
 
@@ -67,16 +67,50 @@ class Match(BaseModel):
     module: str
 
 
+class NeutralLoss(BaseModel):
+    """A Pydantic-based class to represent detected neutral losses in MS2 spectrum
+
+    Attributes:
+        id: neutral loss identifier
+        mz_det: detected m/z
+        mz_ex: expected m/z
+        diff: difference in ppm
+    """
+
+    id: str
+    mz_det: float
+    mz_ex: float
+    diff: float
+
+
+class Peptide(BaseModel):
+    """A Pydantic-based class to represent peptide-specific information
+
+    Attributes:
+        chem_class: the peptide class identifier
+        aa_tags: detected amino acids, derived from neutral losses, one-letter AA code
+        evidence: a list of evidences pointing toward the class
+    """
+
+    chem_class: str = "peptidic"
+    aa_tags: List = []
+    evidence: List = []
+
+
 class Annotations(BaseModel):
     """A Pydantic-based class to represent annotation information
 
     Attributes:
         adducts: list of Adduct objects representing putative adducts of this feature
         matches: list of Match objects repr. putative library matching hits
+        classes: list of objects to annotate putative chemical classes of feature
+        losses: list of NeutralLoss objects annotating functional groups of feature
     """
 
     adducts: Optional[List[Adduct]] = None
     matches: Optional[List[Match]] = None
+    classes: Optional[List[Type]] = None
+    losses: Optional[List[NeutralLoss]] = None
 
 
 class SimNetworks(BaseModel):
@@ -219,6 +253,30 @@ class Feature(BaseModel):
                             "module": match.module,
                         }
                     )
+
+            if self.Annotations.losses is not None:
+                json_dict["annotations"]["losses"] = []
+                for loss in self.Annotations.losses:
+                    json_dict["annotations"]["losses"].append(
+                        {
+                            "id": loss.id,
+                            "mz_det": loss.mz_det,
+                            "mz_ed": loss.mz_ex,
+                            "diff": loss.diff,
+                        }
+                    )
+
+            if self.Annotations.classes is not None:
+                json_dict["annotations"]["classes"] = []
+                for cla in self.Annotations.classes:
+                    if isinstance(cla, Peptide):
+                        json_dict["annotations"]["classes"].append(
+                            {
+                                "chem_class": cla.chem_class,
+                                "aa_tags": sorted(cla.aa_tags, reverse=False),
+                                "evidence": sorted(cla.evidence, reverse=False),
+                            }
+                        )
 
         # TODO(MMZ 20.1.24): implement assignment for complex attributes group_folds,
         #  annotations, phenotypes, scores

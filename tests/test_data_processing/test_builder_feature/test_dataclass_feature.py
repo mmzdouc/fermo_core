@@ -1,11 +1,15 @@
 import matchms
 import numpy as np
 
-from fermo_core.data_processing.builder_feature.dataclass_feature import Feature
-from fermo_core.data_processing.builder_feature.dataclass_feature import SimNetworks
-from fermo_core.data_processing.builder_feature.dataclass_feature import Annotations
-from fermo_core.data_processing.builder_feature.dataclass_feature import Adduct
-from fermo_core.data_processing.builder_feature.dataclass_feature import Match
+from fermo_core.data_processing.builder_feature.dataclass_feature import (
+    Adduct,
+    Annotations,
+    Feature,
+    Match,
+    NeutralLoss,
+    Peptide,
+    SimNetworks,
+)
 
 
 def test_init_feature_valid():
@@ -77,3 +81,23 @@ def test_to_json_matches_valid():
     ]
     f_dict = feature.to_json()
     assert f_dict["annotations"]["matches"][0]["id"] == "fakeomycin"
+
+
+def test_to_json_neural_loss_valid():
+    feature = Feature()
+    feature.Annotations = Annotations()
+    feature.Annotations.losses = [
+        NeutralLoss(id="alanine", mz_det=100.0, mz_ex=100.01, diff=12.0)
+    ]
+    f_dict = feature.to_json()
+    assert f_dict["annotations"]["losses"][0]["id"] == "alanine"
+
+
+def test_to_json_peptide_valid():
+    feature = Feature()
+    feature.Annotations = Annotations()
+    feature.Annotations.classes = [
+        Peptide(aa_tags=["A", "W", "R"], evidence=["not real", "made-up"])
+    ]
+    f_dict = feature.to_json()
+    assert f_dict["annotations"]["classes"][0]["evidence"][0] == "made-up"
