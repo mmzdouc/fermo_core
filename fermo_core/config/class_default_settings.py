@@ -21,9 +21,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
+from typing import List, Optional
 from pathlib import Path
 
-from pydantic import BaseModel, DirectoryPath
+import pandas as pd
+from pydantic import BaseModel, DirectoryPath, model_validator, FilePath
 
 
 class DefaultPaths(BaseModel):
@@ -89,7 +91,7 @@ class DefaultPaths(BaseModel):
 
 
 class DefaultMasses(BaseModel):
-    """A Pydantic-based class for storing atom and ion masses
+    """A Pydantic-based class for storing atom and ion masses for adduct annotation
 
     Sources:
         https://fiehnlab.ucdavis.edu/staff/kind/Metabolomics/MS-Adduct-Calculator/
@@ -112,3 +114,66 @@ class DefaultMasses(BaseModel):
     NH4: float = 18.033823
     K: float = 38.963158
     H2O: float = 18.011114
+
+
+class Loss(BaseModel):
+    """A Pydantic-based class for storing information on neutral losses
+
+    Attributes:
+        id: the identifier/description
+        mass: the neutral loss in Da
+        ribo_tag: the ribosomal amino acids the loss derives from, single letter code
+        nribo_tag: the non-ribosomal amino acid tag (NORINE-code)
+        nribo_mon: putative monomer the non-ribosomal AA derives from
+    """
+
+    id: str
+    mass: float
+    ribo_tag: Optional[str] = None
+    nribo_tag: Optional[str] = None
+    nribo_mon: Optional[str] = None
+
+
+class NeutralMasses(BaseModel):
+    """A Pydantic-based class for storing monoisotopic masses of neutral losses in MS2
+
+    Sources:
+        Kersten et al 2011 (doi.org/10.1038/nchembio.684)
+
+        Interpretation of MS-MS Mass Spectra of Drugs and Pesticides, Niessen,
+        Correa 2017 (ISBN 9781119294245)
+
+    Attributes:
+        ribosomal_src: the path to the file location
+        ribosomal: a list of Loss objects derived from a ribosomal peptide
+        nonribo_src: the path to the file location
+        nonribo: a list of Loss objects derived from a nonribosomal peptide
+    """
+
+    ribosomal_src: FilePath = Path(__file__).parent.joinpath("kersten_ribosomal.csv")
+    ribosomal: List[Loss] = []
+    nonribo_src: FilePath = Path(__file__).parent.joinpath("kersten_nonribosomal.csv")
+    nonribo: List[Loss] = []
+
+    @model_validator(mode="after")
+    def read_files(self):
+        df_rib = pd.read_csv(self.ribosomal_src)
+        for _, row in df_rib.iterrows():
+            self.ribosomal.append(
+                Loss(
+                    id=row["description"],
+                    mass=row["loss"],
+                    ribo_tag=row["tag"],
+                )
+            )
+        df_nonrib = pd.read_csv(self.nonribo_src)
+        for _, row in df_nonrib.iterrows():
+            self.nonribo.append(
+                Loss(
+                    id=row["description"],
+                    mass=row["loss"],
+                    nribo_tag=row["tag"],
+                    nribo_mon=row["monomer"],
+                )
+            )
+        return self
