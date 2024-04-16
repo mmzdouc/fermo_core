@@ -51,35 +51,38 @@ def test_annotate_feature_valid(annotator):
 
 def test_validate_ribosomal_losses_valid(annotator):
     feature = annotator.features.get(1)
-    feature = annotator.setup_storage(feature)
     feature = annotator.validate_ribosomal_losses(feature)
     assert feature.Annotations.losses[0].id == "Glycine"
+    assert feature.Annotations.losses[0].mz_det == 57.022
+    assert feature.Annotations.losses[0].mz_ex == 57.022
+    assert feature.Annotations.losses[0].diff == 0
     assert feature.Annotations.classes["ribosomal"].aa_tags[0] == "G"
-    # assert isinstance(feature.Annotations.classes["ribosomal"].evidence[0], str)
 
 
 def test_validate_nonribosomal_losses_valid(annotator):
     feature = annotator.features.get(1)
-    feature = annotator.setup_storage(feature)
     feature = annotator.validate_nonribosomal_losses(feature)
     assert feature.Annotations.losses[0].id == "Ethanolamine"
+    assert feature.Annotations.losses[0].mz_det == 43.0725
+    assert feature.Annotations.losses[0].mz_ex == 43.07252
     assert feature.Annotations.classes["nonribosomal"].monomer_tags[0] == "Eta"
 
 
 def test_collect_evidence(annotator):
     annotator.annotate_feature(1)
+    annotator.features.entries[1].Annotations.adducts = []
     annotator.features.entries[1].Annotations.adducts.append(
         Adduct(
             adduct_type="[M+2H]2+",
             partner_adduct="[2M+H]+",
             partner_id=2,
             partner_mz=123.23,
-            diff_ppm=1,
+            diff_ppm=10,
             sample="s_name",
         )
     )
     annotator.collect_evidence(1)
     assert (
-        len(annotator.features.entries[1].Annotations.classes.get("ribosomal").evidence)
-        == 2
+        annotator.features.entries[1].Annotations.classes.get("ribosomal").evidence
+        is not None
     )

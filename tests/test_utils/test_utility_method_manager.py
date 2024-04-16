@@ -47,7 +47,7 @@ def test_create_spectrum_object_valid():
 
 
 def test_mass_deviation_valid():
-    assert UtilityMethodManager.mass_deviation(100.0, 100.001, 1) == 10.0
+    assert round(UtilityMethodManager.mass_deviation(100.0, 100.001, 1), 0) == 10.0
 
 
 def test_mass_deviation_invalid():

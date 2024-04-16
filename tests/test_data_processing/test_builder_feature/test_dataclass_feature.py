@@ -103,7 +103,7 @@ def test_to_json_ribosomal_valid():
         )
     }
     f_dict = feature.to_json()
-    assert f_dict["annotations"]["classes"][0]["evidence"][0] == "made-up"
+    assert f_dict["annotations"]["classes"]["ribosomal"]["chem_class"] == "ribosomal"
 
 
 def test_to_json_nonribosomal_valid():
@@ -115,4 +115,6 @@ def test_to_json_nonribosomal_valid():
         )
     }
     f_dict = feature.to_json()
-    assert f_dict["annotations"]["classes"][0]["evidence"][0] == "made-up"
+    assert (
+        f_dict["annotations"]["classes"]["nonribosomal"]["chem_class"] == "nonribosomal"
+    )

@@ -3,7 +3,11 @@ import pytest
 from fermo_core.data_analysis.annotation_manager.class_annotation_manager import (
     AnnotationManager,
 )
-from fermo_core.data_processing.builder_feature.dataclass_feature import Match, Adduct
+from fermo_core.data_processing.builder_feature.dataclass_feature import (
+    Match,
+    Adduct,
+    NeutralLoss,
+)
 
 
 @pytest.fixture
@@ -44,4 +48,12 @@ def test_run_feature_adduct_annotation_valid(annotation_manager_instance):
     annotation_manager_instance.run_feature_adduct_annotation()
     assert isinstance(
         annotation_manager_instance.features.get(131).Annotations.adducts[0], Adduct
+    )
+
+
+@pytest.mark.slow
+def test_run_neutral_loss_annotation_valid(annotation_manager_instance):
+    annotation_manager_instance.run_neutral_loss_annotation()
+    assert isinstance(
+        annotation_manager_instance.features.get(83).Annotations.losses[0], NeutralLoss
     )

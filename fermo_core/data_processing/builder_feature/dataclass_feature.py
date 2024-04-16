@@ -44,6 +44,16 @@ class Adduct(BaseModel):
     diff_ppm: float
     sample: str
 
+    def to_json(self: Self) -> dict:
+        return {
+            "adduct_type": self.adduct_type,
+            "partner_adduct": self.partner_adduct,
+            "partner_id": self.partner_id,
+            "partner_mz": self.partner_mz,
+            "diff_ppm": round(self.diff_ppm, 2),
+            "sample": self.sample,
+        }
+
 
 class Match(BaseModel):
     """A Pydantic-based class to represent library matching information
@@ -66,6 +76,17 @@ class Match(BaseModel):
     diff_mz: float
     module: str
 
+    def to_json(self: Self) -> dict:
+        return {
+            "id": self.id,
+            "library": self.library,
+            "algorithm": self.algorithm,
+            "score": self.score,
+            "mz": self.mz,
+            "diff_mz": self.diff_mz,
+            "module": self.module,
+        }
+
 
 class NeutralLoss(BaseModel):
     """A Pydantic-based class to represent detected neutral losses in MS2 spectrum
@@ -82,6 +103,14 @@ class NeutralLoss(BaseModel):
     mz_ex: float
     diff: float
 
+    def to_json(self: Self) -> dict:
+        return {
+            "id": self.id,
+            "mz_detect": round(self.mz_det, 4),
+            "mz_expect": self.mz_ex,
+            "diff_ppm": round(self.diff, 2),
+        }
+
 
 class Ribosomal(BaseModel):
     """A Pydantic-based class to represent ribosomal peptide-specific information
@@ -95,6 +124,13 @@ class Ribosomal(BaseModel):
     chem_class: str = "ribosomal"
     aa_tags: List = []
     evidence: List = []
+
+    def to_json(self: Self) -> dict:
+        return {
+            "chem_class": self.chem_class,
+            "aa_tags": self.aa_tags,
+            "evidence": sorted(self.evidence, reverse=False),
+        }
 
 
 class NonRibosomal(BaseModel):
@@ -110,6 +146,13 @@ class NonRibosomal(BaseModel):
     monomer_tags: List = []
     evidence: List = []
 
+    def to_json(self: Self) -> dict:
+        return {
+            "chem_class": self.chem_class,
+            "monomer_tags": self.monomer_tags,
+            "evidence": sorted(self.evidence, reverse=False),
+        }
+
 
 class Annotations(BaseModel):
     """A Pydantic-based class to represent annotation information
@@ -117,14 +160,32 @@ class Annotations(BaseModel):
     Attributes:
         adducts: list of Adduct objects representing putative adducts of this feature
         matches: list of Match objects repr. putative library matching hits
-        classes: dict of objects to annotate putative chemical classes of feature
         losses: list of NeutralLoss objects annotating functional groups of feature
+        classes: dict of objects to annotate putative chemical classes of feature
     """
 
     adducts: Optional[List[Adduct]] = None
     matches: Optional[List[Match]] = None
-    classes: Optional[dict] = None
     losses: Optional[List[NeutralLoss]] = None
+    classes: Optional[dict] = None
+
+    def to_json(self: Self) -> dict:
+        json_dict = {}
+        if self.adducts is not None:
+            json_dict["adducts"] = [adduct.to_json() for adduct in self.adducts]
+
+        if self.matches is not None:
+            json_dict["matches"] = [match.to_json() for match in self.matches]
+
+        if self.losses is not None:
+            json_dict["losses"] = [loss.to_json() for loss in self.losses]
+
+        if self.classes is not None:
+            json_dict["classes"] = {}
+            for key, value in self.classes.items():
+                json_dict["classes"][key] = value.to_json()
+
+        return json_dict
 
 
 class SimNetworks(BaseModel):
@@ -137,6 +198,12 @@ class SimNetworks(BaseModel):
 
     algorithm: str
     network_id: int
+
+    def to_json(self: Self) -> dict:
+        return {
+            "algorithm": str(self.algorithm),
+            "network_id": int(self.network_id),
+        }
 
 
 class Feature(BaseModel):
@@ -232,83 +299,10 @@ class Feature(BaseModel):
         if self.networks is not None:
             json_dict["networks"] = dict()
             for network in self.networks:
-                json_dict["networks"][network] = {
-                    "algorithm": str(self.networks[network].algorithm),
-                    "network_id": int(self.networks[network].network_id),
-                }
+                json_dict["networks"][network] = self.networks[network].to_json()
 
         if self.Annotations is not None:
-            json_dict["annotations"] = dict()
-
-            if (
-                self.Annotations.adducts is not None
-                and len(self.Annotations.adducts) > 0
-            ):
-                json_dict["annotations"]["adducts"] = []
-                for adduct in self.Annotations.adducts:
-                    json_dict["annotations"]["adducts"].append(
-                        {
-                            "adduct_type": adduct.adduct_type,
-                            "partner_adduct": adduct.partner_adduct,
-                            "partner_id": adduct.partner_id,
-                            "partner_mz": adduct.partner_mz,
-                            "diff_ppm": adduct.diff_ppm,
-                            "sample": adduct.sample,
-                        }
-                    )
-            if (
-                self.Annotations.matches is not None
-                and len(self.Annotations.matches) > 0
-            ):
-                json_dict["annotations"]["matches"] = []
-                for match in self.Annotations.matches:
-                    json_dict["annotations"]["matches"].append(
-                        {
-                            "id": match.id,
-                            "library": match.library,
-                            "algorithm": match.algorithm,
-                            "score": match.score,
-                            "mz": match.mz,
-                            "diff_mz": match.diff_mz,
-                            "module": match.module,
-                        }
-                    )
-
-            if self.Annotations.losses is not None and len(self.Annotations.losses) > 0:
-                json_dict["annotations"]["losses"] = []
-                for loss in self.Annotations.losses:
-                    json_dict["annotations"]["losses"].append(
-                        {
-                            "id": loss.id,
-                            "mz_det": loss.mz_det,
-                            "mz_ed": loss.mz_ex,
-                            "diff": loss.diff,
-                        }
-                    )
-
-            if self.Annotations.classes is not None:
-                json_dict["annotations"]["classes"] = []
-                for _, value in self.Annotations.classes.items():
-                    if isinstance(value, Ribosomal) and len(value.aa_tags) > 0:
-                        json_dict["annotations"]["classes"].append(
-                            {
-                                "chem_class": value.chem_class,
-                                "aa_tags": sorted(value.aa_tags, reverse=False),
-                                "evidence": sorted(value.evidence, reverse=False),
-                            }
-                        )
-                    elif (
-                        isinstance(value, NonRibosomal) and len(value.monomer_tags) > 0
-                    ):
-                        json_dict["annotations"]["classes"].append(
-                            {
-                                "chem_class": value.chem_class,
-                                "monomer_tags": sorted(
-                                    value.monomer_tags, reverse=False
-                                ),
-                                "evidence": sorted(value.evidence, reverse=False),
-                            }
-                        )
+            json_dict["annotations"] = self.Annotations.to_json()
 
         # TODO(MMZ 20.1.24): implement assignment for complex attributes group_folds,
         #  annotations, phenotypes, scores

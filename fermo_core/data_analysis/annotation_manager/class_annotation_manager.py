@@ -30,6 +30,9 @@ from pydantic import BaseModel
 from fermo_core.data_analysis.annotation_manager.class_adduct_annotator import (
     AdductAnnotator,
 )
+from fermo_core.data_analysis.annotation_manager.class_neutral_loss_annotator import (
+    NeutralLossAnnotator,
+)
 from fermo_core.data_analysis.annotation_manager.class_mod_cos_annotator import (
     ModCosAnnotator,
 )
@@ -87,6 +90,10 @@ class AnnotationManager(BaseModel):
             (
                 self.params.AdductAnnotationParameters.activate_module,
                 self.run_feature_adduct_annotation,
+            ),
+            (
+                self.params.NeutralLossParameters.activate_module,
+                self.run_neutral_loss_annotation,
             )
             # TODO(MMZ 13.03.24): Add additional annotation modules e.g. adduct,
             #  ms2query
@@ -290,3 +297,28 @@ class AnnotationManager(BaseModel):
         self.features = adduct_annotator.return_features()
 
         logger.info("'AnnotationManager': completed feature adduct annotation.")
+
+    def run_neutral_loss_annotation(self: Self):
+        """Perform feature MS2 neutral loss annotation"""
+        logger.info("'AnnotationManager': started feature neutral loss annotation.")
+
+        neutralloss_annotator = NeutralLossAnnotator(
+            params=self.params,
+            stats=self.stats,
+            features=self.features,
+            samples=self.samples,
+        )
+
+        try:
+            neutralloss_annotator.run_analysis()
+        except ZeroDivisionError as e:
+            logger.error(str(e))
+            logger.error(
+                "'AnnotationManager/NeutralLossAnnotator': Attempted division through "
+                "zero when calculating mass deviation - SKIP"
+            )
+            return
+
+        self.features = neutralloss_annotator.return_features()
+
+        logger.info("'AnnotationManager': completed feature neutral loss annotation.")

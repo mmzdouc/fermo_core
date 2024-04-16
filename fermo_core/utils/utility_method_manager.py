@@ -132,8 +132,11 @@ class UtilityMethodManager(BaseModel):
             metadata_harmonization=False,
         )
         spectrum = matchms.filtering.add_precursor_mz(spectrum)
-        spectrum = matchms.filtering.add_losses(spectrum)
         spectrum = matchms.filtering.normalize_intensities(spectrum)
+        spectrum = matchms.filtering.select_by_relative_intensity(
+            spectrum, intensity_from=0.005
+        )
+        spectrum = matchms.filtering.add_losses(spectrum)
 
         return spectrum
 
@@ -156,7 +159,7 @@ class UtilityMethodManager(BaseModel):
             Taken from publication doi.org/10.1016/j.jasms.2010.06.006
         """
         try:
-            return round(abs(((m1 - m2) / m2) * (10**6)), 2)
+            return abs(((m1 - m2) / m2) * 10**6)
         except ZeroDivisionError as e:
             logger.error(
                 f"'AnnotationManager/AdductAnnotator': Division through zero. "
