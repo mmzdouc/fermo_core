@@ -137,4 +137,30 @@ class UtilityMethodManager(BaseModel):
 
         return spectrum
 
-        # TODO (MMZ 13.03.24): remove this utility function
+    @staticmethod
+    def mass_deviation(m1: float, m2: float, f_id_m2: int | str) -> float:
+        """Calculate mass deviation in ppm between m1 and m2
+
+        Arguments:
+            m1: an m/z ratio
+            m2: an m/z ratio
+            f_id_m2: the (feature) id of m2
+
+        Returns:
+            The mass deviation in ppm
+
+        Raises:
+            ZeroDivisionError
+
+        Notes:
+            Taken from publication doi.org/10.1016/j.jasms.2010.06.006
+        """
+        try:
+            return round(abs(((m1 - m2) / m2) * (10**6)), 2)
+        except ZeroDivisionError as e:
+            logger.error(
+                f"'AnnotationManager/AdductAnnotator': Division through zero. "
+                f"Feature with id '{f_id_m2}' has a mass of '{m2}'. This is illegal - "
+                f"SKIP"
+            )
+            raise e

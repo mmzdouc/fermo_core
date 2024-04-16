@@ -20,7 +20,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-from typing import Optional, Tuple, Dict, Set, Self, List, Any, Type
+from typing import Optional, Tuple, Dict, Set, Self, List, Any
 
 from pydantic import BaseModel
 
@@ -117,13 +117,13 @@ class Annotations(BaseModel):
     Attributes:
         adducts: list of Adduct objects representing putative adducts of this feature
         matches: list of Match objects repr. putative library matching hits
-        classes: list of objects to annotate putative chemical classes of feature
+        classes: dict of objects to annotate putative chemical classes of feature
         losses: list of NeutralLoss objects annotating functional groups of feature
     """
 
     adducts: Optional[List[Adduct]] = None
     matches: Optional[List[Match]] = None
-    classes: Optional[List[Type]] = None
+    classes: Optional[dict] = None
     losses: Optional[List[NeutralLoss]] = None
 
 
@@ -240,7 +240,10 @@ class Feature(BaseModel):
         if self.Annotations is not None:
             json_dict["annotations"] = dict()
 
-            if self.Annotations.adducts is not None:
+            if (
+                self.Annotations.adducts is not None
+                and len(self.Annotations.adducts) > 0
+            ):
                 json_dict["annotations"]["adducts"] = []
                 for adduct in self.Annotations.adducts:
                     json_dict["annotations"]["adducts"].append(
@@ -253,7 +256,10 @@ class Feature(BaseModel):
                             "sample": adduct.sample,
                         }
                     )
-            if self.Annotations.matches is not None:
+            if (
+                self.Annotations.matches is not None
+                and len(self.Annotations.matches) > 0
+            ):
                 json_dict["annotations"]["matches"] = []
                 for match in self.Annotations.matches:
                     json_dict["annotations"]["matches"].append(
@@ -268,7 +274,7 @@ class Feature(BaseModel):
                         }
                     )
 
-            if self.Annotations.losses is not None:
+            if self.Annotations.losses is not None and len(self.Annotations.losses) > 0:
                 json_dict["annotations"]["losses"] = []
                 for loss in self.Annotations.losses:
                     json_dict["annotations"]["losses"].append(
@@ -282,21 +288,25 @@ class Feature(BaseModel):
 
             if self.Annotations.classes is not None:
                 json_dict["annotations"]["classes"] = []
-                for cla in self.Annotations.classes:
-                    if isinstance(cla, Ribosomal):
+                for _, value in self.Annotations.classes.items():
+                    if isinstance(value, Ribosomal) and len(value.aa_tags) > 0:
                         json_dict["annotations"]["classes"].append(
                             {
-                                "chem_class": cla.chem_class,
-                                "aa_tags": sorted(cla.aa_tags, reverse=False),
-                                "evidence": sorted(cla.evidence, reverse=False),
+                                "chem_class": value.chem_class,
+                                "aa_tags": sorted(value.aa_tags, reverse=False),
+                                "evidence": sorted(value.evidence, reverse=False),
                             }
                         )
-                    elif isinstance(cla, NonRibosomal):
+                    elif (
+                        isinstance(value, NonRibosomal) and len(value.monomer_tags) > 0
+                    ):
                         json_dict["annotations"]["classes"].append(
                             {
-                                "chem_class": cla.chem_class,
-                                "monomer_tags": sorted(cla.monomer_tags, reverse=False),
-                                "evidence": sorted(cla.evidence, reverse=False),
+                                "chem_class": value.chem_class,
+                                "monomer_tags": sorted(
+                                    value.monomer_tags, reverse=False
+                                ),
+                                "evidence": sorted(value.evidence, reverse=False),
                             }
                         )
 

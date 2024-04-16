@@ -44,3 +44,12 @@ def test_create_spectrum_object_valid():
         }
     )
     assert isinstance(spectrum, matchms.Spectrum)
+
+
+def test_mass_deviation_valid():
+    assert UtilityMethodManager.mass_deviation(100.0, 100.001, 1) == 10.0
+
+
+def test_mass_deviation_invalid():
+    with pytest.raises(ZeroDivisionError):
+        UtilityMethodManager.mass_deviation(100.0, 0, 1)

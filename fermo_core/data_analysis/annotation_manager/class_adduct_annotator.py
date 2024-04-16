@@ -35,6 +35,7 @@ from fermo_core.data_processing.builder_feature.dataclass_feature import (
 from fermo_core.data_processing.class_repository import Repository
 from fermo_core.data_processing.class_stats import Stats
 from fermo_core.input_output.class_parameter_manager import ParameterManager
+from fermo_core.utils.utility_method_manager import UtilityMethodManager as UM
 
 logger = logging.getLogger("fermo_core")
 
@@ -67,34 +68,6 @@ class AdductAnnotator(BaseModel):
 
         for s_name in self.stats.samples:
             self.annotate_spec_features(s_name)
-
-    @staticmethod
-    def mass_deviation(m1: float, m2: float, f_id_m2: int) -> float:
-        """Calculate mass deviation in ppm between m1 and m2
-
-        Arguments:
-            m1: an m/z ratio
-            m2: an m/z ratio
-            f_id_m2: the feature id of m2
-
-        Returns:
-            The mass deviation in ppm
-
-        Raises:
-            ZeroDivisionError
-
-        Notes:
-            Taken from publication doi.org/10.1016/j.jasms.2010.06.006
-        """
-        try:
-            return round(abs(((m1 - m2) / m2) * (10**6)), 2)
-        except ZeroDivisionError as e:
-            logger.error(
-                f"'AnnotationManager/AdductAnnotator': Division through zero. "
-                f"Feature with id '{f_id_m2}' has a mass of '{m2}'. This is illegal - "
-                f"SKIP"
-            )
-            raise e
 
     @staticmethod
     def add_adduct_info(feature: Feature) -> Feature:
@@ -231,7 +204,7 @@ class AdductAnnotator(BaseModel):
         adduct = self.features.get(feat2)
 
         if (
-            ppm := self.mass_deviation(
+            ppm := UM.mass_deviation(
                 (mh_ion.mz - Mass().H + Mass().Na), adduct.mz, adduct.f_id
             )
         ) < self.params.AdductAnnotationParameters.mass_dev_ppm:
@@ -278,7 +251,7 @@ class AdductAnnotator(BaseModel):
         adduct = self.features.get(feat2)
 
         if (
-            ppm := self.mass_deviation(
+            ppm := UM.mass_deviation(
                 ((2 * (mh_ion.mz - Mass().H)) + Mass().Na), adduct.mz, adduct.f_id
             )
         ) < self.params.AdductAnnotationParameters.mass_dev_ppm:
@@ -325,7 +298,7 @@ class AdductAnnotator(BaseModel):
         adduct = self.features.get(feat2)
 
         if (
-            ppm := self.mass_deviation(
+            ppm := UM.mass_deviation(
                 ((mh_ion.mz + Mass().H + Mass().H) / 3), adduct.mz, adduct.f_id
             )
         ) < self.params.AdductAnnotationParameters.mass_dev_ppm:
@@ -372,7 +345,7 @@ class AdductAnnotator(BaseModel):
         adduct = self.features.get(feat2)
 
         if (
-            ppm := self.mass_deviation(
+            ppm := UM.mass_deviation(
                 (mh_ion.mz + (1 * Mass().C13_12)), adduct.mz, adduct.f_id
             )
             < self.params.AdductAnnotationParameters.mass_dev_ppm
@@ -420,7 +393,7 @@ class AdductAnnotator(BaseModel):
         adduct = self.features.get(feat2)
 
         if (
-            ppm := self.mass_deviation(
+            ppm := UM.mass_deviation(
                 (mh_ion.mz + (2 * Mass().C13_12)), adduct.mz, adduct.f_id
             )
             < self.params.AdductAnnotationParameters.mass_dev_ppm
@@ -468,7 +441,7 @@ class AdductAnnotator(BaseModel):
         adduct = self.features.get(feat2)
 
         if (
-            ppm := self.mass_deviation(
+            ppm := UM.mass_deviation(
                 (mh_ion.mz + (3 * Mass().C13_12)), adduct.mz, adduct.f_id
             )
             < self.params.AdductAnnotationParameters.mass_dev_ppm
@@ -516,7 +489,7 @@ class AdductAnnotator(BaseModel):
         adduct = self.features.get(feat2)
 
         if (
-            ppm := self.mass_deviation(
+            ppm := UM.mass_deviation(
                 (mh_ion.mz + (4 * Mass().C13_12)), adduct.mz, adduct.f_id
             )
             < self.params.AdductAnnotationParameters.mass_dev_ppm
@@ -564,7 +537,7 @@ class AdductAnnotator(BaseModel):
         adduct = self.features.get(feat2)
 
         if (
-            ppm := self.mass_deviation(
+            ppm := UM.mass_deviation(
                 (mh_ion.mz + (5 * Mass().C13_12)), adduct.mz, adduct.f_id
             )
             < self.params.AdductAnnotationParameters.mass_dev_ppm
@@ -612,7 +585,7 @@ class AdductAnnotator(BaseModel):
         adduct = self.features.get(feat2)
 
         if (
-            ppm := self.mass_deviation(
+            ppm := UM.mass_deviation(
                 ((mh_ion.mz + Mass().H + (1 * Mass().C13_12)) / 2),
                 adduct.mz,
                 adduct.f_id,
@@ -662,7 +635,7 @@ class AdductAnnotator(BaseModel):
         adduct = self.features.get(feat2)
 
         if (
-            ppm := self.mass_deviation(
+            ppm := UM.mass_deviation(
                 ((mh_ion.mz + Mass().H + (2 * Mass().C13_12)) / 2),
                 adduct.mz,
                 adduct.f_id,
@@ -712,7 +685,7 @@ class AdductAnnotator(BaseModel):
         adduct = self.features.get(feat2)
 
         if (
-            ppm := self.mass_deviation(
+            ppm := UM.mass_deviation(
                 ((mh_ion.mz + Mass().H + (3 * Mass().C13_12)) / 2),
                 adduct.mz,
                 adduct.f_id,
@@ -762,7 +735,7 @@ class AdductAnnotator(BaseModel):
         adduct = self.features.get(feat2)
 
         if (
-            ppm := self.mass_deviation(
+            ppm := UM.mass_deviation(
                 ((mh_ion.mz + Mass().H + (4 * Mass().C13_12)) / 2),
                 adduct.mz,
                 adduct.f_id,
@@ -812,7 +785,7 @@ class AdductAnnotator(BaseModel):
         adduct = self.features.get(feat2)
 
         if (
-            ppm := self.mass_deviation(
+            ppm := UM.mass_deviation(
                 ((mh_ion.mz + Mass().H + (5 * Mass().C13_12)) / 2),
                 adduct.mz,
                 adduct.f_id,
@@ -862,7 +835,7 @@ class AdductAnnotator(BaseModel):
         adduct = self.features.get(feat2)
 
         if (
-            ppm := self.mass_deviation(
+            ppm := UM.mass_deviation(
                 (mh_ion.mz - (3 * Mass().H) + Mass().Fe56), adduct.mz, adduct.f_id
             )
             < self.params.AdductAnnotationParameters.mass_dev_ppm
@@ -919,7 +892,7 @@ class AdductAnnotator(BaseModel):
         adduct = self.features.get(feat2)
 
         if (
-            ppm := self.mass_deviation(
+            ppm := UM.mass_deviation(
                 ((mh_ion.mz + Mass().H) / 2), adduct.mz, adduct.f_id
             )
             < self.params.AdductAnnotationParameters.mass_dev_ppm
@@ -967,7 +940,7 @@ class AdductAnnotator(BaseModel):
         adduct = self.features.get(feat2)
 
         if (
-            ppm := self.mass_deviation(
+            ppm := UM.mass_deviation(
                 (mh_ion.mz - Mass().H + Mass().NH4), adduct.mz, adduct.f_id
             )
             < self.params.AdductAnnotationParameters.mass_dev_ppm
@@ -1015,7 +988,7 @@ class AdductAnnotator(BaseModel):
         adduct = self.features.get(feat2)
 
         if (
-            ppm := self.mass_deviation(
+            ppm := UM.mass_deviation(
                 (mh_ion.mz - Mass().H + Mass().K), adduct.mz, adduct.f_id
             )
             < self.params.AdductAnnotationParameters.mass_dev_ppm
@@ -1063,7 +1036,7 @@ class AdductAnnotator(BaseModel):
         adduct = self.features.get(feat2)
 
         if (
-            ppm := self.mass_deviation((mh_ion.mz + Mass().H2O), adduct.mz, adduct.f_id)
+            ppm := UM.mass_deviation((mh_ion.mz + Mass().H2O), adduct.mz, adduct.f_id)
             < self.params.AdductAnnotationParameters.mass_dev_ppm
         ):
             mh_ion = self.add_adduct_info(mh_ion)
@@ -1109,7 +1082,7 @@ class AdductAnnotator(BaseModel):
         adduct = self.features.get(feat2)
 
         if (
-            ppm := self.mass_deviation((mh_ion.mz - Mass().H2O), adduct.mz, adduct.f_id)
+            ppm := UM.mass_deviation((mh_ion.mz - Mass().H2O), adduct.mz, adduct.f_id)
             < self.params.AdductAnnotationParameters.mass_dev_ppm
         ):
             mh_ion = self.add_adduct_info(mh_ion)

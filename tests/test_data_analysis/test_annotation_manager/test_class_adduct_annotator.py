@@ -47,15 +47,6 @@ def test_run_analysis_valid(adduct_annotator):
     assert features.entries[131].Annotations.adducts[0] is not None
 
 
-def test_mass_deviation_valid(adduct_annotator_min):
-    assert adduct_annotator_min.mass_deviation(100.0, 100.001, 1) == 10.0
-
-
-def test_mass_deviation_invalid(adduct_annotator_min):
-    with pytest.raises(ZeroDivisionError):
-        adduct_annotator_min.mass_deviation(100.0, 0, 1)
-
-
 def test_add_adduct_info_valid(adduct_annotator_min):
     feature = adduct_annotator_min.add_adduct_info(Feature())
     assert feature.Annotations is not None

@@ -97,9 +97,11 @@ def test_to_json_neural_loss_valid():
 def test_to_json_ribosomal_valid():
     feature = Feature()
     feature.Annotations = Annotations()
-    feature.Annotations.classes = [
-        Ribosomal(aa_tags=["A", "W", "R"], evidence=["not real", "made-up"])
-    ]
+    feature.Annotations.classes = {
+        "ribosomal": Ribosomal(
+            aa_tags=["A", "W", "R"], evidence=["not real", "made-up"]
+        )
+    }
     f_dict = feature.to_json()
     assert f_dict["annotations"]["classes"][0]["evidence"][0] == "made-up"
 
@@ -107,8 +109,10 @@ def test_to_json_ribosomal_valid():
 def test_to_json_nonribosomal_valid():
     feature = Feature()
     feature.Annotations = Annotations()
-    feature.Annotations.classes = [
-        NonRibosomal(monomer_tags=["Dhb"], evidence=["not real", "made-up"])
-    ]
+    feature.Annotations.classes = {
+        "nonribosomal": NonRibosomal(
+            monomer_tags=["Dhb"], evidence=["not real", "made-up"]
+        )
+    }
     f_dict = feature.to_json()
     assert f_dict["annotations"]["classes"][0]["evidence"][0] == "made-up"

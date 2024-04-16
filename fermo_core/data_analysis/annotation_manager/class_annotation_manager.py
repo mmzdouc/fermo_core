@@ -280,7 +280,7 @@ class AnnotationManager(BaseModel):
         try:
             adduct_annotator.run_analysis()
         except ZeroDivisionError as e:
-            logger.error(e)
+            logger.error(str(e))
             logger.error(
                 "'AnnotationManager/AdductAnnotator': Attempted division through "
                 "zero when calculating mass deviation - SKIP"

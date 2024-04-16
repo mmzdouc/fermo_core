@@ -116,6 +116,25 @@ class DefaultMasses(BaseModel):
     H2O: float = 18.011114
 
 
+class PeptideHintAdducts(BaseModel):
+    """A Pydantic-based class for referencing peptide-hinting adduct identifiers
+
+    Attributes:
+        adducts: a set of peptide-hinting adducts
+    """
+
+    adducts: set = {
+        "[M+3H]3+",
+        "[M+1+2H]2+",
+        "[M+2+2H]2+",
+        "[M+3+2H]2+",
+        "[M+4+2H]2+",
+        "[M+5+2H]2+",
+        "[2M+H]+",
+        "[M+2H]2+",
+    }
+
+
 class Loss(BaseModel):
     """A Pydantic-based class for storing information on neutral losses
 
