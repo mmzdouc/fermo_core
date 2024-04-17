@@ -1,0 +1,92 @@
+loss,description,formula
+132.04244,D-arabinose,C5H10O5
+146.05744,L-rhamnose,C6H12O5
+146.05744,L-fucose,C6H12O5
+146.05744,D-rhamnose,C6H12O5
+161.06844,D-glucosamine,C6H13N1O5
+162.05244,D-glucose,C6H12O6
+162.05244,D-galactose,C6H12O6
+162.05244,D-mannose,C6H12O6
+176.03244,glucuronic acid,C6H10O7
+176.03244,D-galacturonic acid,C6H10O7
+176.06844,6-methoxy-D-glucose,C7H14O6
+176.06844,3-methoxy-D-mannose,C7H14O6
+203.079,N-acetyl-D-glucosamine,C8H15N1O6
+203.07944,N-acetyl-D-galactose,C8H15N1O6
+220.05844,ketodeoxyoctonic acid,C8H14O8
+291.09542,N-5-acetylneuraminic acid,C11H19NO9
+110.03678,L-aculose,C6H8O3
+112.05243,L-cinerulose A,C6H10O3
+114.06808,L-rhodinose,C6H12O3
+125.047679,rednose,C6H9NO3
+128.047345,L-cinerulose B, C6H10O4
+128.08373,O-methyl-L-amicetose,C7H14O3
+128.08373,4-O-methyl-L-rhodinose,C7H14O3
+129.078979,L-daunosamine ,C6H13NO3
+129.078979,L-acosamine,C6H13NO3
+129.078979,L-ristosamine,C6H13NO3
+129.078979,L-ristosamine,C6H13NO3
+130.062995,D-digitoxose,C6H12O4
+130.062995,L-digitoxose,C6H12O4
+130.062995,2-deoxy-L-fucose,C6H12O4
+130.062995,D-olivose ,C6H12O4
+130.062995,D-oliose,C6H12O4
+130.062995,L-boivinose (esperamicin A1 sugar 1),C6H12O4
+141.078979,4-oxo-L-vancosamine,C7H13NO3
+141.115363,D-forosamine,C8H17NO2
+143.094628,L-actinosamine,C7H15NO3
+143.094628,3-epi-L-vancosamine,C7H15NO3
+143.094628,L-vancosamine,C7H15NO3
+143.094628,L-vicenisamine,C7H15NO3
+144.078645,D-chalcose,C7H14O4
+144.078645,D-mycarose,C7H14O4
+144.078645,3-O-methyl-L-olivose/L-oleandrose,C7H14O4
+144.078645,olivomose,C7H14O4
+145.073894,D-mycosamine,C6H13NO4
+146.040152,4-deoxy-4-thio-D-digitoxose ,C6H12O3S
+146.05791,D-fucofuranose,C6H12O5
+146.05791,D-fucose,C6H12O5
+146.05791,L-rhamnose,C6H12O5
+146.05791,L-quinovose,C6H12O5
+157.110279,"4-N-ethyl-4-amino-3-O-methoxy-2,4,5-trideoxypentose",C8H17NO3
+157.110279,D-3-N-methyl-4-O-methyl-L-ristosamine,C8H17NO3
+157.110279,D-desosamine,C8H17NO3
+157.110279,"N,N-dimethyl-L-pyrrolosamine",C8H17NO3
+157.110279,L-megosamine,C8H17NO3
+157.110279,L-nogalamine,C8H17NO3
+157.110279,L-rhodosamine ,C8H17NO3
+157.110279,D-angolosamine,C8H17NO3
+157.110279,kedarosamine,C8H17NO3
+158.081719,L-noviose,C7H14NO4
+158.094295,L-cladinose, C8H16O4
+159.089544,2'-N-methyl-D-fucosamine,C7H15NO4
+160.055802,4-deoxy-4-methylthio-D-digitoxose ,C7H14O3S
+160.07356,D-digitalose,C7H14O5
+160.07356,3-O-methyl-rhamnose,C7H14O5
+160.07356,2-O-methyl-L-rhamnose,C7H14O5
+160.07356,6-deoxy-3-C-methyl-L-mannose,C7H14O5
+161.068809,"4,6-dideoxy-4-hydroxylamino-D-glucose",C6H13NO5
+162.052825,gulose,C6H12O6
+162.052825,glucose,C6H12O6
+162.052825,mannose,C6H12O6
+171.125929,"3-N,N-dimethyl-L-eremosamine",C9H19NO3
+171.125929,namenamicin sugar C,C9H19NO3
+172.07356,chromose D (4-O-acetyl-β-D-oliose),C8H14O5
+173.068809,4-O-carbamoyl-D-olivose,C7H13NO5
+173.105194,D-ravidosamine,C8H17NO4
+173.105194,"3-N,N-dimethyl-D-mycosamine/D-mycaminose",C8H17NO4
+174.08921,"2,3-O-dimethyl-L-rhamnose",C8H16O5
+174.08921,"2,4-O-dimethyl-L-rhamnose",C8H16O5
+174.08921,"3,4-O-dimethyl-L-rhamnose",C8H16O5
+178.029982,2-thioglucose,C6H12O5S
+186.08921,olivomycose (L-chromose B),C9H16O5
+187.120844,"4-N,N-dimethylamino-4-deoxy-5-C-methyl-l-rhamnose",C9H19NO4
+188.10486,"2,3,4-tri-O-methylrhamnose",C9H18O5
+200.10486,4-O-acetyl-L-arcanose,C10H18O5
+201.100109,3-N-acetyl-D-ravidosamine,C9H17NO5
+201.100109,3-O-carbamoyl-L-noviose,C9H17NO5
+202.12051,L-nogalose,C10H20O5
+215.115759,4-O-acetyl-D-ravidosamine,C10H19NO5
+217.095024,3-O-carbamoyl-4-O-methyl-L-noviose,C9H17NO6
+243.110674,3-N-acetyl-4-O-acetyl-D-ravidosamine,C11H19NO6
+281.126324,3-(5'-methyl-2'-pyrrolylcarbonyl-)4-O-methyl-L-noviose,C14H21NO6
