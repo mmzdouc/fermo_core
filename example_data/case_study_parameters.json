@@ -7,7 +7,8 @@
         },
         "msms": {
             "filepath": "example_data/case_study_MSMS.mgf",
-            "format": "mgf"
+            "format": "mgf",
+            "rel_int_from": 0.001
         },
         "phenotype": {
             "filepath": "example_data/case_study_bioactivity.csv",

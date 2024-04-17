@@ -24,7 +24,8 @@ def annotator():
                 "intens": np.array([10, 20, 100, 15, 55], dtype=float),
                 "f_id": 1,
                 "precursor_mz": 100.0,
-            }
+            },
+            intensity_from=0.0,
         ),
     )
     features = Repository()
@@ -32,7 +33,9 @@ def annotator():
     stats = Stats(active_features={1})
     params = ParameterManager()
     params.MsmsParameters = MsmsParameters(
-        filepath=Path("example_data/case_study_MSMS.mgf"), format="mgf"
+        filepath=Path("example_data/case_study_MSMS.mgf"),
+        format="mgf",
+        rel_int_from=0.0,
     )
     return NeutralLossAnnotator(
         features=features, samples=Repository(), params=params, stats=stats

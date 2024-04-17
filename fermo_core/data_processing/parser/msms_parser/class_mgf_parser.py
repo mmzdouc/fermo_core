@@ -87,7 +87,9 @@ class MgfParser(MsmsParser):
                         "precursor_mz": spectrum.get("params").get("pepmass")[0],
                     }
                     feature = feature_repo.get(data["f_id"])
-                    feature.Spectrum = Utils.create_spectrum_object(data)
+                    feature.Spectrum = Utils.create_spectrum_object(
+                        data, params.MsmsParameters.rel_int_from
+                    )
                     feature_repo.modify(data["f_id"], feature)
 
                 except KeyError:

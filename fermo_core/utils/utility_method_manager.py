@@ -116,11 +116,12 @@ class UtilityMethodManager(BaseModel):
             raise e
 
     @staticmethod
-    def create_spectrum_object(data: dict) -> matchms.Spectrum:
+    def create_spectrum_object(data: dict, intensity_from: float) -> matchms.Spectrum:
         """Create matchms Spectrum instance, add neutral losses and normalize intensity
 
         Arguments:
             data: a dict containing data to create a matchms Spectrum object.
+            intensity_from: a float between 0 and 1 to filter for intensity
 
         Returns:
             A matchms Spectrum object
@@ -133,9 +134,19 @@ class UtilityMethodManager(BaseModel):
         )
         spectrum = matchms.filtering.add_precursor_mz(spectrum)
         spectrum = matchms.filtering.normalize_intensities(spectrum)
-        spectrum = matchms.filtering.select_by_relative_intensity(
-            spectrum, intensity_from=0.005
-        )
+        if intensity_from > 0.0:
+            frag_before = len(spectrum.peaks.mz)
+            spectrum = matchms.filtering.select_by_relative_intensity(
+                spectrum, intensity_from=intensity_from
+            )
+            frag_diff = frag_before - len(spectrum.peaks.mz)
+            logger.debug(
+                f"'UtilityMethodManager': feature id '{data['f_id']}': removed '"
+                f"{frag_diff}' fragments with relative intensity lower than '"
+                f"{intensity_from}'. '{len(spectrum.peaks.mz)}' fragments remaining ("
+                f"before: '{frag_before}')."
+            )
+
         spectrum = matchms.filtering.add_losses(spectrum)
 
         return spectrum

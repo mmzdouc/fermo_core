@@ -64,7 +64,11 @@ def test_assign_peaktable_invalid():
 def test_assign_msms_valid():
     params = ParameterManager()
     params.assign_msms(
-        {"filepath": "example_data/case_study_MSMS.mgf", "format": "mgf"}
+        {
+            "filepath": "example_data/case_study_MSMS.mgf",
+            "format": "mgf",
+            "rel_int_from": 0.05,
+        }
     )
     assert isinstance(params.MsmsParameters, MsmsParameters)
 

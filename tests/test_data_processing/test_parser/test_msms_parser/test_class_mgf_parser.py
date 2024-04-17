@@ -13,7 +13,11 @@ from fermo_core.input_output.input_file_parameter_managers import PeaktableParam
 def params():
     params = ParameterManager()
     params.MsmsParameters = MsmsParameters(
-        **{"filepath": "example_data/case_study_MSMS.mgf", "format": "mgf"}
+        **{
+            "filepath": "example_data/case_study_MSMS.mgf",
+            "format": "mgf",
+            "rel_int_from": 0.005,
+        }
     )
     params.PeaktableParameters = PeaktableParameters(
         **{

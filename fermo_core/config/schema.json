@@ -63,6 +63,12 @@
                             "enum": [
                                 "mgf"
                             ]
+                        },
+                        "rel_int_from": {
+                            "title": "(Optional): Specifies minimal relative intensity of fragments to be retained. Must be a value between (and including) 0 and 1.0. Default: 0.001.",
+                            "type": "number",
+                            "minimum": 0.0,
+                            "maximum": 1.0
                         }
                     }
                 },
