@@ -125,7 +125,7 @@ class NeutralLossAnnotator(BaseModel):
         """
         feature = self.features.get(f_id)
 
-        if feature.Spectrum is None:
+        if feature.Spectrum is None or len(feature.Spectrum.peaks.mz) == 0:
             logger.debug(
                 f"'AnnotationManager/NeutralLossAnnotator': feature ID '{f_id}' has "
                 f"no associated MS/MS spectrum - SKIP "

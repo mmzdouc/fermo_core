@@ -133,6 +133,17 @@ class UtilityMethodManager(BaseModel):
             metadata_harmonization=False,
         )
         spectrum = matchms.filtering.add_precursor_mz(spectrum)
+
+        frag_before = len(spectrum.peaks.mz)
+        spectrum = matchms.filtering.remove_peaks_around_precursor_mz(
+            spectrum_in=spectrum, mz_tolerance=10
+        )
+        logger.debug(
+            f"'UtilityMethodManager': feature id '{data['f_id']}': removed MS2 "
+            f"fragments 10 Da around precursor m/z. '{len(spectrum.peaks.mz)}' "
+            f"fragments remaining (before: '{frag_before}')."
+        )
+
         spectrum = matchms.filtering.normalize_intensities(spectrum)
         if intensity_from > 0.0:
             frag_before = len(spectrum.peaks.mz)
@@ -142,7 +153,7 @@ class UtilityMethodManager(BaseModel):
             frag_diff = frag_before - len(spectrum.peaks.mz)
             logger.debug(
                 f"'UtilityMethodManager': feature id '{data['f_id']}': removed '"
-                f"{frag_diff}' fragments with relative intensity lower than '"
+                f"{frag_diff}' MS2 fragments with relative intensity lower than '"
                 f"{intensity_from}'. '{len(spectrum.peaks.mz)}' fragments remaining ("
                 f"before: '{frag_before}')."
             )

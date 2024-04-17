@@ -88,7 +88,7 @@ class Ms2deepscoreAnnotator(BaseModel):
         query_spectra = []
         for f_id in self.active_features:
             feature = self.features.get(f_id)
-            if feature.Spectrum is None:
+            if feature.Spectrum is None or len(feature.Spectrum.peaks.mz) == 0:
                 logger.debug(
                     f"'AnnotationManager/Ms2deepscoreAnnotator': feature with id "
                     f"'{feature.f_id}' has no associated MS2 spectrum - SKIP"
