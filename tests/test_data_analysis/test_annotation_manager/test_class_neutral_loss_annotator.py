@@ -10,6 +10,7 @@ from fermo_core.data_processing.builder_feature.dataclass_feature import Feature
 from fermo_core.data_processing.class_stats import Stats
 from fermo_core.input_output.class_parameter_manager import ParameterManager
 from fermo_core.input_output.input_file_parameter_managers import MsmsParameters
+from fermo_core.input_output.input_file_parameter_managers import PeaktableParameters
 from fermo_core.utils.utility_method_manager import UtilityMethodManager as Utils
 
 
@@ -37,6 +38,11 @@ def annotator():
         format="mgf",
         rel_int_from=0.0,
     )
+    params.PeaktableParameters = PeaktableParameters(
+        filepath=Path("example_data/case_study_peak_table_quant_full.csv"),
+        format="mzmine3",
+        polarity="positive",
+    )
     return NeutralLossAnnotator(
         features=features, samples=Repository(), params=params, stats=stats
     )
@@ -47,8 +53,8 @@ def test_run_analysis_valid(annotator):
     assert len(annotator.features.entries[1].Annotations.losses) == 2
 
 
-def test_annotate_feature_valid(annotator):
-    annotator.annotate_feature(1)
+def test_annotate_feature_pos_valid(annotator):
+    annotator.annotate_feature_pos(1)
     assert len(annotator.features.entries[1].Annotations.losses) == 2
 
 
@@ -71,8 +77,8 @@ def test_validate_nonribosomal_losses_valid(annotator):
     assert feature.Annotations.classes["nonribosomal"].monomer_tags[0] == "Eta"
 
 
-def test_collect_evidence(annotator):
-    annotator.annotate_feature(1)
+def test_collect_evidence_pos_valid(annotator):
+    annotator.annotate_feature_pos(1)
     annotator.features.entries[1].Annotations.adducts = []
     annotator.features.entries[1].Annotations.adducts.append(
         Adduct(
@@ -84,7 +90,7 @@ def test_collect_evidence(annotator):
             sample="s_name",
         )
     )
-    annotator.collect_evidence(1)
+    annotator.collect_evidence_pos(1)
     assert (
         annotator.features.entries[1].Annotations.classes.get("ribosomal").evidence
         is not None

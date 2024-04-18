@@ -61,6 +61,15 @@ class PeaktableParameters(BaseModel):
                 raise ValueError(f"Unsupported peaktable format: '{format_peaktable}'.")
         return self
 
+    @model_validator(mode="after")
+    def validate_polarity_format(self):
+        if self.polarity not in ["positive", "negative"]:
+            raise ValueError(
+                f"Unsupported polarity format: '{self.polarity}' (must "
+                f"be 'positive' or 'negative')."
+            )
+        return self
+
     def to_json(self: Self) -> dict:
         """Convert attributes to json-compatible ones."""
         return {

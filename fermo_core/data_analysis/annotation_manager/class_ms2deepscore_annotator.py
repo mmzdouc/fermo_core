@@ -116,7 +116,7 @@ class Ms2deepscoreAnnotator(BaseModel):
         """
         if self.polarity != "positive":
             logger.warning(
-                "'AnnotationManager/Ms2deepscoreMatcher': specified ionization "
+                "'AnnotationManager/Ms2deepscoreAnnotator': specified ionization "
                 "polarity invalid. This MS2DeepScore version only supports positive "
                 "ion mode - SKIP."
             )
@@ -130,7 +130,7 @@ class Ms2deepscoreAnnotator(BaseModel):
 
         if self.queries is None or len(self.queries) == 0:
             logger.warning(
-                "'AnnotationManager/Ms2deepscoreMatcher': no query spectra - SKIP "
+                "'AnnotationManager/Ms2deepscoreAnnotator': no query spectra - SKIP "
             )
             raise RuntimeError
 

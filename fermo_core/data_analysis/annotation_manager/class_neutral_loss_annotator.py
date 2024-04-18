@@ -74,7 +74,7 @@ class NeutralLossAnnotator(BaseModel):
         logger.info(
             "'AnnotationManager/NeutralLossAnnotator': needs adduct annotation "
             "to run, but module 'AdductAnnotator' is not activated. Attempt to "
-            "run 'AdductAnnotator' module."
+            "run 'AdductAnnotator' module with default values."
         )
         adduct_annotator = AdductAnnotator(
             params=self.params,
@@ -84,8 +84,8 @@ class NeutralLossAnnotator(BaseModel):
         )
         try:
             adduct_annotator.run_analysis()
-            logger.info("'AnnotationManager': completed feature adduct annotation.")
             self.features = adduct_annotator.return_features()
+            logger.info("'AnnotationManager': completed feature adduct annotation.")
             return
         except ZeroDivisionError as e:
             logger.error(str(e))
@@ -113,11 +113,24 @@ class NeutralLossAnnotator(BaseModel):
             )
             return
 
-        for f_id in self.stats.active_features:
-            self.annotate_feature(f_id)
-            self.collect_evidence(f_id)
+        if self.params.PeaktableParameters.polarity == "positive":
+            logger.info(
+                "'AnnotationManager/NeutralLossAnnotator': positive ion mode detected. "
+                "Attempt to annotate for positive ion mode neutral losses."
+            )
+            for f_id in self.stats.active_features:
+                self.annotate_feature_pos(f_id)
+                self.collect_evidence_pos(f_id)
+        else:
+            logger.warning(
+                "'AnnotationManager/NeutralLossAnnotator': negative ion mode detected. "
+                "Negative ion mode neutral loss determination not yet implemented - "
+                "SKIP"
+            )
+            return
+            # TODO(MMZ 18.04.24): implement negative ion mode
 
-    def annotate_feature(self: Self, f_id: int):
+    def annotate_feature_pos(self: Self, f_id: int):
         """Annotate neutral losses of feature and store data in General Feature
 
         Arguments:
@@ -134,6 +147,7 @@ class NeutralLossAnnotator(BaseModel):
 
         feature = self.validate_ribosomal_losses(feature)
         feature = self.validate_nonribosomal_losses(feature)
+        # TODO(MMZ 18.04.24): expand for other loss categories
 
         self.features.modify(f_id, feature)
 
@@ -207,12 +221,14 @@ class NeutralLossAnnotator(BaseModel):
 
         return feature
 
-    def collect_evidence(self: Self, f_id: int):
+    def collect_evidence_pos(self: Self, f_id: int):
         """Collect available evidence for peptidic classes
 
         Arguments:
             f_id: the feature ID
         """
+        # TODO(MMZ 18.04.24): rework this method - make nicer
+
         feature = self.features.get(f_id)
 
         if feature.Annotations is None:

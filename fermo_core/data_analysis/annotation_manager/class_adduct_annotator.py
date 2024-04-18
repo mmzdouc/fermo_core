@@ -48,6 +48,9 @@ class AdductAnnotator(BaseModel):
         stats: Stats object, holds stats on molecular features and samples
         features: Repository object, holds "General Feature" objects
         samples: Repository object, holds "Sample" objects
+
+    Sources:
+        Blumer et al 2021 doi.org/10.1021/acs.jcim.1c00579
     """
 
     params: ParameterManager
@@ -66,8 +69,19 @@ class AdductAnnotator(BaseModel):
     def run_analysis(self: Self):
         """Organizes calling of data analysis steps."""
 
-        for s_name in self.stats.samples:
-            self.annotate_spec_features(s_name)
+        if self.params.PeaktableParameters.polarity == "positive":
+            logger.info(
+                "'AnnotationManager/AdductAnnotator': positive ion mode detected. "
+                "Attempt to annotate for positive ion mode adducts."
+            )
+            for s_name in self.stats.samples:
+                self.annotate_adducts_pos(s_name)
+        else:
+            logger.warning(
+                "'AnnotationManager/AdductAnnotator': negative ion mode detected. "
+                "Negative ion mode adduct determination not yet implemented - SKIP"
+            )
+            return
 
     @staticmethod
     def add_adduct_info(feature: Feature) -> Feature:
@@ -85,7 +99,7 @@ class AdductAnnotator(BaseModel):
             feature.Annotations.adducts = []
         return feature
 
-    def annotate_spec_features(self: Self, s_name: str | int):
+    def annotate_adducts_pos(self: Self, s_name: str | int):
         """Pairwise comparison of features per sample and adduct information assignment
 
         Arguments:

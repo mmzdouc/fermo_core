@@ -53,7 +53,7 @@ def test_add_adduct_info_valid(adduct_annotator_min):
 
 
 def test_annotate_spec_features_valid(adduct_annotator):
-    adduct_annotator.annotate_spec_features("5458_5457_mod.mzXML")
+    adduct_annotator.annotate_adducts_pos("5458_5457_mod.mzXML")
     features = adduct_annotator.return_features()
     assert features.entries[131].Annotations.adducts[0] is not None
 
