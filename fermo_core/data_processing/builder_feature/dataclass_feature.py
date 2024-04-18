@@ -159,6 +159,27 @@ class NonRibosomal(BaseModel):
         }
 
 
+class Glycoside(BaseModel):
+    """A Pydantic-based class to represent glycoside-specific information
+
+    Attributes:
+        chem_class: the peptide class identifier
+        monomer_tags: the detected glycoside loss
+        evidence: a list of evidences pointing toward the class
+    """
+
+    chem_class: str = "glycoside"
+    monomer_tags: List = []
+    evidence: List = []
+
+    def to_json(self: Self) -> dict:
+        return {
+            "chem_class": self.chem_class,
+            "monomer_tags": self.monomer_tags,
+            "evidence": sorted(self.evidence, reverse=False),
+        }
+
+
 class Annotations(BaseModel):
     """A Pydantic-based class to represent annotation information
 

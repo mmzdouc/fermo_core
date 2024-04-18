@@ -35,6 +35,7 @@ from fermo_core.data_processing.builder_feature.dataclass_feature import (
     NonRibosomal,
     NeutralLoss,
     Feature,
+    Glycoside,
 )
 from fermo_core.data_processing.class_repository import Repository
 from fermo_core.data_processing.class_stats import Stats
@@ -120,15 +121,64 @@ class NeutralLossAnnotator(BaseModel):
             )
             for f_id in self.stats.active_features:
                 self.annotate_feature_pos(f_id)
-                self.collect_evidence_pos(f_id)
+                self.collect_evidence_ribosomal_pos(f_id)
+                self.collect_evidence_nonribosomal_pos(f_id)
+                self.collect_evidence_glycoside_pos(f_id)
         else:
-            logger.warning(
+            logger.info(
                 "'AnnotationManager/NeutralLossAnnotator': negative ion mode detected. "
-                "Negative ion mode neutral loss determination not yet implemented - "
-                "SKIP"
+                "Attempt to annotate for negative ion mode neutral losses."
+            )
+            for f_id in self.stats.active_features:
+                self.annotate_feature_neg(f_id)
+
+    def annotate_feature_neg(self: Self, f_id: int):
+        """Annotate neutral losses of feature and store data in General Feature
+
+        Arguments:
+            f_id: the feature ID
+        """
+        feature = self.features.get(f_id)
+
+        if feature.Spectrum is None or len(feature.Spectrum.peaks.mz) == 0:
+            logger.debug(
+                f"'AnnotationManager/NeutralLossAnnotator': feature ID '{f_id}' has "
+                f"no associated MS/MS spectrum - SKIP "
             )
             return
-            # TODO(MMZ 18.04.24): implement negative ion mode
+        feature = self.validate_gen_other_neg_losses(feature)
+
+        self.features.modify(f_id, feature)
+
+    def validate_gen_other_neg_losses(self: Self, feature: Feature) -> Feature:
+        """Validate losses against a list of generic losses of biol/synth origin
+
+        Arguments:
+            feature: a feature object instance
+
+        Returns:
+            the modified feature object instance
+        """
+        for loss in feature.Spectrum.losses.mz:
+            for ref_loss in self.mass.gen_other_neg:
+                ppm = Utils().mass_deviation(
+                    m1=loss, m2=ref_loss.mass, f_id_m2=ref_loss.id
+                )
+                if ppm < self.params.NeutralLossParameters.mass_dev_ppm:
+                    if feature.Annotations is None:
+                        feature.Annotations = Annotations()
+                    if feature.Annotations.losses is None:
+                        feature.Annotations.losses = []
+
+                    feature.Annotations.losses.append(
+                        NeutralLoss(
+                            id=f"{ref_loss.id}({ref_loss.formula})",
+                            mz_det=loss,
+                            mz_ex=ref_loss.mass,
+                            diff=ppm,
+                        )
+                    )
+        return feature
 
     def annotate_feature_pos(self: Self, f_id: int):
         """Annotate neutral losses of feature and store data in General Feature
@@ -147,7 +197,10 @@ class NeutralLossAnnotator(BaseModel):
 
         feature = self.validate_ribosomal_losses(feature)
         feature = self.validate_nonribosomal_losses(feature)
-        # TODO(MMZ 18.04.24): expand for other loss categories
+        feature = self.validate_glycoside_losses(feature)
+        feature = self.validate_gen_bio_pos_losses(feature)
+        if self.params.NeutralLossParameters.nonbiological is True:
+            feature = self.validate_gen_other_pos_losses(feature)
 
         self.features.modify(f_id, feature)
 
@@ -218,73 +271,199 @@ class NeutralLossAnnotator(BaseModel):
                     feature.Annotations.classes.get("nonribosomal").monomer_tags.append(
                         ref_loss.nribo_tag
                     )
-
         return feature
 
-    def collect_evidence_pos(self: Self, f_id: int):
-        """Collect available evidence for peptidic classes
+    def validate_glycoside_losses(self: Self, feature: Feature) -> Feature:
+        """Validate losses against a list of glycoside losses
+
+        Arguments:
+            feature: a feature object instance
+
+        Returns:
+            the modified feature object instance
+        """
+        for loss in feature.Spectrum.losses.mz:
+            for ref_loss in self.mass.glycoside:
+                ppm = Utils().mass_deviation(
+                    m1=loss, m2=ref_loss.mass, f_id_m2=ref_loss.id
+                )
+                if ppm < self.params.NeutralLossParameters.mass_dev_ppm:
+                    if feature.Annotations is None:
+                        feature.Annotations = Annotations()
+                    if feature.Annotations.losses is None:
+                        feature.Annotations.losses = []
+                    if feature.Annotations.classes is None:
+                        feature.Annotations.classes = {}
+                    if feature.Annotations.classes.get("glycoside") is None:
+                        feature.Annotations.classes["glycoside"] = Glycoside()
+
+                    feature.Annotations.losses.append(
+                        NeutralLoss(
+                            id=f"{ref_loss.id}({ref_loss.formula})",
+                            mz_det=loss,
+                            mz_ex=ref_loss.mass,
+                            diff=ppm,
+                        )
+                    )
+                    feature.Annotations.classes.get("glycoside").monomer_tags.append(
+                        ref_loss.id
+                    )
+        return feature
+
+    def validate_gen_bio_pos_losses(self: Self, feature: Feature) -> Feature:
+        """Validate losses against a list of generic losses of biological origin
+
+        Arguments:
+            feature: a feature object instance
+
+        Returns:
+            the modified feature object instance
+        """
+        for loss in feature.Spectrum.losses.mz:
+            for ref_loss in self.mass.gen_bio_pos:
+                ppm = Utils().mass_deviation(
+                    m1=loss, m2=ref_loss.mass, f_id_m2=ref_loss.id
+                )
+                if ppm < self.params.NeutralLossParameters.mass_dev_ppm:
+                    if feature.Annotations is None:
+                        feature.Annotations = Annotations()
+                    if feature.Annotations.losses is None:
+                        feature.Annotations.losses = []
+
+                    feature.Annotations.losses.append(
+                        NeutralLoss(
+                            id=f"{ref_loss.id}({ref_loss.formula})",
+                            mz_det=loss,
+                            mz_ex=ref_loss.mass,
+                            diff=ppm,
+                        )
+                    )
+        return feature
+
+    def validate_gen_other_pos_losses(self: Self, feature: Feature) -> Feature:
+        """Validate losses against a list of generic losses of biol/synth origin
+
+        Arguments:
+            feature: a feature object instance
+
+        Returns:
+            the modified feature object instance
+        """
+        for loss in feature.Spectrum.losses.mz:
+            for ref_loss in self.mass.gen_other_pos:
+                ppm = Utils().mass_deviation(
+                    m1=loss, m2=ref_loss.mass, f_id_m2=ref_loss.id
+                )
+                if ppm < self.params.NeutralLossParameters.mass_dev_ppm:
+                    if feature.Annotations is None:
+                        feature.Annotations = Annotations()
+                    if feature.Annotations.losses is None:
+                        feature.Annotations.losses = []
+
+                    feature.Annotations.losses.append(
+                        NeutralLoss(
+                            id=f"{ref_loss.id}({ref_loss.formula})",
+                            mz_det=loss,
+                            mz_ex=ref_loss.mass,
+                            diff=ppm,
+                        )
+                    )
+        return feature
+
+    def collect_evidence_ribosomal_pos(self: Self, f_id: int):
+        """Collect available evidence for ribosomal peptide class in positive mode
 
         Arguments:
             f_id: the feature ID
         """
-        # TODO(MMZ 18.04.24): rework this method - make nicer
-
         feature = self.features.get(f_id)
-
-        if feature.Annotations is None:
-            logger.debug(
-                f"'AnnotationManager/NeutralLossAnnotator': feature ID '{f_id}' has "
-                f"no Annotation - SKIP "
-            )
+        if (
+            feature.Annotations is None
+            or feature.Annotations.classes is None
+            or feature.Annotations.classes.get("ribosomal") is None
+        ):
             return
 
-        if feature.Annotations.classes is not None:
-            if feature.Annotations.classes.get("ribosomal") is not None:
-                if len(feature.Annotations.classes.get("ribosomal").aa_tags) > 0:
-                    feature.Annotations.classes.get("ribosomal").evidence.append(
-                        f"Neutral losses: detected "
-                        f"'{len(feature.Annotations.classes.get('ribosomal').aa_tags)}' "
-                        f"typical loss(es)."
-                    )
+        if len(feature.Annotations.classes.get("ribosomal").aa_tags) > 0:
+            feature.Annotations.classes.get("ribosomal").evidence.append(
+                f"Neutral losses: detected "
+                f"'{len(feature.Annotations.classes.get('ribosomal').aa_tags)}' "
+                f"putative typical loss(es)."
+            )
 
-                if (
-                    feature.Annotations.adducts is not None
-                    and len(feature.Annotations.adducts) > 0
-                ):
-                    adduct_types = set()
-                    for adduct in feature.Annotations.adducts:
-                        adduct_types.add(adduct.adduct_type)
-                    if not adduct_types.isdisjoint(PeptideHintAdducts().adducts):
-                        feature.Annotations.classes.get("ribosomal").evidence.append(
-                            "Adducts: typical multicharged adduct(s) detected."
-                        )
+        if (
+            feature.Annotations.adducts is not None
+            and len(feature.Annotations.adducts) > 0
+        ):
+            adduct_types = set()
+            for adduct in feature.Annotations.adducts:
+                adduct_types.add(adduct.adduct_type)
+            if not adduct_types.isdisjoint(PeptideHintAdducts().adducts):
+                feature.Annotations.classes.get("ribosomal").evidence.append(
+                    "Adducts: typical multicharged adduct(s) detected."
+                )
 
-                if feature.mz > 1500:
-                    feature.Annotations.classes.get("ribosomal").evidence.append(
-                        "Weight: typical for a ribosomal peptide."
-                    )
+        if feature.mz > 1500:
+            feature.Annotations.classes.get("ribosomal").evidence.append(
+                "Weight: typical for a ribosomal peptide."
+            )
 
-            if feature.Annotations.classes.get("nonribosomal") is not None:
-                if (
-                    len(feature.Annotations.classes.get("nonribosomal").monomer_tags)
-                    > 0
-                ):
-                    feature.Annotations.classes.get("nonribosomal").evidence.append(
-                        f"Neutral losses: detected "
-                        f"'{len(feature.Annotations.classes.get('nonribosomal').monomer_tags)}' "
-                        f"typical loss(es)."
-                    )
+        self.features.modify(f_id, feature)
 
-                if (
-                    feature.Annotations.adducts is not None
-                    and len(feature.Annotations.adducts) > 0
-                ):
-                    adduct_types = set()
-                    for adduct in feature.Annotations.adducts:
-                        adduct_types.add(adduct.adduct_type)
-                    if not adduct_types.isdisjoint(PeptideHintAdducts().adducts):
-                        feature.Annotations.classes.get("nonribosomal").evidence.append(
-                            "Adducts: typical multicharged adduct(s) detected."
-                        )
+    def collect_evidence_nonribosomal_pos(self: Self, f_id: int):
+        """Collect available evidence for nonribosomal peptide class in positive mode
+
+        Arguments:
+            f_id: the feature ID
+        """
+        feature = self.features.get(f_id)
+        if (
+            feature.Annotations is None
+            or feature.Annotations.classes is None
+            or feature.Annotations.classes.get("nonribosomal") is None
+        ):
+            return
+
+        if len(feature.Annotations.classes.get("nonribosomal").monomer_tags) > 0:
+            feature.Annotations.classes.get("nonribosomal").evidence.append(
+                f"Neutral losses: detected "
+                f"'{len(feature.Annotations.classes.get('nonribosomal').monomer_tags)}' "
+                f"putative typical loss(es)."
+            )
+
+        if (
+            feature.Annotations.adducts is not None
+            and len(feature.Annotations.adducts) > 0
+        ):
+            adduct_types = set()
+            for adduct in feature.Annotations.adducts:
+                adduct_types.add(adduct.adduct_type)
+            if not adduct_types.isdisjoint(PeptideHintAdducts().adducts):
+                feature.Annotations.classes.get("nonribosomal").evidence.append(
+                    "Adducts: typical multicharged adduct(s) detected."
+                )
+
+        self.features.modify(f_id, feature)
+
+    def collect_evidence_glycoside_pos(self: Self, f_id: int):
+        """Collect available evidence for glycoside class in positive mode
+
+        Arguments:
+            f_id: the feature ID
+        """
+        feature = self.features.get(f_id)
+        if (
+            feature.Annotations is None
+            or feature.Annotations.classes is None
+            or feature.Annotations.classes.get("glycoside") is None
+        ):
+            return
+
+        if len(feature.Annotations.classes.get("glycoside").monomer_tags) > 0:
+            feature.Annotations.classes.get("glycoside").evidence.append(
+                f"Neutral losses: detected "
+                f"'{len(feature.Annotations.classes.get('glycoside').monomer_tags)}' "
+                f"putative typical loss(es)."
+            )
 
         self.features.modify(f_id, feature)

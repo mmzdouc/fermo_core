@@ -34,7 +34,8 @@
         },
         "neutral_loss_annotation": {
             "activate_module": true,
-            "mass_dev_ppm": 20.0
+            "mass_dev_ppm": 20.0,
+            "nonbiological": true
         },
         "spec_sim_networking": {
             "modified_cosine": {

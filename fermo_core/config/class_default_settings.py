@@ -153,6 +153,7 @@ class Loss(BaseModel):
         ribo_tag: the ribosomal amino acids the loss derives from, single letter code
         nribo_tag: the non-ribosomal amino acid tag (NORINE-code)
         nribo_mon: putative monomer the non-ribosomal AA derives from
+        formula: the molecular formula, if available
     """
 
     id: str
@@ -160,6 +161,7 @@ class Loss(BaseModel):
     ribo_tag: Optional[str] = None
     nribo_tag: Optional[str] = None
     nribo_mon: Optional[str] = None
+    formula: Optional[str] = None
 
 
 class NeutralMasses(BaseModel):
@@ -168,25 +170,47 @@ class NeutralMasses(BaseModel):
     Sources:
         Kersten et al 2011 (doi.org/10.1038/nchembio.684)
 
+        Kersten et al 2013 (doi.org/10.1073/pnas.1315492110)
+
         Interpretation of MS-MS Mass Spectra of Drugs and Pesticides, Niessen,
         Correa 2017 (ISBN 9781119294245)
 
     Attributes:
-        ribosomal_src: the path to the file location
-        ribosomal: a list of Loss objects derived from a ribosomal peptide
-        nonribo_src: the path to the file location
-        nonribo: a list of Loss objects derived from a nonribosomal peptide
+        ribosomal_src: path to the file location
+        ribosomal: neutral losses derived from ribosomal peptides, positive mode
+        nonribo_src: path to the file location
+        nonribo: neutral losses derived from nonribosomal peptides, positive mode
+        glycoside_src: path to the file location
+        glycoside: neutral losses derived from glycosides, positive mode
+        gen_bio_pos_src: path to file location
+        gen_bio_pos: generic neutral losses from metabolites, positive mode
+        gen_other_pos_src: path to file location
+        gen_other_pos: generic neutral losses (metabolite+synthetics), positive mode
+        gen_other_neg_src: path to file location
+        gen_other_neg: generic neutral losses (metabolite+synthetics), negative mode
     """
 
     ribosomal_src: FilePath = Path(__file__).parent.joinpath("kersten_ribosomal.csv")
     ribosomal: List[Loss] = []
     nonribo_src: FilePath = Path(__file__).parent.joinpath("kersten_nonribosomal.csv")
     nonribo: List[Loss] = []
+    glycoside_src: FilePath = Path(__file__).parent.joinpath("kersten_glycosides.csv")
+    glycoside: List[Loss] = []
+    gen_bio_pos_src: FilePath = Path(__file__).parent.joinpath("generic_bio_pos.csv")
+    gen_bio_pos: List[Loss] = []
+    gen_other_pos_src: FilePath = Path(__file__).parent.joinpath(
+        "generic_other_pos.csv"
+    )
+    gen_other_pos: List[Loss] = []
+    gen_other_neg_src: FilePath = Path(__file__).parent.joinpath(
+        "generic_other_neg.csv"
+    )
+    gen_other_neg: List[Loss] = []
 
     @model_validator(mode="after")
     def read_files(self):
-        df_rib = pd.read_csv(self.ribosomal_src)
-        for _, row in df_rib.iterrows():
+        df = pd.read_csv(self.ribosomal_src)
+        for _, row in df.iterrows():
             self.ribosomal.append(
                 Loss(
                     id=row["description"],
@@ -194,8 +218,8 @@ class NeutralMasses(BaseModel):
                     ribo_tag=row["tag"],
                 )
             )
-        df_nonrib = pd.read_csv(self.nonribo_src)
-        for _, row in df_nonrib.iterrows():
+        df = pd.read_csv(self.nonribo_src)
+        for _, row in df.iterrows():
             self.nonribo.append(
                 Loss(
                     id=row["description"],
@@ -204,4 +228,25 @@ class NeutralMasses(BaseModel):
                     nribo_mon=row["monomer"],
                 )
             )
+        df = pd.read_csv(self.glycoside_src)
+        for _, row in df.iterrows():
+            self.glycoside.append(
+                Loss(id=row["description"], mass=row["loss"], formula=row["formula"])
+            )
+        df = pd.read_csv(self.gen_bio_pos_src)
+        for _, row in df.iterrows():
+            self.gen_bio_pos.append(
+                Loss(id=row["description"], mass=row["loss"], formula=row["tag"])
+            )
+        df = pd.read_csv(self.gen_other_pos_src)
+        for _, row in df.iterrows():
+            self.gen_other_pos.append(
+                Loss(id=row["description"], mass=row["loss"], formula=row["tag"])
+            )
+        df = pd.read_csv(self.gen_other_neg_src)
+        for _, row in df.iterrows():
+            self.gen_other_neg.append(
+                Loss(id=row["description"], mass=row["loss"], formula=row["tag"])
+            )
+
         return self

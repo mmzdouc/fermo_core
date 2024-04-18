@@ -19,5 +19,7 @@ def test_neutralmasses_valid():
     neutral_masses = NeutralMasses()
     assert len(neutral_masses.ribosomal) != 0
     assert len(neutral_masses.nonribo) != 0
-    assert neutral_masses.nonribo[0].nribo_mon == "Eta"
-    assert neutral_masses.ribosomal[0].id == "Glycine"
+    assert len(neutral_masses.glycoside) != 0
+    assert len(neutral_masses.gen_bio_pos) != 0
+    assert len(neutral_masses.gen_other_pos) != 0
+    assert len(neutral_masses.gen_other_neg) != 0

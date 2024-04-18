@@ -70,6 +70,7 @@ class NeutralLossParameters(BaseModel):
     Attributes:
         activate_module: bool to indicate if module should be executed.
         mass_dev_ppm: The estimated maximum mass deviation in ppm.
+        nonbiological: Switch on comparison against losses in 'generic_other_pos.csv'
 
     Raise:
         ValueError: Mass deviation unreasonably high.
@@ -78,6 +79,7 @@ class NeutralLossParameters(BaseModel):
 
     activate_module: bool = True
     mass_dev_ppm: PositiveFloat = 20.0
+    nonbiological: bool = False
 
     @model_validator(mode="after")
     def validate_adduct_annotation_parameters(self):
@@ -91,6 +93,7 @@ class NeutralLossParameters(BaseModel):
             return {
                 "activate_module": self.activate_module,
                 "mass_dev_ppm": float(self.mass_dev_ppm),
+                "nonbiological": self.nonbiological,
             }
         else:
             return {"activate_module": self.activate_module}
