@@ -96,6 +96,7 @@ class DefaultMasses(BaseModel):
     Sources:
         https://fiehnlab.ucdavis.edu/staff/kind/Metabolomics/MS-Adduct-Calculator/
         https://media.iupac.org/publications/pac/2003/pdf/7506x0683.pdf
+        https://pubchem.ncbi.nlm.nih.gov/compound/Bicarbonate-Ion
 
     Attributes:
         Na: sodium monoisotopic mass
@@ -105,6 +106,10 @@ class DefaultMasses(BaseModel):
         NH4: monoisotopic mass ammonium
         K: monoisotopic mass potassium
         H2O: monoisotopic mass water
+        Cl35: monoisotopic mass of 35Cl
+        HCO2: monoisotopic mass of bicarbonate anion
+        TFA: monoisotopic mass of trifluoroacetic acid anion
+        Ac: monoisotopicmass of acetic acid anion
     """
 
     Na: float = 22.989218
@@ -114,6 +119,10 @@ class DefaultMasses(BaseModel):
     NH4: float = 18.033823
     K: float = 38.963158
     H2O: float = 18.011114
+    Cl35: float = 34.969402
+    HCO2: float = 60.992568
+    TFA: float = 112.985586
+    Ac: float = 59.013851
 
 
 class PeptideHintAdducts(BaseModel):

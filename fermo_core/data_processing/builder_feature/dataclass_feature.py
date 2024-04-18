@@ -20,9 +20,12 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
+import logging
 from typing import Optional, Tuple, Dict, Set, Self, List, Any
 
 from pydantic import BaseModel
+
+logger = logging.getLogger("fermo_core")
 
 
 class Adduct(BaseModel):
@@ -35,6 +38,7 @@ class Adduct(BaseModel):
         partner_mz: partner feature mz
         diff_ppm: the difference in ppm between the two features
         sample: the sample identifier
+        sample_set: a set of samples in which Adduct was observed
     """
 
     adduct_type: str
@@ -42,7 +46,8 @@ class Adduct(BaseModel):
     partner_id: int
     partner_mz: float
     diff_ppm: float
-    sample: str
+    sample: Optional[str] = None
+    sample_set: Optional[set] = None
 
     def to_json(self: Self) -> dict:
         return {
@@ -51,7 +56,7 @@ class Adduct(BaseModel):
             "partner_id": self.partner_id,
             "partner_mz": self.partner_mz,
             "diff_ppm": round(self.diff_ppm, 2),
-            "sample": self.sample,
+            "samples": list(self.sample_set),
         }
 
 

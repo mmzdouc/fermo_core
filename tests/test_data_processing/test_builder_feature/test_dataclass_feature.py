@@ -60,6 +60,7 @@ def test_to_json_adducts_valid():
             partner_adduct="[M+H]+",
             diff_ppm=5.5,
             sample="sample1",
+            sample_set={"sample1"},
         )
     ]
     f_dict = feature.to_json()
