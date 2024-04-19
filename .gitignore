@@ -3,6 +3,7 @@
 example_data/fermo.backup.session.json
 example_data/fermo.session.json
 example_data/fermo.csv
+example_data/fermo.backup.csv
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

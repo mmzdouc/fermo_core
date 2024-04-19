@@ -61,6 +61,15 @@ class PeaktableParameters(BaseModel):
                 raise ValueError(f"Unsupported peaktable format: '{format_peaktable}'.")
         return self
 
+    @model_validator(mode="after")
+    def validate_polarity_format(self):
+        if self.polarity not in ["positive", "negative"]:
+            raise ValueError(
+                f"Unsupported polarity format: '{self.polarity}' (must "
+                f"be 'positive' or 'negative')."
+            )
+        return self
+
     def to_json(self: Self) -> dict:
         """Convert attributes to json-compatible ones."""
         return {
@@ -76,6 +85,7 @@ class MsmsParameters(BaseModel):
     Attributes:
         filepath: a pathlib Path object pointing towards an MS/MS file
         format: indicates the format of the MS/MS file
+        rel_int_from: the minimum relative intensity of MS2 fragments to be retained
 
     Raise:
         ValueError: Unsupported MS/MS file format.
@@ -84,6 +94,7 @@ class MsmsParameters(BaseModel):
 
     filepath: FilePath
     format: str
+    rel_int_from: float = 0.001
 
     @model_validator(mode="after")
     def validate_msms_format(self):
@@ -97,11 +108,19 @@ class MsmsParameters(BaseModel):
                 raise ValueError(f"Unsupported MS/MS format: '{format_msms}'.")
         return self
 
+    @model_validator(mode="after")
+    def validate_rel_int_range(self):
+        if 0.0 <= self.rel_int_from <= 1.0:
+            return self
+        else:
+            raise ValueError("Parameter 'rel_int_from' not between 0.0 and 1.0.")
+
     def to_json(self: Self) -> dict:
         """Convert attributes to json-compatible ones."""
         return {
             "filepath": str(self.filepath.resolve()),
             "format": str(self.format),
+            "rel_int_from": str(self.rel_int_from),
         }
 
 

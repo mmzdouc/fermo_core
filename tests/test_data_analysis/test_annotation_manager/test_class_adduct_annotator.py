@@ -3,7 +3,7 @@ import pytest
 from fermo_core.data_analysis.annotation_manager.class_adduct_annotator import (
     AdductAnnotator,
 )
-from fermo_core.data_processing.builder_feature.dataclass_feature import Feature
+from fermo_core.data_processing.builder_feature.dataclass_feature import Feature, Adduct
 from fermo_core.data_processing.class_repository import Repository
 from fermo_core.data_processing.class_stats import Stats
 from fermo_core.input_output.class_parameter_manager import ParameterManager
@@ -30,10 +30,11 @@ def adduct_annotator_min():
     features = Repository()
     feature1 = Feature(f_id=1, mz=100.0)
     features.add(1, feature1)
-    feature2 = Feature(f_id=1, mz=100.0)
+    feature2 = Feature(f_id=2, mz=100.0)
     features.add(2, feature2)
+    stats = Stats(active_features={1, 2})
     return AdductAnnotator(
-        params=params, stats=Stats(), features=features, samples=Repository()
+        params=params, stats=stats, features=features, samples=Repository()
     )
 
 
@@ -47,24 +48,35 @@ def test_run_analysis_valid(adduct_annotator):
     assert features.entries[131].Annotations.adducts[0] is not None
 
 
-def test_mass_deviation_valid(adduct_annotator_min):
-    assert adduct_annotator_min.mass_deviation(100.0, 100.001, 1) == 10.0
-
-
-def test_mass_deviation_invalid(adduct_annotator_min):
-    with pytest.raises(ZeroDivisionError):
-        adduct_annotator_min.mass_deviation(100.0, 0, 1)
-
-
 def test_add_adduct_info_valid(adduct_annotator_min):
     feature = adduct_annotator_min.add_adduct_info(Feature())
     assert feature.Annotations is not None
 
 
 def test_annotate_spec_features_valid(adduct_annotator):
-    adduct_annotator.annotate_spec_features("5458_5457_mod.mzXML")
+    adduct_annotator.annotate_adducts_pos("5458_5457_mod.mzXML")
     features = adduct_annotator.return_features()
     assert features.entries[131].Annotations.adducts[0] is not None
+
+
+def test_dereplicate_adducts_valid(adduct_annotator_min):
+    adduct_annotator_min.features.entries[1].mz = 415.2098
+    adduct_annotator_min.features.entries[2].mz = 437.1912
+    adduct_annotator_min.sodium_adduct(1, 2, "sample1")
+    adduct_annotator_min.features.entries[1].Annotations.adducts.append(
+        Adduct(
+            adduct_type="[M+H]+",
+            partner_adduct="[M+Na]+",
+            partner_id=2,
+            partner_mz=437.1912,
+            diff_ppm=12.0,
+            sample="sample2",
+        )
+    )
+    adduct_annotator_min.dereplicate_adducts()
+    features = adduct_annotator_min.return_features()
+    adduct_dict = features.entries[1].Annotations.adducts[0].to_json()
+    assert len(adduct_dict["samples"]) == 2
 
 
 def test_sodium_adduct_valid(adduct_annotator_min):
@@ -179,3 +191,33 @@ def test_water_loss_valid(adduct_annotator_min):
     adduct_annotator_min.features.entries[1].mz = 409.29477
     adduct_annotator_min.features.entries[2].mz = 391.284
     assert adduct_annotator_min.water_loss(1, 2, "sample1")
+
+
+def test_chloride_adduct_valid(adduct_annotator_min):
+    adduct_annotator_min.features.entries[1].mz = 852.323614
+    adduct_annotator_min.features.entries[2].mz = 888.300292
+    assert adduct_annotator_min.chloride_adduct(1, 2, "sample1")
+
+
+def test_double_dimer_pair_neg_valid(adduct_annotator_min):
+    adduct_annotator_min.features.entries[1].mz = 1648.47
+    adduct_annotator_min.features.entries[2].mz = 823.73
+    assert adduct_annotator_min.double_dimer_pair_neg(1, 2, "sample1")
+
+
+def test_bicarbonate_adduct_valid(adduct_annotator_min):
+    adduct_annotator_min.features.entries[1].mz = 852.323614
+    adduct_annotator_min.features.entries[2].mz = 914.32345
+    assert adduct_annotator_min.bicarbonate_adduct(1, 2, "sample1")
+
+
+def test_tfa_adduct_valid(adduct_annotator_min):
+    adduct_annotator_min.features.entries[1].mz = 852.323614
+    adduct_annotator_min.features.entries[2].mz = 966.316476
+    assert adduct_annotator_min.tfa_adduct(1, 2, "sample1")
+
+
+def test_acetate_adduct_valid(adduct_annotator_min):
+    adduct_annotator_min.features.entries[1].mz = 852.323614
+    adduct_annotator_min.features.entries[2].mz = 912.344741
+    assert adduct_annotator_min.acetate_adduct(1, 2, "sample1")

@@ -41,6 +41,17 @@ def test_create_spectrum_object_valid():
             "intens": np.array([10, 20, 100], dtype=float),
             "f_id": 0,
             "precursor_mz": 100.0,
-        }
+        },
+        0.005,
     )
     assert isinstance(spectrum, matchms.Spectrum)
+    assert len(spectrum.mz) == 3
+
+
+def test_mass_deviation_valid():
+    assert round(UtilityMethodManager.mass_deviation(100.0, 100.001, 1), 0) == 10.0
+
+
+def test_mass_deviation_invalid():
+    with pytest.raises(ZeroDivisionError):
+        UtilityMethodManager.mass_deviation(100.0, 0, 1)

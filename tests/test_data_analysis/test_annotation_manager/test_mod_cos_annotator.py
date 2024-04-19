@@ -33,7 +33,8 @@ def mod_cos_annotator():
                 "intens": np.array([10, 20, 100, 15, 55], dtype=float),
                 "f_id": 1,
                 "precursor_mz": 100.0,
-            }
+            },
+            intensity_from=0.0,
         ),
     )
     features = Repository()

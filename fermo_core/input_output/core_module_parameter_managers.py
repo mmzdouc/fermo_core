@@ -64,6 +64,41 @@ class AdductAnnotationParameters(BaseModel):
             return {"activate_module": self.activate_module}
 
 
+class NeutralLossParameters(BaseModel):
+    """A Pydantic-based class for repr. and valid. of neutral loss annotation params.
+
+    Attributes:
+        activate_module: bool to indicate if module should be executed.
+        mass_dev_ppm: The estimated maximum mass deviation in ppm.
+        nonbiological: Switch on comparison against losses in 'generic_other_pos.csv'
+
+    Raise:
+        ValueError: Mass deviation unreasonably high.
+        pydantic.ValidationError: Pydantic validation failed during instantiation.
+    """
+
+    activate_module: bool = True
+    mass_dev_ppm: PositiveFloat = 20.0
+    nonbiological: bool = False
+
+    @model_validator(mode="after")
+    def validate_adduct_annotation_parameters(self):
+        ppm = self.mass_dev_ppm
+        ValidationManager.validate_mass_deviation_ppm(ppm)
+        return self
+
+    def to_json(self: Self) -> dict:
+        """Convert attributes to json-compatible ones."""
+        if self.activate_module:
+            return {
+                "activate_module": self.activate_module,
+                "mass_dev_ppm": float(self.mass_dev_ppm),
+                "nonbiological": self.nonbiological,
+            }
+        else:
+            return {"activate_module": self.activate_module}
+
+
 class SpecSimNetworkCosineParameters(BaseModel):
     """A Pydantic-based class for repr. and valid. of spec. similarity network params.
 
