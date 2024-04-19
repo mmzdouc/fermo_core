@@ -193,25 +193,44 @@ class ExportManager(BaseModel):
                 sample = self.samples.get(sample_id)
                 self.json_dict["samples"][sample_id] = sample.to_json()
 
+    def write_csv_output(self: Self):
+        """Write modified peaktable as csv on disk
+
+        Raises:
+            FileNotFoundError: Could not write or find written csv output file.
+        """
+        filepath = self.params.OutputParameters.filepath.with_suffix(".csv")
+
+        self.df.to_csv(filepath, encoding="utf-8", index=False, sep=",")
+
+        self.validate_output_created(filepath)
+
     def build_csv_output(self: Self):
         """Driver method to assemble data for csv output"""
         self.df = pd.read_csv(self.params.PeaktableParameters.filepath)
 
-        attributes = []
         if self.stats.networks is not None:
-            for network in self.stats.networks:
-                attributes.append(f"fermo:networks:{network}:network_id")
+            self.add_networks_info_csv()
 
-        if len(attributes) == 0:
+        if self.params.NeutralLossParameters.activate_module:
+            self.add_class_evidence_csv()
+
+    def add_networks_info_csv(self: Self):
+        """Iterates through network information and prepares for export"""
+        networks = []
+        for network in self.stats.networks:
+            networks.append(f"fermo:networks:{network}:network_id")
+
+        if len(networks) == 0:
             return
 
-        for attribute in attributes:
-            self.df[attribute] = self.df["id"].map(
-                lambda x: self.get_attribute_value(x, attribute)
+        for network in networks:
+            self.df[network] = self.df["id"].map(
+                lambda x: self.get_network_value(x, network)
             )
 
-    def get_attribute_value(self: Self, feature_id: int, attribute: str):
-        """Retrieve attribute of feature id
+    def get_network_value(self: Self, feature_id: int, attribute: str):
+        """Retrieve network value attribute of feature id
 
         Arguments:
             feature_id: an integer feature id
@@ -224,14 +243,31 @@ class ExportManager(BaseModel):
         except (TypeError, AttributeError, KeyError):
             return None
 
-    def write_csv_output(self: Self):
-        """Write modified peaktable as csv on disk
+    def add_class_evidence_csv(self: Self):
+        """Iterates through evidence information and prepare for export"""
+        tags = {"ribosomal": {}, "nonribosomal": {}, "glycoside": {}}
+        for f_id in self.stats.active_features:
+            feature = self.features.get(f_id)
+            try:
+                tags["ribosomal"][f_id] = "|".join(
+                    feature.Annotations.classes["ribosomal"].evidence
+                )
+            except (TypeError, AttributeError, KeyError):
+                pass
+            try:
+                tags["nonribosomal"][f_id] = "|".join(
+                    feature.Annotations.classes["nonribosomal"].evidence
+                )
+            except (TypeError, AttributeError, KeyError):
+                pass
+            try:
+                tags["glycoside"][f_id] = "|".join(
+                    feature.Annotations.classes["glycoside"].evidence
+                )
+            except (TypeError, AttributeError, KeyError):
+                pass
 
-        Raises:
-            FileNotFoundError: Could not write or find written csv output file.
-        """
-        filepath = self.params.OutputParameters.filepath.with_suffix(".csv")
-
-        self.df.to_csv(filepath, encoding="utf-8", index=False, sep=",")
-
-        self.validate_output_created(filepath)
+        for key, val in tags.items():
+            self.df[f"fermo:annotation:{key}:monomers"] = self.df["id"].map(
+                lambda x: val.get(x)
+            )

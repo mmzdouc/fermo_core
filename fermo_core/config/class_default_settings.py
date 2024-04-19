@@ -190,20 +190,28 @@ class NeutralMasses(BaseModel):
         gen_other_neg: generic neutral losses (metabolite+synthetics), negative mode
     """
 
-    ribosomal_src: FilePath = Path(__file__).parent.joinpath("kersten_ribosomal.csv")
+    ribosomal_src: FilePath = Path(__file__).parent.joinpath(
+        "loss_libs/kersten_ribosomal.csv"
+    )
     ribosomal: List[Loss] = []
-    nonribo_src: FilePath = Path(__file__).parent.joinpath("kersten_nonribosomal.csv")
+    nonribo_src: FilePath = Path(__file__).parent.joinpath(
+        "loss_libs/kersten_nonribosomal.csv"
+    )
     nonribo: List[Loss] = []
-    glycoside_src: FilePath = Path(__file__).parent.joinpath("kersten_glycosides.csv")
+    glycoside_src: FilePath = Path(__file__).parent.joinpath(
+        "loss_libs/kersten_glycosides.csv"
+    )
     glycoside: List[Loss] = []
-    gen_bio_pos_src: FilePath = Path(__file__).parent.joinpath("generic_bio_pos.csv")
+    gen_bio_pos_src: FilePath = Path(__file__).parent.joinpath(
+        "loss_libs/generic_bio_pos.csv"
+    )
     gen_bio_pos: List[Loss] = []
     gen_other_pos_src: FilePath = Path(__file__).parent.joinpath(
-        "generic_other_pos.csv"
+        "loss_libs/generic_other_pos.csv"
     )
     gen_other_pos: List[Loss] = []
     gen_other_neg_src: FilePath = Path(__file__).parent.joinpath(
-        "generic_other_neg.csv"
+        "loss_libs/generic_other_neg.csv"
     )
     gen_other_neg: List[Loss] = []
 
