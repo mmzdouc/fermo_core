@@ -135,6 +135,8 @@ class Stats(BaseModel):
             ("area_max", self.area_max, int),
             ("samples", self.samples, list),
             ("features", self.features, int),
+            ("nr_active_features", len(self.active_features), int),
+            ("nr_inactive_features", len(self.inactive_features), int),
             ("active_features", self.active_features, list),
             ("inactive_features", self.inactive_features, list),
             ("blank_features", self.blank_features, list),

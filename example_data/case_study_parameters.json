@@ -23,8 +23,7 @@
             "format": "mgf"
         },
         "output": {
-            "filepath": "example_data/fermo.session.json",
-            "format": "all"
+            "directory_path": "data_analysis/"
         }
     },
     "core_modules": {

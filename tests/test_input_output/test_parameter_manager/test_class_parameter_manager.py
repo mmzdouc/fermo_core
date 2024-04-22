@@ -139,9 +139,7 @@ def test_assign_spectral_library_invalid():
 
 def test_assign_output_valid():
     params = ParameterManager()
-    params.assign_output(
-        {"filepath": "example_data/case_study_fermo.json", "format": "json"}
-    )
+    params.assign_output({"dir_path": "example_data"})
     assert isinstance(params.OutputParameters, OutputParameters)
 
 
@@ -152,7 +150,7 @@ def test_assign_output_invalid():
             "sasd": "dasdas",
         }
     )
-    assert params.OutputParameters.format == "all"
+    assert params.OutputParameters.dir_path.stem == "example_data"
 
 
 def test_assign_adduct_annotation_valid():
@@ -399,4 +397,4 @@ def test_to_json_files_valid():
 def test_to_json_output():
     params = ParameterManager()
     json_dict = params.to_json()
-    assert json_dict["OutputParameters"]["format"] == "all"
+    assert json_dict["OutputParameters"]["dir_path"] is not None
