@@ -48,7 +48,6 @@ class SpecSimNet(BaseModel):
         """Convert attributes to json-compatible ones."""
         return {
             "algorithm": self.algorithm,
-            "network": nx.cytoscape_data(self.network),
             "subnetworks": {
                 key: nx.cytoscape_data(value)
                 for (key, value) in self.subnetworks.items()

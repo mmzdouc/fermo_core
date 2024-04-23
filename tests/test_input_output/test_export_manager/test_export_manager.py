@@ -56,7 +56,7 @@ def test_write_fermo_json_invalid(export_m_dummy):
     )
     export_m_dummy.define_filename()
     with pytest.raises(FileNotFoundError):
-        export_m_dummy.write_fermo_json()
+        export_m_dummy.write_fermo_json(version="0.1.0", starttime=datetime.now())
 
 
 def test_build_json_dict_valid(export_m_dummy):

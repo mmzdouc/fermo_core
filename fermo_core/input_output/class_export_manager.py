@@ -24,10 +24,11 @@ SOFTWARE.
 from datetime import datetime
 import json
 import logging
-import pandas as pd
 import platform
 from typing import Self, Optional, Any
 
+import networkx as nx
+import pandas as pd
 from pydantic import BaseModel
 
 from fermo_core.data_processing.class_repository import Repository
@@ -63,6 +64,20 @@ class ExportManager(BaseModel):
     df_full: Optional[Any] = None
     df_abbrev: Optional[Any] = None
 
+    @staticmethod
+    def log_start_module(file: str):
+        """Log the start of the export of the corresponding file"""
+        logger.debug(
+            f"'ExportManager': started export of '{file}'."
+        )
+
+    @staticmethod
+    def log_complete_module(file: str):
+        """Log the completion of the export of the corresponding file"""
+        logger.debug(
+            f"'ExportManager': completed export of '{file}'."
+        )
+
     def run(self: Self, version: str, starttime: datetime):
         """Call export methods based on user-input
 
@@ -71,31 +86,58 @@ class ExportManager(BaseModel):
             starttime: the date and time at start of fermo_core processing
         """
         self.define_filename()
-
-        self.build_json_dict(version, starttime)
-        self.write_fermo_json()
-
-        self.build_csv_output()
+        self.write_fermo_json(version, starttime)
         self.write_csv_output()
+        self.write_cytoscape_output()
 
     def define_filename(self: Self):
         """Derive output filename base from peaktable"""
         self.filename_base = self.params.PeaktableParameters.filepath.stem
 
-    def write_fermo_json(self: Self):
+    def write_cytoscape_output(self: Self):
+        """Write cytoscape output if networking was performed"""
+
+        # check the network files and log it
+        self.log_start_module(".cytoscape.json")
+
+        if self.stats.networks is None:
+            logger.warning(
+                "'ExportManager': no spectral similarity networks generated - SKIP"
+            )
+            return
+
+        for network in self.stats.networks:
+            path_graphml = self.params.OutputParameters.dir_path.joinpath(
+                self.filename_base
+            ).with_suffix(f".fermo.{network}.graphml")
+            nx.write_graphml(self.stats.networks[network].network, path_graphml)
+            ValidationManager().validate_output_created(path_graphml)
+
+        self.log_complete_module(".cytoscape.json")
+
+    def write_fermo_json(self: Self, version: str, starttime: datetime):
         """Write collected data in session dict into a json file on disk
+
+        Arguments:
+            version: a str indicating the currently running version of fermo_core
+            starttime: the date and time at start of fermo_core processing
 
         Raises:
             FileNotFoundError: Could not write or find written json file.
         """
+        self.log_start_module("fermo.session.json")
+
+        self.build_json_dict(version, starttime)
+
         filepath = self.params.OutputParameters.dir_path.joinpath(
             self.filename_base
         ).with_suffix(".fermo.session.json")
-
         with open(filepath, "w", encoding="utf-8") as outfile:
             outfile.write(json.dumps(self.session, indent=2, ensure_ascii=False))
 
         ValidationManager().validate_output_created(filepath)
+
+        self.log_complete_module("fermo.session.json")
 
     def build_json_dict(self: Self, version: str, starttime: datetime):
         """Driver method to assemble data for json dump
@@ -103,7 +145,6 @@ class ExportManager(BaseModel):
         Arguments:
             version: a str indicating the currently running version of fermo_core
             starttime: the date and time at start of fermo_core processing
-
         """
         self.export_metadata_json(version, starttime)
         self.export_stats_json()
@@ -162,21 +203,25 @@ class ExportManager(BaseModel):
         Raises:
             FileNotFoundError: Could not write or find written csv output file.
         """
+        self.log_start_module("fermo.full.csv/fermo.abbrev.csv")
+
+        self.build_csv_output()
+
         filepath_df_full = self.params.OutputParameters.dir_path.joinpath(
             self.filename_base
         ).with_suffix(".fermo.full.csv")
+        self.df_full.to_csv(filepath_df_full, encoding="utf-8", index=False, sep=",")
+        ValidationManager().validate_output_created(filepath_df_full)
 
         filepath_df_abbrev = self.params.OutputParameters.dir_path.joinpath(
             self.filename_base
         ).with_suffix(".fermo.abbrev.csv")
-
-        self.df_full.to_csv(filepath_df_full, encoding="utf-8", index=False, sep=",")
-        ValidationManager().validate_output_created(filepath_df_full)
-
         self.df_abbrev.to_csv(
             filepath_df_abbrev, encoding="utf-8", index=False, sep=","
         )
         ValidationManager().validate_output_created(filepath_df_abbrev)
+
+        self.log_complete_module("fermo.full.csv/fermo.abbrev.csv")
 
     def build_csv_output(self: Self):
         """Driver method to assemble data for csv output"""
