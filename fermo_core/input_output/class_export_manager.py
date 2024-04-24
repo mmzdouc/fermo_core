@@ -67,16 +67,12 @@ class ExportManager(BaseModel):
     @staticmethod
     def log_start_module(file: str):
         """Log the start of the export of the corresponding file"""
-        logger.debug(
-            f"'ExportManager': started export of '{file}'."
-        )
+        logger.debug(f"'ExportManager': started export of '{file}'.")
 
     @staticmethod
     def log_complete_module(file: str):
         """Log the completion of the export of the corresponding file"""
-        logger.debug(
-            f"'ExportManager': completed export of '{file}'."
-        )
+        logger.debug(f"'ExportManager': completed export of '{file}'.")
 
     def run(self: Self, version: str, starttime: datetime):
         """Call export methods based on user-input
