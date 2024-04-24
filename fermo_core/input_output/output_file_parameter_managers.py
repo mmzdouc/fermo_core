@@ -20,50 +20,42 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
+import logging
 from pathlib import Path
 from typing import Self
 
 from pydantic import BaseModel, model_validator
+
+from fermo_core.config.class_default_settings import DefaultPaths
+
+logger = logging.getLogger("fermo_core")
 
 
 class OutputParameters(BaseModel):
     """A Pydantic-based class for representing and validating output parameters.
 
     Attributes:
-        default_filepath: a pathlib Path reference in case filepath is corrupted
-        filepath: a pathlib Path object pointing toward the output file
-        format: the format of the output file
+        dir_path: the output directory path
 
     Raise:
         pydantic.ValidationError: Pydantic validation failed during instantiation.
     """
 
-    default_filepath: Path = Path(__file__).parent.parent.parent.joinpath(
-        "example_data/fermo_session"
-    )
-    filepath: Path = Path(__file__).parent.parent.parent.joinpath(
-        "example_data/fermo_session"
-    )
-    format: str = "all"
+    dir_path: Path = DefaultPaths().dirpath_output
 
     @model_validator(mode="after")
-    def validate_format(self):
-        match self.format:
-            case "session.json":
-                pass
-            case "csv":
-                pass
-            case "all":
-                pass
-            case _:
-                raise ValueError(
-                    f"Unsupported spectral library format: " f"'{self.format}'."
-                )
+    def validate_output_dir(self):
+        if not self.dir_path.exists():
+            logger.warning(
+                f"'ParameterManager/OutputParameters': specified output directory '"
+                f"{self.dir_path}' cannot be found. Fall back to default output "
+                f"directory '{DefaultPaths().dirpath_output}'."
+            )
+            self.dir_path = DefaultPaths().dirpath_output
         return self
 
     def to_json(self: Self) -> dict:
         """Convert attributes to json-compatible ones."""
         return {
-            "filepath": str(self.filepath.resolve()),
-            "format": str(self.format),
+            "dir_path": str(self.dir_path.resolve()),
         }

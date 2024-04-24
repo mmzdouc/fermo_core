@@ -139,26 +139,16 @@
                     }
                 },
                 "output": {
-                    "title": "(Optional): output of fermo_core.",
+                    "title": "(Optional): fermo_core output location.",
                     "additionalProperties": false,
                     "type": "object",
                     "required": [
-                        "filepath",
-                        "format"
+                        "directory_path"
                     ],
                     "properties": {
-                        "filepath": {
-                            "title": "Specifies the filepath. Absolute paths are preferred. Default location: 'example_data/fermo.session.json'",
+                        "directory_path": {
+                            "title": "Specifies the directory path. Absolute paths are preferred. Default location: 'example_data/'",
                             "type": "string"
-                        },
-                        "format": {
-                            "title": "Specifies the format of the file. Must be one of the allowed formats in 'enum'. For format 'csv', results are added to input peaktable. Default: 'session.json'.",
-                            "type": "string",
-                            "enum": [
-                                "session.json",
-                                "csv",
-                                "all"
-                            ]
                         }
                     }
                 }

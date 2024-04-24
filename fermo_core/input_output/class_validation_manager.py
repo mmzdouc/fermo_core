@@ -273,3 +273,24 @@ class ValidationManager:
             msg = f"{filename}: {lines[0]}"
             logger.critical(msg)
             raise jsonschema.exceptions.ValidationError(msg)
+
+    @staticmethod
+    def validate_output_created(filepath: Path):
+        """Validate that output file was created and log if not
+
+        Arguments:
+            filepath: a Path object pointing to created output file
+
+        Raises:
+            FileNotFoundError: file should have been created but can't be found
+        """
+        if filepath.exists():
+            logger.info(
+                f"'ExportManager': Successfully wrote file " f"'{filepath.resolve()}'."
+            )
+        else:
+            logger.fatal(
+                f"'ExportManager': File '{filepath}' should have been written but "
+                f"cannot be found - ABORT"
+            )
+            raise FileNotFoundError

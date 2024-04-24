@@ -175,6 +175,7 @@ class NeutralLossAnnotator(BaseModel):
                             id=f"{ref_loss.id}({ref_loss.formula})",
                             mz_det=loss,
                             mz_ex=ref_loss.mass,
+                            mz_frag=(feature.mz - loss),
                             diff=ppm,
                         )
                     )
@@ -230,7 +231,11 @@ class NeutralLossAnnotator(BaseModel):
 
                     feature.Annotations.losses.append(
                         NeutralLoss(
-                            id=ref_loss.id, mz_det=loss, mz_ex=ref_loss.mass, diff=ppm
+                            id=ref_loss.id,
+                            mz_det=loss,
+                            mz_ex=ref_loss.mass,
+                            mz_frag=(feature.mz - loss),
+                            diff=ppm,
                         )
                     )
                     feature.Annotations.classes.get("ribosomal").aa_tags.append(
@@ -265,7 +270,11 @@ class NeutralLossAnnotator(BaseModel):
 
                     feature.Annotations.losses.append(
                         NeutralLoss(
-                            id=ref_loss.id, mz_det=loss, mz_ex=ref_loss.mass, diff=ppm
+                            id=ref_loss.id,
+                            mz_det=loss,
+                            mz_ex=ref_loss.mass,
+                            mz_frag=(feature.mz - loss),
+                            diff=ppm,
                         )
                     )
                     feature.Annotations.classes.get("nonribosomal").monomer_tags.append(
@@ -302,6 +311,7 @@ class NeutralLossAnnotator(BaseModel):
                             id=f"{ref_loss.id}({ref_loss.formula})",
                             mz_det=loss,
                             mz_ex=ref_loss.mass,
+                            mz_frag=(feature.mz - loss),
                             diff=ppm,
                         )
                     )
@@ -335,6 +345,7 @@ class NeutralLossAnnotator(BaseModel):
                             id=f"{ref_loss.id}({ref_loss.formula})",
                             mz_det=loss,
                             mz_ex=ref_loss.mass,
+                            mz_frag=(feature.mz - loss),
                             diff=ppm,
                         )
                     )
@@ -365,6 +376,7 @@ class NeutralLossAnnotator(BaseModel):
                             id=f"{ref_loss.id}({ref_loss.formula})",
                             mz_det=loss,
                             mz_ex=ref_loss.mass,
+                            mz_frag=(feature.mz - loss),
                             diff=ppm,
                         )
                     )

@@ -89,7 +89,7 @@ def test_to_json_neural_loss_valid():
     feature = Feature()
     feature.Annotations = Annotations()
     feature.Annotations.losses = [
-        NeutralLoss(id="alanine", mz_det=100.0, mz_ex=100.01, diff=12.0)
+        NeutralLoss(id="alanine", mz_det=100.0, mz_ex=100.01, mz_frag=80.0, diff=12.0)
     ]
     f_dict = feature.to_json()
     assert f_dict["annotations"]["losses"][0]["id"] == "alanine"

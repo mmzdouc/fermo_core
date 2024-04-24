@@ -38,6 +38,7 @@ class DefaultPaths(BaseModel):
         dirpath_ms2query: points towards default ms2query dir
         url_ms2query_pos: urls to default ms2query files for positive ion mode
         url_ms2query_neg: urls to default ms2query files for negative ion mode
+        dirpath_export: points towards default exports dir
     """
 
     dirpath_ms2deepscore: DirectoryPath = Path(__file__).parent.parent.joinpath(
@@ -87,6 +88,9 @@ class DefaultPaths(BaseModel):
         "/neg_mode_spec2vec_model_GNPS_15_12_2021.model.wv.vectors.npy?download=1",
         "https://zenodo.org/records/10528030/files/negative_mode_15_12_2021.sqlite"
         "?download=1",
+    )
+    dirpath_output: DirectoryPath = Path(__file__).parent.parent.parent.joinpath(
+        "example_data/"
     )
 
 

@@ -227,3 +227,17 @@ def test_validate_file_vs_jsonschema_valid():
 def test_validate_file_vs_jsonschema_invalid():
     with pytest.raises(jsonschema.exceptions.ValidationError):
         ValidationManager.validate_file_vs_jsonschema({"key": "value"}, "name")
+
+
+def test_validate_output_created_valid():
+    assert (
+        ValidationManager.validate_output_created(
+            Path("example_data/case_study_parameters.json")
+        )
+        is None
+    )
+
+
+def test_validate_output_created_invalid():
+    with pytest.raises(FileNotFoundError):
+        ValidationManager().validate_output_created(Path("sadasa/adsasd"))
