@@ -468,24 +468,20 @@
                             "title": "Specifies whether this module should be run. Default: False",
                             "type": "boolean"
                         },
-                        "directory_path": {
-                            "title": "(Optional): A path to a directory containing MS2Query files. If not specified, MS2Query files will be downloaded and put into the default directory ('fermo_core/libraries').",
-                            "type": "string"
-                        },
-                        "consider_blank": {
-                            "title": "(Optional): Specifies if blank-associated features are also annotated by ms2query (default: false).",
+                        "exclude_blank": {
+                            "title": "(Optional): Specifies if blank-associated features should be excluded from MS2Query annotation. Default: False",
                             "type": "boolean"
                         },
-                        "filter_rel_int_range": {
-                            "title": "(Optional): filter to restrict the annotation via MS2Query to molecular features inside the specified range, based on relative intensity. By default, the range is from 0.0-1.0 (all molecular features are annotated).",
-                            "type": "array",
-                            "minItems": 2,
-                            "maxItems": 2,
-                            "items": {
-                                "type": "number",
-                                "minimum": 0.0,
-                                "maximum": 1.0
-                            }
+                        "maximum_runtime": {
+                            "title": "(Optional): maximum running time of module, in seconds. A value of 0 (zero) indicates unlimited running time. Default value: 600 seconds.",
+                            "type": "integer",
+                            "minimum": 0
+                        },
+                        "score_cutoff": {
+                            "title": "(Optional): minimum score that must be reached to consider two MS/MS fragmentation spectra to be related. Default value: 0.7",
+                            "type": "number",
+                            "minimum": 0.1,
+                            "maximum": 1.0
                         }
                     }
                 }

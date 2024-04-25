@@ -23,6 +23,7 @@ SOFTWARE.
 import logging
 from pathlib import Path
 from typing import Self
+from urllib.parse import urlparse
 import urllib.request
 import urllib.error
 
@@ -37,52 +38,54 @@ logger = logging.getLogger("fermo_core")
 class UtilityMethodManager(BaseModel):
     """Pydantic-based base class to organize general utility methods for subclasses."""
 
-    @staticmethod
-    def check_ms2deepscore_req() -> bool:
-        """Checks and logs if file required for MS2DeepScore functionality are present
+    def check_ms2deepscore_req(self: Self, polarity: str):
+        """Checks if files required for ms2query functionality are present
 
-        Returns:
-            True - file present; False - file not present
+        Attributes:
+            polarity: the mass spectrometry data polarity
+
+        Raises:
+            RuntimeError: unexpected polarity (currently only positive mode supported)
         """
-        if (
-            not DefaultPaths()
-            .dirpath_ms2deepscore.joinpath(DefaultPaths().filename_ms2deepscore)
-            .exists()
-        ):
+        if polarity == "positive":
+            file = urlparse(DefaultPaths().url_ms2deepscore_pos).path.split("/")[-1]
+            if not DefaultPaths().dirpath_ms2deepscore_pos.joinpath(file).exists():
+                self.download_file(
+                    url=DefaultPaths().url_ms2deepscore_pos,
+                    location=DefaultPaths().dirpath_ms2deepscore_pos.joinpath(file),
+                    timeout=600,
+                )
+        else:
             logger.warning(
-                f"'MS2DeepScore embedding file "
-                f"'{DefaultPaths().filename_ms2deepscore}' not found. "
-                f"Attempting to download file to default directory"
-                f"{DefaultPaths().dirpath_ms2deepscore.resolve()}'. This may take "
-                f"some time."
+                "'UtilityMethodManager': the MS2DeepScore algorithm currently only "
+                "supports positive ionization mode mass spectrometry data - SKIP"
             )
-            return False
-        else:
-            return True
+            raise RuntimeError
 
-    def download_ms2deepscore_req(self: Self, max_runtime: int):
-        """Download ms2deepscore required files as specified in DefaultSettings class
+    def check_ms2query_req(self: Self, polarity: str):
+        """Checks if files required for ms2query functionality are present
 
-        Arguments:
-            max_runtime: maximum time to download in seconds
-
+        Attributes:
+            polarity: the mass spectrometry data polarity
         """
-        if max_runtime != 0:
-            self.download_file(
-                url=DefaultPaths().url_ms2deepscore,
-                location=DefaultPaths().dirpath_ms2deepscore.joinpath(
-                    DefaultPaths().filename_ms2deepscore
-                ),
-                timeout=max_runtime,
-            )
+        if polarity == "positive":
+            for url in DefaultPaths().url_ms2query_pos:
+                file = urlparse(url).path.split("/")[-1]
+                if not DefaultPaths().dirpath_ms2query_pos.joinpath(file).exists():
+                    self.download_file(
+                        url=url,
+                        location=DefaultPaths().dirpath_ms2query_pos.joinpath(file),
+                        timeout=600,
+                    )
         else:
-            self.download_file(
-                url=DefaultPaths().url_ms2deepscore,
-                location=DefaultPaths().dirpath_ms2deepscore.joinpath(
-                    DefaultPaths().filename_ms2deepscore
-                ),
-                timeout=3600,
-            )
+            for url in DefaultPaths().url_ms2query_neg:
+                file = urlparse(url).path.split("/")[-1]
+                if not DefaultPaths().dirpath_ms2query_neg.joinpath(file).exists():
+                    self.download_file(
+                        url=url,
+                        location=DefaultPaths().dirpath_ms2query_neg.joinpath(file),
+                        timeout=600,
+                    )
 
     @staticmethod
     def download_file(url: str, location: Path, timeout: int):
@@ -99,6 +102,10 @@ class UtilityMethodManager(BaseModel):
         Notes:
             `urlretrieve` considered legacy, therefore not used
         """
+        logger.info(
+            f"'UtilityMethodManager': attempt to download file from "
+            f"'{url}' to location '{location}' with a timeout of '{timeout}' seconds."
+        )
         try:
             with urllib.request.urlopen(url=url, timeout=timeout) as response, open(
                 location, "wb"

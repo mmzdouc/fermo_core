@@ -20,7 +20,6 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-from pathlib import Path
 from typing import List, Optional, Self
 
 from pydantic import (
@@ -28,7 +27,6 @@ from pydantic import (
     model_validator,
     PositiveInt,
     PositiveFloat,
-    DirectoryPath,
 )
 
 from fermo_core.input_output.class_validation_manager import ValidationManager
@@ -223,51 +221,27 @@ class Ms2QueryAnnotationParameters(BaseModel):
 
     Attributes:
         activate_module: bool to indicate if module should be executed.
-        directory_path: pathlib Path object pointing to dir with ms2query files.
-        consider_blank: indicates if blank-associated features are annotated too
-        filter_rel_int_range: only features inside range are annotated
+        exclude_blank: sets if blank-associated features should be excluded from annot
+        score_cutoff: only matches with a score higher or equal to are retained
+        maximum_runtime: maximum runtime in seconds
 
     Raise:
         pydantic.ValidationError: Pydantic validation failed during instantiation.
     """
 
     activate_module: bool = False
-    directory_path: DirectoryPath = Path(__file__).parent.parent.joinpath(
-        "libraries/ms2query"
-    )
-    consider_blank: bool = False
-    filter_rel_int_range: List[float] = None
-
-    @model_validator(mode="after")
-    def validate_attrs(self):
-        if self.filter_rel_int_range is not None:
-            self.filter_rel_int_range = self.order_and_validate_range(
-                self.filter_rel_int_range
-            )
-        return self
-
-    @staticmethod
-    def order_and_validate_range(r_list: List[float]) -> List[float]:
-        """Order the list and validate format.
-
-        Attributes:
-            r_list: a range of two floats
-
-        Returns:
-            The modified list of a range of two floats
-        """
-        r_list = [min(r_list), max(r_list)]
-        ValidationManager.validate_range_zero_one(r_list)
-        return r_list
+    exclude_blank: bool = False
+    score_cutoff: PositiveFloat = 0.7
+    maximum_runtime: int = 600
 
     def to_json(self: Self) -> dict:
         """Convert attributes to json-compatible ones."""
         if self.activate_module:
             return {
                 "activate_module": self.activate_module,
-                "directory_path": str(self.directory_path.resolve()),
-                "consider_blank": self.consider_blank,
-                "filter_rel_int_range": self.filter_rel_int_range,
+                "exclude_blank": self.exclude_blank,
+                "score_cutoff": self.score_cutoff,
+                "maximum_runtime": self.maximum_runtime,
             }
         else:
             return {"activate_module": self.activate_module}

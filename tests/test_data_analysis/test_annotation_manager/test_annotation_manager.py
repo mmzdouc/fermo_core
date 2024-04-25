@@ -57,3 +57,12 @@ def test_run_neutral_loss_annotation_valid(annotation_manager_instance):
     assert isinstance(
         annotation_manager_instance.features.get(83).Annotations.losses[0], NeutralLoss
     )
+
+
+@pytest.mark.high_cpu
+def test_run_ms2query_annotation_valid(annotation_manager_instance):
+    annotation_manager_instance.run_ms2query_annotation()
+    assert isinstance(
+        annotation_manager_instance.features.get(13).Annotations.matches[0], Match
+    )
+    # TODO (MMZ 25.4.24): look which one is chymostatinol

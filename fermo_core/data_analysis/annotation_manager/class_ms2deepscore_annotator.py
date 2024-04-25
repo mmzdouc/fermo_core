@@ -1,6 +1,6 @@
 """Runs the ms2deepscore library annotation module.
 
-Copyright (c) 2022-2023 Mitja Maximilian Zdouc, PhD
+Copyright (c) 2024 Mitja Maximilian Zdouc, PhD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -22,7 +22,7 @@ SOFTWARE.
 """
 import logging
 from typing import Self, Optional, Any
-import urllib.error
+from urllib.parse import urlparse
 
 import func_timeout
 import matchms
@@ -66,7 +66,7 @@ class Ms2deepscoreAnnotator(BaseModel):
         """Logs timeout due to long-running ms2deepscore library matching"""
         logger.warning(
             f"'AnnotationManager/Ms2deepscoreAnnotator': timeout of "
-            f"ms2deepscore-based calculation "
+            f"MS2DeepScore-based calculation "
             f"- took longer than maximum set time of '{self.max_time}' seconds.  "
             f"For unlimited runtime, set 'maximum_runtime' parameter to 0 (zero) - SKIP"
         )
@@ -114,19 +114,7 @@ class Ms2deepscoreAnnotator(BaseModel):
             func_timeout.FunctionTimedOut: ms2deepscore calc takes too long.
             urllib.error.URLError: download failed
         """
-        if self.polarity != "positive":
-            logger.warning(
-                "'AnnotationManager/Ms2deepscoreAnnotator': specified ionization "
-                "polarity invalid. This MS2DeepScore version only supports positive "
-                "ion mode - SKIP."
-            )
-            raise RuntimeError
-
-        try:
-            if not UtilityMethodManager().check_ms2deepscore_req():
-                UtilityMethodManager().download_ms2deepscore_req(self.max_time)
-        except urllib.error.URLError as e:
-            raise e
+        UtilityMethodManager().check_ms2deepscore_req(self.polarity)
 
         if self.queries is None or len(self.queries) == 0:
             logger.warning(
@@ -134,11 +122,8 @@ class Ms2deepscoreAnnotator(BaseModel):
             )
             raise RuntimeError
 
-        model = load_model(
-            DefaultPaths().dirpath_ms2deepscore.joinpath(
-                DefaultPaths().filename_ms2deepscore
-            )
-        )
+        file = urlparse(DefaultPaths().url_ms2deepscore_pos).path.split("/")[-1]
+        model = load_model(DefaultPaths().dirpath_ms2deepscore_pos.joinpath(file))
 
         sim_algorithm = MS2DeepScore(model=model, progress_bar=False)
 

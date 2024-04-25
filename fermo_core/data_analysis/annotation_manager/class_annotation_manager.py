@@ -39,6 +39,9 @@ from fermo_core.data_analysis.annotation_manager.class_mod_cos_annotator import 
 from fermo_core.data_analysis.annotation_manager.class_ms2deepscore_annotator import (
     Ms2deepscoreAnnotator,
 )
+from fermo_core.data_analysis.annotation_manager.class_ms2query_annotator import (
+    MS2QueryAnnotator,
+)
 from fermo_core.data_processing.builder_feature.dataclass_feature import (
     Feature,
     Annotations,
@@ -94,9 +97,11 @@ class AnnotationManager(BaseModel):
             (
                 self.params.NeutralLossParameters.activate_module,
                 self.run_neutral_loss_annotation,
-            )
-            # TODO(MMZ 13.03.24): Add additional annotation modules e.g. adduct,
-            #  ms2query
+            ),
+            (
+                self.params.Ms2QueryAnnotationParameters.activate_module,
+                self.run_ms2query_annotation,
+            ),
         )
 
         for module in modules:
@@ -127,6 +132,8 @@ class AnnotationManager(BaseModel):
             "'AnnotationManager': started matching of features against a "
             "user-provided spectral library using the modified cosine algorithm."
         )
+
+        # TODO(MMZ 24.4.24): put the check functions somewhere separate
 
         if self.params.SpecLibParameters is None:
             logger.warning(
@@ -203,6 +210,8 @@ class AnnotationManager(BaseModel):
             "user-provided spectral library using the ms2deepscore algorithm."
         )
 
+        # TODO(MMZ 24.4.24): put the check functions somewhere separate
+
         if self.params.SpecLibParameters is None:
             logger.warning(
                 "'AnnotationManager': no spectral library parameters provided - SKIP"
@@ -231,6 +240,9 @@ class AnnotationManager(BaseModel):
             ms2deepscore_annotator.prepare_queries()
             ms2deepscore_annotator.calculate_scores_ms2deepscore()
             scores = ms2deepscore_annotator.return_scores()
+
+            # TODO(MMZ 24.4.24): move all this into a function of
+            #  ms2deepscore_annotator and give it the params
 
             for spectrum in ms2deepscore_annotator.queries:
                 feature = self.features.get(int(spectrum.metadata.get("id")))
@@ -322,3 +334,39 @@ class AnnotationManager(BaseModel):
         self.features = neutralloss_annotator.return_features()
 
         logger.info("'AnnotationManager': completed feature neutral loss annotation.")
+
+    def run_ms2query_annotation(self: Self):
+        """Perform annotation of feature MS2 using ms2query"""
+        logger.info("'AnnotationManager': started annotation using MS2Query")
+
+        ms2query_annotator = MS2QueryAnnotator(
+            params=self.params,
+            features=self.features,
+            active_features=self.stats.active_features,
+        )
+        try:
+            ms2query_annotator.run_ms2query()
+            ms2query_annotator.remove_ms2query_temp_files()
+            self.features = ms2query_annotator.return_features()
+        except RuntimeError:
+            return
+        except urllib.error.URLError:
+            return
+        except func_timeout.FunctionTimedOut:
+            return
+        except FileExistsError as e:
+            logger.error(
+                "'AnnotationManager/MS2QueryAnnotator': error in file reading/writing "
+                "- ERROR"
+            )
+            logger.error(str(e))
+            return
+        except AssertionError as e:
+            logger.error(
+                "'AnnotationManager/MS2QueryAnnotator': error MS2Query spectrum "
+                "processing - ERROR"
+            )
+            logger.error(str(e))
+            return
+
+        logger.info("'AnnotationManager': completed annotation using MS2Query")

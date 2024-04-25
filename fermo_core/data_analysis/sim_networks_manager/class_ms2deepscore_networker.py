@@ -22,6 +22,7 @@ SOFTWARE.
 """
 import logging
 import networkx
+from urllib.parse import urlparse
 
 import matchms
 from ms2deepscore import MS2DeepScore
@@ -70,11 +71,8 @@ class Ms2deepscoreNetworker:
             feature = feature_repo.get(f_id)
             spectra.append(feature.Spectrum)
 
-        model = load_model(
-            DefaultPaths().dirpath_ms2deepscore.joinpath(
-                DefaultPaths().filename_ms2deepscore
-            )
-        )
+        file = urlparse(DefaultPaths().url_ms2deepscore_pos).path.split("/")[-1]
+        model = load_model(DefaultPaths().dirpath_ms2deepscore_pos.joinpath(file))
 
         sim_algorithm = MS2DeepScore(model=model, progress_bar=False)
 

@@ -43,14 +43,14 @@
                 "fragment_tol": 0.1,
                 "score_cutoff": 0.7,
                 "max_nr_links": 10,
-                "maximum_runtime": 1200
+                "maximum_runtime": 200
             },
             "ms2deepscore": {
                 "activate_module": true,
                 "score_cutoff": 0.7,
                 "max_nr_links": 10,
                 "msms_min_frag_nr": 5,
-                "maximum_runtime": 1200
+                "maximum_runtime": 200
             }
         }
     },
@@ -58,11 +58,11 @@
         "feature_filtering": {
             "activate_module": true,
             "filter_rel_int_range": [
-                0.0,
+                0.1,
                 1.0
             ],
             "filter_rel_area_range": [
-                0.0,
+                0.1,
                 1.0
             ]
         },
@@ -84,23 +84,20 @@
                 "min_nr_matched_peaks": 5,
                 "score_cutoff": 0.7,
                 "max_precursor_mass_diff": 600,
-                "maximum_runtime": 1200
+                "maximum_runtime": 200
             },
             "ms2deepscore": {
                 "activate_module": true,
                 "score_cutoff": 0.7,
                 "max_precursor_mass_diff": 600,
-                "maximum_runtime": 1200
+                "maximum_runtime": 200
             }
         },
         "ms2query_annotation": {
             "activate_module": true,
-            "directory_path": "fermo_core/libraries/ms2query",
-            "consider_blank": true,
-            "filter_rel_int_range": [
-                0.0,
-                1.0
-            ]
+            "exclude_blank": false,
+            "maximum_runtime": 600,
+            "score_cutoff": 0.7
         }
     }
 }

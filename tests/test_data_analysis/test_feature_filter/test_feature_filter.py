@@ -52,17 +52,17 @@ def test_return_values_valid(feature_filter_instance):
 
 def test_filter_valid(feature_filter_instance):
     feature_filter_instance.filter()
-    assert len(feature_filter_instance.stats.active_features) == 143
+    assert len(feature_filter_instance.stats.active_features) == 69
 
 
 def test_filter_rel_int_range_valid(feature_filter_instance):
     feature_filter_instance.filter_rel_int_range()
-    assert len(feature_filter_instance.stats.active_features) == 143
+    assert len(feature_filter_instance.stats.active_features) == 98
 
 
 def test_filter_rel_area_range_valid(feature_filter_instance):
     feature_filter_instance.filter_rel_area_range()
-    assert len(feature_filter_instance.stats.active_features) == 143
+    assert len(feature_filter_instance.stats.active_features) == 72
 
 
 def test_filter_rel_int_range_mod_valid(feature_filter_instance):

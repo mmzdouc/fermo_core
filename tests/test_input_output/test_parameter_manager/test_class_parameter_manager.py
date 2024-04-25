@@ -317,9 +317,9 @@ def test_assign_ms2query_valid():
     params.assign_ms2query(
         {
             "activate_module": True,
-            "directory_path": "fermo_core/libraries",
-            "consider_blank": True,
-            "filter_rel_int_range": [0.0, 0.1],
+            "exclude_blank": False,
+            "score_cutoff": 0.7,
+            "maximum_runtime": 600,
         }
     )
     assert isinstance(params.Ms2QueryAnnotationParameters, Ms2QueryAnnotationParameters)
@@ -328,7 +328,7 @@ def test_assign_ms2query_valid():
 def test_assign_ms2query_invalid():
     params = ParameterManager()
     params.assign_ms2query({"asdfg": "asdfg"})
-    assert params.Ms2QueryAnnotationParameters.filter_rel_int_range is None
+    assert params.Ms2QueryAnnotationParameters.exclude_blank is False
 
 
 def test_assign_parameters_cli_valid():
