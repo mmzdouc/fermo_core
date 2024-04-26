@@ -91,7 +91,7 @@ class ExportManager(BaseModel):
 
     def define_filename(self: Self):
         """Derive output filename base from peaktable"""
-        self.filename_base = self.params.PeaktableParameters.filepath.stem
+        self.filename_base = f"out_{self.params.PeaktableParameters.filepath.stem}"
 
     def write_cytoscape_output(self: Self):
         """Write cytoscape output if networking was performed"""
