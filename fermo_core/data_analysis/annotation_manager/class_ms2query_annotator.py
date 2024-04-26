@@ -154,29 +154,27 @@ class MS2QueryAnnotator(BaseModel):
     @staticmethod
     def remove_ms2query_temp_files():
         """Remove queries and results files to clean up before run"""
-        if DefaultPaths().dirpath_ms2query_base.joinpath("queries").exists():
-            if (
-                DefaultPaths()
-                .dirpath_ms2query_base.joinpath("queries/f_queries.mgf")
-                .exists()
-            ):
-                os.remove(
-                    DefaultPaths().dirpath_ms2query_base.joinpath(
-                        "queries/f_queries.mgf"
-                    )
+        if (
+            DefaultPaths()
+            .dirpath_ms2query_base.joinpath("queries/f_queries.mgf")
+            .exists()
+        ):
+            os.remove(
+                DefaultPaths().dirpath_ms2query_base.joinpath(
+                    "queries/f_queries.mgf"
                 )
+            )
 
-        if DefaultPaths().dirpath_ms2query_base.joinpath("results").exists():
-            if (
-                DefaultPaths()
-                .dirpath_ms2query_base.joinpath("results/f_queries.csv")
-                .exists()
-            ):
-                os.remove(
-                    DefaultPaths().dirpath_ms2query_base.joinpath(
-                        "results/f_queries.csv"
-                    )
+        if (
+            DefaultPaths()
+            .dirpath_ms2query_base.joinpath("results/f_queries.csv")
+            .exists()
+        ):
+            os.remove(
+                DefaultPaths().dirpath_ms2query_base.joinpath(
+                    "results/f_queries.csv"
                 )
+            )
 
     def assign_feature_info(self: Self, results_path: str | Path):
         """Load ms2query results and add annotation to feature
