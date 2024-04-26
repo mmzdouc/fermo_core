@@ -153,7 +153,7 @@ class MS2QueryAnnotator(BaseModel):
 
     @staticmethod
     def remove_ms2query_temp_files():
-        """Remove queries and results files to clean up if they exist"""
+        """Remove queries and results files to clean up before run"""
         if DefaultPaths().dirpath_ms2query_base.joinpath("queries").exists():
             if (
                 DefaultPaths()

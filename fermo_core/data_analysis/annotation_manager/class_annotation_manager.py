@@ -346,7 +346,6 @@ class AnnotationManager(BaseModel):
         )
         try:
             ms2query_annotator.run_ms2query()
-            ms2query_annotator.remove_ms2query_temp_files()
             self.features = ms2query_annotator.return_features()
         except RuntimeError:
             return

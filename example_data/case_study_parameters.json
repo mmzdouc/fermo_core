@@ -94,7 +94,7 @@
             }
         },
         "ms2query_annotation": {
-            "activate_module": true,
+            "activate_module": false,
             "exclude_blank": false,
             "maximum_runtime": 600,
             "score_cutoff": 0.7
