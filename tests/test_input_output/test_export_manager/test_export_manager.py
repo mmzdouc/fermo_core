@@ -4,6 +4,10 @@ from pathlib import Path
 import pandas as pd
 import pytest
 
+from fermo_core.config.class_default_settings import DefaultPaths
+from fermo_core.data_analysis.annotation_manager.class_ms2query_annotator import (
+    MS2QueryAnnotator,
+)
 from fermo_core.input_output.class_export_manager import ExportManager
 from fermo_core.input_output.class_parameter_manager import ParameterManager
 from fermo_core.input_output.output_file_parameter_managers import OutputParameters
@@ -146,3 +150,16 @@ def test_add_sample_info_csv(real_data_export):
     )
     real_data_export.add_sample_info_csv()
     assert real_data_export.df["fermo:samples"] is not None
+
+
+def test_write_raw_ms2query_results_valid(export_m_dummy):
+    path = DefaultPaths().dirpath_ms2query_base.joinpath("results/f_queries.csv")
+    path.touch(exist_ok=True)
+    export_m_dummy.filename_base = "dummy"
+    assert export_m_dummy.write_raw_ms2query_results()
+
+
+def test_write_raw_ms2query_results_invalid(export_m_dummy):
+    export_m_dummy.filename_base = "dummy"
+    MS2QueryAnnotator.remove_ms2query_temp_files()
+    assert export_m_dummy.write_raw_ms2query_results() is False

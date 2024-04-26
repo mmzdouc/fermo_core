@@ -5,10 +5,13 @@ example_data/*.fermo.full.csv
 example_data/*.fermo.abbrev.csv
 example_data/fermo.backup.csv
 example_data/*.graphml
+example_data/*.ms2query_results.csv
 data_working/
 !fermo_core/data_analysis/annotation_manager/class_ms2query_annotator.py
 
 #ms2query files
+fermo_core/libraries/ms2query/results
+fermo_core/libraries/ms2query/queries/
 fermo_core/libraries/ms2query/neg/*
 !fermo_core/libraries/ms2query/neg/.placeholder
 fermo_core/libraries/ms2query/pos/*

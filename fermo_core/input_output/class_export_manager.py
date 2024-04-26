@@ -25,12 +25,14 @@ from datetime import datetime
 import json
 import logging
 import platform
+import shutil
 from typing import Self, Optional, Any
 
 import networkx as nx
 import pandas as pd
 from pydantic import BaseModel
 
+from fermo_core.config.class_default_settings import DefaultPaths
 from fermo_core.data_processing.class_repository import Repository
 from fermo_core.data_processing.class_stats import Stats
 from fermo_core.input_output.class_parameter_manager import ParameterManager
@@ -85,6 +87,7 @@ class ExportManager(BaseModel):
         self.write_fermo_json(version, starttime)
         self.write_csv_output()
         self.write_cytoscape_output()
+        self.write_raw_ms2query_results()
 
     def define_filename(self: Self):
         """Derive output filename base from peaktable"""
@@ -309,3 +312,27 @@ class ExportManager(BaseModel):
             self.df[f"fermo:annotation:{key}:monomers"] = self.df["id"].map(
                 lambda x: val.get(x)
             )
+
+    def write_raw_ms2query_results(self: Self) -> bool:
+        """If raw MS2Query results exist, write to output directory
+
+        Returns:
+            A bool indicating the outcome of the operation
+        """
+        if (
+            DefaultPaths().dirpath_ms2query_base.joinpath("results").exists()
+            and DefaultPaths()
+            .dirpath_ms2query_base.joinpath("results/f_queries.csv")
+            .exists()
+        ):
+            shutil.move(
+                src=DefaultPaths().dirpath_ms2query_base.joinpath(
+                    "results/f_queries.csv"
+                ),
+                dst=self.params.OutputParameters.dir_path.joinpath(
+                    self.filename_base
+                ).with_suffix(".ms2query_results.csv"),
+            )
+            return True
+        else:
+            return False
