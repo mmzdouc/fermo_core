@@ -23,7 +23,7 @@
             "format": "mgf"
         },
         "output": {
-            "directory_path": "data_analysis/"
+            "directory_path": "results/"
         }
     },
     "core_modules": {

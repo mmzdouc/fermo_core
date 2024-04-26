@@ -95,7 +95,7 @@ class DefaultPaths(BaseModel):
         "?download=1",
     )
     dirpath_output: DirectoryPath = Path(__file__).parent.parent.parent.joinpath(
-        "example_data/"
+        "results/"
     )
 
 

@@ -150,7 +150,7 @@ def test_assign_output_invalid():
             "sasd": "dasdas",
         }
     )
-    assert params.OutputParameters.dir_path.stem == "example_data"
+    assert params.OutputParameters.dir_path.stem == "results"
 
 
 def test_assign_adduct_annotation_valid():
