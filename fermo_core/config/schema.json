@@ -138,6 +138,26 @@
                         }
                     }
                 },
+                "ms2query_results": {
+                    "title": "(Optional): file containing MS2Query results. Must contain a column 'id' that matches feature IDs from peaktable. If present, MS2Query algorithm does not run.",
+                    "additionalProperties": false,
+                    "type": "object",
+                    "required": [
+                        "filepath"
+                    ],
+                    "properties": {
+                        "filepath": {
+                            "title": "Specifies the filepath. Absolute paths are preferred.",
+                            "type": "string"
+                        },
+                        "score_cutoff": {
+                            "title": "(Optional): minimum score to consider feature annotation. Default value: 0.7",
+                            "type": "number",
+                            "minimum": 0.1,
+                            "maximum": 1.0
+                        }
+                    }
+                },
                 "output": {
                     "title": "(Optional): fermo_core output location.",
                     "additionalProperties": false,

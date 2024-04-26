@@ -1,7 +1,7 @@
-import pytest
-
+from pathlib import Path
 
 from pydantic import ValidationError
+import pytest
 
 from fermo_core.input_output.class_file_manager import FileManager
 from fermo_core.input_output.class_parameter_manager import ParameterManager
@@ -10,6 +10,7 @@ from fermo_core.input_output.input_file_parameter_managers import (
     MsmsParameters,
     PhenotypeParameters,
     GroupMetadataParameters,
+    MS2QueryResultsParameters,
     SpecLibParameters,
 )
 from fermo_core.input_output.output_file_parameter_managers import OutputParameters
@@ -135,6 +136,26 @@ def test_assign_spectral_library_invalid():
         }
     )
     assert params.SpecLibParameters is None
+
+
+def test_assign_ms2query_results_valid():
+    params = ParameterManager()
+    params.assign_ms2query_results(
+        {
+            "filepath": Path(
+                "tests/test_input_output/test_validation_manager/"
+                "example_results_ms2query.csv"
+            ),
+            "score_cutoff": 0.7,
+        }
+    )
+    assert isinstance(params.MS2QueryResultsParameters, MS2QueryResultsParameters)
+
+
+def test_assign_ms2query_results_invalid():
+    params = ParameterManager()
+    params.assign_ms2query_results({"score_cutoff": 0.7})
+    assert params.MS2QueryResultsParameters is None
 
 
 def test_assign_output_valid():

@@ -103,6 +103,47 @@ def test_validate_peaktable_mzmine3_invalid():
         )
 
 
+def test_validate_ms2query_results_valid():
+    assert (
+        ValidationManager.validate_ms2query_results(
+            Path(
+                "tests/test_input_output/test_validation_manager/"
+                "example_results_ms2query.csv"
+            )
+        )
+        is None
+    )
+
+
+def test_validate_ms2query_results_format_invalid():
+    with pytest.raises(KeyError):
+        ValidationManager.validate_ms2query_results(
+            Path(
+                "tests/test_input_output/test_validation_manager/"
+                "example_group_fermo.csv"
+            )
+        )
+
+
+def test_validate_csv_has_rows_valid():
+    assert (
+        ValidationManager.validate_csv_has_rows(
+            Path(
+                "tests/test_input_output/test_validation_manager/"
+                "example_results_ms2query.csv"
+            )
+        )
+        is None
+    )
+
+
+def test_validate_csv_has_rows_invalid():
+    with pytest.raises(ValueError):
+        ValidationManager.validate_csv_has_rows(
+            Path("tests/test_input_output/test_validation_manager/" "example_empty.csv")
+        )
+
+
 def test_validate_no_duplicate_entries_valid():
     assert (
         ValidationManager.validate_no_duplicate_entries_csv_column(

@@ -46,9 +46,7 @@ def ms2query_annotator():
     params.PeaktableParameters = peaktable_p
     params.Ms2QueryAnnotationParameters = ms2query_p
     return MS2QueryAnnotator(
-        features=features,
-        params=params,
-        active_features={20},
+        features=features, params=params, active_features={20}, cutoff=0.7
     )
 
 
@@ -65,7 +63,7 @@ def test_prepare_queries_invalid(ms2query_annotator):
 
 
 def test_assign_feature_info_valid(ms2query_annotator):
-    ms2query_annotator.params.Ms2QueryAnnotationParameters.score_cutoff = 0.4
+    ms2query_annotator.cutoff = 0.4
     ms2query_annotator.assign_feature_info(
         "tests/test_data_analysis/test_annotation_manager/dummy_results_ms2query.csv"
     )
@@ -94,7 +92,7 @@ def test_run_ms2query_over_timeout(ms2query_annotator):
 @pytest.mark.high_cpu
 def test_run_ms2query_valid(ms2query_annotator):
     ms2query_annotator.prepare_queries()
-    ms2query_annotator.params.Ms2QueryAnnotationParameters.score_cutoff = 0.4
+    ms2query_annotator.cutoff = 0.4
     ms2query_annotator.run_ms2query()
     assert (
         ms2query_annotator.features.entries[20].Annotations.matches[0].id

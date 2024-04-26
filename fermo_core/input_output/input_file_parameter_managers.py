@@ -23,7 +23,7 @@ SOFTWARE.
 
 from typing import Self
 
-from pydantic import BaseModel, model_validator, FilePath
+from pydantic import BaseModel, model_validator, FilePath, PositiveFloat
 
 from fermo_core.input_output.class_validation_manager import ValidationManager
 
@@ -53,6 +53,7 @@ class PeaktableParameters(BaseModel):
             case "mzmine3":
                 ValidationManager.validate_file_extension(path_peaktable, ".csv")
                 ValidationManager.validate_csv_file(path_peaktable)
+                ValidationManager.validate_csv_has_rows(path_peaktable)
                 ValidationManager.validate_peaktable_mzmine3(path_peaktable)
                 ValidationManager.validate_no_duplicate_entries_csv_column(
                     path_peaktable, "id"
@@ -162,6 +163,7 @@ class PhenotypeParameters(BaseModel):
             case "fermo":
                 ValidationManager.validate_file_extension(path_phenotype, ".csv")
                 ValidationManager.validate_csv_file(path_phenotype)
+                ValidationManager.validate_csv_has_rows(path_phenotype)
                 ValidationManager.validate_phenotype_fermo(path_phenotype)
                 ValidationManager.validate_no_duplicate_entries_csv_column(
                     path_phenotype, "sample_name"
@@ -213,6 +215,7 @@ class GroupMetadataParameters(BaseModel):
             case "fermo":
                 ValidationManager.validate_file_extension(path_group, ".csv")
                 ValidationManager.validate_csv_file(path_group)
+                ValidationManager.validate_csv_has_rows(path_group)
                 ValidationManager.validate_group_metadata_fermo(path_group)
                 ValidationManager.validate_no_duplicate_entries_csv_column(
                     path_group, "sample_name"
@@ -265,4 +268,33 @@ class SpecLibParameters(BaseModel):
         return {
             "filepath": str(self.filepath.resolve()),
             "format": str(self.format),
+        }
+
+
+class MS2QueryResultsParameters(BaseModel):
+    """Pydantic-based class for repres. and valid. of MS2Query result parameters.
+
+    Attributes:
+        filepath: a pathlib Path object pointing towards a MS2Query results file
+        score_cutoff: the minimal score to retain the annotation
+
+    Raise:
+        pydantic.ValidationError: Pydantic validation failed during instantiation.
+    """
+
+    filepath: FilePath
+    score_cutoff: PositiveFloat = 0.7
+
+    @model_validator(mode="after")
+    def validate_ms2query_result_format(self):
+        ValidationManager.validate_file_extension(self.filepath, ".csv")
+        ValidationManager.validate_csv_has_rows(self.filepath)
+        ValidationManager.validate_ms2query_results(self.filepath)
+        return self
+
+    def to_json(self: Self) -> dict:
+        """Convert attributes to json-compatible ones."""
+        return {
+            "filepath": str(self.filepath.resolve()),
+            "score_cutoff": self.score_cutoff,
         }

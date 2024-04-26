@@ -33,6 +33,7 @@ from fermo_core.input_output.input_file_parameter_managers import (
     PhenotypeParameters,
     GroupMetadataParameters,
     SpecLibParameters,
+    MS2QueryResultsParameters,
 )
 from fermo_core.input_output.output_file_parameter_managers import OutputParameters
 from fermo_core.input_output.core_module_parameter_managers import (
@@ -67,6 +68,7 @@ class ParameterManager(BaseModel):
         PhenotypeParameters: class handling phenotype parameters or None
         GroupMetadataParameters: class handling metadata parameters or None
         SpecLibParameters: class handling spectra library parameters or None
+        MS2QueryResultsParameters: class handling ms2query results or None
         OutputParameters: class handling output file parameters
         AdductAnnotationParameters: class handling adduct annotation module parameter
         NeutralLossParameters: class handling neutral loss annotation module parameters
@@ -90,6 +92,7 @@ class ParameterManager(BaseModel):
     PhenotypeParameters: Optional[PhenotypeParameters] = None
     GroupMetadataParameters: Optional[GroupMetadataParameters] = None
     SpecLibParameters: Optional[SpecLibParameters] = None
+    MS2QueryResultsParameters: Optional[MS2QueryResultsParameters] = None
     OutputParameters: OutputParameters = OutputParameters()
     AdductAnnotationParameters: AdductAnnotationParameters = (
         AdductAnnotationParameters()
@@ -130,6 +133,7 @@ class ParameterManager(BaseModel):
             (self.PhenotypeParameters, "PhenotypeParameters"),
             (self.GroupMetadataParameters, "GroupMetadataParameters"),
             (self.SpecLibParameters, "SpecLibParameters"),
+            (self.MS2QueryResultsParameters, "MS2QueryResultsParameters"),
         )
 
         json_dict = {}
@@ -217,6 +221,11 @@ class ParameterManager(BaseModel):
                 user_params.get("spectral_library"),
                 self.assign_spectral_library,
                 "spectral_library",
+            ),
+            (
+                user_params.get("ms2query_results"),
+                self.assign_ms2query_results,
+                "ms2query_results",
             ),
             (user_params.get("output"), self.assign_output, "output"),
         )
@@ -457,6 +466,23 @@ class ParameterManager(BaseModel):
             logger.warning(str(e))
             self.log_malformed_parameters_skip("spectral_library")
             self.SpecLibParameters = None
+
+    def assign_ms2query_results(self: Self, user_params: dict):
+        """Assign ms2query_results parameters to self.MS2QueryResultsParameters.
+
+        Parameters:
+            user_params: user-provided params, read from json file
+        """
+        try:
+            self.MS2QueryResultsParameters = MS2QueryResultsParameters(**user_params)
+            logger.info(
+                "'ParameterManager': validated and assigned parameters "
+                "for 'ms2query_results'."
+            )
+        except Exception as e:
+            logger.warning(str(e))
+            self.log_malformed_parameters_skip("ms2query_results")
+            self.MS2QueryResultsParameters = None
 
     def assign_output(self: Self, user_params: dict):
         """Assign output parameters to self.OutputParameters.

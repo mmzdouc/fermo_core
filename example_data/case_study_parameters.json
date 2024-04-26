@@ -22,6 +22,10 @@
             "filepath": "example_data/case_study_spectral_library.mgf",
             "format": "mgf"
         },
+        "ms2query_results": {
+            "filepath": "example_data/case_study.ms2query_results.csv",
+            "score_cutoff": 0.7
+        },
         "output": {
             "directory_path": "results/"
         }
@@ -94,7 +98,7 @@
             }
         },
         "ms2query_annotation": {
-            "activate_module": false,
+            "activate_module": true,
             "exclude_blank": false,
             "maximum_runtime": 600,
             "score_cutoff": 0.7

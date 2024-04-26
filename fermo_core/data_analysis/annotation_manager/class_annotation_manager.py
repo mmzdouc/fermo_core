@@ -81,6 +81,9 @@ class AnnotationManager(BaseModel):
         """Organizes calling of data analysis steps."""
         logger.info("'AnnotationManager': started analysis steps.")
 
+        def _eval_ms2query_results() -> bool:
+            return True if self.params.MS2QueryResultsParameters is not None else False
+
         modules = (
             (
                 self.params.SpectralLibMatchingCosineParameters.activate_module,
@@ -97,6 +100,10 @@ class AnnotationManager(BaseModel):
             (
                 self.params.NeutralLossParameters.activate_module,
                 self.run_neutral_loss_annotation,
+            ),
+            (
+                _eval_ms2query_results,
+                self.run_ms2query_results_assignment,
             ),
             (
                 self.params.Ms2QueryAnnotationParameters.activate_module,
@@ -335,18 +342,70 @@ class AnnotationManager(BaseModel):
 
         logger.info("'AnnotationManager': completed feature neutral loss annotation.")
 
+    def run_ms2query_results_assignment(self: Self):
+        """Annotate Features from existing MS2Query results"""
+        if self.params.Ms2QueryAnnotationParameters.activate_module is True:
+            logger.warning(
+                f"'AnnotationManager': both an MS2Query result table and instruction "
+                f"for running the MS2Query algorithm were provided. In this case, "
+                f"the existing MS2Query result table '"
+                f"{self.params.MS2QueryResultsParameters.filepath.name}' takes "
+                f"precedence."
+            )
+
+        logger.info(
+            "'AnnotationManager': started annotation from existing MS2Query results."
+        )
+
+        ms2query_annotator = MS2QueryAnnotator(
+            params=self.params,
+            features=self.features,
+            active_features=self.stats.active_features,
+            cutoff=self.params.MS2QueryResultsParameters.score_cutoff,
+        )
+
+        try:
+            ms2query_annotator.assign_feature_info(
+                self.params.MS2QueryResultsParameters.filepath,
+            )
+            self.features = ms2query_annotator.return_features()
+        except Exception as e:
+            logger.warning(str(e))
+            logger.warning(
+                "'AnnotationManager': Error during MS2Query Results Assignment - SKIP"
+            )
+
+        logger.info(
+            "'AnnotationManager': completed annotation from existing MS2Query "
+            "results"
+        )
+
     def run_ms2query_annotation(self: Self):
         """Perform annotation of feature MS2 using ms2query"""
+        if self.params.MS2QueryResultsParameters is not None:
+            logger.warning(
+                f"'AnnotationManager': both an MS2Query result table and instruction "
+                f"for running the MS2Query algorithm were provided. In this case, "
+                f"the existing MS2Query result table '"
+                f"{self.params.MS2QueryResultsParameters.filepath.name}' takes "
+                f"precedence."
+            )
+            logger.warning("'AnnotationManager': MS2QueryAnnotator - SKIP ")
+            return
+
         logger.info("'AnnotationManager': started annotation using MS2Query")
 
         ms2query_annotator = MS2QueryAnnotator(
             params=self.params,
             features=self.features,
             active_features=self.stats.active_features,
+            cutoff=self.params.Ms2QueryAnnotationParameters.score_cutoff,
         )
         try:
             ms2query_annotator.run_ms2query()
             self.features = ms2query_annotator.return_features()
+        # TODO(MMZ 26.04.24): change so that errors are caught generally
+
         except RuntimeError:
             return
         except urllib.error.URLError:

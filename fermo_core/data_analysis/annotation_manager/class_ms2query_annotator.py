@@ -52,12 +52,14 @@ class MS2QueryAnnotator(BaseModel):
         features: Repository object, holds "General Feature" objects
         params: User-provided parameters
         active_features: a set of active features
+        cutoff: a float between 0 and 1 indicating the minimum accepted score
         queries: a list of Spectra for which to perform matching
     """
 
     features: Repository
     params: ParameterManager
     active_features: set
+    cutoff: float
     queries: Optional[list] = None
 
     def log_ms2query_timeout(self: Self):
@@ -183,8 +185,8 @@ class MS2QueryAnnotator(BaseModel):
 
         for _, row in df.iterrows():
             if (
-                float(row["ms2query_model_prediction"])
-                >= self.params.Ms2QueryAnnotationParameters.score_cutoff
+                int(row["id"]) in self.active_features
+                and float(row["ms2query_model_prediction"]) >= self.cutoff
             ):
                 feature = self.features.get(int(row["id"]))
 

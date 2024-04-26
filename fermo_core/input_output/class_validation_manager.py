@@ -135,6 +135,51 @@ class ValidationManager:
                 )
 
     @staticmethod
+    def validate_ms2query_results(ms2query_results: Path):
+        """Validate format of ms2query results table
+
+        Prepared for MS2Query version 1.3.0. Must have a column "id" corresponding to
+        the feature id of the peak table.
+
+        Args:
+           ms2query_results: A pathlib Path object
+
+        Raises:
+            KeyError: missing columns in results file or empty
+        """
+        df = pd.read_csv(ms2query_results, sep=",")
+
+        for arg in [
+            ("^id$", "id"),
+            ("^analog_compound_name", "analog_compound_name"),
+            ("^ms2query_model_prediction", "ms2query_model_prediction"),
+            ("^precursor_mz_difference", "precursor_mz_difference"),
+            ("^precursor_mz_analog", "precursor_mz_analog"),
+            ("^smiles", "smiles"),
+            ("^inchikey", "inchikey"),
+            ("^npc_class_results", "npc_class_results"),
+        ]:
+            if df.filter(regex=arg[0]).columns.empty:
+                raise KeyError(
+                    f"Column '{arg[1]}' is missing in MS2Query results file "
+                    f"'{ms2query_results.name}'."
+                )
+
+    @staticmethod
+    def validate_csv_has_rows(csv_path: Path):
+        """Validate if csv file has rows
+
+        Args:
+           csv_path: A pathlib Path object
+
+        Raises:
+            ValueError: has no rows (data)
+        """
+        df = pd.read_csv(csv_path, sep=",")
+        if df.shape[0] == 0:
+            raise ValueError(f"Csv-file '{csv_path.name}' has no data rows.")
+
+    @staticmethod
     def validate_no_duplicate_entries_csv_column(csv_file: Path, column: str):
         """Validate that csv column has no duplicate entries
 
