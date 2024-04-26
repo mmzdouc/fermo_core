@@ -83,9 +83,9 @@ class Match(BaseModel):
     mz: float
     diff_mz: float
     module: str
-    smiles: Optional[None] = None
-    inchikey: Optional[None] = None
-    npc_class: Optional[None] = None
+    smiles: Optional[str] = None
+    inchikey: Optional[str] = None
+    npc_class: Optional[str] = None
 
     def to_json(self: Self) -> dict:
         temp_dict = {

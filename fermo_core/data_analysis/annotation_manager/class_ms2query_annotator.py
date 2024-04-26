@@ -160,9 +160,7 @@ class MS2QueryAnnotator(BaseModel):
             .exists()
         ):
             os.remove(
-                DefaultPaths().dirpath_ms2query_base.joinpath(
-                    "queries/f_queries.mgf"
-                )
+                DefaultPaths().dirpath_ms2query_base.joinpath("queries/f_queries.mgf")
             )
 
         if (
@@ -171,9 +169,7 @@ class MS2QueryAnnotator(BaseModel):
             .exists()
         ):
             os.remove(
-                DefaultPaths().dirpath_ms2query_base.joinpath(
-                    "results/f_queries.csv"
-                )
+                DefaultPaths().dirpath_ms2query_base.joinpath("results/f_queries.csv")
             )
 
     def assign_feature_info(self: Self, results_path: str | Path):
@@ -183,32 +179,34 @@ class MS2QueryAnnotator(BaseModel):
             results_path: location of the ms2query results file
         """
         df = pd.read_csv(results_path)
+        df.fillna("unknown", inplace=True)
+
         for _, row in df.iterrows():
-            feature = self.features.get(int(row["id"]))
-
-            if feature.Annotations is None:
-                feature.Annotations = Annotations()
-            if feature.Annotations.matches is None:
-                feature.Annotations.matches = []
-
             if (
                 float(row["ms2query_model_prediction"])
                 >= self.params.Ms2QueryAnnotationParameters.score_cutoff
             ):
-                match = Match(
-                    id=row["analog_compound_name"],
-                    library="ms2query",
-                    algorithm="ms2query",
-                    score=float(row["ms2query_model_prediction"]),
-                    mz=float(row["precursor_mz_analog"]),
-                    diff_mz=float(row["precursor_mz_difference"]),
-                    module="MS2QueryAnnotator",
-                )
-                match.smiles = row["smiles"]
-                match.inchikey = row["inchikey"]
-                match.npc_class = row["npc_class_results"]
+                feature = self.features.get(int(row["id"]))
 
-                feature.Annotations.matches.append(match)
+                if feature.Annotations is None:
+                    feature.Annotations = Annotations()
+                if feature.Annotations.matches is None:
+                    feature.Annotations.matches = []
+
+                feature.Annotations.matches.append(
+                    Match(
+                        id=row["analog_compound_name"],
+                        library="ms2query",
+                        algorithm="ms2query",
+                        score=float(row["ms2query_model_prediction"]),
+                        mz=float(row["precursor_mz_analog"]),
+                        diff_mz=float(row["precursor_mz_difference"]),
+                        module="ms2query_annotation",
+                        smiles=str(row["smiles"]),
+                        inchikey=str(row["inchikey"]),
+                        npc_class=str(row["npc_class_results"]),
+                    )
+                )
                 self.features.modify(int(row["id"]), feature)
 
     def start_ms2query_algorithm(self: Self, library: MS2Library):

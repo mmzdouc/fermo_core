@@ -1,2 +1,2 @@
 query_spectrum_nr,ms2query_model_prediction,precursor_mz_difference,precursor_mz_query_spectrum,precursor_mz_analog,inchikey,analog_compound_name,smiles,id,cf_kingdom,cf_superclass,cf_class,cf_subclass,cf_direct_parent,npc_class_results,npc_superclass_results,npc_pathway_results
-1,0.4090,70.8066,610.3346,539.5280,GCGTXOVNNFGTPQ,Cer(d18:0/16:0),CCCCCCCCCCCCCCC[C@H]([C@H](CO)NC(=O)CCCCCCCCCCCCCCC)O,20,Organic compounds,Lipids and lipid-like molecules,Sphingolipids,Ceramides,Long-chain ceramides,Ceramides,Sphingolipids,Fatty acids
+1,0.4090,70.8066,610.3346,539.5280,GCGTXOVNNFGTPQ,Cer(d18:0/16:0),CCCCCCCCCCCCCCC[C@H]([C@H](CO)NC(=O)CCCCCCCCCCCCCCC)O,20,Organic compounds,Lipids and lipid-like molecules,Sphingolipids,Ceramides,Long-chain ceramides,,Sphingolipids,Fatty acids

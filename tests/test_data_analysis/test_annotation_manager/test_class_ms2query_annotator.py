@@ -10,7 +10,7 @@ from fermo_core.input_output.class_parameter_manager import (
     Ms2QueryAnnotationParameters,
 )
 from fermo_core.data_processing.class_repository import Repository
-from fermo_core.data_processing.builder_feature.dataclass_feature import Feature, Match
+from fermo_core.data_processing.builder_feature.dataclass_feature import Feature
 from fermo_core.utils.utility_method_manager import UtilityMethodManager as Utils
 
 
@@ -69,8 +69,9 @@ def test_assign_feature_info_valid(ms2query_annotator):
     ms2query_annotator.assign_feature_info(
         "tests/test_data_analysis/test_annotation_manager/dummy_results_ms2query.csv"
     )
-    assert isinstance(
-        ms2query_annotator.features.entries[20].Annotations.matches[0], Match
+    assert (
+        ms2query_annotator.features.entries[20].Annotations.matches[0].npc_class
+        == "unknown"
     )
 
 
@@ -78,7 +79,7 @@ def test_assign_feature_info_invalid(ms2query_annotator):
     ms2query_annotator.assign_feature_info(
         "tests/test_data_analysis/test_annotation_manager/dummy_results_ms2query.csv"
     )
-    assert len(ms2query_annotator.features.entries[20].Annotations.matches) == 0
+    assert ms2query_annotator.features.entries[20].Annotations is None
 
 
 @pytest.mark.high_cpu
