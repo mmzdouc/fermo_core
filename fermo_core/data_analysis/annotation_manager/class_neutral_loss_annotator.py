@@ -123,7 +123,7 @@ class NeutralLossAnnotator(BaseModel):
         for loss in feature.Spectrum.losses.mz:
             for ref_loss in self.mass.gen_other_neg:
                 ppm = Utils().mass_deviation(
-                    m1=ref_loss.mass, m2=loss, f_id_m2=feature.f_id
+                    m1=loss, m2=ref_loss.mass, f_id_m2=ref_loss.id
                 )
                 if ppm < self.params.NeutralLossParameters.mass_dev_ppm:
                     if feature.Annotations is None:
@@ -178,7 +178,7 @@ class NeutralLossAnnotator(BaseModel):
         for loss in feature.Spectrum.losses.mz:
             for ref_loss in self.mass.ribosomal:
                 ppm = Utils().mass_deviation(
-                    m1=ref_loss.mass, m2=loss, f_id_m2=feature.f_id
+                    m1=loss, m2=ref_loss.mass, f_id_m2=ref_loss.id
                 )
                 if ppm < self.params.NeutralLossParameters.mass_dev_ppm:
                     if feature.Annotations is None:
@@ -217,7 +217,7 @@ class NeutralLossAnnotator(BaseModel):
         for loss in feature.Spectrum.losses.mz:
             for ref_loss in self.mass.nonribo:
                 ppm = Utils().mass_deviation(
-                    m1=ref_loss.mass, m2=loss, f_id_m2=feature.f_id
+                    m1=loss, m2=ref_loss.mass, f_id_m2=ref_loss.id
                 )
                 if ppm < self.params.NeutralLossParameters.mass_dev_ppm:
                     if feature.Annotations is None:
@@ -255,7 +255,7 @@ class NeutralLossAnnotator(BaseModel):
         for loss in feature.Spectrum.losses.mz:
             for ref_loss in self.mass.glycoside:
                 ppm = Utils().mass_deviation(
-                    m1=ref_loss.mass, m2=loss, f_id_m2=feature.f_id
+                    m1=loss, m2=ref_loss.mass, f_id_m2=ref_loss.id
                 )
                 if ppm < self.params.NeutralLossParameters.mass_dev_ppm:
                     if feature.Annotations is None:
@@ -293,7 +293,7 @@ class NeutralLossAnnotator(BaseModel):
         for loss in feature.Spectrum.losses.mz:
             for ref_loss in self.mass.gen_bio_pos:
                 ppm = Utils().mass_deviation(
-                    m1=ref_loss.mass, m2=loss, f_id_m2=feature.f_id
+                    m1=loss, m2=ref_loss.mass, f_id_m2=ref_loss.id
                 )
                 if ppm < self.params.NeutralLossParameters.mass_dev_ppm:
                     if feature.Annotations is None:
@@ -324,7 +324,7 @@ class NeutralLossAnnotator(BaseModel):
         for loss in feature.Spectrum.losses.mz:
             for ref_loss in self.mass.gen_other_pos:
                 ppm = Utils().mass_deviation(
-                    m1=ref_loss.mass, m2=loss, f_id_m2=feature.f_id
+                    m1=loss, m2=ref_loss.mass, f_id_m2=ref_loss.id
                 )
                 if ppm < self.params.NeutralLossParameters.mass_dev_ppm:
                     if feature.Annotations is None:

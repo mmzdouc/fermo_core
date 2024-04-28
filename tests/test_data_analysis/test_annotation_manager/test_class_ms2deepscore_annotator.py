@@ -44,26 +44,24 @@ def ms2deepscore_annotator():
         active_features={1},
         polarity="positive",
         library=library,
+        library_name="dummy_library",
         max_time=100,
         score_cutoff=0.5,
         max_precursor_mass_diff=600,
     )
 
 
-@pytest.mark.slow
 def test_prepare_queries_valid(ms2deepscore_annotator):
     ms2deepscore_annotator.prepare_queries()
     assert ms2deepscore_annotator.queries is not None
 
 
-@pytest.mark.slow
 def test_prepare_queries_invalid(ms2deepscore_annotator):
     ms2deepscore_annotator.active_features = set()
     with pytest.raises(RuntimeError):
         ms2deepscore_annotator.prepare_queries()
 
 
-@pytest.mark.slow
 def test_calculate_ms2deepscore_runtimeerror(ms2deepscore_annotator):
     with pytest.raises(RuntimeError):
         ms2deepscore_annotator.calculate_scores_ms2deepscore()
@@ -80,8 +78,7 @@ def test_calculate_ms2deepscore_valid(ms2deepscore_annotator):
 def test_filter_match_valid(ms2deepscore_annotator):
     ms2deepscore_annotator.prepare_queries()
     ms2deepscore_annotator.calculate_scores_ms2deepscore()
-    scores = ms2deepscore_annotator.return_scores()
-    sorted_matches = scores.scores_by_query(
+    sorted_matches = ms2deepscore_annotator.scores.scores_by_query(
         ms2deepscore_annotator.queries[0], name="MS2DeepScore", sort=True
     )
     assert ms2deepscore_annotator.filter_match(sorted_matches[0], 100.0)
@@ -92,8 +89,21 @@ def test_filter_match_invalid(ms2deepscore_annotator):
     ms2deepscore_annotator.prepare_queries()
     ms2deepscore_annotator.score_cutoff = 1.0
     ms2deepscore_annotator.calculate_scores_ms2deepscore()
-    scores = ms2deepscore_annotator.return_scores()
-    sorted_matches = scores.scores_by_query(
+    sorted_matches = ms2deepscore_annotator.scores.scores_by_query(
         ms2deepscore_annotator.queries[0], name="MS2DeepScore", sort=True
     )
     assert ms2deepscore_annotator.filter_match(sorted_matches[0], 100.0) is False
+
+
+def test_extract_userlib_scores_invalid(ms2deepscore_annotator):
+    with pytest.raises(RuntimeError):
+        ms2deepscore_annotator.extract_userlib_scores()
+
+
+@pytest.mark.slow
+def test_extract_userlib_scores_valid(ms2deepscore_annotator):
+    ms2deepscore_annotator.prepare_queries()
+    ms2deepscore_annotator.calculate_scores_ms2deepscore()
+    ms2deepscore_annotator.extract_userlib_scores()
+    features = ms2deepscore_annotator.return_features()
+    assert features.entries[1].Annotations is not None

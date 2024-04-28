@@ -62,16 +62,6 @@ class MS2QueryAnnotator(BaseModel):
     cutoff: float
     queries: Optional[list] = None
 
-    # TODO: change to static method
-    def log_ms2query_timeout(self: Self):
-        """Logs timeout due to long-running ms2query library matching"""
-        logger.warning(
-            f"'MS2QueryAnnotator': timeout of MS2Query-based calculation:"
-            f"took longer than maximum set time of '"
-            f"{self.params.Ms2QueryAnnotationParameters.maximum_runtime}' seconds. "
-            f"For unlimited runtime, set 'maximum_runtime' parameter to 0 (zero) - SKIP"
-        )
-
     def return_features(self: Self) -> Repository:
         """Return the modified Feature objects as Repository object
 
@@ -92,7 +82,7 @@ class MS2QueryAnnotator(BaseModel):
             feature = self.features.get(f_id)
             if feature.Spectrum is None or len(feature.Spectrum.peaks.mz) == 0:
                 logger.debug(
-                    f"'MS2QueryAnnotator': feature with id "
+                    f"'AnnotationManager/MS2QueryAnnotator': feature with id "
                     f"'{feature.f_id}' has no associated MS2 spectrum - SKIP"
                 )
                 continue
@@ -101,7 +91,7 @@ class MS2QueryAnnotator(BaseModel):
                 and self.params.Ms2QueryAnnotationParameters.exclude_blank is True
             ):
                 logger.debug(
-                    f"'MS2QueryAnnotator': feature with id "
+                    f"'AnnotationManager/MS2QueryAnnotator': feature with id "
                     f"'{feature.f_id}' is blank-associated. "
                     f"MS2Query is set to exclude blanks - SKIP"
                 )
@@ -111,9 +101,11 @@ class MS2QueryAnnotator(BaseModel):
 
         if len(query_spectra) != 0:
             self.queries = query_spectra
+            return
         else:
             raise RuntimeError(
-                "'MS2QueryAnnotator': no query spectra qualify for matching - SKIP"
+                "'AnnotationManager/MS2QueryAnnotator': no query spectra qualify for "
+                "matching - SKIP"
             )
 
     def estimate_calc_time(self: Self):
@@ -124,7 +116,7 @@ class MS2QueryAnnotator(BaseModel):
         """
         if self.queries is None:
             raise RuntimeError(
-                "'MS2QueryAnnotator': 'self.queries' is None."
+                "'AnnotationManager/MS2QueryAnnotator': 'self.queries' is None."
                 "Did you run 'self.prepare_queries()'?"
             )
 
@@ -133,7 +125,8 @@ class MS2QueryAnnotator(BaseModel):
                 len(self.queries) * 2.5
             ) > self.params.Ms2QueryAnnotationParameters.maximum_runtime:
                 raise RuntimeError(
-                    f"'MS2QueryAnnotator': Estimated runtime of MS2Query for the "
+                    f"'AnnotationManager/MS2QueryAnnotator': Estimated runtime of "
+                    f"MS2Query for the "
                     f"annotation of "
                     f"'{len(self.queries)}' features is '{len(self.queries) * 2.5}' "
                     f"seconds. This exceeds the maximum allowed runtime of "
@@ -184,7 +177,8 @@ class MS2QueryAnnotator(BaseModel):
         for _, row in df.iterrows():
             if int(row["id"]) not in self.active_features:
                 logger.debug(
-                    f"'MS2QueryAnnotator': in MS2Query results, feature with ID "
+                    f"'AnnotationManager/MS2QueryAnnotator': in MS2Query results, "
+                    f"feature with ID "
                     f"'{row['id']}' is not part of set of currently active features. "
                     f"This feature might have been filtered out due to fermo_core "
                     f"filter settings. Alternatively, the wrong MS2Query results file "
@@ -229,7 +223,8 @@ class MS2QueryAnnotator(BaseModel):
 
         if self.params.Ms2QueryAnnotationParameters.maximum_runtime == 0:
             logger.info(
-                "'MS2QueryAnnotator': Started MS2Query algorithm with no timeout set."
+                "'AnnotationManager/MS2QueryAnnotator': Started MS2Query algorithm "
+                "with no timeout set."
             )
             run_complete_folder(
                 ms2library=library,
@@ -242,7 +237,8 @@ class MS2QueryAnnotator(BaseModel):
         else:
             try:
                 logger.info(
-                    f"'MS2QueryAnnotator': Started MS2Query algorithm with a timeout "
+                    f"'AnnotationManager/MS2QueryAnnotator': Started MS2Query "
+                    f"algorithm with a timeout "
                     f"of '{self.params.Ms2QueryAnnotationParameters.maximum_runtime}' "
                     f"seconds."
                 )
@@ -260,9 +256,17 @@ class MS2QueryAnnotator(BaseModel):
                         "settings": settings,
                     },
                 )
-            except func_timeout.FunctionTimedOut as e:
-                self.log_ms2query_timeout()
-                raise e
+            except func_timeout.FunctionTimedOut:
+                raise func_timeout.FunctionTimedOut(
+                    msg=(
+                        f"'AnnotationManager/MS2QueryAnnotator': timeout of "
+                        f"MS2Query-based calculation:"
+                        f"took longer than maximum set time of '"
+                        f"{self.params.Ms2QueryAnnotationParameters.maximum_runtime}'. "
+                        f"seconds. For unlimited runtime, "
+                        f"set 'maximum_runtime' parameter to 0 (zero) - SKIP"
+                    )
+                )
 
     def run_ms2query(self: Self):
         """Prepare dump/load locations and annotate features with ms2query"""

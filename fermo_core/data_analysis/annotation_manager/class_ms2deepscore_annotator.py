@@ -32,6 +32,10 @@ from pydantic import BaseModel
 
 from fermo_core.config.class_default_settings import DefaultPaths
 from fermo_core.utils.utility_method_manager import UtilityMethodManager
+from fermo_core.data_processing.builder_feature.dataclass_feature import (
+    Match,
+    Annotations,
+)
 from fermo_core.data_processing.class_repository import Repository
 
 logger = logging.getLogger("fermo_core")
@@ -45,6 +49,7 @@ class Ms2deepscoreAnnotator(BaseModel):
         active_features: a set of active features
         polarity: the ion mode polarity
         library: a list of Spectrum object representing the library to match against
+        library_name: the name of the library that is matched against
         queries: a list of Spectra for which to perform matching
         scores: a matchms.Scores object storing the raw results of the matching
         max_time: maximum allowed calculation time of individual steps
@@ -56,28 +61,20 @@ class Ms2deepscoreAnnotator(BaseModel):
     active_features: set
     polarity: str
     library: list
+    library_name: str
     queries: Optional[list] = None
     scores: Optional[Any] = None
     max_time: int
     score_cutoff: float
     max_precursor_mass_diff: float
 
-    def log_ms2deepscore_timeout(self: Self):
-        """Logs timeout due to long-running ms2deepscore library matching"""
-        logger.warning(
-            f"'AnnotationManager/Ms2deepscoreAnnotator': timeout of "
-            f"MS2DeepScore-based calculation "
-            f"- took longer than maximum set time of '{self.max_time}' seconds.  "
-            f"For unlimited runtime, set 'maximum_runtime' parameter to 0 (zero) - SKIP"
-        )
-
-    def return_scores(self: Self) -> matchms.Scores:
-        """Return the generated matchms Scores object
+    def return_features(self: Self) -> Repository:
+        """Return the modified Feature objects as Repository object
 
         Returns:
-            A matchms.Scores object
+            A Repository object with modified Feature objects
         """
-        return self.scores
+        return self.features
 
     def prepare_queries(self: Self):
         """Prepare a filtered list of query spectra for matching
@@ -90,7 +87,7 @@ class Ms2deepscoreAnnotator(BaseModel):
             feature = self.features.get(f_id)
             if feature.Spectrum is None or len(feature.Spectrum.peaks.mz) == 0:
                 logger.debug(
-                    f"'AnnotationManager/Ms2deepscoreAnnotator': feature with id "
+                    f"'AnnotationManager/Ms2deepscoreAnnotator': feature with ID "
                     f"'{feature.f_id}' has no associated MS2 spectrum - SKIP"
                 )
                 continue
@@ -99,12 +96,12 @@ class Ms2deepscoreAnnotator(BaseModel):
 
         if len(query_spectra) != 0:
             self.queries = query_spectra
+            return
         else:
-            logger.warning(
-                "'AnnotationManager/Ms2deepscoreAnnotator': no query spectra could be "
-                "collected for matching - SKIP "
+            raise RuntimeError(
+                "'AnnotationManager/Ms2deepscoreAnnotator': no query spectra qualify "
+                "for matching - SKIP"
             )
-            raise RuntimeError
 
     def calculate_scores_ms2deepscore(self: Self):
         """Calculate matchms scores using ms2deepscore algorithm
@@ -112,15 +109,15 @@ class Ms2deepscoreAnnotator(BaseModel):
         Raises:
             RuntimeError: fatal error preventing successful execution of module - abort
             func_timeout.FunctionTimedOut: ms2deepscore calc takes too long.
-            urllib.error.URLError: download failed
         """
         UtilityMethodManager().check_ms2deepscore_req(self.polarity)
 
-        if self.queries is None or len(self.queries) == 0:
-            logger.warning(
-                "'AnnotationManager/Ms2deepscoreAnnotator': no query spectra - SKIP "
+        if self.queries is None:
+            raise RuntimeError(
+                "'AnnotationManager/Ms2deepscoreAnnotator': no query spectra found. "
+                "Did you run "
+                "'prepare_queries()'? - SKIP "
             )
-            raise RuntimeError
 
         file = urlparse(DefaultPaths().url_ms2deepscore_pos).path.split("/")[-1]
         model = load_model(DefaultPaths().dirpath_ms2deepscore_pos.joinpath(file))
@@ -128,6 +125,11 @@ class Ms2deepscoreAnnotator(BaseModel):
         sim_algorithm = MS2DeepScore(model=model, progress_bar=False)
 
         if self.max_time == 0:
+            logger.info(
+                "'AnnotationManager/Ms2deepscoreAnnotator': Started ms2deepscore "
+                "library matching "
+                "algorithm with no timeout set."
+            )
             self.scores = matchms.calculate_scores(
                 references=self.library,
                 queries=self.queries,
@@ -135,6 +137,10 @@ class Ms2deepscoreAnnotator(BaseModel):
             )
         else:
             try:
+                logger.info(
+                    f"'AnnotationManager/Ms2deepscoreAnnotator': Started ms2deepscore library matching"
+                    f" algorithm with a timeout of '{self.max_time}' seconds."
+                )
                 self.scores = func_timeout.func_timeout(
                     timeout=self.max_time,
                     func=matchms.calculate_scores,
@@ -144,12 +150,18 @@ class Ms2deepscoreAnnotator(BaseModel):
                         "similarity_function": sim_algorithm,
                     },
                 )
-            except func_timeout.FunctionTimedOut as e:
-                self.log_ms2deepscore_timeout()
-                raise e
+            except func_timeout.FunctionTimedOut:
+                raise func_timeout.FunctionTimedOut(
+                    msg=(
+                        f"'AnnotationManager/Ms2deepscoreAnnotator': timeout of "
+                        f"MS2dDeepScore-based "
+                        f"calculation: more than specified '{self.max_time}' seconds."
+                        f"For unlimited runtime, set 'maximum_runtime' to 0 - SKIP"
+                    )
+                )
 
     def filter_match(self: Self, match: tuple, f_mz: float) -> bool:
-        """Filter matches for user-specified params
+        """Filter ms2deepscore-derived matches for user-specified params
 
         Arguments:
             match: a tuple of (matchms.Spectrum, score)
@@ -167,3 +179,48 @@ class Ms2deepscoreAnnotator(BaseModel):
             return False
         else:
             return True
+
+    def extract_userlib_scores(self: Self):
+        """Extract best matches against user library
+
+        This method must only be called for extracting matches resulting from hits
+        against a user-provided library.
+
+        Raises:
+            RuntimeError: 'self.scores' None - no scores calculated
+        """
+        if self.scores is None:
+            raise RuntimeError(
+                "'AnnotationManager/Ms2deepscoreAnnotator': 'self.scores' is None."
+                "Did you run 'self.calculate_scores_ms2deepscore()'?"
+            )
+
+        for spectrum in self.queries:
+            feature = self.features.get(int(spectrum.metadata.get("id")))
+
+            sorted_matches = self.scores.scores_by_query(
+                spectrum, name="MS2DeepScore", sort=True
+            )
+            for match in sorted_matches:
+                if self.filter_match(match, feature.mz):
+                    if feature.Annotations is None:
+                        feature.Annotations = Annotations()
+                    if feature.Annotations.matches is None:
+                        feature.Annotations.matches = []
+
+                    feature.Annotations.matches.append(
+                        Match(
+                            id=match[0].metadata.get("compound_name"),
+                            library=self.library_name,
+                            algorithm="ms2deepscore",
+                            score=float(match[1].round(2)),
+                            mz=match[0].metadata.get("precursor_mz"),
+                            diff_mz=round(
+                                abs(match[0].metadata.get("precursor_mz") - feature.mz),
+                                4,
+                            ),
+                            module="user-library-matching",
+                        )
+                    )
+
+            self.features.modify(int(spectrum.metadata.get("id")), feature)

@@ -22,9 +22,7 @@ SOFTWARE.
 """
 import logging
 from typing import Self, Tuple
-import urllib.error
 
-import func_timeout
 from pydantic import BaseModel
 
 from fermo_core.data_analysis.annotation_manager.class_adduct_annotator import (
@@ -41,11 +39,6 @@ from fermo_core.data_analysis.annotation_manager.class_ms2deepscore_annotator im
 )
 from fermo_core.data_analysis.annotation_manager.class_ms2query_annotator import (
     MS2QueryAnnotator,
-)
-from fermo_core.data_processing.builder_feature.dataclass_feature import (
-    Feature,
-    Annotations,
-    Match,
 )
 from fermo_core.data_processing.class_repository import Repository
 from fermo_core.data_processing.class_stats import Stats
@@ -117,21 +110,27 @@ class AnnotationManager(BaseModel):
 
         logger.info("'AnnotationManager': completed analysis steps.")
 
-    @staticmethod
-    def add_match_info(feature: Feature) -> Feature:
-        """Check annotation object instances if necessary
-
-        Arguments:
-            feature: feature object in modification
+    def verify_user_lib_params(self: Self) -> bool:
+        """Perform preliminary checks on user-provided library and params.
 
         Returns:
-            (modified) feature object
+            A bool indicating pass or fail
         """
-        if feature.Annotations is None:
-            feature.Annotations = Annotations()
-        if feature.Annotations.matches is None:
-            feature.Annotations.matches = []
-        return feature
+        if self.params.SpecLibParameters is None:
+            logger.warning(
+                "'AnnotationManager': no spectral library params provided - SKIP"
+            )
+            return False
+        elif self.stats.spectral_library is None:
+            logger.warning(
+                "'AnnotationManager': no spectral library file provided - SKIP"
+            )
+            return False
+        elif len(self.stats.spectral_library) == 0:
+            logger.warning("'AnnotationManager': spectral library file is empty - SKIP")
+            return False
+        else:
+            return True
 
     def run_user_lib_mod_cosine_matching(self: Self):
         """Match features against a user-provided spectral library using mod cosine."""
@@ -140,69 +139,30 @@ class AnnotationManager(BaseModel):
             "user-provided spectral library using the modified cosine algorithm."
         )
 
-        # TODO(MMZ 24.4.24): put the check functions somewhere separate
-
-        if self.params.SpecLibParameters is None:
-            logger.warning(
-                "'AnnotationManager': no spectral library parameters provided - SKIP"
-            )
-            return
-        elif self.stats.spectral_library is None:
-            logger.warning(
-                "'AnnotationManager': no spectral library file provided - SKIP"
-            )
-            return
-        elif len(self.stats.spectral_library) == 0:
-            logger.warning("'AnnotationManager': spectral library file is empty - SKIP")
+        if not self.verify_user_lib_params():
             return
 
-        mod_cosine_annotator = ModCosAnnotator(
-            features=self.features,
-            active_features=self.stats.active_features,
-            library=self.stats.spectral_library,
-            max_time=self.params.SpectralLibMatchingCosineParameters.maximum_runtime,
-            fragment_tol=self.params.SpectralLibMatchingCosineParameters.fragment_tol,
-            score_cutoff=self.params.SpectralLibMatchingCosineParameters.score_cutoff,
-            min_nr_matched_peaks=self.params.SpectralLibMatchingCosineParameters.min_nr_matched_peaks,
-            max_precursor_mass_diff=self.params.SpectralLibMatchingCosineParameters.max_precursor_mass_diff,
-        )
         try:
+            mod_cosine_annotator = ModCosAnnotator(
+                features=self.features,
+                active_features=self.stats.active_features,
+                library=self.stats.spectral_library,
+                library_name=self.params.SpecLibParameters.filepath.name,
+                max_time=self.params.SpectralLibMatchingCosineParameters.maximum_runtime,
+                fragment_tol=self.params.SpectralLibMatchingCosineParameters.fragment_tol,
+                score_cutoff=self.params.SpectralLibMatchingCosineParameters.score_cutoff,
+                min_nr_matched_peaks=self.params.SpectralLibMatchingCosineParameters.min_nr_matched_peaks,
+                max_precursor_mass_diff=self.params.SpectralLibMatchingCosineParameters.max_precursor_mass_diff,
+            )
             mod_cosine_annotator.prepare_queries()
             mod_cosine_annotator.calculate_scores_mod_cosine()
-            scores = mod_cosine_annotator.return_scores()
-
-            for spectrum in mod_cosine_annotator.queries:
-                feature = self.features.get(int(spectrum.metadata.get("id")))
-                sorted_matches = scores.scores_by_query(
-                    spectrum, name="ModifiedCosine_score", sort=True
-                )
-
-                for match in sorted_matches:
-                    if mod_cosine_annotator.filter_match(match, feature.mz):
-                        feature = self.add_match_info(feature)
-                        feature.Annotations.matches.append(
-                            Match(
-                                id=match[0].metadata.get("compound_name"),
-                                library=str(
-                                    self.params.SpecLibParameters.filepath.resolve()
-                                ),
-                                algorithm="modified cosine",
-                                score=float(match[1][0].round(2)),
-                                mz=match[0].metadata.get("precursor_mz"),
-                                diff_mz=round(
-                                    abs(
-                                        match[0].metadata.get("precursor_mz")
-                                        - feature.mz
-                                    ),
-                                    4,
-                                ),
-                                module="user-library-matching",
-                            )
-                        )
-                self.features.modify(int(spectrum.metadata.get("id")), feature)
-        except RuntimeError:
-            return
-        except func_timeout.FunctionTimedOut:
+            mod_cosine_annotator.extract_userlib_scores()
+            self.features = mod_cosine_annotator.return_features()
+        except Exception as e:
+            logger.error(str(e))
+            logger.error(
+                "'AnnotationManager': Error during running of ModCosineAnnotator - SKIP"
+            )
             return
 
         logger.info(
@@ -217,74 +177,30 @@ class AnnotationManager(BaseModel):
             "user-provided spectral library using the ms2deepscore algorithm."
         )
 
-        # TODO(MMZ 24.4.24): put the check functions somewhere separate
-
-        if self.params.SpecLibParameters is None:
-            logger.warning(
-                "'AnnotationManager': no spectral library parameters provided - SKIP"
-            )
+        if not self.verify_user_lib_params():
             return
-        elif self.stats.spectral_library is None:
-            logger.warning(
-                "'AnnotationManager': no spectral library file provided - SKIP"
-            )
-            return
-        elif len(self.stats.spectral_library) == 0:
-            logger.warning("'AnnotationManager': spectral library file is empty - SKIP")
-            return
-
-        ms2deepscore_annotator = Ms2deepscoreAnnotator(
-            features=self.features,
-            active_features=self.stats.active_features,
-            polarity=self.params.PeaktableParameters.polarity,
-            library=self.stats.spectral_library,
-            max_time=self.params.SpectralLibMatchingDeepscoreParameters.maximum_runtime,
-            score_cutoff=self.params.SpectralLibMatchingDeepscoreParameters.score_cutoff,
-            max_precursor_mass_diff=self.params.SpectralLibMatchingDeepscoreParameters.max_precursor_mass_diff,
-        )
 
         try:
+            ms2deepscore_annotator = Ms2deepscoreAnnotator(
+                features=self.features,
+                active_features=self.stats.active_features,
+                polarity=self.params.PeaktableParameters.polarity,
+                library=self.stats.spectral_library,
+                library_name=self.params.SpecLibParameters.filepath.name,
+                max_time=self.params.SpectralLibMatchingDeepscoreParameters.maximum_runtime,
+                score_cutoff=self.params.SpectralLibMatchingDeepscoreParameters.score_cutoff,
+                max_precursor_mass_diff=self.params.SpectralLibMatchingDeepscoreParameters.max_precursor_mass_diff,
+            )
             ms2deepscore_annotator.prepare_queries()
             ms2deepscore_annotator.calculate_scores_ms2deepscore()
-            scores = ms2deepscore_annotator.return_scores()
-
-            # TODO(MMZ 24.4.24): move all this into a function of
-            #  ms2deepscore_annotator and give it the params
-
-            for spectrum in ms2deepscore_annotator.queries:
-                feature = self.features.get(int(spectrum.metadata.get("id")))
-                sorted_matches = scores.scores_by_query(
-                    spectrum, name="MS2DeepScore", sort=True
-                )
-
-                for match in sorted_matches:
-                    if ms2deepscore_annotator.filter_match(match, feature.mz):
-                        feature = self.add_match_info(feature)
-                        feature.Annotations.matches.append(
-                            Match(
-                                id=match[0].metadata.get("compound_name"),
-                                library=str(
-                                    self.params.SpecLibParameters.filepath.resolve()
-                                ),
-                                algorithm="ms2deepscore",
-                                score=float(match[1].round(2)),
-                                mz=match[0].metadata.get("precursor_mz"),
-                                diff_mz=round(
-                                    abs(
-                                        match[0].metadata.get("precursor_mz")
-                                        - feature.mz
-                                    ),
-                                    4,
-                                ),
-                                module="user-library-matching",
-                            )
-                        )
-                self.features.modify(int(spectrum.metadata.get("id")), feature)
-        except RuntimeError:
-            return
-        except func_timeout.FunctionTimedOut:
-            return
-        except urllib.error.URLError:
+            ms2deepscore_annotator.extract_userlib_scores()
+            self.features = ms2deepscore_annotator.return_features()
+        except Exception as e:
+            logger.error(str(e))
+            logger.error(
+                "'AnnotationManager': Error during running of Ms2deepscoreAnnotator "
+                "- SKIP"
+            )
             return
 
         logger.info(

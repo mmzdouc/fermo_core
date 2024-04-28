@@ -27,6 +27,10 @@ import func_timeout
 import matchms
 from pydantic import BaseModel
 
+from fermo_core.data_processing.builder_feature.dataclass_feature import (
+    Annotations,
+    Match,
+)
 from fermo_core.data_processing.class_repository import Repository
 
 logger = logging.getLogger("fermo_core")
@@ -39,6 +43,7 @@ class ModCosAnnotator(BaseModel):
         features: Repository object, holds "General Feature" objects
         active_features: a set of active features
         library: a list of Spectrum object representing the library to match against
+        library_name: the name of the library
         queries: a list of Spectra for which to perform matching
         scores: a matchms.Scores object storing the raw results of the matching
         max_time: maximum allowed calculation time of individual steps
@@ -51,6 +56,7 @@ class ModCosAnnotator(BaseModel):
     features: Repository
     active_features: set
     library: list
+    library_name: str
     queries: Optional[list] = None
     scores: Optional[Any] = None
     max_time: float
@@ -59,27 +65,18 @@ class ModCosAnnotator(BaseModel):
     min_nr_matched_peaks: int
     max_precursor_mass_diff: float
 
-    def log_mod_cosine_timeout(self: Self):
-        """Logs timeout due to long-running modified cosine library matching"""
-        logger.warning(
-            f"'AnnotationManager/ModCosAnnotator': timeout of modified "
-            f"cosine-based calculation "
-            f"- took longer than maximum set time of '{self.max_time}' seconds.  "
-            f"For unlimited runtime, set 'maximum_runtime' parameter to 0 (zero) - SKIP"
-        )
-
-    def return_scores(self: Self) -> matchms.Scores:
-        """Return the generated matchms Scores object
+    def return_features(self: Self) -> Repository:
+        """Return the modified Feature objects as Repository object
 
         Returns:
-            A matchms.Scores object
+            A Repository object with modified Feature objects
         """
-        return self.scores
+        return self.features
 
     def prepare_queries(self: Self):
         """Prepare a filtered list of query spectra for matching
 
-        Raise:
+        Raises:
             RuntimeError: no query spectra collected (empty list)
         """
         query_spectra = []
@@ -87,7 +84,7 @@ class ModCosAnnotator(BaseModel):
             feature = self.features.get(f_id)
             if feature.Spectrum is None or len(feature.Spectrum.peaks.mz) == 0:
                 logger.debug(
-                    f"'AnnotationManager/ModCosAnnotator': feature with id "
+                    f"'AnnotationManager/ModCosAnnotator': feature with ID "
                     f"'{feature.f_id}' has no associated MS2 spectrum - SKIP"
                 )
                 continue
@@ -96,12 +93,12 @@ class ModCosAnnotator(BaseModel):
 
         if len(query_spectra) != 0:
             self.queries = query_spectra
+            return
         else:
-            logger.warning(
-                "'AnnotationManager/ModCosAnnotator': no query spectra could be "
-                "collected for matching - SKIP "
+            raise RuntimeError(
+                "'AnnotationManager/ModCosAnnotator': no query spectra qualify for "
+                "matching - SKIP"
             )
-            raise RuntimeError
 
     def calculate_scores_mod_cosine(self: Self):
         """Calculate matchms scores using modified cosine algorithm
@@ -110,15 +107,19 @@ class ModCosAnnotator(BaseModel):
             RuntimeError: queries attribute is empty
             func_timeout.FunctionTimedOut: mod cosine calc takes too long.
         """
-        if self.queries is None or len(self.queries) == 0:
-            logger.warning(
-                "'AnnotationManager/ModCosAnnotator': no query spectra - SKIP "
+        if self.queries is None:
+            raise RuntimeError(
+                "'AnnotationManager/ModCosAnnotator': no query spectra found. Did you run "
+                "'prepare_queries()'? - SKIP "
             )
-            raise RuntimeError
 
         sim_algorithm = matchms.similarity.ModifiedCosine(tolerance=self.fragment_tol)
 
         if self.max_time == 0:
+            logger.info(
+                "'AnnotationManager/ModCosAnnotator': Started modified cosine library matching algorithm "
+                "with no timeout set."
+            )
             self.scores = matchms.calculate_scores(
                 references=self.library,
                 queries=self.queries,
@@ -126,6 +127,11 @@ class ModCosAnnotator(BaseModel):
             )
         else:
             try:
+                logger.info(
+                    f"'AnnotationManager/ModCosAnnotator': Started modified cosine "
+                    f"library matching "
+                    f"algorithm with a timeout of '{self.max_time}' seconds."
+                )
                 self.scores = func_timeout.func_timeout(
                     timeout=self.max_time,
                     func=matchms.calculate_scores,
@@ -135,12 +141,18 @@ class ModCosAnnotator(BaseModel):
                         "similarity_function": sim_algorithm,
                     },
                 )
-            except func_timeout.FunctionTimedOut as e:
-                self.log_mod_cosine_timeout()
-                raise e
+            except func_timeout.FunctionTimedOut:
+                raise func_timeout.FunctionTimedOut(
+                    msg=(
+                        f"'AnnotationManager/ModCosAnnotator': timeout of modified "
+                        f"cosine-based "
+                        f"calculation: more than specified '{self.max_time}' seconds."
+                        f"For unlimited runtime, set 'maximum_runtime' to 0 - SKIP"
+                    )
+                )
 
     def filter_match(self: Self, match: tuple, f_mz: float) -> bool:
-        """Filter matches for user-specified params
+        """Filter modified cosine-derived matches for user-specified params
 
         Arguments:
             match: a tuple of (matchms.Spectrum, List[score, nr_matched_peaks])
@@ -160,3 +172,48 @@ class ModCosAnnotator(BaseModel):
             return False
         else:
             return True
+
+    def extract_userlib_scores(self: Self):
+        """Extract best matches against user library
+
+        This method must only be called for extracting matches resulting from hits
+        against a user-provided library.
+
+        Raises:
+            RuntimeError: 'self.scores' None - no scores calculated
+        """
+        if self.scores is None:
+            raise RuntimeError(
+                "'AnnotationManager/ModCosAnnotator': 'self.scores' is None."
+                "Did you run 'self.calculate_scores_mod_cosine()'?"
+            )
+
+        for spectrum in self.queries:
+            feature = self.features.get(int(spectrum.metadata.get("id")))
+
+            sorted_matches = self.scores.scores_by_query(
+                spectrum, name="ModifiedCosine_score", sort=True
+            )
+            for match in sorted_matches:
+                if self.filter_match(match, feature.mz):
+                    if feature.Annotations is None:
+                        feature.Annotations = Annotations()
+                    if feature.Annotations.matches is None:
+                        feature.Annotations.matches = []
+
+                    feature.Annotations.matches.append(
+                        Match(
+                            id=match[0].metadata.get("compound_name"),
+                            library=self.library_name,
+                            algorithm="modified cosine",
+                            score=float(match[1][0].round(2)),
+                            mz=match[0].metadata.get("precursor_mz"),
+                            diff_mz=round(
+                                abs(match[0].metadata.get("precursor_mz") - feature.mz),
+                                4,
+                            ),
+                            module="user-library-matching",
+                        )
+                    )
+
+            self.features.modify(int(spectrum.metadata.get("id")), feature)
