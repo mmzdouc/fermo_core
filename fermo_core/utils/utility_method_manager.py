@@ -56,11 +56,10 @@ class UtilityMethodManager(BaseModel):
                     timeout=600,
                 )
         else:
-            logger.warning(
+            RuntimeError(
                 "'UtilityMethodManager': the MS2DeepScore algorithm currently only "
                 "supports positive ionization mode mass spectrometry data - SKIP"
             )
-            raise RuntimeError
 
     def check_ms2query_req(self: Self, polarity: str):
         """Checks if files required for ms2query functionality are present
@@ -97,7 +96,7 @@ class UtilityMethodManager(BaseModel):
             timeout: A timeout for the download
 
         Raises:
-            URLError
+            URLError: states the URL from where download failed
 
         Notes:
             `urlretrieve` considered legacy, therefore not used
@@ -116,19 +115,18 @@ class UtilityMethodManager(BaseModel):
                 f"'UtilityMethodManager': successfully downloaded file from "
                 f"'{url}' to location '{location}'."
             )
-        except urllib.error.URLError as e:
-            logger.error(
+        except urllib.error.URLError:
+            raise urllib.error.URLError(
                 f"'UtilityMethodManager': could not download from url '{url}' - SKIP"
             )
-            raise e
 
     @staticmethod
     def create_spectrum_object(data: dict, intensity_from: float) -> matchms.Spectrum:
-        """Create matchms Spectrum instance, add neutral losses and normalize intensity
+        """Create matchms Spectrum, add neutral losses, normalize and filter intensity
 
         Arguments:
             data: a dict containing data to create a matchms Spectrum object.
-            intensity_from: a float between 0 and 1 to filter for intensity
+            intensity_from: a float between 0 and 1 to filter for MS2 rel intensity
 
         Returns:
             A matchms Spectrum object
@@ -160,9 +158,9 @@ class UtilityMethodManager(BaseModel):
             frag_diff = frag_before - len(spectrum.peaks.mz)
             logger.debug(
                 f"'UtilityMethodManager': feature id '{data['f_id']}': removed '"
-                f"{frag_diff}' MS2 fragments with relative intensity lower than '"
-                f"{intensity_from}'. '{len(spectrum.peaks.mz)}' fragments remaining ("
-                f"before: '{frag_before}')."
+                f"MS2 fragments with relative intensity lower than '"
+                f"{intensity_from}': {frag_diff}'. '{len(spectrum.peaks.mz)}' "
+                f"fragments remaining (before: '{frag_before}')."
             )
 
         spectrum = matchms.filtering.add_losses(spectrum)
@@ -176,23 +174,21 @@ class UtilityMethodManager(BaseModel):
         Arguments:
             m1: an m/z ratio
             m2: an m/z ratio
-            f_id_m2: the (feature) id of m2
+            f_id_m2: the (feature) id of m2 for error reporting
 
         Returns:
             The mass deviation in ppm
 
         Raises:
-            ZeroDivisionError
+            ZeroDivisionError: m2 is zero
 
         Notes:
             Taken from publication doi.org/10.1016/j.jasms.2010.06.006
         """
         try:
             return abs(((m1 - m2) / m2) * 10**6)
-        except ZeroDivisionError as e:
-            logger.error(
-                f"'AnnotationManager/AdductAnnotator': Division through zero. "
-                f"Feature with id '{f_id_m2}' has a mass of '{m2}'. This is illegal - "
-                f"SKIP"
+        except ZeroDivisionError:
+            raise ZeroDivisionError(
+                f"'UtilityMethodManager': Division through zero in mass deviation "
+                f"calculation. Feature with id '{f_id_m2}' has a mass of '{m2}' - SKIP"
             )
-            raise e

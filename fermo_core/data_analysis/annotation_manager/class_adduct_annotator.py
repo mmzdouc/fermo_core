@@ -88,13 +88,13 @@ class AdductAnnotator(BaseModel):
 
     @staticmethod
     def add_adduct_info(feature: Feature) -> Feature:
-        """Check annotation object instances if necessary
+        """Instantiate Annotation object instances
 
         Arguments:
-            feature: feature object in modification
+            feature: Feature object to be modified
 
         Returns:
-            (modified) feature object
+            (modified) Feature object
         """
         if feature.Annotations is None:
             feature.Annotations = Annotations()
@@ -155,24 +155,25 @@ class AdductAnnotator(BaseModel):
         for pair in f_pairs:
             feat1 = sample.features[pair[0]]
             feat2 = sample.features[pair[1]]
+
             if not (feat1.rt_stop < feat2.rt_start or feat2.rt_stop < feat1.rt_start):
                 if self.chloride_adduct(
                     feat1.f_id, feat2.f_id, s_name
                 ) or self.chloride_adduct(feat1.f_id, feat2.f_id, s_name):
                     continue
-                if self.double_dimer_pair_neg(
+                elif self.double_dimer_pair_neg(
                     feat1.f_id, feat2.f_id, s_name
                 ) or self.double_dimer_pair_neg(feat1.f_id, feat2.f_id, s_name):
                     continue
-                if self.bicarbonate_adduct(
+                elif self.bicarbonate_adduct(
                     feat1.f_id, feat2.f_id, s_name
                 ) or self.bicarbonate_adduct(feat1.f_id, feat2.f_id, s_name):
                     continue
-                if self.tfa_adduct(feat1.f_id, feat2.f_id, s_name) or self.tfa_adduct(
+                elif self.tfa_adduct(feat1.f_id, feat2.f_id, s_name) or self.tfa_adduct(
                     feat1.f_id, feat2.f_id, s_name
                 ):
                     continue
-                if self.acetate_adduct(
+                elif self.acetate_adduct(
                     feat1.f_id, feat2.f_id, s_name
                 ) or self.acetate_adduct(feat1.f_id, feat2.f_id, s_name):
                     continue

@@ -63,15 +63,18 @@ class NeutralLossAnnotator(BaseModel):
     mass: NeutralMasses = NeutralMasses()
 
     def return_features(self: Self) -> Repository:
-        """Returns modified attributes from NeutralLossAnnotator to the calling function
+        """Returns modified Feature objects in Repository object instance
 
         Returns:
-            Modified Feature Repository objects.
+            Modified Feature Repository object.
         """
         return self.features
 
     def run_adduct_annotator(self: Self):
-        """Run AdductAnnotator module - module switched off by user."""
+        """Run AdductAnnotator module.
+
+        Run in case user has explicitly switched off Adduct Annotation.
+        """
         logger.info(
             "'AnnotationManager/NeutralLossAnnotator': needs adduct annotation "
             "to run, but module 'AdductAnnotator' is not activated. Attempt to "
@@ -83,54 +86,12 @@ class NeutralLossAnnotator(BaseModel):
             features=self.features,
             samples=self.samples,
         )
-        try:
-            adduct_annotator.run_analysis()
-            self.features = adduct_annotator.return_features()
-            logger.info("'AnnotationManager': completed feature adduct annotation.")
-            return
-        except ZeroDivisionError as e:
-            logger.error(str(e))
-            logger.error(
-                "'AnnotationManager/AdductAnnotator': Attempted division through "
-                "zero when calculating mass deviation - SKIP"
-            )
-            return
+        adduct_annotator.run_analysis()
+        self.features = adduct_annotator.return_features()
 
-    def run_analysis(self: Self):
-        """Organizes calling of data analysis steps."""
-
-        if self.params.MsmsParameters is None:
-            logger.warning(
-                "'AnnotationManager/NeutralLossAnnotator': no MS2 file provided - SKIP"
-            )
-            return
-
-        if self.params.AdductAnnotationParameters.activate_module is False:
-            self.run_adduct_annotator()
-
-        if len(self.stats.active_features) == 0:
-            logger.warning(
-                "'AnnotationManager/NeutralLossAnnotator': no active features - SKIP"
-            )
-            return
-
-        if self.params.PeaktableParameters.polarity == "positive":
-            logger.info(
-                "'AnnotationManager/NeutralLossAnnotator': positive ion mode detected. "
-                "Attempt to annotate for positive ion mode neutral losses."
-            )
-            for f_id in self.stats.active_features:
-                self.annotate_feature_pos(f_id)
-                self.collect_evidence_ribosomal_pos(f_id)
-                self.collect_evidence_nonribosomal_pos(f_id)
-                self.collect_evidence_glycoside_pos(f_id)
-        else:
-            logger.info(
-                "'AnnotationManager/NeutralLossAnnotator': negative ion mode detected. "
-                "Attempt to annotate for negative ion mode neutral losses."
-            )
-            for f_id in self.stats.active_features:
-                self.annotate_feature_neg(f_id)
+        logger.info(
+            "'AnnotationManager/AdductAnnotator': completed feature adduct annotation."
+        )
 
     def annotate_feature_neg(self: Self, f_id: int):
         """Annotate neutral losses of feature and store data in General Feature
@@ -146,9 +107,9 @@ class NeutralLossAnnotator(BaseModel):
                 f"no associated MS/MS spectrum - SKIP "
             )
             return
-        feature = self.validate_gen_other_neg_losses(feature)
-
-        self.features.modify(f_id, feature)
+        else:
+            feature = self.validate_gen_other_neg_losses(feature)
+            self.features.modify(f_id, feature)
 
     def validate_gen_other_neg_losses(self: Self, feature: Feature) -> Feature:
         """Validate losses against a list of generic losses of biol/synth origin
@@ -162,7 +123,7 @@ class NeutralLossAnnotator(BaseModel):
         for loss in feature.Spectrum.losses.mz:
             for ref_loss in self.mass.gen_other_neg:
                 ppm = Utils().mass_deviation(
-                    m1=loss, m2=ref_loss.mass, f_id_m2=ref_loss.id
+                    m1=ref_loss.mass, m2=loss, f_id_m2=feature.f_id
                 )
                 if ppm < self.params.NeutralLossParameters.mass_dev_ppm:
                     if feature.Annotations is None:
@@ -217,7 +178,7 @@ class NeutralLossAnnotator(BaseModel):
         for loss in feature.Spectrum.losses.mz:
             for ref_loss in self.mass.ribosomal:
                 ppm = Utils().mass_deviation(
-                    m1=loss, m2=ref_loss.mass, f_id_m2=ref_loss.id
+                    m1=ref_loss.mass, m2=loss, f_id_m2=feature.f_id
                 )
                 if ppm < self.params.NeutralLossParameters.mass_dev_ppm:
                     if feature.Annotations is None:
@@ -256,7 +217,7 @@ class NeutralLossAnnotator(BaseModel):
         for loss in feature.Spectrum.losses.mz:
             for ref_loss in self.mass.nonribo:
                 ppm = Utils().mass_deviation(
-                    m1=loss, m2=ref_loss.mass, f_id_m2=ref_loss.id
+                    m1=ref_loss.mass, m2=loss, f_id_m2=feature.f_id
                 )
                 if ppm < self.params.NeutralLossParameters.mass_dev_ppm:
                     if feature.Annotations is None:
@@ -294,7 +255,7 @@ class NeutralLossAnnotator(BaseModel):
         for loss in feature.Spectrum.losses.mz:
             for ref_loss in self.mass.glycoside:
                 ppm = Utils().mass_deviation(
-                    m1=loss, m2=ref_loss.mass, f_id_m2=ref_loss.id
+                    m1=ref_loss.mass, m2=loss, f_id_m2=feature.f_id
                 )
                 if ppm < self.params.NeutralLossParameters.mass_dev_ppm:
                     if feature.Annotations is None:
@@ -332,7 +293,7 @@ class NeutralLossAnnotator(BaseModel):
         for loss in feature.Spectrum.losses.mz:
             for ref_loss in self.mass.gen_bio_pos:
                 ppm = Utils().mass_deviation(
-                    m1=loss, m2=ref_loss.mass, f_id_m2=ref_loss.id
+                    m1=ref_loss.mass, m2=loss, f_id_m2=feature.f_id
                 )
                 if ppm < self.params.NeutralLossParameters.mass_dev_ppm:
                     if feature.Annotations is None:
@@ -363,7 +324,7 @@ class NeutralLossAnnotator(BaseModel):
         for loss in feature.Spectrum.losses.mz:
             for ref_loss in self.mass.gen_other_pos:
                 ppm = Utils().mass_deviation(
-                    m1=loss, m2=ref_loss.mass, f_id_m2=ref_loss.id
+                    m1=ref_loss.mass, m2=loss, f_id_m2=feature.f_id
                 )
                 if ppm < self.params.NeutralLossParameters.mass_dev_ppm:
                     if feature.Annotations is None:
@@ -417,7 +378,7 @@ class NeutralLossAnnotator(BaseModel):
 
         if feature.mz > 1500:
             feature.Annotations.classes.get("ribosomal").evidence.append(
-                "Weight: typical for a ribosomal peptide."
+                "m/z ratio: typical for a ribosomal peptide (if [M+H]+)."
             )
 
         self.features.modify(f_id, feature)
@@ -479,3 +440,39 @@ class NeutralLossAnnotator(BaseModel):
             )
 
         self.features.modify(f_id, feature)
+
+    def run_analysis(self: Self):
+        """Organizes calling of data analysis steps."""
+
+        if self.params.MsmsParameters is None:
+            logger.warning(
+                "'AnnotationManager/NeutralLossAnnotator': no MS2 file provided - SKIP"
+            )
+            return
+
+        if len(self.stats.active_features) == 0:
+            logger.warning(
+                "'AnnotationManager/NeutralLossAnnotator': no active features - SKIP"
+            )
+            return
+
+        if self.params.AdductAnnotationParameters.activate_module is False:
+            self.run_adduct_annotator()
+
+        if self.params.PeaktableParameters.polarity == "positive":
+            logger.info(
+                "'AnnotationManager/NeutralLossAnnotator': positive ion mode detected. "
+                "Attempt to annotate for positive ion mode neutral losses."
+            )
+            for f_id in self.stats.active_features:
+                self.annotate_feature_pos(f_id)
+                self.collect_evidence_ribosomal_pos(f_id)
+                self.collect_evidence_nonribosomal_pos(f_id)
+                self.collect_evidence_glycoside_pos(f_id)
+        else:
+            logger.info(
+                "'AnnotationManager/NeutralLossAnnotator': negative ion mode detected. "
+                "Attempt to annotate for negative ion mode neutral losses."
+            )
+            for f_id in self.stats.active_features:
+                self.annotate_feature_neg(f_id)

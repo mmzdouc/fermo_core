@@ -81,7 +81,7 @@ class AnnotationManager(BaseModel):
         """Organizes calling of data analysis steps."""
         logger.info("'AnnotationManager': started analysis steps.")
 
-        def _eval_ms2query_results() -> bool:
+        def _eval_ms2query_results_file() -> bool:
             return True if self.params.MS2QueryResultsParameters is not None else False
 
         modules = (
@@ -102,7 +102,7 @@ class AnnotationManager(BaseModel):
                 self.run_neutral_loss_annotation,
             ),
             (
-                _eval_ms2query_results,
+                _eval_ms2query_results_file,
                 self.run_ms2query_results_assignment,
             ),
             (
@@ -296,24 +296,21 @@ class AnnotationManager(BaseModel):
         """Perform feature adduct annotation"""
         logger.info("'AnnotationManager': started feature adduct annotation.")
 
-        adduct_annotator = AdductAnnotator(
-            params=self.params,
-            stats=self.stats,
-            features=self.features,
-            samples=self.samples,
-        )
-
         try:
+            adduct_annotator = AdductAnnotator(
+                params=self.params,
+                stats=self.stats,
+                features=self.features,
+                samples=self.samples,
+            )
             adduct_annotator.run_analysis()
-        except ZeroDivisionError as e:
+            self.features = adduct_annotator.return_features()
+        except Exception as e:
             logger.error(str(e))
             logger.error(
-                "'AnnotationManager/AdductAnnotator': Attempted division through "
-                "zero when calculating mass deviation - SKIP"
+                "'AnnotationManager': Error during running of AdductAnnotator " "- SKIP"
             )
             return
-
-        self.features = adduct_annotator.return_features()
 
         logger.info("'AnnotationManager': completed feature adduct annotation.")
 
@@ -321,24 +318,22 @@ class AnnotationManager(BaseModel):
         """Perform feature MS2 neutral loss annotation"""
         logger.info("'AnnotationManager': started feature neutral loss annotation.")
 
-        neutralloss_annotator = NeutralLossAnnotator(
-            params=self.params,
-            stats=self.stats,
-            features=self.features,
-            samples=self.samples,
-        )
-
         try:
+            neutralloss_annotator = NeutralLossAnnotator(
+                params=self.params,
+                stats=self.stats,
+                features=self.features,
+                samples=self.samples,
+            )
             neutralloss_annotator.run_analysis()
-        except ZeroDivisionError as e:
+            self.features = neutralloss_annotator.return_features()
+        except Exception as e:
             logger.error(str(e))
             logger.error(
-                "'AnnotationManager/NeutralLossAnnotator': Attempted division through "
-                "zero when calculating mass deviation - SKIP"
+                "'AnnotationManager': Error during running of NeutralLossAnnotator "
+                "- SKIP"
             )
             return
-
-        self.features = neutralloss_annotator.return_features()
 
         logger.info("'AnnotationManager': completed feature neutral loss annotation.")
 
@@ -357,21 +352,20 @@ class AnnotationManager(BaseModel):
             "'AnnotationManager': started annotation from existing MS2Query results."
         )
 
-        ms2query_annotator = MS2QueryAnnotator(
-            params=self.params,
-            features=self.features,
-            active_features=self.stats.active_features,
-            cutoff=self.params.MS2QueryResultsParameters.score_cutoff,
-        )
-
         try:
+            ms2query_annotator = MS2QueryAnnotator(
+                params=self.params,
+                features=self.features,
+                active_features=self.stats.active_features,
+                cutoff=self.params.MS2QueryResultsParameters.score_cutoff,
+            )
             ms2query_annotator.assign_feature_info(
                 self.params.MS2QueryResultsParameters.filepath,
             )
             self.features = ms2query_annotator.return_features()
         except Exception as e:
-            logger.warning(str(e))
-            logger.warning(
+            logger.error(str(e))
+            logger.error(
                 "'AnnotationManager': Error during MS2Query Results Assignment - SKIP"
             )
             return
@@ -396,20 +390,19 @@ class AnnotationManager(BaseModel):
 
         logger.info("'AnnotationManager': started annotation using MS2Query")
 
-        ms2query_annotator = MS2QueryAnnotator(
-            params=self.params,
-            features=self.features,
-            active_features=self.stats.active_features,
-            cutoff=self.params.Ms2QueryAnnotationParameters.score_cutoff,
-        )
-
         try:
+            ms2query_annotator = MS2QueryAnnotator(
+                params=self.params,
+                features=self.features,
+                active_features=self.stats.active_features,
+                cutoff=self.params.Ms2QueryAnnotationParameters.score_cutoff,
+            )
             ms2query_annotator.run_ms2query()
             self.features = ms2query_annotator.return_features()
         except Exception as e:
-            logger.warning(str(e))
-            logger.warning(
-                "'AnnotationManager': Error in running MS2QueryAnnotator - SKIP"
+            logger.error(str(e))
+            logger.error(
+                "'AnnotationManager': Error during running of MS2QueryAnnotator - SKIP"
             )
             return
 
