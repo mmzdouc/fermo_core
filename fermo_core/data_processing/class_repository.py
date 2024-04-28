@@ -23,7 +23,6 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-import logging
 from typing import Union, Self
 
 from pydantic import BaseModel
@@ -31,11 +30,9 @@ from pydantic import BaseModel
 from fermo_core.data_processing.builder_feature.dataclass_feature import Feature
 from fermo_core.data_processing.builder_sample.dataclass_sample import Sample
 
-logger = logging.getLogger("fermo_core")
-
 
 class Repository(BaseModel):
-    """Handles addition, retrieval, and modification of class instances.
+    """Handles addition, retrieval, modification, and deletion of class instances.
 
     Attributes:
         entries: a dict to store instances of the class in repository
@@ -53,14 +50,10 @@ class Repository(BaseModel):
         Raises:
             ValueError: Cannot add entry because it already exists in the repository.
         """
-        if identifier not in self.entries:
+        if self.entries.get(identifier) is None:
             self.entries[identifier] = entry
         else:
-            try:
-                raise ValueError(f"Object '{identifier}' already exists in repository.")
-            except ValueError as e:
-                logger.error(str(e))
-                raise e
+            raise ValueError(f"Object '{identifier}' already exists in repository.")
 
     def get(self: Self, identifier: Union[int, str]) -> Union[Feature, Sample]:
         """Get an entry from the repository dict.
@@ -74,14 +67,10 @@ class Repository(BaseModel):
         Raises:
             KeyError: Cannot get the entry because it does not exist in repository.
         """
-        if identifier in self.entries:
-            return self.entries.get(identifier)
+        if (entry := self.entries.get(identifier)) is not None:
+            return entry
         else:
-            try:
-                raise KeyError(f"Object '{identifier}' does not exist in repository.")
-            except KeyError as e:
-                logger.error(str(e))
-                raise e
+            raise KeyError(f"Object '{identifier}' does not exist in repository.")
 
     def modify(self: Self, identifier: Union[int, str], entry: Union[Feature, Sample]):
         """Modify an entry by overwriting it.
@@ -93,14 +82,10 @@ class Repository(BaseModel):
         Raises:
             KeyError: Cannot modify entry because it does not exist in the repository.
         """
-        if identifier in self.entries:
+        if self.entries.get(identifier) is not None:
             self.entries[identifier] = entry
         else:
-            try:
-                raise KeyError(f"Object '{identifier}' does not exist in repository.")
-            except KeyError as e:
-                logger.error(str(e))
-                raise e
+            raise KeyError(f"Object '{identifier}' does not exist in repository.")
 
     def remove(self: Self, identifier: Union[int, str]):
         """Remove an entry from Repository.
@@ -111,11 +96,7 @@ class Repository(BaseModel):
         Raises:
             KeyError: Cannot remove entry because it does not exist in the repository.
         """
-        if identifier in self.entries:
+        if self.entries.get(identifier) is not None:
             del self.entries[identifier]
         else:
-            try:
-                raise KeyError(f"Object '{identifier}' does not exist in repository.")
-            except KeyError as e:
-                logger.error(str(e))
-                raise e
+            raise KeyError(f"Object '{identifier}' does not exist in repository.")
