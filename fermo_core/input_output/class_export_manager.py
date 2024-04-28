@@ -247,7 +247,18 @@ class ExportManager(BaseModel):
             try:
                 feature = self.features.get(f_id)
                 return "|".join([s for s in feature.samples])
-            except KeyError:
+            except KeyError as e:
+                logger.debug(str(e))
+                if f_id in self.stats.inactive_features:
+                    logger.debug(
+                        f"'ExportManager': Feature id '{f_id}' has been "
+                        f"filtered from 'active_features' due to filter settings."
+                    )
+                else:
+                    logger.warning(
+                        f"'ExportManager': Feature id '{f_id}' not found in  "
+                        f"'inactive_features'. This is suspicious."
+                    )
                 return None
 
         self.df["fermo:samples"] = self.df["id"].map(lambda x: _add_sample_info(f_id=x))
@@ -286,7 +297,18 @@ class ExportManager(BaseModel):
         for f_id in self.stats.active_features:
             try:
                 feature = self.features.get(f_id)
-            except KeyError:
+            except KeyError as e:
+                logger.debug(str(e))
+                if f_id in self.stats.inactive_features:
+                    logger.debug(
+                        f"'ExportManager': Feature id '{f_id}' has been "
+                        f"filtered from 'active_features' due to filter settings."
+                    )
+                else:
+                    logger.warning(
+                        f"'ExportManager': Feature id '{f_id}' not found in  "
+                        f"'inactive_features'. This is suspicious."
+                    )
                 continue
 
             try:
