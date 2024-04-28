@@ -346,11 +346,11 @@ class AnnotationManager(BaseModel):
         """Annotate Features from existing MS2Query results"""
         if self.params.Ms2QueryAnnotationParameters.activate_module is True:
             logger.warning(
-                f"'AnnotationManager': both an MS2Query result table and instruction "
+                f"'AnnotationManager': both an MS2Query result file and instructions "
                 f"for running the MS2Query algorithm were provided. In this case, "
-                f"the existing MS2Query result table '"
-                f"{self.params.MS2QueryResultsParameters.filepath.name}' takes "
-                f"precedence."
+                f"the existing MS2Query results file "
+                f"'{self.params.MS2QueryResultsParameters.filepath.name}' takes "
+                f"precedence. "
             )
 
         logger.info(
@@ -374,6 +374,7 @@ class AnnotationManager(BaseModel):
             logger.warning(
                 "'AnnotationManager': Error during MS2Query Results Assignment - SKIP"
             )
+            return
 
         logger.info(
             "'AnnotationManager': completed annotation from existing MS2Query "
@@ -381,14 +382,14 @@ class AnnotationManager(BaseModel):
         )
 
     def run_ms2query_annotation(self: Self):
-        """Perform annotation of feature MS2 using ms2query"""
+        """Perform annotation of feature MS2 using ms2query - run algorithm"""
         if self.params.MS2QueryResultsParameters is not None:
             logger.warning(
-                f"'AnnotationManager': both an MS2Query result table and instruction "
+                f"'AnnotationManager': both an MS2Query result file and instructions "
                 f"for running the MS2Query algorithm were provided. In this case, "
-                f"the existing MS2Query result table '"
-                f"{self.params.MS2QueryResultsParameters.filepath.name}' takes "
-                f"precedence."
+                f"the existing MS2Query results file "
+                f"'{self.params.MS2QueryResultsParameters.filepath.name}' takes "
+                f"precedence. "
             )
             logger.warning("'AnnotationManager': MS2QueryAnnotator - SKIP ")
             return
@@ -401,30 +402,15 @@ class AnnotationManager(BaseModel):
             active_features=self.stats.active_features,
             cutoff=self.params.Ms2QueryAnnotationParameters.score_cutoff,
         )
+
         try:
             ms2query_annotator.run_ms2query()
             self.features = ms2query_annotator.return_features()
-        # TODO(MMZ 26.04.24): change so that errors are caught generally
-
-        except RuntimeError:
-            return
-        except urllib.error.URLError:
-            return
-        except func_timeout.FunctionTimedOut:
-            return
-        except FileExistsError as e:
-            logger.error(
-                "'AnnotationManager/MS2QueryAnnotator': error in file reading/writing "
-                "- ERROR"
+        except Exception as e:
+            logger.warning(str(e))
+            logger.warning(
+                "'AnnotationManager': Error in running MS2QueryAnnotator - SKIP"
             )
-            logger.error(str(e))
-            return
-        except AssertionError as e:
-            logger.error(
-                "'AnnotationManager/MS2QueryAnnotator': error MS2Query spectrum "
-                "processing - ERROR"
-            )
-            logger.error(str(e))
             return
 
         logger.info("'AnnotationManager': completed annotation using MS2Query")

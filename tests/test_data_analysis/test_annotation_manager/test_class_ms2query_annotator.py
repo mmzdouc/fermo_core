@@ -1,6 +1,7 @@
 import numpy as np
 import pytest
 
+from fermo_core.config.class_default_settings import DefaultPaths
 from fermo_core.data_analysis.annotation_manager.class_ms2query_annotator import (
     MS2QueryAnnotator,
 )
@@ -60,6 +61,64 @@ def test_prepare_queries_invalid(ms2query_annotator):
     ms2query_annotator.features.entries.get(20).blank = True
     with pytest.raises(RuntimeError):
         ms2query_annotator.prepare_queries()
+
+
+def test_estimate_calc_time_valid(ms2query_annotator):
+    ms2query_annotator.prepare_queries()
+    assert ms2query_annotator.estimate_calc_time() is None
+
+
+def test_estimate_calc_time_skip(ms2query_annotator):
+    ms2query_annotator.params.Ms2QueryAnnotationParameters.maximum_runtime = 0
+    ms2query_annotator.prepare_queries()
+    assert ms2query_annotator.estimate_calc_time() is None
+
+
+def test_estimate_calc_time_no_queries(ms2query_annotator):
+    with pytest.raises(RuntimeError):
+        ms2query_annotator.estimate_calc_time()
+
+
+def test_estimate_calc_time_timeout(ms2query_annotator):
+    ms2query_annotator.params.Ms2QueryAnnotationParameters.maximum_runtime = 1
+    ms2query_annotator.prepare_queries()
+    with pytest.raises(RuntimeError):
+        ms2query_annotator.estimate_calc_time()
+
+
+def test_create_ms2query_dirs(ms2query_annotator):
+    ms2query_annotator.create_ms2query_dirs()
+    assert DefaultPaths().dirpath_ms2query_base.joinpath("queries").exists()
+    assert DefaultPaths().dirpath_ms2query_base.joinpath("results").exists()
+
+
+def test_remove_ms2query_temp_files(ms2query_annotator):
+    DefaultPaths().dirpath_ms2query_base.joinpath("queries/f_queries.mgf").touch(
+        exist_ok=True
+    )
+    DefaultPaths().dirpath_ms2query_base.joinpath("results/f_queries.csv").touch(
+        exist_ok=True
+    )
+    ms2query_annotator.remove_ms2query_temp_files()
+    assert (
+        not DefaultPaths()
+        .dirpath_ms2query_base.joinpath("queries/f_queries.mgf")
+        .exists()
+    )
+    assert (
+        not DefaultPaths()
+        .dirpath_ms2query_base.joinpath("results/f_queries.csv")
+        .exists()
+    )
+
+
+def test_assign_feature_info_results_invalid(ms2query_annotator):
+    ms2query_annotator.cutoff = 0.4
+    ms2query_annotator.active_features = {99}
+    ms2query_annotator.assign_feature_info(
+        "tests/test_data_analysis/test_annotation_manager/dummy_results_ms2query.csv"
+    )
+    assert ms2query_annotator.features.entries[20].Annotations is None
 
 
 def test_assign_feature_info_valid(ms2query_annotator):
