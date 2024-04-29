@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../../css/style.css">
+
+<script type="text/javascript" src="../../js/jquery.js"></script>
+<script type="text/javascript" src="../../js/jquery.tablesorter.min.js"></script>
+
+<script type="text/javascript" >
+var counter = 1;
+function addInput(divName){
+     var newdiv = document.createElement('div');
+     newdiv.innerHTML = "<b>Locus " + (counter + 1) + "</b><br> GenBank accession: <input type='text' required name='myInputs[]'> Start nt: <input type='number' name='myStartCoords[]' placeholder='N/A'> End nt: <input type='number' name='myEndCoords[]' placeholder='N/A'> <br><br>";
+     document.getElementById(divName).appendChild(newdiv);
+     counter++;
+}
+</script>
+
+<script>
+$(document).ready(function()
+    {
+        $("#myTable").tablesorter();
+    }
+);
+
+</script>
+<style>
+table {
+    border-width: thin;
+    border-spacing: 2px;
+    border-style: none;
+    border-color: black;
+}
+</style>
+</head>
+<body>
+    <table id="myTable" class="tablesorter" border=1>
+    <thead>
+    <tr>
+        <th>MIBiG Protein</th>
+        <th>Description</th>
+        <th>MIBiG Cluster</th>
+        <th>MiBiG Product</th>
+        <th>% ID</th>
+        <th>% Coverage</th>
+        <th>BLAST Score</th>
+        <th>E-value</th>
+    </tr>
+    </thead>
+    <tbody>
+
+          <tr>
+              <td>AAM78025.1</td>
+              <td>Unknown</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0000112/1">BGC0000112</a></td>
+              <td>Polyketide:Iterative type I polyketide+Polyketide:Enediyne type I polyketide</td>
+              <td>66.0</td>
+              <td>101.4</td>
+              <td>372.0</td>
+              <td>4.86e-130</td>
+          </tr>
+
+          <tr>
+              <td>AFV52144.1</td>
+              <td>hypothetical_protein</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0000081/1">BGC0000081</a></td>
+              <td>NRP+Polyketide:Iterative type I polyketide+Polyketide:Enediyne type I polyketide</td>
+              <td>67.0</td>
+              <td>101.4</td>
+              <td>359.0</td>
+              <td>5.98e-125</td>
+          </tr>
+
+          <tr>
+              <td>AAM94767.1</td>
+              <td>CalU6</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0000033/1">BGC0000033</a></td>
+              <td>Polyketide</td>
+              <td>52.0</td>
+              <td>101.0</td>
+              <td>267.0</td>
+              <td>1.11e-88</td>
+          </tr>
+
+          <tr>
+              <td>ACB47052.1</td>
+              <td>DynU6</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0001060/1">BGC0001060</a></td>
+              <td>Polyketide</td>
+              <td>53.0</td>
+              <td>100.0</td>
+              <td>250.0</td>
+              <td>4.36e-82</td>
+          </tr>
+
+          <tr>
+              <td>QIJ31524.1</td>
+              <td>SgdU6</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0002545/1">BGC0002545</a></td>
+              <td>Polyketide</td>
+              <td>48.0</td>
+              <td>100.3</td>
+              <td>226.0</td>
+              <td>1.43e-72</td>
+          </tr>
+
+    </tbody>
+  </table>
+</body>

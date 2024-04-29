@@ -1,0 +1,90 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" x="0" y="0" height="230" width="800" viewBox="0 0 800 230" preserveAspectRatio="none"  >
+<g label="Query sequence" class="clusterblast-cluster"  >
+<text x="5" y="20" class="clusterblast-acc"  >
+Query sequence</text>
+<line x1="10" y1="35" x2="778.0" y2="35" style="stroke-width:1; stroke:grey; "  />
+<polygon points="0,35 5,30 24,30 24,40 5,40 0,35 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;HS041_24960&lt;/b&gt;&lt;br&gt;hypothetical protein&lt;br&gt;Location: 753374 - 753986" locus_tag="HS041_24960" class="clusterblast-orf" id="dummy-3_q0_0_all"  />
+<polygon points="51,35 56,30 99,30 99,40 56,40 51,35 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;HS041_24965&lt;/b&gt;&lt;br&gt;hypothetical protein&lt;br&gt;Location: 754683 - 755901" locus_tag="HS041_24965" class="clusterblast-orf" id="dummy-3_q1_0_all"  />
+<polygon points="107,40 128,40 133,35 128,30 107,30 107,40 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;HS041_24970&lt;/b&gt;&lt;br&gt;response regulator transcription factor&lt;br&gt;Location: 756095 - 756752" locus_tag="HS041_24970" class="clusterblast-orf" id="dummy-3_q2_0_all"  />
+<polygon points="132,35 137,30 200,30 200,40 137,40 132,35 " style="fill:#d81515; stroke-width:1; stroke:black; " description="&lt;b&gt;HS041_24975&lt;/b&gt;&lt;br&gt;ABC transporter ATP-binding protein&lt;br&gt;Location: 756733 - 758476" locus_tag="HS041_24975" class="clusterblast-orf" id="dummy-3_q3_0_all"  />
+<polygon points="200,35 205,30 268,30 268,40 205,40 200,35 " style="fill:#4dd815; stroke-width:1; stroke:black; " description="&lt;b&gt;HS041_24980&lt;/b&gt;&lt;br&gt;ABC transporter ATP-binding protein&lt;br&gt;Location: 758472 - 760203" locus_tag="HS041_24980" class="clusterblast-orf" id="dummy-3_q4_0_all"  />
+<polygon points="272,35 276,30 276,40 272,35 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;HS041_24985&lt;/b&gt;&lt;br&gt;SapB/AmfS family lantipeptide&lt;br&gt;Location: 760296 - 760410" locus_tag="HS041_24985" class="clusterblast-orf" id="dummy-3_q5_0_all"  />
+<polygon points="279,35 284,30 388,30 388,40 284,40 279,35 " style="fill:#1585d8; stroke-width:1; stroke:black; " description="&lt;b&gt;HS041_24990&lt;/b&gt;&lt;br&gt;protein kinase/lanthionine synthetase C family protein&lt;br&gt;Location: 760480 - 763255" locus_tag="HS041_24990" class="clusterblast-orf" id="dummy-3_q6_0_all"  />
+<polygon points="394,35 399,30 423,30 423,40 399,40 394,35 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;HS041_24995&lt;/b&gt;&lt;br&gt;hypothetical protein&lt;br&gt;Location: 763401 - 764133" locus_tag="HS041_24995" class="clusterblast-orf" id="dummy-3_q7_0_all"  />
+<polygon points="429,35 434,30 457,30 457,40 434,40 429,35 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;HS041_25000&lt;/b&gt;&lt;br&gt;M50 family metallopeptidase&lt;br&gt;Location: 764287 - 765001" locus_tag="HS041_25000" class="clusterblast-orf" id="dummy-3_q8_0_all"  />
+<polygon points="463,35 468,30 550,30 550,40 468,40 463,35 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;HS041_25005&lt;/b&gt;&lt;br&gt;MFS transporter&lt;br&gt;Location: 765160 - 767371" locus_tag="HS041_25005" class="clusterblast-orf" id="dummy-3_q9_0_all"  />
+<polygon points="558,40 597,40 602,35 597,30 558,30 558,40 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;HS041_25010&lt;/b&gt;&lt;br&gt;hypothetical protein&lt;br&gt;Location: 767581 - 768694" locus_tag="HS041_25010" class="clusterblast-orf" id="dummy-3_q10_0_all"  />
+<polygon points="605,35 610,30 639,30 639,40 610,40 605,35 " style="fill:#d815bc; stroke-width:1; stroke:black; " description="&lt;b&gt;HS041_25015&lt;/b&gt;&lt;br&gt;ABC transporter permease&lt;br&gt;Location: 768787 - 769642" locus_tag="HS041_25015" class="clusterblast-orf" id="dummy-3_q11_0_all"  />
+<polygon points="642,35 647,30 681,30 681,40 647,40 642,35 " style="fill:#d8bc15; stroke-width:1; stroke:black; " description="&lt;b&gt;HS041_25020&lt;/b&gt;&lt;br&gt;ATP-binding cassette domain-containing protein&lt;br&gt;Location: 769729 - 770704" locus_tag="HS041_25020" class="clusterblast-orf" id="dummy-3_q12_0_all"  />
+<polygon points="691,35 696,30 715,30 715,40 696,40 691,35 " style="fill:#15d885; stroke-width:1; stroke:black; " description="&lt;b&gt;HS041_25025&lt;/b&gt;&lt;br&gt;TetR/AcrR family transcriptional regulator&lt;br&gt;Location: 770968 - 771568" locus_tag="HS041_25025" class="clusterblast-orf" id="dummy-3_q13_0_all"  />
+<polygon points="718,40 775,40 780,35 775,30 718,30 718,40 " style="fill:#4d15d8; stroke-width:1; stroke:black; " description="&lt;b&gt;HS041_25030&lt;/b&gt;&lt;br&gt;methylcrotonoyl-CoA carboxylase&lt;br&gt;Location: 771657 - 773226" locus_tag="HS041_25030" class="clusterblast-orf" id="dummy-3_q14_0_all"  />
+</g>
+<g label="BGC0000503" description="BGC0000503_c1: cinnamycin (9% of genes show similarity), RiPP:Lanthipeptide" class="clusterblast-cluster"  >
+<text x="5" y="70" class="clusterblast-acc"  >
+<a xlink:href="https://mibig.secondarymetabolites.org/go/BGC0000503/1" target="_blank">BGC0000503</a>: cinnamycin                                                                       (9% of genes show similarity), RiPP:Lanthipeptide</text>
+<line x1="10" y1="85" x2="778.0" y2="85" style="stroke-width:1; stroke:grey; "  />
+</g>
+<g id="a3_000"  >
+<polygon points="54,85 59,80 75,80 75,90 59,90 54,85 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;CAD60536.1&lt;/b&gt;&lt;br&gt;Cinorf14 protein&lt;br&gt;Location: 17083 - 16549" locus_tag="CAD60536.1" class="clusterblast-orf" id="dummy-3_h3_7_0"  />
+</g>
+<g id="a3_001"  >
+<polygon points="77,85 82,80 100,80 100,90 82,90 77,85 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;CAD60535.1&lt;/b&gt;&lt;br&gt;Cinorf13 protein&lt;br&gt;Location: 16496 - 15912" locus_tag="CAD60535.1" class="clusterblast-orf" id="dummy-3_h3_7_1"  />
+</g>
+<g id="a3_002"  >
+<polygon points="101,85 106,80 121,80 121,90 106,90 101,85 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;CAD60534.1&lt;/b&gt;&lt;br&gt;Cinorf12 protein&lt;br&gt;Location: 15872 - 15381" locus_tag="CAD60534.1" class="clusterblast-orf" id="dummy-3_h3_7_2"  />
+</g>
+<g id="a3_003"  >
+<polygon points="129,90 155,90 160,85 155,80 129,80 129,90 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;CAD60533.1&lt;/b&gt;&lt;br&gt;CinR1 protein&lt;br&gt;Location: 15160 - 14375" locus_tag="CAD60533.1" class="clusterblast-orf" id="dummy-3_h3_7_3"  />
+</g>
+<g id="a3_004"  >
+<polygon points="138,85 143,80 185,80 185,90 143,90 138,85 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;CAD60532.1&lt;/b&gt;&lt;br&gt;Cinorf11 protein&lt;br&gt;Location: 14944 - 13754" locus_tag="CAD60532.1" class="clusterblast-orf" id="dummy-3_h3_7_4"  />
+</g>
+<g id="a3_005"  >
+<polygon points="185,85 190,80 204,80 204,90 190,90 185,85 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;CAD60531.1&lt;/b&gt;&lt;br&gt;Cinorf10 protein&lt;br&gt;Location: 13754 - 13257" locus_tag="CAD60531.1" class="clusterblast-orf" id="dummy-3_h3_7_5"  />
+</g>
+<g id="a3_006"  >
+<polygon points="221,90 258,90 263,85 258,80 221,80 221,90 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;CAD60530.1&lt;/b&gt;&lt;br&gt;CinK protein&lt;br&gt;Location: 12822 - 11758" locus_tag="CAD60530.1" class="clusterblast-orf" id="dummy-3_h3_7_6"  />
+</g>
+<g id="a3_007"  >
+<polygon points="263,90 284,90 289,85 284,80 263,80 263,90 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;CAD60529.1&lt;/b&gt;&lt;br&gt;CinR protein&lt;br&gt;Location: 11761 - 11111" locus_tag="CAD60529.1" class="clusterblast-orf" id="dummy-3_h3_7_7"  />
+</g>
+<g id="a3_008"  >
+<polygon points="290,85 295,80 302,80 302,90 295,90 290,85 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;CAD60528.1&lt;/b&gt;&lt;br&gt;Cinorf9 protein&lt;br&gt;Location: 11078 - 10758" locus_tag="CAD60528.1" class="clusterblast-orf" id="dummy-3_h3_7_8"  />
+</g>
+<g id="a3_009"  >
+<polygon points="306,85 311,80 323,80 323,90 311,90 306,85 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;CAD60527.1&lt;/b&gt;&lt;br&gt;Cinorf8 protein&lt;br&gt;Location: 10665 - 10246" locus_tag="CAD60527.1" class="clusterblast-orf" id="dummy-3_h3_7_9"  />
+</g>
+<g id="a3_0010"  >
+<polygon points="325,90 345,90 350,85 345,80 325,80 325,90 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;CAD60526.1&lt;/b&gt;&lt;br&gt;CinZ protein&lt;br&gt;Location: 10171 - 9545" locus_tag="CAD60526.1" class="clusterblast-orf" id="dummy-3_h3_7_10"  />
+</g>
+<g id="a3_0011"  >
+<polygon points="353,85 358,80 393,80 393,90 358,90 353,85 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;CAD60525.1&lt;/b&gt;&lt;br&gt;CinY protein&lt;br&gt;Location: 9466 - 8444" locus_tag="CAD60525.1" class="clusterblast-orf" id="dummy-3_h3_7_11"  />
+</g>
+<g id="a3_0012"  >
+<polygon points="397,85 402,80 432,80 432,90 402,90 397,85 " style="fill:#d815bc; stroke-width:1; stroke:black; " description="&lt;b&gt;CAD60524.1&lt;/b&gt;&lt;br&gt;CinH protein&lt;br&gt;Location: 8341 - 7469&lt;br&gt;&lt;br&gt;&lt;b&gt;BlastP hit with HS041_25015&lt;/b&gt;&lt;br&gt;Percentage identity: 46&lt;br&gt;Percentage coverage: 101&lt;br&gt;BLAST bit score: 223&lt;br&gt;E-value: 5.98e-72" locus_tag="CAD60524.1" class="clusterblast-orf" id="dummy-3_h3_7_12"  />
+</g>
+<g id="a3_0013"  >
+<polygon points="432,85 437,80 468,80 468,90 437,90 432,85 " style="fill:#d8bc15; stroke-width:1; stroke:black; " description="&lt;b&gt;CAD60523.1&lt;/b&gt;&lt;br&gt;CinT protein&lt;br&gt;Location: 7472 - 6543&lt;br&gt;&lt;br&gt;&lt;b&gt;BlastP hit with HS041_25020&lt;/b&gt;&lt;br&gt;Percentage identity: 58&lt;br&gt;Percentage coverage: 91&lt;br&gt;BLAST bit score: 327&lt;br&gt;E-value: 9.47e-112" locus_tag="CAD60523.1" class="clusterblast-orf" id="dummy-3_h3_7_13"  />
+</g>
+<g id="a3_0014"  >
+<polygon points="477,85 482,80 515,80 515,90 482,90 477,85 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;CAD60522.1&lt;/b&gt;&lt;br&gt;CinX protein&lt;br&gt;Location: 6317 - 5340" locus_tag="CAD60522.1" class="clusterblast-orf" id="dummy-3_h3_7_14"  />
+</g>
+<g id="a3_0015"  >
+<polygon points="516,85 521,80 644,80 644,90 521,90 516,85 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;CAD60521.1&lt;/b&gt;&lt;br&gt;CinM protein&lt;br&gt;Location: 5325 - 2059" locus_tag="CAD60521.1" class="clusterblast-orf" id="dummy-3_h3_7_15"  />
+</g>
+<g id="a3_0016"  >
+<polygon points="650,85 655,80 659,80 659,90 655,90 650,85 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;CAD60520.1&lt;/b&gt;&lt;br&gt;preprocinnamycin&lt;br&gt;Location: 1907 - 1671" locus_tag="CAD60520.1" class="clusterblast-orf" id="dummy-3_h3_7_16"  />
+</g>
+<g id="a3_0017"  >
+<polygon points="661,85 666,80 675,80 675,90 666,90 661,85 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;CAD60519.1&lt;/b&gt;&lt;br&gt;Cin orf7 protein&lt;br&gt;Location: 1626 - 1267" locus_tag="CAD60519.1" class="clusterblast-orf" id="dummy-3_h3_7_17"  />
+</g>
+<g id="a3_0018"  >
+<polygon points="678,85 682,80 682,90 678,85 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;CAD60518.1&lt;/b&gt;&lt;br&gt;hypothetical protein&lt;br&gt;Location: 1198 - 1109" locus_tag="CAD60518.1" class="clusterblast-orf" id="dummy-3_h3_7_18"  />
+</g>
+<g id="a3_0019"  >
+<polygon points="685,85 690,80 707,80 707,90 690,90 685,85 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;CAD60517.1&lt;/b&gt;&lt;br&gt;Cinorf4 protein&lt;br&gt;Location: 1026 - 454" locus_tag="CAD60517.1" class="clusterblast-orf" id="dummy-3_h3_7_19"  />
+</g>
+<g id="a3_0020"  >
+<polygon points="712,90 720,90 725,85 720,80 712,80 712,90 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;CAD60516.1&lt;/b&gt;&lt;br&gt;Cinorf3 protein&lt;br&gt;Location: 346 - 1" locus_tag="CAD60516.1" class="clusterblast-orf" id="dummy-3_h3_7_20"  />
+</g>
+</svg>

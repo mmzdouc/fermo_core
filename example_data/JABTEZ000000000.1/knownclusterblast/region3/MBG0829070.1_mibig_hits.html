@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../../css/style.css">
+
+<script type="text/javascript" src="../../js/jquery.js"></script>
+<script type="text/javascript" src="../../js/jquery.tablesorter.min.js"></script>
+
+<script type="text/javascript" >
+var counter = 1;
+function addInput(divName){
+     var newdiv = document.createElement('div');
+     newdiv.innerHTML = "<b>Locus " + (counter + 1) + "</b><br> GenBank accession: <input type='text' required name='myInputs[]'> Start nt: <input type='number' name='myStartCoords[]' placeholder='N/A'> End nt: <input type='number' name='myEndCoords[]' placeholder='N/A'> <br><br>";
+     document.getElementById(divName).appendChild(newdiv);
+     counter++;
+}
+</script>
+
+<script>
+$(document).ready(function()
+    {
+        $("#myTable").tablesorter();
+    }
+);
+
+</script>
+<style>
+table {
+    border-width: thin;
+    border-spacing: 2px;
+    border-style: none;
+    border-color: black;
+}
+</style>
+</head>
+<body>
+    <table id="myTable" class="tablesorter" border=1>
+    <thead>
+    <tr>
+        <th>MIBiG Protein</th>
+        <th>Description</th>
+        <th>MIBiG Cluster</th>
+        <th>MiBiG Product</th>
+        <th>% ID</th>
+        <th>% Coverage</th>
+        <th>BLAST Score</th>
+        <th>E-value</th>
+    </tr>
+    </thead>
+    <tbody>
+
+          <tr>
+              <td>AFV52132.1</td>
+              <td>hypothetical_protein</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0000081/1">BGC0000081</a></td>
+              <td>NRP+Polyketide:Iterative type I polyketide+Polyketide:Enediyne type I polyketide</td>
+              <td>55.0</td>
+              <td>96.0</td>
+              <td>307.0</td>
+              <td>3.97e-103</td>
+          </tr>
+
+          <tr>
+              <td>ABY66000.1</td>
+              <td>unknown</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0001008/1">BGC0001008</a></td>
+              <td>Polyketide:Iterative type I polyketide+Polyketide:Enediyne type I polyketide</td>
+              <td>53.0</td>
+              <td>98.3</td>
+              <td>307.0</td>
+              <td>1.08e-102</td>
+          </tr>
+
+          <tr>
+              <td>ABP55147.1</td>
+              <td>alkylhydroperoxidase_like_protein,_AhpD_family</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0000150/1">BGC0000150</a></td>
+              <td>NRP+Polyketide:Enediyne type I polyketide</td>
+              <td>52.0</td>
+              <td>100.0</td>
+              <td>306.0</td>
+              <td>1.3e-102</td>
+          </tr>
+
+          <tr>
+              <td>AAL06686.1</td>
+              <td>Unknown</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0000965/1">BGC0000965</a></td>
+              <td>Polyketide:Iterative type I polyketide+Polyketide:Enediyne type I polyketide</td>
+              <td>52.0</td>
+              <td>98.9</td>
+              <td>292.0</td>
+              <td>4.56e-97</td>
+          </tr>
+
+          <tr>
+              <td>ALU98448.1</td>
+              <td>alkylhydroperoxidase</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0001397/1">BGC0001397</a></td>
+              <td>NRP+Polyketide</td>
+              <td>52.0</td>
+              <td>98.9</td>
+              <td>292.0</td>
+              <td>4.56e-97</td>
+          </tr>
+
+          <tr>
+              <td>ANY94456.1</td>
+              <td>hypothetical_protein</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0001584/1">BGC0001584</a></td>
+              <td>Polyketide</td>
+              <td>52.0</td>
+              <td>98.3</td>
+              <td>288.0</td>
+              <td>1.84e-95</td>
+          </tr>
+
+          <tr>
+              <td>AAM77983.1</td>
+              <td>Unknown</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0000112/1">BGC0000112</a></td>
+              <td>Polyketide:Iterative type I polyketide+Polyketide:Enediyne type I polyketide</td>
+              <td>48.0</td>
+              <td>97.7</td>
+              <td>260.0</td>
+              <td>1.52e-84</td>
+          </tr>
+
+          <tr>
+              <td>ATV95641.1</td>
+              <td>alkylhydroperoxidase_like_protein</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0001503/1">BGC0001503</a></td>
+              <td>Polyketide</td>
+              <td>49.0</td>
+              <td>54.4</td>
+              <td>149.0</td>
+              <td>1.59e-43</td>
+          </tr>
+
+          <tr>
+              <td>ATV95642.1</td>
+              <td>alkyhydroperoxidase</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0001503/1">BGC0001503</a></td>
+              <td>Polyketide</td>
+              <td>63.0</td>
+              <td>27.5</td>
+              <td>119.0</td>
+              <td>3.52e-32</td>
+          </tr>
+
+    </tbody>
+  </table>
+</body>

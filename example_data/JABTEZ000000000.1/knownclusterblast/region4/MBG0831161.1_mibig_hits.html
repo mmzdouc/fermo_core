@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../../css/style.css">
+
+<script type="text/javascript" src="../../js/jquery.js"></script>
+<script type="text/javascript" src="../../js/jquery.tablesorter.min.js"></script>
+
+<script type="text/javascript" >
+var counter = 1;
+function addInput(divName){
+     var newdiv = document.createElement('div');
+     newdiv.innerHTML = "<b>Locus " + (counter + 1) + "</b><br> GenBank accession: <input type='text' required name='myInputs[]'> Start nt: <input type='number' name='myStartCoords[]' placeholder='N/A'> End nt: <input type='number' name='myEndCoords[]' placeholder='N/A'> <br><br>";
+     document.getElementById(divName).appendChild(newdiv);
+     counter++;
+}
+</script>
+
+<script>
+$(document).ready(function()
+    {
+        $("#myTable").tablesorter();
+    }
+);
+
+</script>
+<style>
+table {
+    border-width: thin;
+    border-spacing: 2px;
+    border-style: none;
+    border-color: black;
+}
+</style>
+</head>
+<body>
+    <table id="myTable" class="tablesorter" border=1>
+    <thead>
+    <tr>
+        <th>MIBiG Protein</th>
+        <th>Description</th>
+        <th>MIBiG Cluster</th>
+        <th>MiBiG Product</th>
+        <th>% ID</th>
+        <th>% Coverage</th>
+        <th>BLAST Score</th>
+        <th>E-value</th>
+    </tr>
+    </thead>
+    <tbody>
+
+          <tr>
+              <td>AWX24495.1</td>
+              <td>tryptophan_2,3-dioxygenase</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0001695/1">BGC0001695</a></td>
+              <td>NRP</td>
+              <td>56.0</td>
+              <td>94.7</td>
+              <td>292.0</td>
+              <td>3.18e-99</td>
+          </tr>
+
+          <tr>
+              <td>BBD17752.1</td>
+              <td>tryptophan_dioxygenase</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0001918/1">BGC0001918</a></td>
+              <td>NRP+Polyketide</td>
+              <td>52.0</td>
+              <td>93.2</td>
+              <td>279.0</td>
+              <td>3.26e-94</td>
+          </tr>
+
+          <tr>
+              <td>antaN</td>
+              <td>tryptophan_2,3-dioxygenase</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0001455/1">BGC0001455</a></td>
+              <td>NRP+Polyketide</td>
+              <td>52.0</td>
+              <td>93.6</td>
+              <td>273.0</td>
+              <td>9.37e-92</td>
+          </tr>
+
+          <tr>
+              <td>BBD17773.1</td>
+              <td>tryptophan_dioxygenase</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0001919/1">BGC0001919</a></td>
+              <td>NRP+Polyketide</td>
+              <td>50.0</td>
+              <td>94.3</td>
+              <td>266.0</td>
+              <td>6.77e-89</td>
+          </tr>
+
+          <tr>
+              <td>WP_003946507.1</td>
+              <td>tryptophan_2,3-dioxygenase_family_protein</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0000958/1">BGC0000958</a></td>
+              <td>NRP:Cyclic depsipeptide+Polyketide:Modular type I polyketide</td>
+              <td>50.0</td>
+              <td>95.4</td>
+              <td>259.0</td>
+              <td>5.31e-86</td>
+          </tr>
+
+          <tr>
+              <td>AKA54638.1</td>
+              <td>tryptophan_2,3-dioxygenase</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0001216/1">BGC0001216</a></td>
+              <td>NRP+Polyketide</td>
+              <td>47.0</td>
+              <td>95.4</td>
+              <td>240.0</td>
+              <td>9.61e-79</td>
+          </tr>
+
+          <tr>
+              <td>ADG27362.1</td>
+              <td>tryptophan_2,3-dioxygenase</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0000296/1">BGC0000296</a></td>
+              <td>NRP</td>
+              <td>46.0</td>
+              <td>92.9</td>
+              <td>217.0</td>
+              <td>1.45e-69</td>
+          </tr>
+
+          <tr>
+              <td>ACN39739.1</td>
+              <td>SibP</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0000428/1">BGC0000428</a></td>
+              <td>NRP</td>
+              <td>43.0</td>
+              <td>94.0</td>
+              <td>204.0</td>
+              <td>1.08e-64</td>
+          </tr>
+
+          <tr>
+              <td>QWT72299.1</td>
+              <td>tryptophan_2,3-dioxygenase</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0002430/1">BGC0002430</a></td>
+              <td>NRP+Saccharide</td>
+              <td>28.0</td>
+              <td>90.0</td>
+              <td>99.0</td>
+              <td>2.19e-24</td>
+          </tr>
+
+    </tbody>
+  </table>
+</body>

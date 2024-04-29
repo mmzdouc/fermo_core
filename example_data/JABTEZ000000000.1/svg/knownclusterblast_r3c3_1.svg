@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" x="0" y="0" height="230" width="800" viewBox="0 0 800 230" preserveAspectRatio="none"  >
+<g label="Query sequence" class="clusterblast-cluster"  >
+<text x="5" y="20" class="clusterblast-acc"  >
+Query sequence</text>
+<line x1="10" y1="35" x2="778.0" y2="35" style="stroke-width:1; stroke:grey; "  />
+<polygon points="0,35 5,30 24,30 24,40 5,40 0,35 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;HS041_24960&lt;/b&gt;&lt;br&gt;hypothetical protein&lt;br&gt;Location: 753374 - 753986" locus_tag="HS041_24960" class="clusterblast-orf" id="dummy-3_q0_0_all"  />
+<polygon points="51,35 56,30 99,30 99,40 56,40 51,35 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;HS041_24965&lt;/b&gt;&lt;br&gt;hypothetical protein&lt;br&gt;Location: 754683 - 755901" locus_tag="HS041_24965" class="clusterblast-orf" id="dummy-3_q1_0_all"  />
+<polygon points="107,40 128,40 133,35 128,30 107,30 107,40 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;HS041_24970&lt;/b&gt;&lt;br&gt;response regulator transcription factor&lt;br&gt;Location: 756095 - 756752" locus_tag="HS041_24970" class="clusterblast-orf" id="dummy-3_q2_0_all"  />
+<polygon points="132,35 137,30 200,30 200,40 137,40 132,35 " style="fill:#d81515; stroke-width:1; stroke:black; " description="&lt;b&gt;HS041_24975&lt;/b&gt;&lt;br&gt;ABC transporter ATP-binding protein&lt;br&gt;Location: 756733 - 758476" locus_tag="HS041_24975" class="clusterblast-orf" id="dummy-3_q3_0_all"  />
+<polygon points="200,35 205,30 268,30 268,40 205,40 200,35 " style="fill:#4dd815; stroke-width:1; stroke:black; " description="&lt;b&gt;HS041_24980&lt;/b&gt;&lt;br&gt;ABC transporter ATP-binding protein&lt;br&gt;Location: 758472 - 760203" locus_tag="HS041_24980" class="clusterblast-orf" id="dummy-3_q4_0_all"  />
+<polygon points="272,35 276,30 276,40 272,35 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;HS041_24985&lt;/b&gt;&lt;br&gt;SapB/AmfS family lantipeptide&lt;br&gt;Location: 760296 - 760410" locus_tag="HS041_24985" class="clusterblast-orf" id="dummy-3_q5_0_all"  />
+<polygon points="279,35 284,30 388,30 388,40 284,40 279,35 " style="fill:#1585d8; stroke-width:1; stroke:black; " description="&lt;b&gt;HS041_24990&lt;/b&gt;&lt;br&gt;protein kinase/lanthionine synthetase C family protein&lt;br&gt;Location: 760480 - 763255" locus_tag="HS041_24990" class="clusterblast-orf" id="dummy-3_q6_0_all"  />
+<polygon points="394,35 399,30 423,30 423,40 399,40 394,35 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;HS041_24995&lt;/b&gt;&lt;br&gt;hypothetical protein&lt;br&gt;Location: 763401 - 764133" locus_tag="HS041_24995" class="clusterblast-orf" id="dummy-3_q7_0_all"  />
+<polygon points="429,35 434,30 457,30 457,40 434,40 429,35 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;HS041_25000&lt;/b&gt;&lt;br&gt;M50 family metallopeptidase&lt;br&gt;Location: 764287 - 765001" locus_tag="HS041_25000" class="clusterblast-orf" id="dummy-3_q8_0_all"  />
+<polygon points="463,35 468,30 550,30 550,40 468,40 463,35 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;HS041_25005&lt;/b&gt;&lt;br&gt;MFS transporter&lt;br&gt;Location: 765160 - 767371" locus_tag="HS041_25005" class="clusterblast-orf" id="dummy-3_q9_0_all"  />
+<polygon points="558,40 597,40 602,35 597,30 558,30 558,40 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;HS041_25010&lt;/b&gt;&lt;br&gt;hypothetical protein&lt;br&gt;Location: 767581 - 768694" locus_tag="HS041_25010" class="clusterblast-orf" id="dummy-3_q10_0_all"  />
+<polygon points="605,35 610,30 639,30 639,40 610,40 605,35 " style="fill:#d815bc; stroke-width:1; stroke:black; " description="&lt;b&gt;HS041_25015&lt;/b&gt;&lt;br&gt;ABC transporter permease&lt;br&gt;Location: 768787 - 769642" locus_tag="HS041_25015" class="clusterblast-orf" id="dummy-3_q11_0_all"  />
+<polygon points="642,35 647,30 681,30 681,40 647,40 642,35 " style="fill:#d8bc15; stroke-width:1; stroke:black; " description="&lt;b&gt;HS041_25020&lt;/b&gt;&lt;br&gt;ATP-binding cassette domain-containing protein&lt;br&gt;Location: 769729 - 770704" locus_tag="HS041_25020" class="clusterblast-orf" id="dummy-3_q12_0_all"  />
+<polygon points="691,35 696,30 715,30 715,40 696,40 691,35 " style="fill:#15d885; stroke-width:1; stroke:black; " description="&lt;b&gt;HS041_25025&lt;/b&gt;&lt;br&gt;TetR/AcrR family transcriptional regulator&lt;br&gt;Location: 770968 - 771568" locus_tag="HS041_25025" class="clusterblast-orf" id="dummy-3_q13_0_all"  />
+<polygon points="718,40 775,40 780,35 775,30 718,30 718,40 " style="fill:#4d15d8; stroke-width:1; stroke:black; " description="&lt;b&gt;HS041_25030&lt;/b&gt;&lt;br&gt;methylcrotonoyl-CoA carboxylase&lt;br&gt;Location: 771657 - 773226" locus_tag="HS041_25030" class="clusterblast-orf" id="dummy-3_q14_0_all"  />
+</g>
+<g label="BGC0000501" description="BGC0000501_c1: catenulipeptin (60% of genes show similarity), RiPP:Lanthipeptide" class="clusterblast-cluster"  >
+<text x="5" y="70" class="clusterblast-acc"  >
+<a xlink:href="https://mibig.secondarymetabolites.org/go/BGC0000501/1" target="_blank">BGC0000501</a>: catenulipeptin                                                                   (60% of genes show similarity), RiPP:Lanthipeptide</text>
+<line x1="10" y1="85" x2="778.0" y2="85" style="stroke-width:1; stroke:grey; "  />
+</g>
+<g id="a3_000"  >
+<polygon points="248,85 253,80 320,80 320,90 253,90 248,85 " style="fill:#d81515; stroke-width:1; stroke:black; " description="&lt;b&gt;Caci_4243&lt;/b&gt;&lt;br&gt;ABC transporter related&lt;br&gt;Location: 7208 - 5379&lt;br&gt;&lt;br&gt;&lt;b&gt;BlastP hit with HS041_24975&lt;/b&gt;&lt;br&gt;Percentage identity: 49&lt;br&gt;Percentage coverage: 93&lt;br&gt;BLAST bit score: 414&lt;br&gt;E-value: 7.69e-138" locus_tag="Caci_4243" class="clusterblast-orf" id="dummy-3_h3_1_0"  />
+</g>
+<g id="a3_001"  >
+<polygon points="320,85 325,80 384,80 384,90 325,90 320,85 " style="fill:#4dd815; stroke-width:1; stroke:black; " description="&lt;b&gt;Caci_4242&lt;/b&gt;&lt;br&gt;ABC transporter related&lt;br&gt;Location: 5382 - 3742&lt;br&gt;&lt;br&gt;&lt;b&gt;BlastP hit with HS041_24980&lt;/b&gt;&lt;br&gt;Percentage identity: 49&lt;br&gt;Percentage coverage: 94&lt;br&gt;BLAST bit score: 441&lt;br&gt;E-value: 4.04e-149" locus_tag="Caci_4242" class="clusterblast-orf" id="dummy-3_h3_1_1"  />
+</g>
+<g id="a3_002"  >
+<polygon points="387,90 411,90 416,85 411,80 387,80 387,90 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;Caci_4241&lt;/b&gt;&lt;br&gt;hypothetical protein&lt;br&gt;Location: 3663 - 2938" locus_tag="Caci_4241" class="clusterblast-orf" id="dummy-3_h3_1_2"  />
+</g>
+<g id="a3_003"  >
+<polygon points="422,85 427,80 428,80 428,90 427,90 422,85 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;Caci_4240&lt;/b&gt;&lt;br&gt;precursor&lt;br&gt;Location: 2774 - 2619" locus_tag="Caci_4240" class="clusterblast-orf" id="dummy-3_h3_1_3"  />
+</g>
+<g id="a3_004"  >
+<polygon points="428,85 433,80 531,80 531,90 433,90 428,85 " style="fill:#1585d8; stroke-width:1; stroke:black; " description="&lt;b&gt;Caci_4239&lt;/b&gt;&lt;br&gt;serine/threonine protein kinase&lt;br&gt;Location: 2613 - 1&lt;br&gt;&lt;br&gt;&lt;b&gt;BlastP hit with HS041_24990&lt;/b&gt;&lt;br&gt;Percentage identity: 49&lt;br&gt;Percentage coverage: 94&lt;br&gt;BLAST bit score: 778&lt;br&gt;E-value: 2.11e-271" locus_tag="Caci_4239" class="clusterblast-orf" id="dummy-3_h3_1_4"  />
+</g>
+</svg>

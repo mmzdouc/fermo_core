@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../../css/style.css">
+
+<script type="text/javascript" src="../../js/jquery.js"></script>
+<script type="text/javascript" src="../../js/jquery.tablesorter.min.js"></script>
+
+<script type="text/javascript" >
+var counter = 1;
+function addInput(divName){
+     var newdiv = document.createElement('div');
+     newdiv.innerHTML = "<b>Locus " + (counter + 1) + "</b><br> GenBank accession: <input type='text' required name='myInputs[]'> Start nt: <input type='number' name='myStartCoords[]' placeholder='N/A'> End nt: <input type='number' name='myEndCoords[]' placeholder='N/A'> <br><br>";
+     document.getElementById(divName).appendChild(newdiv);
+     counter++;
+}
+</script>
+
+<script>
+$(document).ready(function()
+    {
+        $("#myTable").tablesorter();
+    }
+);
+
+</script>
+<style>
+table {
+    border-width: thin;
+    border-spacing: 2px;
+    border-style: none;
+    border-color: black;
+}
+</style>
+</head>
+<body>
+    <table id="myTable" class="tablesorter" border=1>
+    <thead>
+    <tr>
+        <th>MIBiG Protein</th>
+        <th>Description</th>
+        <th>MIBiG Cluster</th>
+        <th>MiBiG Product</th>
+        <th>% ID</th>
+        <th>% Coverage</th>
+        <th>BLAST Score</th>
+        <th>E-value</th>
+    </tr>
+    </thead>
+    <tbody>
+
+          <tr>
+              <td>BBM96665.1</td>
+              <td>transcriptional_regulator</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0002452/1">BGC0002452</a></td>
+              <td>Polyketide</td>
+              <td>59.0</td>
+              <td>96.6</td>
+              <td>159.0</td>
+              <td>1.33e-50</td>
+          </tr>
+
+          <tr>
+              <td>RMI87914.1</td>
+              <td>Rrf2_family_transcriptional_regulator</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0002285/1">BGC0002285</a></td>
+              <td>RiPP</td>
+              <td>58.0</td>
+              <td>100.0</td>
+              <td>158.0</td>
+              <td>2.44e-50</td>
+          </tr>
+
+          <tr>
+              <td>AWC08646.1</td>
+              <td>putative_transcriptional_regulator</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0001662/1">BGC0001662</a></td>
+              <td>Polyketide</td>
+              <td>55.0</td>
+              <td>93.3</td>
+              <td>138.0</td>
+              <td>3.32e-42</td>
+          </tr>
+
+          <tr>
+              <td>AAM80543.1</td>
+              <td>StaS</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0000290/1">BGC0000290</a></td>
+              <td>NRP:Glycopeptide</td>
+              <td>54.0</td>
+              <td>95.3</td>
+              <td>134.0</td>
+              <td>9.36e-41</td>
+          </tr>
+
+          <tr>
+              <td>BAW35650.1</td>
+              <td>putative_transcriptional_regulator</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0002356/1">BGC0002356</a></td>
+              <td>Polyketide+Other</td>
+              <td>54.0</td>
+              <td>83.9</td>
+              <td>118.0</td>
+              <td>1.69e-34</td>
+          </tr>
+
+          <tr>
+              <td>ALA99207.1</td>
+              <td>CreJ</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0001295/1">BGC0001295</a></td>
+              <td>Other</td>
+              <td>41.0</td>
+              <td>57.0</td>
+              <td>71.0</td>
+              <td>5.62e-16</td>
+          </tr>
+
+          <tr>
+              <td>AXG48290.1</td>
+              <td>Fe-S_cluster_assembly_transcriptional_regulator_IscR</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0002716/1">BGC0002716</a></td>
+              <td>NRP</td>
+              <td>32.0</td>
+              <td>87.9</td>
+              <td>64.0</td>
+              <td>2.29e-13</td>
+          </tr>
+
+    </tbody>
+  </table>
+</body>

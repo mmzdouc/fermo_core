@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../../css/style.css">
+
+<script type="text/javascript" src="../../js/jquery.js"></script>
+<script type="text/javascript" src="../../js/jquery.tablesorter.min.js"></script>
+
+<script type="text/javascript" >
+var counter = 1;
+function addInput(divName){
+     var newdiv = document.createElement('div');
+     newdiv.innerHTML = "<b>Locus " + (counter + 1) + "</b><br> GenBank accession: <input type='text' required name='myInputs[]'> Start nt: <input type='number' name='myStartCoords[]' placeholder='N/A'> End nt: <input type='number' name='myEndCoords[]' placeholder='N/A'> <br><br>";
+     document.getElementById(divName).appendChild(newdiv);
+     counter++;
+}
+</script>
+
+<script>
+$(document).ready(function()
+    {
+        $("#myTable").tablesorter();
+    }
+);
+
+</script>
+<style>
+table {
+    border-width: thin;
+    border-spacing: 2px;
+    border-style: none;
+    border-color: black;
+}
+</style>
+</head>
+<body>
+    <table id="myTable" class="tablesorter" border=1>
+    <thead>
+    <tr>
+        <th>MIBiG Protein</th>
+        <th>Description</th>
+        <th>MIBiG Cluster</th>
+        <th>MiBiG Product</th>
+        <th>% ID</th>
+        <th>% Coverage</th>
+        <th>BLAST Score</th>
+        <th>E-value</th>
+    </tr>
+    </thead>
+    <tbody>
+
+          <tr>
+              <td>CBG67534.1</td>
+              <td>putative_oxidoreductase</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0002367/1">BGC0002367</a></td>
+              <td>NRP</td>
+              <td>50.0</td>
+              <td>89.9</td>
+              <td>301.0</td>
+              <td>6.77e-100</td>
+          </tr>
+
+          <tr>
+              <td>MCG7203805.1</td>
+              <td>LLM_class_flavin-dependent_oxidoreductase</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0000248/1">BGC0000248</a></td>
+              <td>Polyketide</td>
+              <td>43.0</td>
+              <td>91.6</td>
+              <td>234.0</td>
+              <td>2.95e-74</td>
+          </tr>
+
+          <tr>
+              <td>BBM95949.1</td>
+              <td>F420-dependent_oxidoreductase</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0002558/1">BGC0002558</a></td>
+              <td>Polyketide</td>
+              <td>42.0</td>
+              <td>96.4</td>
+              <td>233.0</td>
+              <td>9.61e-74</td>
+          </tr>
+
+          <tr>
+              <td>BAL90267.1</td>
+              <td>putative_luciferase-like_monooxygenase</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0002021/1">BGC0002021</a></td>
+              <td>Polyketide</td>
+              <td>42.0</td>
+              <td>89.4</td>
+              <td>221.0</td>
+              <td>4.07e-69</td>
+          </tr>
+
+          <tr>
+              <td>ABM21741.1</td>
+              <td>PdmV</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0000256/1">BGC0000256</a></td>
+              <td>Polyketide</td>
+              <td>44.0</td>
+              <td>84.3</td>
+              <td>216.0</td>
+              <td>1.55e-67</td>
+          </tr>
+
+          <tr>
+              <td>CAA09650.1</td>
+              <td>putative_FMN-dependent_monooxygenase</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0000227/1">BGC0000227</a></td>
+              <td>Polyketide:Type II polyketide</td>
+              <td>42.0</td>
+              <td>86.3</td>
+              <td>210.0</td>
+              <td>5.35e-65</td>
+          </tr>
+
+          <tr>
+              <td>ATY46588.1</td>
+              <td>monooxygenase</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0001666/1">BGC0001666</a></td>
+              <td>Polyketide</td>
+              <td>30.0</td>
+              <td>89.9</td>
+              <td>97.0</td>
+              <td>1.95e-22</td>
+          </tr>
+
+          <tr>
+              <td>AQP25573.1</td>
+              <td>oxidoreductase</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0001590/1">BGC0001590</a></td>
+              <td>Polyketide</td>
+              <td>31.0</td>
+              <td>54.3</td>
+              <td>77.0</td>
+              <td>1.69e-15</td>
+          </tr>
+
+          <tr>
+              <td>AAG52987.1</td>
+              <td>putative_alpha-chain_alkanal_monooxygenase</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0000136/1">BGC0000136</a></td>
+              <td>Polyketide</td>
+              <td>31.0</td>
+              <td>65.0</td>
+              <td>69.0</td>
+              <td>1.22e-12</td>
+          </tr>
+
+          <tr>
+              <td>ADB02852.1</td>
+              <td>AzicO6</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0000202/1">BGC0000202</a></td>
+              <td>Polyketide</td>
+              <td>31.0</td>
+              <td>61.1</td>
+              <td>65.0</td>
+              <td>1.3e-11</td>
+          </tr>
+
+          <tr>
+              <td>CAQ46286.1</td>
+              <td>putative_monooxygenase,_luciferase-like</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0002689/1">BGC0002689</a></td>
+              <td>NRP</td>
+              <td>29.0</td>
+              <td>76.2</td>
+              <td>63.0</td>
+              <td>7.76e-11</td>
+          </tr>
+
+          <tr>
+              <td>ADH04656.1</td>
+              <td>TugE</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0001342/1">BGC0001342</a></td>
+              <td>NRP+Polyketide</td>
+              <td>24.0</td>
+              <td>87.1</td>
+              <td>60.0</td>
+              <td>1.06e-09</td>
+          </tr>
+
+    </tbody>
+  </table>
+</body>

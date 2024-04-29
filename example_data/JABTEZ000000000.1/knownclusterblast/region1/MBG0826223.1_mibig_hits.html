@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../../css/style.css">
+
+<script type="text/javascript" src="../../js/jquery.js"></script>
+<script type="text/javascript" src="../../js/jquery.tablesorter.min.js"></script>
+
+<script type="text/javascript" >
+var counter = 1;
+function addInput(divName){
+     var newdiv = document.createElement('div');
+     newdiv.innerHTML = "<b>Locus " + (counter + 1) + "</b><br> GenBank accession: <input type='text' required name='myInputs[]'> Start nt: <input type='number' name='myStartCoords[]' placeholder='N/A'> End nt: <input type='number' name='myEndCoords[]' placeholder='N/A'> <br><br>";
+     document.getElementById(divName).appendChild(newdiv);
+     counter++;
+}
+</script>
+
+<script>
+$(document).ready(function()
+    {
+        $("#myTable").tablesorter();
+    }
+);
+
+</script>
+<style>
+table {
+    border-width: thin;
+    border-spacing: 2px;
+    border-style: none;
+    border-color: black;
+}
+</style>
+</head>
+<body>
+    <table id="myTable" class="tablesorter" border=1>
+    <thead>
+    <tr>
+        <th>MIBiG Protein</th>
+        <th>Description</th>
+        <th>MIBiG Cluster</th>
+        <th>MiBiG Product</th>
+        <th>% ID</th>
+        <th>% Coverage</th>
+        <th>BLAST Score</th>
+        <th>E-value</th>
+    </tr>
+    </thead>
+    <tbody>
+
+          <tr>
+              <td>BAE78988.1</td>
+              <td>Probable_short-chain_Z-isoprenyl_diphosphate_synthase</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0001078/1">BGC0001078</a></td>
+              <td>Terpene+Polyketide</td>
+              <td>51.0</td>
+              <td>100.0</td>
+              <td>254.0</td>
+              <td>1.36e-84</td>
+          </tr>
+
+          <tr>
+              <td>AAZ23097.1</td>
+              <td>hypothetical_protein</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0000291/1">BGC0000291</a></td>
+              <td>NRP</td>
+              <td>43.0</td>
+              <td>89.0</td>
+              <td>164.0</td>
+              <td>6.14e-50</td>
+          </tr>
+
+          <tr>
+              <td>AGK82801.1</td>
+              <td>cis-prenyl_transferase_2</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0001322/1">BGC0001322</a></td>
+              <td>Terpene</td>
+              <td>36.0</td>
+              <td>97.3</td>
+              <td>159.0</td>
+              <td>6.85e-47</td>
+          </tr>
+
+          <tr>
+              <td>AGK82820.1</td>
+              <td>cis-prenyl_transferase_2</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0001324/1">BGC0001324</a></td>
+              <td>Terpene</td>
+              <td>36.0</td>
+              <td>97.3</td>
+              <td>159.0</td>
+              <td>6.85e-47</td>
+          </tr>
+
+          <tr>
+              <td>AGK82827.1</td>
+              <td>cis-prenyl_transferase_9</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0001323/1">BGC0001323</a></td>
+              <td>Terpene</td>
+              <td>35.0</td>
+              <td>94.1</td>
+              <td>154.0</td>
+              <td>3.68e-45</td>
+          </tr>
+
+          <tr>
+              <td>AGK82810.1</td>
+              <td>cis-prenyl_transferase_1</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0001322/1">BGC0001322</a></td>
+              <td>Terpene</td>
+              <td>35.0</td>
+              <td>92.5</td>
+              <td>153.0</td>
+              <td>6.28e-45</td>
+          </tr>
+
+          <tr>
+              <td>AGK82834.1</td>
+              <td>cis-prenyl_transferase_9</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0001321/1">BGC0001321</a></td>
+              <td>Terpene</td>
+              <td>35.0</td>
+              <td>94.1</td>
+              <td>154.0</td>
+              <td>7.28e-45</td>
+          </tr>
+
+          <tr>
+              <td>AGK82812.1</td>
+              <td>cis-prenyl_transferase_1</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0001324/1">BGC0001324</a></td>
+              <td>Terpene</td>
+              <td>35.0</td>
+              <td>92.5</td>
+              <td>153.0</td>
+              <td>8.84e-45</td>
+          </tr>
+
+          <tr>
+              <td>AGK82828.1</td>
+              <td>cis-prenyl_transferase_1</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0001321/1">BGC0001321</a></td>
+              <td>Terpene</td>
+              <td>36.0</td>
+              <td>92.5</td>
+              <td>152.0</td>
+              <td>1.75e-44</td>
+          </tr>
+
+          <tr>
+              <td>AGK82826.1</td>
+              <td>cis-prenyl_transferase_1</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0001323/1">BGC0001323</a></td>
+              <td>Terpene</td>
+              <td>36.0</td>
+              <td>92.5</td>
+              <td>152.0</td>
+              <td>1.75e-44</td>
+          </tr>
+
+          <tr>
+              <td>pseudo&lt;30240_31281</td>
+              <td></td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0001323/1">BGC0001323</a></td>
+              <td>Terpene</td>
+              <td>36.0</td>
+              <td>66.3</td>
+              <td>101.0</td>
+              <td>1.82e-26</td>
+          </tr>
+
+          <tr>
+              <td>pseudo94131_96140</td>
+              <td></td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0001322/1">BGC0001322</a></td>
+              <td>Terpene</td>
+              <td>43.0</td>
+              <td>42.4</td>
+              <td>81.0</td>
+              <td>1.14e-18</td>
+          </tr>
+
+          <tr>
+              <td>pseudo49437_51033</td>
+              <td></td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0001322/1">BGC0001322</a></td>
+              <td>Terpene</td>
+              <td>34.0</td>
+              <td>32.5</td>
+              <td>67.0</td>
+              <td>1.24e-13</td>
+          </tr>
+
+          <tr>
+              <td>pseudo41887__42385</td>
+              <td></td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0001324/1">BGC0001324</a></td>
+              <td>Terpene</td>
+              <td>36.0</td>
+              <td>26.3</td>
+              <td>57.0</td>
+              <td>3.84e-10</td>
+          </tr>
+
+    </tbody>
+  </table>
+</body>

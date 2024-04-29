@@ -1,0 +1,225 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" x="0" y="0" height="230" width="800" viewBox="0 0 800 230" preserveAspectRatio="none"  >
+<g label="Query sequence" class="clusterblast-cluster"  >
+<text x="5" y="20" class="clusterblast-acc"  >
+Query sequence</text>
+<line x1="10" y1="35" x2="778.0" y2="35" style="stroke-width:1; stroke:grey; "  />
+<polygon points="120,40 124,40 129,35 124,30 120,30 120,40 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;HS041_33900&lt;/b&gt;&lt;br&gt;ABC transporter ATP-binding protein&lt;br&gt;Location: 706760 - 707567" locus_tag="HS041_33900" class="clusterblast-orf" id="dummy-3_q0_0_all"  />
+<polygon points="129,40 142,40 147,35 142,30 129,30 129,40 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;HS041_33905&lt;/b&gt;&lt;br&gt;CocE/NonD family hydrolase&lt;br&gt;Location: 707603 - 709274" locus_tag="HS041_33905" class="clusterblast-orf" id="dummy-3_q1_0_all"  />
+<polygon points="149,40 149,40 154,35 149,30 149,30 149,40 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;HS041_33910&lt;/b&gt;&lt;br&gt;DUF3237 domain-containing protein&lt;br&gt;Location: 709435 - 709912" locus_tag="HS041_33910" class="clusterblast-orf" id="dummy-3_q2_0_all"  />
+<polygon points="156,40 158,40 163,35 158,30 156,30 156,40 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;HS041_33915&lt;/b&gt;&lt;br&gt;DUF2238 domain-containing protein&lt;br&gt;Location: 710106 - 710724" locus_tag="HS041_33915" class="clusterblast-orf" id="dummy-3_q3_0_all"  />
+<polygon points="165,40 172,40 177,35 172,30 165,30 165,40 " style="fill:#d81515; stroke-width:1; stroke:black; " description="&lt;b&gt;HS041_33920&lt;/b&gt;&lt;br&gt;GTP-binding protein&lt;br&gt;Location: 710941 - 712084" locus_tag="HS041_33920" class="clusterblast-orf" id="dummy-3_q4_0_all"  />
+<polygon points="177,40 180,35 177,30 177,40 " style="fill:#5cd815; stroke-width:1; stroke:black; " description="&lt;b&gt;HS041_33925&lt;/b&gt;&lt;br&gt;30S ribosomal protein S18&lt;br&gt;Location: 712080 - 712308" locus_tag="HS041_33925" class="clusterblast-orf" id="dummy-3_q5_0_all"  />
+<polygon points="181,40 183,35 181,30 181,40 " style="fill:#15a3d8; stroke-width:1; stroke:black; " description="&lt;b&gt;HS041_33930&lt;/b&gt;&lt;br&gt;50S ribosomal protein L33&lt;br&gt;Location: 712433 - 712598" locus_tag="HS041_33930" class="clusterblast-orf" id="dummy-3_q6_0_all"  />
+<polygon points="183,40 186,35 183,30 183,40 " style="fill:#c715d8; stroke-width:1; stroke:black; " description="&lt;b&gt;HS041_33935&lt;/b&gt;&lt;br&gt;type B 50S ribosomal protein L31&lt;br&gt;Location: 712602 - 712848" locus_tag="HS041_33935" class="clusterblast-orf" id="dummy-3_q7_0_all"  />
+<polygon points="186,40 188,35 186,30 186,40 " style="fill:#d88015; stroke-width:1; stroke:black; " description="&lt;b&gt;HS041_33940&lt;/b&gt;&lt;br&gt;50S ribosomal protein L28&lt;br&gt;Location: 712847 - 713084" locus_tag="HS041_33940" class="clusterblast-orf" id="dummy-3_q8_0_all"  />
+<polygon points="188,40 191,35 188,30 188,40 " style="fill:#15d839; stroke-width:1; stroke:black; " description="&lt;b&gt;HS041_33945&lt;/b&gt;&lt;br&gt;30S ribosomal protein S14&lt;br&gt;Location: 713083 - 713383" locus_tag="HS041_33945" class="clusterblast-orf" id="dummy-3_q9_0_all"  />
+<polygon points="191,40 193,35 191,30 191,40 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;HS041_33950&lt;/b&gt;&lt;br&gt;50S ribosomal protein L32&lt;br&gt;Location: 713386 - 713554" locus_tag="HS041_33950" class="clusterblast-orf" id="dummy-3_q10_0_all"  />
+<polygon points="194,40 198,40 203,35 198,30 194,30 194,40 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;HS041_33955&lt;/b&gt;&lt;br&gt;class I SAM-dependent methyltransferase&lt;br&gt;Location: 713649 - 714447" locus_tag="HS041_33955" class="clusterblast-orf" id="dummy-3_q11_0_all"  />
+<polygon points="204,35 209,30 215,30 215,40 209,40 204,35 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;HS041_33960&lt;/b&gt;&lt;br&gt;LacI family DNA-binding transcriptional regulator&lt;br&gt;Location: 714561 - 715590" locus_tag="HS041_33960" class="clusterblast-orf" id="dummy-3_q12_0_all"  />
+<polygon points="216,35 221,30 241,30 241,40 221,40 216,35 " style="fill:#1539d8; stroke-width:1; stroke:black; " description="&lt;b&gt;HS041_33965&lt;/b&gt;&lt;br&gt;ATP-binding cassette domain-containing protein&lt;br&gt;Location: 715665 - 718005" locus_tag="HS041_33965" class="clusterblast-orf" id="dummy-3_q13_0_all"  />
+<polygon points="242,40 247,40 252,35 247,30 242,30 242,40 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;HS041_33970&lt;/b&gt;&lt;br&gt;YafY family transcriptional regulator&lt;br&gt;Location: 718114 - 719071" locus_tag="HS041_33970" class="clusterblast-orf" id="dummy-3_q14_0_all"  />
+<polygon points="254,35 259,30 263,30 263,40 259,40 254,35 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;HS041_33975&lt;/b&gt;&lt;br&gt;hypothetical protein&lt;br&gt;Location: 719203 - 720076" locus_tag="HS041_33975" class="clusterblast-orf" id="dummy-3_q15_0_all"  />
+<polygon points="264,40 266,40 271,35 266,30 264,30 264,40 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;HS041_33980&lt;/b&gt;&lt;br&gt;winged helix-turn-helix transcriptional regulator&lt;br&gt;Location: 720196 - 720811" locus_tag="HS041_33980" class="clusterblast-orf" id="dummy-3_q16_0_all"  />
+<polygon points="273,40 282,40 287,35 282,30 273,30 273,40 " style="fill:#d81580; stroke-width:1; stroke:black; " description="&lt;b&gt;HS041_33985&lt;/b&gt;&lt;br&gt;tryptophan 7-halogenase&lt;br&gt;Location: 720962 - 722273" locus_tag="HS041_33985" class="clusterblast-orf" id="dummy-3_q17_0_all"  />
+<polygon points="287,35 292,30 299,30 299,40 292,40 287,35 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;HS041_33990&lt;/b&gt;&lt;br&gt;saccharopine dehydrogenase NADP-binding domain-containing protein&lt;br&gt;Location: 722306 - 723383" locus_tag="HS041_33990" class="clusterblast-orf" id="dummy-3_q18_0_all"  />
+<polygon points="299,35 304,30 320,30 320,40 304,40 299,35 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;HS041_33995&lt;/b&gt;&lt;br&gt;condensation protein&lt;br&gt;Location: 723379 - 725344" locus_tag="HS041_33995" class="clusterblast-orf" id="dummy-3_q19_0_all"  />
+<polygon points="320,35 325,30 332,30 332,40 325,40 320,35 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;HS041_34000&lt;/b&gt;&lt;br&gt;class I SAM-dependent methyltransferase&lt;br&gt;Location: 725340 - 726483" locus_tag="HS041_34000" class="clusterblast-orf" id="dummy-3_q20_0_all"  />
+<polygon points="333,40 372,40 377,35 372,30 333,30 333,40 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;HS041_34005&lt;/b&gt;&lt;br&gt;amino acid adenylation domain-containing protein&lt;br&gt;Location: 726574 - 730708" locus_tag="HS041_34005" class="clusterblast-orf" id="dummy-3_q21_0_all"  />
+<polygon points="377,40 442,40 447,35 442,30 377,30 377,40 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;HS041_34010&lt;/b&gt;&lt;br&gt;SDR family NAD(P)-dependent oxidoreductase&lt;br&gt;Location: 730722 - 737169" locus_tag="HS041_34010" class="clusterblast-orf" id="dummy-3_q22_0_all"  />
+<polygon points="447,40 458,40 463,35 458,30 447,30 447,40 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;HS041_34015&lt;/b&gt;&lt;br&gt;ABC transporter substrate-binding protein&lt;br&gt;Location: 737180 - 738722" locus_tag="HS041_34015" class="clusterblast-orf" id="dummy-3_q23_0_all"  />
+<polygon points="464,40 468,40 473,35 468,30 464,30 464,40 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;HS041_34020&lt;/b&gt;&lt;br&gt;ABC transporter permease&lt;br&gt;Location: 738750 - 739674" locus_tag="HS041_34020" class="clusterblast-orf" id="dummy-3_q24_0_all"  />
+<polygon points="473,40 477,40 482,35 477,30 473,30 473,40 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;HS041_34025&lt;/b&gt;&lt;br&gt;ABC transporter permease subunit&lt;br&gt;Location: 739670 - 740453" locus_tag="HS041_34025" class="clusterblast-orf" id="dummy-3_q25_0_all"  />
+<polygon points="482,40 492,40 497,35 492,30 482,30 482,40 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;HS041_34030&lt;/b&gt;&lt;br&gt;ABC transporter ATP-binding protein&lt;br&gt;Location: 740449 - 741841" locus_tag="HS041_34030" class="clusterblast-orf" id="dummy-3_q26_0_all"  />
+<polygon points="497,40 518,40 523,35 518,30 497,30 497,40 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;HS041_34035&lt;/b&gt;&lt;br&gt;class I SAM-dependent methyltransferase&lt;br&gt;Location: 741848 - 744314" locus_tag="HS041_34035" class="clusterblast-orf" id="dummy-3_q27_0_all"  />
+<polygon points="524,35 529,30 534,30 534,40 529,40 524,35 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;HS041_34040&lt;/b&gt;&lt;br&gt;NAD(P)/FAD-dependent oxidoreductase&lt;br&gt;Location: 744366 - 745296" locus_tag="HS041_34040" class="clusterblast-orf" id="dummy-3_q28_0_all"  />
+<polygon points="534,35 539,30 541,30 541,40 539,40 534,35 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;HS041_34045&lt;/b&gt;&lt;br&gt;class I SAM-dependent methyltransferase&lt;br&gt;Location: 745288 - 746008" locus_tag="HS041_34045" class="clusterblast-orf" id="dummy-3_q29_0_all"  />
+<polygon points="553,40 553,40 558,35 553,30 553,30 553,40 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;HS041_34050&lt;/b&gt;&lt;br&gt;hypothetical protein&lt;br&gt;Location: 747065 - 747557" locus_tag="HS041_34050" class="clusterblast-orf" id="dummy-3_q30_0_all"  />
+<polygon points="559,40 563,35 559,30 559,40 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;HS041_34055&lt;/b&gt;&lt;br&gt;STAS domain-containing protein&lt;br&gt;Location: 747675 - 747999" locus_tag="HS041_34055" class="clusterblast-orf" id="dummy-3_q31_0_all"  />
+<polygon points="564,35 569,30 581,30 581,40 569,40 564,35 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;HS041_34060&lt;/b&gt;&lt;br&gt;pentapeptide repeat-containing protein&lt;br&gt;Location: 748144 - 749671" locus_tag="HS041_34060" class="clusterblast-orf" id="dummy-3_q32_0_all"  />
+<polygon points="588,35 592,30 592,40 588,35 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;HS041_34065&lt;/b&gt;&lt;br&gt;hypothetical protein&lt;br&gt;Location: 750360 - 750696" locus_tag="HS041_34065" class="clusterblast-orf" id="dummy-3_q33_0_all"  />
+<polygon points="593,35 598,30 604,30 604,40 598,40 593,35 " style="fill:#c7d815; stroke-width:1; stroke:black; " description="&lt;b&gt;HS041_34070&lt;/b&gt;&lt;br&gt;YafY family transcriptional regulator&lt;br&gt;Location: 750831 - 751833" locus_tag="HS041_34070" class="clusterblast-orf" id="dummy-3_q34_0_all"  />
+<polygon points="604,40 612,40 617,35 612,30 604,30 604,40 " style="fill:#15d8a3; stroke-width:1; stroke:black; " description="&lt;b&gt;HS041_34075&lt;/b&gt;&lt;br&gt;alpha/beta fold hydrolase&lt;br&gt;Location: 751875 - 753066" locus_tag="HS041_34075" class="clusterblast-orf" id="dummy-3_q35_0_all"  />
+<polygon points="617,40 625,40 630,35 625,30 617,30 617,40 " style="fill:#5c15d8; stroke-width:1; stroke:black; " description="&lt;b&gt;HS041_34080&lt;/b&gt;&lt;br&gt;winged helix DNA-binding domain-containing protein&lt;br&gt;Location: 753091 - 754246" locus_tag="HS041_34080" class="clusterblast-orf" id="dummy-3_q36_0_all"  />
+<polygon points="630,35 635,30 650,30 650,40 635,40 630,35 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;HS041_34085&lt;/b&gt;&lt;br&gt;acyltransferase&lt;br&gt;Location: 754268 - 756140" locus_tag="HS041_34085" class="clusterblast-orf" id="dummy-3_q37_0_all"  />
+<polygon points="655,40 659,35 655,30 655,40 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;HS041_34090&lt;/b&gt;&lt;br&gt;hypothetical protein&lt;br&gt;Location: 756583 - 756964" locus_tag="HS041_34090" class="clusterblast-orf" id="dummy-3_q38_0_all"  />
+</g>
+<g label="BGC0001397" description="BGC0001397_c1: lidamycin (3% of genes show similarity), NRP+Polyketide" class="clusterblast-cluster"  >
+<text x="5" y="70" class="clusterblast-acc"  >
+<a xlink:href="https://mibig.secondarymetabolites.org/go/BGC0001397/1" target="_blank">BGC0001397</a>: lidamycin                                                                        (3% of genes show similarity), NRP+Polyketide</text>
+<line x1="10" y1="85" x2="778.0" y2="85" style="stroke-width:1; stroke:grey; "  />
+</g>
+<g id="a3_000"  >
+<polygon points="0,90 9,90 14,85 9,80 0,80 0,90 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;WQO_33745&lt;/b&gt;&lt;br&gt;hypothetical protein&lt;br&gt;Location: 1 - 1320" locus_tag="WQO_33745" class="clusterblast-orf" id="dummy-3_h3_9_0"  />
+</g>
+<g id="a3_001"  >
+<polygon points="15,85 20,80 40,80 40,90 20,90 15,85 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;WQO_33750&lt;/b&gt;&lt;br&gt;daunorubicin resistance protein DrrC&lt;br&gt;Location: 1426 - 3753" locus_tag="WQO_33750" class="clusterblast-orf" id="dummy-3_h3_9_1"  />
+</g>
+<g id="a3_002"  >
+<polygon points="41,85 46,80 55,80 55,90 46,90 41,85 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;WQO_33755&lt;/b&gt;&lt;br&gt;sodium:proton exchanger&lt;br&gt;Location: 3834 - 5216" locus_tag="WQO_33755" class="clusterblast-orf" id="dummy-3_h3_9_2"  />
+</g>
+<g id="a3_003"  >
+<polygon points="55,85 60,80 71,80 71,90 60,90 55,85 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;WQO_33760&lt;/b&gt;&lt;br&gt;tryptophan halogenase&lt;br&gt;Location: 5203 - 6681" locus_tag="WQO_33760" class="clusterblast-orf" id="dummy-3_h3_9_3"  />
+</g>
+<g id="a3_004"  >
+<polygon points="73,90 80,90 85,85 80,80 73,80 73,90 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;WQO_33765&lt;/b&gt;&lt;br&gt;glucose-1-phosphate thymidylyltransferase&lt;br&gt;Location: 6864 - 7931" locus_tag="WQO_33765" class="clusterblast-orf" id="dummy-3_h3_9_4"  />
+</g>
+<g id="a3_005"  >
+<polygon points="86,85 90,80 90,90 86,85 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;WQO_33770&lt;/b&gt;&lt;br&gt;hypothetical protein&lt;br&gt;Location: 8064 - 8450" locus_tag="WQO_33770" class="clusterblast-orf" id="dummy-3_h3_9_5"  />
+</g>
+<g id="a3_006"  >
+<polygon points="91,85 96,80 104,80 104,90 96,90 91,85 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;WQO_33775&lt;/b&gt;&lt;br&gt;dTDP-4-dehydro-6-deoxyglucose aminotransferase&lt;br&gt;Location: 8542 - 9774" locus_tag="WQO_33775" class="clusterblast-orf" id="dummy-3_h3_9_6"  />
+</g>
+<g id="a3_007"  >
+<polygon points="104,85 109,80 112,80 112,90 109,90 104,85 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;WQO_33780&lt;/b&gt;&lt;br&gt;SAM-dependent methyltransferase&lt;br&gt;Location: 9771 - 10505" locus_tag="WQO_33780" class="clusterblast-orf" id="dummy-3_h3_9_7"  />
+</g>
+<g id="a3_008"  >
+<polygon points="112,85 117,80 126,80 126,90 117,90 112,85 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;WQO_33785&lt;/b&gt;&lt;br&gt;SAM-dependent methyltransferase&lt;br&gt;Location: 10505 - 11776" locus_tag="WQO_33785" class="clusterblast-orf" id="dummy-3_h3_9_8"  />
+</g>
+<g id="a3_009"  >
+<polygon points="127,85 132,80 139,80 139,90 132,90 127,85 " style="fill:#15d8a3; stroke-width:1; stroke:black; " description="&lt;b&gt;WQO_33790&lt;/b&gt;&lt;br&gt;epoxide hydrolase&lt;br&gt;Location: 11883 - 13040&lt;br&gt;&lt;br&gt;&lt;b&gt;BlastP hit with HS041_34075&lt;/b&gt;&lt;br&gt;Percentage identity: 49&lt;br&gt;Percentage coverage: 98&lt;br&gt;BLAST bit score: 379&lt;br&gt;E-value: 4.11e-130" locus_tag="WQO_33790" class="clusterblast-orf" id="dummy-3_h3_9_9"  />
+</g>
+<g id="a3_0010"  >
+<polygon points="140,85 145,80 146,80 146,90 145,90 140,85 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;WQO_33795&lt;/b&gt;&lt;br&gt;anthranilate synthase subunit II&lt;br&gt;Location: 13114 - 13671" locus_tag="WQO_33795" class="clusterblast-orf" id="dummy-3_h3_9_10"  />
+</g>
+<g id="a3_0011"  >
+<polygon points="147,85 152,80 163,80 163,90 152,90 147,85 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;WQO_33800&lt;/b&gt;&lt;br&gt;aminodeoxychorismate synthase component I&lt;br&gt;Location: 13773 - 15254" locus_tag="WQO_33800" class="clusterblast-orf" id="dummy-3_h3_9_11"  />
+</g>
+<g id="a3_0012"  >
+<polygon points="163,85 168,80 179,80 179,90 168,90 163,85 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;WQO_33805&lt;/b&gt;&lt;br&gt;CoF synthetase&lt;br&gt;Location: 15271 - 16683" locus_tag="WQO_33805" class="clusterblast-orf" id="dummy-3_h3_9_12"  />
+</g>
+<g id="a3_0013"  >
+<polygon points="179,85 184,80 186,80 186,90 184,90 179,85 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;WQO_33810&lt;/b&gt;&lt;br&gt;NADPH-dependent FMN reductase&lt;br&gt;Location: 16722 - 17393" locus_tag="WQO_33810" class="clusterblast-orf" id="dummy-3_h3_9_13"  />
+</g>
+<g id="a3_0014"  >
+<polygon points="186,85 191,80 200,80 200,90 191,90 186,85 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;WQO_33815&lt;/b&gt;&lt;br&gt;hypothetical protein&lt;br&gt;Location: 17413 - 18648" locus_tag="WQO_33815" class="clusterblast-orf" id="dummy-3_h3_9_14"  />
+</g>
+<g id="a3_0015"  >
+<polygon points="202,85 207,80 208,80 208,90 207,90 202,85 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;WQO_33820&lt;/b&gt;&lt;br&gt;dTDP-4-dehydrorhamnose 3,5-epimerase&lt;br&gt;Location: 18834 - 19412" locus_tag="WQO_33820" class="clusterblast-orf" id="dummy-3_h3_9_15"  />
+</g>
+<g id="a3_0016"  >
+<polygon points="211,90 220,90 225,85 220,80 211,80 211,90 " style="fill:#d81580; stroke-width:1; stroke:black; " description="&lt;b&gt;WQO_33825&lt;/b&gt;&lt;br&gt;FAD-binding monooxygenase&lt;br&gt;Location: 19663 - 21018&lt;br&gt;&lt;br&gt;&lt;b&gt;BlastP hit with HS041_33985&lt;/b&gt;&lt;br&gt;Percentage identity: 47&lt;br&gt;Percentage coverage: 99&lt;br&gt;BLAST bit score: 364&lt;br&gt;E-value: 1.14e-122" locus_tag="WQO_33825" class="clusterblast-orf" id="dummy-3_h3_9_16"  />
+</g>
+<g id="a3_0017"  >
+<polygon points="226,90 235,90 240,85 235,80 226,80 226,90 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;WQO_33830&lt;/b&gt;&lt;br&gt;hypothetical protein&lt;br&gt;Location: 21062 - 22441" locus_tag="WQO_33830" class="clusterblast-orf" id="dummy-3_h3_9_17"  />
+</g>
+<g id="a3_0018"  >
+<polygon points="240,90 246,90 251,85 246,80 240,80 240,90 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;WQO_33835&lt;/b&gt;&lt;br&gt;dTDP-glucose 4,6-dehydratase&lt;br&gt;Location: 22438 - 23436" locus_tag="WQO_33835" class="clusterblast-orf" id="dummy-3_h3_9_18"  />
+</g>
+<g id="a3_0019"  >
+<polygon points="252,90 263,90 268,85 263,80 252,80 252,90 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;WQO_33840&lt;/b&gt;&lt;br&gt;MFS transporter&lt;br&gt;Location: 23480 - 25045" locus_tag="WQO_33840" class="clusterblast-orf" id="dummy-3_h3_9_19"  />
+</g>
+<g id="a3_0020"  >
+<polygon points="269,90 278,90 283,85 278,80 269,80 269,90 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;WQO_33845&lt;/b&gt;&lt;br&gt;phenylacetate--CoA ligase&lt;br&gt;Location: 25128 - 26438" locus_tag="WQO_33845" class="clusterblast-orf" id="dummy-3_h3_9_20"  />
+</g>
+<g id="a3_0021"  >
+<polygon points="283,90 285,85 283,80 283,90 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;WQO_33850&lt;/b&gt;&lt;br&gt;hypothetical protein&lt;br&gt;Location: 26407 - 26616" locus_tag="WQO_33850" class="clusterblast-orf" id="dummy-3_h3_9_21"  />
+</g>
+<g id="a3_0022"  >
+<polygon points="286,90 298,90 303,85 298,80 286,80 286,90 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;WQO_33855&lt;/b&gt;&lt;br&gt;Pyoverdin chromophore biosynthetic protein pvcC&lt;br&gt;Location: 26717 - 28240" locus_tag="WQO_33855" class="clusterblast-orf" id="dummy-3_h3_9_22"  />
+</g>
+<g id="a3_0023"  >
+<polygon points="303,85 308,80 312,80 312,90 308,90 303,85 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;WQO_33860&lt;/b&gt;&lt;br&gt;hydrolase&lt;br&gt;Location: 28314 - 29150" locus_tag="WQO_33860" class="clusterblast-orf" id="dummy-3_h3_9_23"  />
+</g>
+<g id="a3_0024"  >
+<polygon points="315,85 319,80 319,90 315,85 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;WQO_33865&lt;/b&gt;&lt;br&gt;DUF4440 domain-containing protein&lt;br&gt;Location: 29372 - 29794" locus_tag="WQO_33865" class="clusterblast-orf" id="dummy-3_h3_9_24"  />
+</g>
+<g id="a3_0025"  >
+<polygon points="322,90 331,90 336,85 331,80 322,80 322,90 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;WQO_33870&lt;/b&gt;&lt;br&gt;cinnamoyl-CoA reductase&lt;br&gt;Location: 30075 - 31346" locus_tag="WQO_33870" class="clusterblast-orf" id="dummy-3_h3_9_25"  />
+</g>
+<g id="a3_0026"  >
+<polygon points="337,90 346,90 351,85 346,80 337,80 337,90 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;WQO_33875&lt;/b&gt;&lt;br&gt;hypothetical protein&lt;br&gt;Location: 31415 - 32794" locus_tag="WQO_33875" class="clusterblast-orf" id="dummy-3_h3_9_26"  />
+</g>
+<g id="a3_0027"  >
+<polygon points="352,90 355,85 352,80 352,90 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;WQO_33880&lt;/b&gt;&lt;br&gt;phosphopantetheine-binding protein&lt;br&gt;Location: 32839 - 33120" locus_tag="WQO_33880" class="clusterblast-orf" id="dummy-3_h3_9_27"  />
+</g>
+<g id="a3_0028"  >
+<polygon points="356,85 361,80 373,80 373,90 361,90 356,85 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;WQO_33885&lt;/b&gt;&lt;br&gt;tyrosine 2,3-aminomutase&lt;br&gt;Location: 33223 - 34836" locus_tag="WQO_33885" class="clusterblast-orf" id="dummy-3_h3_9_28"  />
+</g>
+<g id="a3_0029"  >
+<polygon points="374,85 379,80 402,80 402,90 379,90 374,85 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;WQO_33890&lt;/b&gt;&lt;br&gt;hypothetical protein&lt;br&gt;Location: 34908 - 37523" locus_tag="WQO_33890" class="clusterblast-orf" id="dummy-3_h3_9_29"  />
+</g>
+<g id="a3_0030"  >
+<polygon points="405,90 422,90 427,85 422,80 405,80 405,90 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;WQO_33895&lt;/b&gt;&lt;br&gt;hypothetical protein&lt;br&gt;Location: 37759 - 39867" locus_tag="WQO_33895" class="clusterblast-orf" id="dummy-3_h3_9_30"  />
+</g>
+<g id="a3_0031"  >
+<polygon points="429,90 435,90 440,85 435,80 429,80 429,90 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;WQO_33900&lt;/b&gt;&lt;br&gt;methyltransferase&lt;br&gt;Location: 40021 - 41022" locus_tag="WQO_33900" class="clusterblast-orf" id="dummy-3_h3_9_31"  />
+</g>
+<g id="a3_0032"  >
+<polygon points="441,90 449,90 454,85 449,80 441,80 441,90 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;WQO_33905&lt;/b&gt;&lt;br&gt;cytochrome&lt;br&gt;Location: 41094 - 42335" locus_tag="WQO_33905" class="clusterblast-orf" id="dummy-3_h3_9_32"  />
+</g>
+<g id="a3_0033"  >
+<polygon points="454,85 459,80 467,80 467,90 459,90 454,85 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;WQO_33910&lt;/b&gt;&lt;br&gt;acyl-CoA dehydrogenase&lt;br&gt;Location: 42388 - 43569" locus_tag="WQO_33910" class="clusterblast-orf" id="dummy-3_h3_9_33"  />
+</g>
+<g id="a3_0034"  >
+<polygon points="470,90 474,85 470,80 470,90 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;WQO_33915&lt;/b&gt;&lt;br&gt;hypothetical protein&lt;br&gt;Location: 43873 - 44208" locus_tag="WQO_33915" class="clusterblast-orf" id="dummy-3_h3_9_34"  />
+</g>
+<g id="a3_0035"  >
+<polygon points="474,90 480,90 485,85 480,80 474,80 474,90 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;WQO_33920&lt;/b&gt;&lt;br&gt;alkylhydroperoxidase&lt;br&gt;Location: 44205 - 45245" locus_tag="WQO_33920" class="clusterblast-orf" id="dummy-3_h3_9_35"  />
+</g>
+<g id="a3_0036"  >
+<polygon points="485,85 490,80 495,80 495,90 490,90 485,85 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;WQO_33925&lt;/b&gt;&lt;br&gt;short-chain dehydrogenase&lt;br&gt;Location: 45276 - 46196" locus_tag="WQO_33925" class="clusterblast-orf" id="dummy-3_h3_9_36"  />
+</g>
+<g id="a3_0037"  >
+<polygon points="496,85 501,80 502,80 502,90 501,90 496,85 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;WQO_33930&lt;/b&gt;&lt;br&gt;alkylhydroperoxidase&lt;br&gt;Location: 46221 - 46772" locus_tag="WQO_33930" class="clusterblast-orf" id="dummy-3_h3_9_37"  />
+</g>
+<g id="a3_0038"  >
+<polygon points="505,85 510,80 512,80 512,90 510,90 505,85 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;WQO_33935&lt;/b&gt;&lt;br&gt;hypothetical protein&lt;br&gt;Location: 47101 - 47739" locus_tag="WQO_33935" class="clusterblast-orf" id="dummy-3_h3_9_38"  />
+</g>
+<g id="a3_0039"  >
+<polygon points="515,90 523,90 528,85 523,80 515,80 515,90 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;WQO_33940&lt;/b&gt;&lt;br&gt;DNA-binding protein&lt;br&gt;Location: 47999 - 49234" locus_tag="WQO_33940" class="clusterblast-orf" id="dummy-3_h3_9_39"  />
+</g>
+<g id="a3_0040"  >
+<polygon points="534,90 539,90 544,85 539,80 534,80 534,90 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;WQO_33945&lt;/b&gt;&lt;br&gt;hypothetical protein&lt;br&gt;Location: 49761 - 50735" locus_tag="WQO_33945" class="clusterblast-orf" id="dummy-3_h3_9_40"  />
+</g>
+<g id="a3_0041"  >
+<polygon points="545,85 550,80 553,80 553,90 550,90 545,85 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;WQO_33950&lt;/b&gt;&lt;br&gt;wyosine base formation domain-containing protein&lt;br&gt;Location: 50782 - 51585" locus_tag="WQO_33950" class="clusterblast-orf" id="dummy-3_h3_9_41"  />
+</g>
+<g id="a3_0042"  >
+<polygon points="554,85 559,80 559,80 559,90 559,90 554,85 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;WQO_33955&lt;/b&gt;&lt;br&gt;4-hydroxybenzoyl-CoA thioesterase&lt;br&gt;Location: 51688 - 52158" locus_tag="WQO_33955" class="clusterblast-orf" id="dummy-3_h3_9_42"  />
+</g>
+<g id="a3_0043"  >
+<polygon points="561,85 566,80 579,80 579,90 566,90 561,85 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;WQO_33960&lt;/b&gt;&lt;br&gt;glucose-methanol-choline oxidoreductase&lt;br&gt;Location: 52295 - 53950" locus_tag="WQO_33960" class="clusterblast-orf" id="dummy-3_h3_9_43"  />
+</g>
+<g id="a3_0044"  >
+<polygon points="579,85 584,80 585,80 585,90 584,90 579,85 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;WQO_33965&lt;/b&gt;&lt;br&gt;regulator&lt;br&gt;Location: 53947 - 54537" locus_tag="WQO_33965" class="clusterblast-orf" id="dummy-3_h3_9_44"  />
+</g>
+<g id="a3_0045"  >
+<polygon points="588,90 594,90 599,85 594,80 588,80 588,90 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;WQO_33970&lt;/b&gt;&lt;br&gt;transcriptional regulator&lt;br&gt;Location: 54822 - 55874" locus_tag="WQO_33970" class="clusterblast-orf" id="dummy-3_h3_9_45"  />
+</g>
+<g id="a3_0046"  >
+<polygon points="599,90 604,90 609,85 604,80 599,80 599,90 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;WQO_33975&lt;/b&gt;&lt;br&gt;hypothetical protein&lt;br&gt;Location: 55900 - 56754" locus_tag="WQO_33975" class="clusterblast-orf" id="dummy-3_h3_9_46"  />
+</g>
+<g id="a3_0047"  >
+<polygon points="607,85 612,80 622,80 622,90 612,90 607,85 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;WQO_33980&lt;/b&gt;&lt;br&gt;cytochrome P450&lt;br&gt;Location: 56642 - 57991" locus_tag="WQO_33980" class="clusterblast-orf" id="dummy-3_h3_9_47"  />
+</g>
+<g id="a3_0048"  >
+<polygon points="622,85 627,80 628,80 628,90 627,90 622,85 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;WQO_33985&lt;/b&gt;&lt;br&gt;flavin reductase&lt;br&gt;Location: 57988 - 58536" locus_tag="WQO_33985" class="clusterblast-orf" id="dummy-3_h3_9_48"  />
+</g>
+<g id="a3_0049"  >
+<polygon points="629,85 634,80 692,80 692,90 634,90 629,85 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;WQO_33990&lt;/b&gt;&lt;br&gt;erythronolide synthase&lt;br&gt;Location: 58662 - 64481" locus_tag="WQO_33990" class="clusterblast-orf" id="dummy-3_h3_9_49"  />
+</g>
+<g id="a3_0050"  >
+<polygon points="692,85 697,80 704,80 704,90 697,90 692,85 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;WQO_33995&lt;/b&gt;&lt;br&gt;enediyne biosynthesis protein&lt;br&gt;Location: 64478 - 65608" locus_tag="WQO_33995" class="clusterblast-orf" id="dummy-3_h3_9_50"  />
+</g>
+<g id="a3_0051"  >
+<polygon points="704,85 709,80 724,80 724,90 709,90 704,85 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;WQO_34000&lt;/b&gt;&lt;br&gt;RNA-binding protein&lt;br&gt;Location: 65605 - 67473" locus_tag="WQO_34000" class="clusterblast-orf" id="dummy-3_h3_9_51"  />
+</g>
+<g id="a3_0052"  >
+<polygon points="724,85 729,80 734,80 734,90 729,90 724,85 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;WQO_34005&lt;/b&gt;&lt;br&gt;enediyne biosynthesis protein&lt;br&gt;Location: 67530 - 68435" locus_tag="WQO_34005" class="clusterblast-orf" id="dummy-3_h3_9_52"  />
+</g>
+<g id="a3_0053"  >
+<polygon points="736,85 741,80 747,80 747,90 741,90 736,85 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;WQO_34010&lt;/b&gt;&lt;br&gt;enediyne biosynthesis protein&lt;br&gt;Location: 68612 - 69640" locus_tag="WQO_34010" class="clusterblast-orf" id="dummy-3_h3_9_53"  />
+</g>
+<g id="a3_0054"  >
+<polygon points="748,85 753,80 753,80 753,90 753,90 748,85 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;WQO_34015&lt;/b&gt;&lt;br&gt;HxlR family transcriptional regulator&lt;br&gt;Location: 69777 - 70220" locus_tag="WQO_34015" class="clusterblast-orf" id="dummy-3_h3_9_54"  />
+</g>
+<g id="a3_0055"  >
+<polygon points="755,90 756,90 761,85 756,80 755,80 755,90 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;WQO_34020&lt;/b&gt;&lt;br&gt;hypothetical protein&lt;br&gt;Location: 70367 - 70930" locus_tag="WQO_34020" class="clusterblast-orf" id="dummy-3_h3_9_55"  />
+</g>
+<g id="a3_0056"  >
+<polygon points="761,90 761,90 766,85 761,80 761,80 761,90 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;WQO_34025&lt;/b&gt;&lt;br&gt;hypothetical protein&lt;br&gt;Location: 70935 - 71396" locus_tag="WQO_34025" class="clusterblast-orf" id="dummy-3_h3_9_56"  />
+</g>
+<g id="a3_0057"  >
+<polygon points="767,85 772,80 780,80 780,90 772,90 767,85 " style="fill:white; stroke-width:1; stroke:black; " description="&lt;b&gt;WQO_34030&lt;/b&gt;&lt;br&gt;hypothetical protein&lt;br&gt;Location: 71486 - 72673" locus_tag="WQO_34030" class="clusterblast-orf" id="dummy-3_h3_9_57"  />
+</g>
+</svg>

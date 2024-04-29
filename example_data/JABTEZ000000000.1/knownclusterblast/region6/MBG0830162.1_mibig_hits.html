@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../../css/style.css">
+
+<script type="text/javascript" src="../../js/jquery.js"></script>
+<script type="text/javascript" src="../../js/jquery.tablesorter.min.js"></script>
+
+<script type="text/javascript" >
+var counter = 1;
+function addInput(divName){
+     var newdiv = document.createElement('div');
+     newdiv.innerHTML = "<b>Locus " + (counter + 1) + "</b><br> GenBank accession: <input type='text' required name='myInputs[]'> Start nt: <input type='number' name='myStartCoords[]' placeholder='N/A'> End nt: <input type='number' name='myEndCoords[]' placeholder='N/A'> <br><br>";
+     document.getElementById(divName).appendChild(newdiv);
+     counter++;
+}
+</script>
+
+<script>
+$(document).ready(function()
+    {
+        $("#myTable").tablesorter();
+    }
+);
+
+</script>
+<style>
+table {
+    border-width: thin;
+    border-spacing: 2px;
+    border-style: none;
+    border-color: black;
+}
+</style>
+</head>
+<body>
+    <table id="myTable" class="tablesorter" border=1>
+    <thead>
+    <tr>
+        <th>MIBiG Protein</th>
+        <th>Description</th>
+        <th>MIBiG Cluster</th>
+        <th>MiBiG Product</th>
+        <th>% ID</th>
+        <th>% Coverage</th>
+        <th>BLAST Score</th>
+        <th>E-value</th>
+    </tr>
+    </thead>
+    <tbody>
+
+          <tr>
+              <td>QYI86761.1</td>
+              <td>putative_ABC_transporter</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0002424/1">BGC0002424</a></td>
+              <td>NRP</td>
+              <td>60.0</td>
+              <td>85.1</td>
+              <td>380.0</td>
+              <td>7.24e-132</td>
+          </tr>
+
+          <tr>
+              <td>CAM02312.1</td>
+              <td>possible_ABC_Fe(3+)_transporter_binding_protein</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0000349/1">BGC0000349</a></td>
+              <td>NRP</td>
+              <td>52.0</td>
+              <td>84.3</td>
+              <td>328.0</td>
+              <td>2.28e-111</td>
+          </tr>
+
+          <tr>
+              <td>ATW52425.1</td>
+              <td>iron_ABC_transporter_substrate-binding_protein</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0002466/1">BGC0002466</a></td>
+              <td>NRP</td>
+              <td>52.0</td>
+              <td>85.7</td>
+              <td>327.0</td>
+              <td>3.34e-111</td>
+          </tr>
+
+          <tr>
+              <td>ctg1_orf19</td>
+              <td></td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0001767/1">BGC0001767</a></td>
+              <td>NRP</td>
+              <td>52.0</td>
+              <td>86.0</td>
+              <td>316.0</td>
+              <td>1.21e-106</td>
+          </tr>
+
+          <tr>
+              <td>WP_020635022.1</td>
+              <td>iron-siderophore_ABC_transporter_substrate-binding_protein</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0001211/1">BGC0001211</a></td>
+              <td>NRP</td>
+              <td>44.0</td>
+              <td>88.0</td>
+              <td>250.0</td>
+              <td>1.38e-80</td>
+          </tr>
+
+          <tr>
+              <td>CBG75490.1</td>
+              <td>putative_secreted_siderophore-binding_lipoprotein_(transport_system_associated)</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0000423/1">BGC0000423</a></td>
+              <td>NRP</td>
+              <td>41.0</td>
+              <td>87.1</td>
+              <td>220.0</td>
+              <td>8.4e-69</td>
+          </tr>
+
+          <tr>
+              <td>CAB53324.1</td>
+              <td>putative_iron-siderophore_binding_lipoprotein</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0000325/1">BGC0000325</a></td>
+              <td>NRP</td>
+              <td>39.0</td>
+              <td>87.7</td>
+              <td>213.0</td>
+              <td>2.39e-66</td>
+          </tr>
+
+          <tr>
+              <td>MBD2892721.1</td>
+              <td>Petrobactin-binding_protein_FpuA</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0002718/1">BGC0002718</a></td>
+              <td>NRP</td>
+              <td>31.0</td>
+              <td>86.6</td>
+              <td>145.0</td>
+              <td>3.49e-40</td>
+          </tr>
+
+          <tr>
+              <td>AJW65401.1</td>
+              <td>transport_protein</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0001195/1">BGC0001195</a></td>
+              <td>NRP+Polyketide</td>
+              <td>41.0</td>
+              <td>56.9</td>
+              <td>133.0</td>
+              <td>5.36e-37</td>
+          </tr>
+
+          <tr>
+              <td>AMK48224.1</td>
+              <td>putative_iron(III)/siderophore_ABC_transporter_substrate_binding_protein</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0001351/1">BGC0001351</a></td>
+              <td>NRP</td>
+              <td>28.0</td>
+              <td>87.1</td>
+              <td>109.0</td>
+              <td>5.22e-27</td>
+          </tr>
+
+          <tr>
+              <td>AJW65402.1</td>
+              <td>transport_protein</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0001195/1">BGC0001195</a></td>
+              <td>NRP+Polyketide</td>
+              <td>49.0</td>
+              <td>22.3</td>
+              <td>74.0</td>
+              <td>9.37e-16</td>
+          </tr>
+
+    </tbody>
+  </table>
+</body>

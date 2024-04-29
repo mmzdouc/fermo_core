@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../../css/style.css">
+
+<script type="text/javascript" src="../../js/jquery.js"></script>
+<script type="text/javascript" src="../../js/jquery.tablesorter.min.js"></script>
+
+<script type="text/javascript" >
+var counter = 1;
+function addInput(divName){
+     var newdiv = document.createElement('div');
+     newdiv.innerHTML = "<b>Locus " + (counter + 1) + "</b><br> GenBank accession: <input type='text' required name='myInputs[]'> Start nt: <input type='number' name='myStartCoords[]' placeholder='N/A'> End nt: <input type='number' name='myEndCoords[]' placeholder='N/A'> <br><br>";
+     document.getElementById(divName).appendChild(newdiv);
+     counter++;
+}
+</script>
+
+<script>
+$(document).ready(function()
+    {
+        $("#myTable").tablesorter();
+    }
+);
+
+</script>
+<style>
+table {
+    border-width: thin;
+    border-spacing: 2px;
+    border-style: none;
+    border-color: black;
+}
+</style>
+</head>
+<body>
+    <table id="myTable" class="tablesorter" border=1>
+    <thead>
+    <tr>
+        <th>MIBiG Protein</th>
+        <th>Description</th>
+        <th>MIBiG Cluster</th>
+        <th>MiBiG Product</th>
+        <th>% ID</th>
+        <th>% Coverage</th>
+        <th>BLAST Score</th>
+        <th>E-value</th>
+    </tr>
+    </thead>
+    <tbody>
+
+          <tr>
+              <td>CAO98841.1</td>
+              <td>hypothetical_protein</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0000023/1">BGC0000023</a></td>
+              <td>Polyketide:Modular type I polyketide</td>
+              <td>38.0</td>
+              <td>38.3</td>
+              <td>113.0</td>
+              <td>7.69e-27</td>
+          </tr>
+
+          <tr>
+              <td>APZ78674.1</td>
+              <td>two-component_sensor_histidine_kinase</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0001417/1">BGC0001417</a></td>
+              <td>NRP:Cyclic depsipeptide+Polyketide:Iterative type I polyketide</td>
+              <td>34.0</td>
+              <td>51.3</td>
+              <td>98.0</td>
+              <td>1.81e-21</td>
+          </tr>
+
+          <tr>
+              <td>ABK32283.1</td>
+              <td>Jer3</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0000080/1">BGC0000080</a></td>
+              <td>Polyketide</td>
+              <td>28.0</td>
+              <td>73.5</td>
+              <td>95.0</td>
+              <td>1.28e-20</td>
+          </tr>
+
+          <tr>
+              <td>QVV57669.1</td>
+              <td>HAMP_domain-containing_histidine_kinase</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0002338/1">BGC0002338</a></td>
+              <td>Polyketide</td>
+              <td>32.0</td>
+              <td>47.2</td>
+              <td>87.0</td>
+              <td>2.38e-18</td>
+          </tr>
+
+          <tr>
+              <td>ABK32251.1</td>
+              <td>Amb3</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0000014/1">BGC0000014</a></td>
+              <td>Polyketide</td>
+              <td>38.0</td>
+              <td>28.6</td>
+              <td>79.0</td>
+              <td>2.81e-16</td>
+          </tr>
+
+          <tr>
+              <td>AYM52840.1</td>
+              <td>sensor_protein</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0001964/1">BGC0001964</a></td>
+              <td>Polyketide</td>
+              <td>29.0</td>
+              <td>48.3</td>
+              <td>74.0</td>
+              <td>1.39e-13</td>
+          </tr>
+
+          <tr>
+              <td>WP_032643380.1</td>
+              <td>PAS_domain-containing_protein</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0002571/1">BGC0002571</a></td>
+              <td>NRP</td>
+              <td>30.0</td>
+              <td>40.9</td>
+              <td>72.0</td>
+              <td>7.27e-13</td>
+          </tr>
+
+          <tr>
+              <td>BCJ07535.1</td>
+              <td>hybrid_sensor_histidine_kinase/response_regulator</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0002379/1">BGC0002379</a></td>
+              <td>NRP</td>
+              <td>30.0</td>
+              <td>53.0</td>
+              <td>68.0</td>
+              <td>1.19e-11</td>
+          </tr>
+
+          <tr>
+              <td>CAK15821.1</td>
+              <td>putative_sensory_box_histidine_kinase/response_regulator_(hybrid)</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0000344/1">BGC0000344</a></td>
+              <td>NRP</td>
+              <td>26.0</td>
+              <td>54.0</td>
+              <td>61.0</td>
+              <td>1.79e-09</td>
+          </tr>
+
+          <tr>
+              <td>AMD57702.1</td>
+              <td>hybrid_sensor_histidine_kinase/response_regulator</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0001765/1">BGC0001765</a></td>
+              <td>Saccharide</td>
+              <td>24.0</td>
+              <td>61.9</td>
+              <td>60.0</td>
+              <td>4.82e-09</td>
+          </tr>
+
+          <tr>
+              <td>ALI93253.1</td>
+              <td>transcriptional_regulator</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0001380/1">BGC0001380</a></td>
+              <td>Saccharide</td>
+              <td>34.0</td>
+              <td>23.5</td>
+              <td>59.0</td>
+              <td>6.36e-09</td>
+          </tr>
+
+          <tr>
+              <td>ABK32279.1</td>
+              <td>hypothetical_protein</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0000014/1">BGC0000014</a></td>
+              <td>Polyketide</td>
+              <td>32.0</td>
+              <td>35.0</td>
+              <td>57.0</td>
+              <td>3.33e-08</td>
+          </tr>
+
+    </tbody>
+  </table>
+</body>

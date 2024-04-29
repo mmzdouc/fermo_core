@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../../css/style.css">
+
+<script type="text/javascript" src="../../js/jquery.js"></script>
+<script type="text/javascript" src="../../js/jquery.tablesorter.min.js"></script>
+
+<script type="text/javascript" >
+var counter = 1;
+function addInput(divName){
+     var newdiv = document.createElement('div');
+     newdiv.innerHTML = "<b>Locus " + (counter + 1) + "</b><br> GenBank accession: <input type='text' required name='myInputs[]'> Start nt: <input type='number' name='myStartCoords[]' placeholder='N/A'> End nt: <input type='number' name='myEndCoords[]' placeholder='N/A'> <br><br>";
+     document.getElementById(divName).appendChild(newdiv);
+     counter++;
+}
+</script>
+
+<script>
+$(document).ready(function()
+    {
+        $("#myTable").tablesorter();
+    }
+);
+
+</script>
+<style>
+table {
+    border-width: thin;
+    border-spacing: 2px;
+    border-style: none;
+    border-color: black;
+}
+</style>
+</head>
+<body>
+    <table id="myTable" class="tablesorter" border=1>
+    <thead>
+    <tr>
+        <th>MIBiG Protein</th>
+        <th>Description</th>
+        <th>MIBiG Cluster</th>
+        <th>MiBiG Product</th>
+        <th>% ID</th>
+        <th>% Coverage</th>
+        <th>BLAST Score</th>
+        <th>E-value</th>
+    </tr>
+    </thead>
+    <tbody>
+
+          <tr>
+              <td>ADO67772.1</td>
+              <td>tpaC</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0000615/1">BGC0000615</a></td>
+              <td>RiPP:Thiopeptide</td>
+              <td>44.0</td>
+              <td>102.5</td>
+              <td>310.0</td>
+              <td>2.13e-101</td>
+          </tr>
+
+          <tr>
+              <td>QVN25649.1</td>
+              <td>cyclodehydratase</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0002363/1">BGC0002363</a></td>
+              <td>RiPP</td>
+              <td>42.0</td>
+              <td>99.5</td>
+              <td>308.0</td>
+              <td>8.5e-101</td>
+          </tr>
+
+          <tr>
+              <td>AGN11668.1</td>
+              <td>BerG2</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0001472/1">BGC0001472</a></td>
+              <td>RiPP</td>
+              <td>42.0</td>
+              <td>99.5</td>
+              <td>305.0</td>
+              <td>1.35e-99</td>
+          </tr>
+
+          <tr>
+              <td>WP_199814150.1</td>
+              <td>YcaO-like_family_protein</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0001753/1">BGC0001753</a></td>
+              <td>RiPP</td>
+              <td>43.0</td>
+              <td>89.2</td>
+              <td>296.0</td>
+              <td>6.49e-97</td>
+          </tr>
+
+          <tr>
+              <td>QAZ50818.1</td>
+              <td>hypothetical_protein</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0002311/1">BGC0002311</a></td>
+              <td>RiPP</td>
+              <td>39.0</td>
+              <td>98.0</td>
+              <td>265.0</td>
+              <td>7.32e-84</td>
+          </tr>
+
+          <tr>
+              <td>AFZ08005.1</td>
+              <td>Heterocyclase</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0000471/1">BGC0000471</a></td>
+              <td>RiPP:Cyanobactin</td>
+              <td>27.0</td>
+              <td>88.9</td>
+              <td>96.0</td>
+              <td>1.34e-20</td>
+          </tr>
+
+          <tr>
+              <td>AAY21153.1</td>
+              <td>adenylation/heterocyclization_protein</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0000475/1">BGC0000475</a></td>
+              <td>RiPP:Cyanobactin</td>
+              <td>27.0</td>
+              <td>89.6</td>
+              <td>95.0</td>
+              <td>2.41e-20</td>
+          </tr>
+
+          <tr>
+              <td>EKF00813.1</td>
+              <td>putative_adenylation/heterocyclization_protein</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0002486/1">BGC0002486</a></td>
+              <td>RiPP</td>
+              <td>26.0</td>
+              <td>86.0</td>
+              <td>88.0</td>
+              <td>3.19e-18</td>
+          </tr>
+
+          <tr>
+              <td>BAE46919.2</td>
+              <td>goadsporin_biosynthetic_protein</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0000565/1">BGC0000565</a></td>
+              <td>RiPP:LAP</td>
+              <td>26.0</td>
+              <td>87.1</td>
+              <td>87.0</td>
+              <td>9.94e-18</td>
+          </tr>
+
+          <tr>
+              <td>ACA04483.1</td>
+              <td>TenD</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0000480/1">BGC0000480</a></td>
+              <td>RiPP:Cyanobactin</td>
+              <td>25.0</td>
+              <td>88.9</td>
+              <td>83.0</td>
+              <td>1.75e-16</td>
+          </tr>
+
+          <tr>
+              <td>CAP64338.1</td>
+              <td>adenylation/heterocyclization_protein</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0000474/1">BGC0000474</a></td>
+              <td>RiPP:Cyanobactin</td>
+              <td>28.0</td>
+              <td>86.2</td>
+              <td>82.0</td>
+              <td>4.11e-16</td>
+          </tr>
+
+          <tr>
+              <td>CAO82084.1</td>
+              <td>adenylation/heterocyclization_protein</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0000473/1">BGC0000473</a></td>
+              <td>RiPP:Cyanobactin</td>
+              <td>28.0</td>
+              <td>86.2</td>
+              <td>81.0</td>
+              <td>5.46e-16</td>
+          </tr>
+
+          <tr>
+              <td>QGA72585.1</td>
+              <td>MusD</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0002485/1">BGC0002485</a></td>
+              <td>RiPP+Alkaloid</td>
+              <td>24.0</td>
+              <td>86.5</td>
+              <td>74.0</td>
+              <td>1.2e-13</td>
+          </tr>
+
+    </tbody>
+  </table>
+</body>

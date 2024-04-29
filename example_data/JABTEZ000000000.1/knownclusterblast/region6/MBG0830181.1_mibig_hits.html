@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../../css/style.css">
+
+<script type="text/javascript" src="../../js/jquery.js"></script>
+<script type="text/javascript" src="../../js/jquery.tablesorter.min.js"></script>
+
+<script type="text/javascript" >
+var counter = 1;
+function addInput(divName){
+     var newdiv = document.createElement('div');
+     newdiv.innerHTML = "<b>Locus " + (counter + 1) + "</b><br> GenBank accession: <input type='text' required name='myInputs[]'> Start nt: <input type='number' name='myStartCoords[]' placeholder='N/A'> End nt: <input type='number' name='myEndCoords[]' placeholder='N/A'> <br><br>";
+     document.getElementById(divName).appendChild(newdiv);
+     counter++;
+}
+</script>
+
+<script>
+$(document).ready(function()
+    {
+        $("#myTable").tablesorter();
+    }
+);
+
+</script>
+<style>
+table {
+    border-width: thin;
+    border-spacing: 2px;
+    border-style: none;
+    border-color: black;
+}
+</style>
+</head>
+<body>
+    <table id="myTable" class="tablesorter" border=1>
+    <thead>
+    <tr>
+        <th>MIBiG Protein</th>
+        <th>Description</th>
+        <th>MIBiG Cluster</th>
+        <th>MiBiG Product</th>
+        <th>% ID</th>
+        <th>% Coverage</th>
+        <th>BLAST Score</th>
+        <th>E-value</th>
+    </tr>
+    </thead>
+    <tbody>
+
+          <tr>
+              <td>SEG87485.1</td>
+              <td>Flavin-dependent_oxidoreductase,_luciferase_family_(includes_alkanesulfonate_monooxygenase_SsuD_and_methylene_tetrahydromethanopterin_reductase)</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0002712/1">BGC0002712</a></td>
+              <td>Polyketide</td>
+              <td>66.0</td>
+              <td>98.7</td>
+              <td>394.0</td>
+              <td>9.1e-139</td>
+          </tr>
+
+          <tr>
+              <td>BAJ07867.1</td>
+              <td>putative_N5,N10-_methylenetetrahydromethanopterin_reductase</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0000232/1">BGC0000232</a></td>
+              <td>Polyketide</td>
+              <td>64.0</td>
+              <td>97.7</td>
+              <td>382.0</td>
+              <td>1.05e-133</td>
+          </tr>
+
+          <tr>
+              <td>CAE45677.1</td>
+              <td>putative_dehydrogenase</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0000031/1">BGC0000031</a></td>
+              <td>Polyketide:Modular type I polyketide</td>
+              <td>35.0</td>
+              <td>56.6</td>
+              <td>79.0</td>
+              <td>2.4e-16</td>
+          </tr>
+
+          <tr>
+              <td>ALV82315.1</td>
+              <td>putative_dehydrogenase</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0001533/1">BGC0001533</a></td>
+              <td>Polyketide</td>
+              <td>35.0</td>
+              <td>56.6</td>
+              <td>79.0</td>
+              <td>2.4e-16</td>
+          </tr>
+
+          <tr>
+              <td>ARU08084.1</td>
+              <td>mlcP</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0001448/1">BGC0001448</a></td>
+              <td>NRP:Lipopeptide:Ca+-dependent lipopeptide</td>
+              <td>27.0</td>
+              <td>82.9</td>
+              <td>62.0</td>
+              <td>7.9e-11</td>
+          </tr>
+
+          <tr>
+              <td>ADE22295.1</td>
+              <td>putative_F420-dependent_reductase</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0000279/1">BGC0000279</a></td>
+              <td>Polyketide</td>
+              <td>31.0</td>
+              <td>57.2</td>
+              <td>60.0</td>
+              <td>4.67e-10</td>
+          </tr>
+
+          <tr>
+              <td>BAJ19083.1</td>
+              <td>putative_luciferase_family_protein</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0000288/1">BGC0000288</a></td>
+              <td>NRP</td>
+              <td>28.0</td>
+              <td>59.2</td>
+              <td>54.0</td>
+              <td>7.24e-08</td>
+          </tr>
+
+    </tbody>
+  </table>
+</body>

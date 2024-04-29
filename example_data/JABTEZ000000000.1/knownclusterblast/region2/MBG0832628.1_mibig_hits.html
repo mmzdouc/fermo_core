@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../../css/style.css">
+
+<script type="text/javascript" src="../../js/jquery.js"></script>
+<script type="text/javascript" src="../../js/jquery.tablesorter.min.js"></script>
+
+<script type="text/javascript" >
+var counter = 1;
+function addInput(divName){
+     var newdiv = document.createElement('div');
+     newdiv.innerHTML = "<b>Locus " + (counter + 1) + "</b><br> GenBank accession: <input type='text' required name='myInputs[]'> Start nt: <input type='number' name='myStartCoords[]' placeholder='N/A'> End nt: <input type='number' name='myEndCoords[]' placeholder='N/A'> <br><br>";
+     document.getElementById(divName).appendChild(newdiv);
+     counter++;
+}
+</script>
+
+<script>
+$(document).ready(function()
+    {
+        $("#myTable").tablesorter();
+    }
+);
+
+</script>
+<style>
+table {
+    border-width: thin;
+    border-spacing: 2px;
+    border-style: none;
+    border-color: black;
+}
+</style>
+</head>
+<body>
+    <table id="myTable" class="tablesorter" border=1>
+    <thead>
+    <tr>
+        <th>MIBiG Protein</th>
+        <th>Description</th>
+        <th>MIBiG Cluster</th>
+        <th>MiBiG Product</th>
+        <th>% ID</th>
+        <th>% Coverage</th>
+        <th>BLAST Score</th>
+        <th>E-value</th>
+    </tr>
+    </thead>
+    <tbody>
+
+          <tr>
+              <td>AFV52135.1</td>
+              <td>putative_ketoreductase</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0000081/1">BGC0000081</a></td>
+              <td>NRP+Polyketide:Iterative type I polyketide+Polyketide:Enediyne type I polyketide</td>
+              <td>29.0</td>
+              <td>72.6</td>
+              <td>149.0</td>
+              <td>1.71e-37</td>
+          </tr>
+
+          <tr>
+              <td>ABY65999.1</td>
+              <td>oxidoreductase</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0001008/1">BGC0001008</a></td>
+              <td>Polyketide:Iterative type I polyketide+Polyketide:Enediyne type I polyketide</td>
+              <td>29.0</td>
+              <td>71.9</td>
+              <td>144.0</td>
+              <td>8.69e-36</td>
+          </tr>
+
+          <tr>
+              <td>AAM78005.1</td>
+              <td>oxidoreductase</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0000112/1">BGC0000112</a></td>
+              <td>Polyketide:Iterative type I polyketide+Polyketide:Enediyne type I polyketide</td>
+              <td>29.0</td>
+              <td>71.7</td>
+              <td>140.0</td>
+              <td>9.14e-35</td>
+          </tr>
+
+          <tr>
+              <td>AAL06693.1</td>
+              <td>oxidoreductase</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0000965/1">BGC0000965</a></td>
+              <td>Polyketide:Iterative type I polyketide+Polyketide:Enediyne type I polyketide</td>
+              <td>28.0</td>
+              <td>71.7</td>
+              <td>139.0</td>
+              <td>2.93e-34</td>
+          </tr>
+
+          <tr>
+              <td>ALU98455.1</td>
+              <td>glucose-methanol-choline_oxidoreductase</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0001397/1">BGC0001397</a></td>
+              <td>NRP+Polyketide</td>
+              <td>28.0</td>
+              <td>71.7</td>
+              <td>139.0</td>
+              <td>2.93e-34</td>
+          </tr>
+
+          <tr>
+              <td>ANY94464.1</td>
+              <td>oxidoreductase</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0001584/1">BGC0001584</a></td>
+              <td>Polyketide</td>
+              <td>28.0</td>
+              <td>71.7</td>
+              <td>136.0</td>
+              <td>3.04e-33</td>
+          </tr>
+
+          <tr>
+              <td>ABP55148.1</td>
+              <td>glucose-methanol-choline_oxidoreductase</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0000150/1">BGC0000150</a></td>
+              <td>NRP+Polyketide:Enediyne type I polyketide</td>
+              <td>28.0</td>
+              <td>72.4</td>
+              <td>131.0</td>
+              <td>1.34e-31</td>
+          </tr>
+
+          <tr>
+              <td>QFS19042.1</td>
+              <td>oxidoreductase</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0002506/1">BGC0002506</a></td>
+              <td>Polyketide</td>
+              <td>30.0</td>
+              <td>41.5</td>
+              <td>101.0</td>
+              <td>4.91e-22</td>
+          </tr>
+
+          <tr>
+              <td>AQW35067.1</td>
+              <td>oxidase</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0001675/1">BGC0001675</a></td>
+              <td>Polyketide</td>
+              <td>29.0</td>
+              <td>41.5</td>
+              <td>92.0</td>
+              <td>4.66e-19</td>
+          </tr>
+
+          <tr>
+              <td>CAI47657.1</td>
+              <td>putative_hexosamine-6-dehydrogenase</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0000692/1">BGC0000692</a></td>
+              <td>Saccharide</td>
+              <td>26.0</td>
+              <td>69.8</td>
+              <td>81.0</td>
+              <td>2.4e-15</td>
+          </tr>
+
+          <tr>
+              <td>QED90616.1</td>
+              <td>cholesterol_oxidase</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0002081/1">BGC0002081</a></td>
+              <td>Polyketide</td>
+              <td>29.0</td>
+              <td>42.2</td>
+              <td>81.0</td>
+              <td>2.53e-15</td>
+          </tr>
+
+          <tr>
+              <td>CAF33316.1</td>
+              <td>putative_bifunctional_neomycin_6&#39;-and_6&#39;&#39;&#39;-dehydrogenase,_NeoQ</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0000709/1">BGC0000709</a></td>
+              <td>Saccharide</td>
+              <td>25.0</td>
+              <td>70.4</td>
+              <td>70.0</td>
+              <td>4.99e-12</td>
+          </tr>
+
+          <tr>
+              <td>CAH58694.1</td>
+              <td>putative_sugar_dehydrogenase</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0000711/1">BGC0000711</a></td>
+              <td>Saccharide</td>
+              <td>25.0</td>
+              <td>70.4</td>
+              <td>70.0</td>
+              <td>4.99e-12</td>
+          </tr>
+
+          <tr>
+              <td>BAC68118.1</td>
+              <td>putative_cholesterol_oxidase</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0000059/1">BGC0000059</a></td>
+              <td>Polyketide</td>
+              <td>23.0</td>
+              <td>37.2</td>
+              <td>61.0</td>
+              <td>3.88e-09</td>
+          </tr>
+
+          <tr>
+              <td>CAG34714.1</td>
+              <td>putative_sugar-alcohol_dehydrogenase</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0000713/1">BGC0000713</a></td>
+              <td>Saccharide</td>
+              <td>31.0</td>
+              <td>22.0</td>
+              <td>52.0</td>
+              <td>2.88e-06</td>
+          </tr>
+
+    </tbody>
+  </table>
+</body>

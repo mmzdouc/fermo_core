@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../../css/style.css">
+
+<script type="text/javascript" src="../../js/jquery.js"></script>
+<script type="text/javascript" src="../../js/jquery.tablesorter.min.js"></script>
+
+<script type="text/javascript" >
+var counter = 1;
+function addInput(divName){
+     var newdiv = document.createElement('div');
+     newdiv.innerHTML = "<b>Locus " + (counter + 1) + "</b><br> GenBank accession: <input type='text' required name='myInputs[]'> Start nt: <input type='number' name='myStartCoords[]' placeholder='N/A'> End nt: <input type='number' name='myEndCoords[]' placeholder='N/A'> <br><br>";
+     document.getElementById(divName).appendChild(newdiv);
+     counter++;
+}
+</script>
+
+<script>
+$(document).ready(function()
+    {
+        $("#myTable").tablesorter();
+    }
+);
+
+</script>
+<style>
+table {
+    border-width: thin;
+    border-spacing: 2px;
+    border-style: none;
+    border-color: black;
+}
+</style>
+</head>
+<body>
+    <table id="myTable" class="tablesorter" border=1>
+    <thead>
+    <tr>
+        <th>MIBiG Protein</th>
+        <th>Description</th>
+        <th>MIBiG Cluster</th>
+        <th>MiBiG Product</th>
+        <th>% ID</th>
+        <th>% Coverage</th>
+        <th>BLAST Score</th>
+        <th>E-value</th>
+    </tr>
+    </thead>
+    <tbody>
+
+          <tr>
+              <td>BAJ19075.1</td>
+              <td>putative_phosphoenolpyruvate_synthase</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0000288/1">BGC0000288</a></td>
+              <td>NRP</td>
+              <td>72.0</td>
+              <td>99.7</td>
+              <td>1212.0</td>
+              <td>0.0</td>
+          </tr>
+
+          <tr>
+              <td>ADX66475.1</td>
+              <td>putative_phosphoenolpyruvate_synthase</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0000108/1">BGC0000108</a></td>
+              <td>Polyketide</td>
+              <td>70.0</td>
+              <td>81.6</td>
+              <td>973.0</td>
+              <td>0.0</td>
+          </tr>
+
+          <tr>
+              <td>AGP37403.1</td>
+              <td>hypothetical_protein</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0002386/1">BGC0002386</a></td>
+              <td>NRP+Polyketide</td>
+              <td>30.0</td>
+              <td>110.3</td>
+              <td>296.0</td>
+              <td>5.82e-87</td>
+          </tr>
+
+          <tr>
+              <td>AKQ22702.1</td>
+              <td>phosphoenolpyruvate_synthase</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0001186/1">BGC0001186</a></td>
+              <td>Polyketide</td>
+              <td>29.0</td>
+              <td>106.2</td>
+              <td>273.0</td>
+              <td>1.92e-78</td>
+          </tr>
+
+          <tr>
+              <td>WP_037611834.1</td>
+              <td>PEP-utilizing_enzyme</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0002381/1">BGC0002381</a></td>
+              <td>Alkaloid+Polyketide</td>
+              <td>29.0</td>
+              <td>104.6</td>
+              <td>273.0</td>
+              <td>2.1e-78</td>
+          </tr>
+
+          <tr>
+              <td>MBA5221222.1</td>
+              <td>phosphoenolpyruvate-utilizing_enzyme</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0002090/1">BGC0002090</a></td>
+              <td>NRP+Polyketide:Modular type I polyketide</td>
+              <td>29.0</td>
+              <td>104.6</td>
+              <td>253.0</td>
+              <td>4.52e-71</td>
+          </tr>
+
+          <tr>
+              <td>CAD55238.1</td>
+              <td>phosphoenolpyruvate-utilizing_enzyme</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0001063/1">BGC0001063</a></td>
+              <td>NRP+Polyketide</td>
+              <td>29.0</td>
+              <td>104.9</td>
+              <td>240.0</td>
+              <td>1.6e-66</td>
+          </tr>
+
+          <tr>
+              <td>WP_044618983.1</td>
+              <td>PEP-utilizing_enzyme</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0001791/1">BGC0001791</a></td>
+              <td>NRP</td>
+              <td>28.0</td>
+              <td>105.4</td>
+              <td>238.0</td>
+              <td>4.04e-66</td>
+          </tr>
+
+          <tr>
+              <td>AHF22858.1</td>
+              <td>MarH</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0000091/1">BGC0000091</a></td>
+              <td>Polyketide</td>
+              <td>28.0</td>
+              <td>105.2</td>
+              <td>238.0</td>
+              <td>5.26e-66</td>
+          </tr>
+
+          <tr>
+              <td>QPB84028.1</td>
+              <td>phosphoenolpyruvate_synthase</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0002675/1">BGC0002675</a></td>
+              <td>Polyketide</td>
+              <td>27.0</td>
+              <td>106.1</td>
+              <td>238.0</td>
+              <td>5.83e-66</td>
+          </tr>
+
+          <tr>
+              <td>ABB69075.1</td>
+              <td>condensation_enzyme</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0000260/1">BGC0000260</a></td>
+              <td>Polyketide</td>
+              <td>27.0</td>
+              <td>108.6</td>
+              <td>234.0</td>
+              <td>1.25e-64</td>
+          </tr>
+
+          <tr>
+              <td>CAH55631.1</td>
+              <td>putative_phosphoenolpyruvate-utilizing_enzyme</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0000258/1">BGC0000258</a></td>
+              <td>Polyketide</td>
+              <td>27.0</td>
+              <td>105.1</td>
+              <td>229.0</td>
+              <td>5.58e-63</td>
+          </tr>
+
+          <tr>
+              <td>BAG84255.1</td>
+              <td>putative_pyrrole-condensing_enzyme</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0000257/1">BGC0000257</a></td>
+              <td>Polyketide</td>
+              <td>27.0</td>
+              <td>106.4</td>
+              <td>226.0</td>
+              <td>3.47e-61</td>
+          </tr>
+
+          <tr>
+              <td>TXD00004.1</td>
+              <td>phosphoenolpyruvate_synthase</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0001877/1">BGC0001877</a></td>
+              <td>Polyketide</td>
+              <td>28.0</td>
+              <td>107.2</td>
+              <td>223.0</td>
+              <td>1.35e-60</td>
+          </tr>
+
+          <tr>
+              <td>CAH55648.1</td>
+              <td>putative_phosphoenolpyruvate-utilizing_enzyme</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0000259/1">BGC0000259</a></td>
+              <td>Polyketide</td>
+              <td>28.0</td>
+              <td>105.6</td>
+              <td>222.0</td>
+              <td>1.81e-60</td>
+          </tr>
+
+          <tr>
+              <td>AMH40425.1</td>
+              <td>phosphoenolpyruvate_synthase</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0001350/1">BGC0001350</a></td>
+              <td>Polyketide</td>
+              <td>37.0</td>
+              <td>38.9</td>
+              <td>169.0</td>
+              <td>3.35e-43</td>
+          </tr>
+
+          <tr>
+              <td>ABW00316.1</td>
+              <td>pyruvate_phosphate_dikinase_PEP/pyruvate-binding</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0000333/1">BGC0000333</a></td>
+              <td>NRP</td>
+              <td>36.0</td>
+              <td>36.6</td>
+              <td>155.0</td>
+              <td>1.07e-40</td>
+          </tr>
+
+          <tr>
+              <td>ADA82588.1</td>
+              <td>phosphoenolpyruvate_synthase_alpha_subunit</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0001110/1">BGC0001110</a></td>
+              <td>NRP+Polyketide:Trans-AT type I polyketide</td>
+              <td>37.0</td>
+              <td>36.1</td>
+              <td>150.0</td>
+              <td>5.24e-40</td>
+          </tr>
+
+          <tr>
+              <td>CAJ46688.1</td>
+              <td>putative_phosphoenol_pyruvate_synthase</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0000969/1">BGC0000969</a></td>
+              <td>NRP:Cyclic depsipeptide+Polyketide:Modular type I polyketide</td>
+              <td>33.0</td>
+              <td>39.1</td>
+              <td>127.0</td>
+              <td>4.13e-30</td>
+          </tr>
+
+          <tr>
+              <td>ALD82526.1</td>
+              <td>non-ribosomal_peptide_synthase</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0001212/1">BGC0001212</a></td>
+              <td>NRP+Polyketide</td>
+              <td>31.0</td>
+              <td>43.1</td>
+              <td>120.0</td>
+              <td>3.56e-27</td>
+          </tr>
+
+          <tr>
+              <td>ADA82586.1</td>
+              <td>phosphoenolpyruvate_synthase,_beta_and_gamma_subunit</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0001110/1">BGC0001110</a></td>
+              <td>NRP+Polyketide:Trans-AT type I polyketide</td>
+              <td>33.0</td>
+              <td>24.2</td>
+              <td>106.0</td>
+              <td>2.22e-23</td>
+          </tr>
+
+    </tbody>
+  </table>
+</body>

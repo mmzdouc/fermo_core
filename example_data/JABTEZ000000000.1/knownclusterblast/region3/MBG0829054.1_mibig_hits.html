@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../../css/style.css">
+
+<script type="text/javascript" src="../../js/jquery.js"></script>
+<script type="text/javascript" src="../../js/jquery.tablesorter.min.js"></script>
+
+<script type="text/javascript" >
+var counter = 1;
+function addInput(divName){
+     var newdiv = document.createElement('div');
+     newdiv.innerHTML = "<b>Locus " + (counter + 1) + "</b><br> GenBank accession: <input type='text' required name='myInputs[]'> Start nt: <input type='number' name='myStartCoords[]' placeholder='N/A'> End nt: <input type='number' name='myEndCoords[]' placeholder='N/A'> <br><br>";
+     document.getElementById(divName).appendChild(newdiv);
+     counter++;
+}
+</script>
+
+<script>
+$(document).ready(function()
+    {
+        $("#myTable").tablesorter();
+    }
+);
+
+</script>
+<style>
+table {
+    border-width: thin;
+    border-spacing: 2px;
+    border-style: none;
+    border-color: black;
+}
+</style>
+</head>
+<body>
+    <table id="myTable" class="tablesorter" border=1>
+    <thead>
+    <tr>
+        <th>MIBiG Protein</th>
+        <th>Description</th>
+        <th>MIBiG Cluster</th>
+        <th>MiBiG Product</th>
+        <th>% ID</th>
+        <th>% Coverage</th>
+        <th>BLAST Score</th>
+        <th>E-value</th>
+    </tr>
+    </thead>
+    <tbody>
+
+          <tr>
+              <td>ARO49559.1</td>
+              <td>2-IPM_synthase</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0001440/1">BGC0001440</a></td>
+              <td>Other</td>
+              <td>60.0</td>
+              <td>94.3</td>
+              <td>639.0</td>
+              <td>6.51e-227</td>
+          </tr>
+
+          <tr>
+              <td>ARO49578.1</td>
+              <td>2-IPM_synthase</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0001441/1">BGC0001441</a></td>
+              <td>Other</td>
+              <td>53.0</td>
+              <td>92.4</td>
+              <td>528.0</td>
+              <td>6.45e-183</td>
+          </tr>
+
+          <tr>
+              <td>AAY93384.1</td>
+              <td>putative_2-isopropylmalate_synthase</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0000413/1">BGC0000413</a></td>
+              <td>NRP</td>
+              <td>50.0</td>
+              <td>97.1</td>
+              <td>506.0</td>
+              <td>1.61e-174</td>
+          </tr>
+
+          <tr>
+              <td>QUJ09154.1</td>
+              <td>Lon7</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0002440/1">BGC0002440</a></td>
+              <td>NRP</td>
+              <td>49.0</td>
+              <td>95.5</td>
+              <td>503.0</td>
+              <td>2.51e-173</td>
+          </tr>
+
+          <tr>
+              <td>MBE3200459.1</td>
+              <td>2-isopropylmalate_synthase</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0002409/1">BGC0002409</a></td>
+              <td>NRP</td>
+              <td>50.0</td>
+              <td>97.1</td>
+              <td>499.0</td>
+              <td>1.86e-171</td>
+          </tr>
+
+          <tr>
+              <td>KUM80505.1</td>
+              <td>2-isopropylmalate_synthase</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0001562/1">BGC0001562</a></td>
+              <td>NRP</td>
+              <td>49.0</td>
+              <td>96.7</td>
+              <td>496.0</td>
+              <td>1.6e-170</td>
+          </tr>
+
+          <tr>
+              <td>ANZ15829.1</td>
+              <td>2-isopropylmalate_synthase</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0001569/1">BGC0001569</a></td>
+              <td>NRP</td>
+              <td>48.0</td>
+              <td>96.2</td>
+              <td>486.0</td>
+              <td>1.32e-166</td>
+          </tr>
+
+          <tr>
+              <td>ATU31805.1</td>
+              <td>2-isopropylmalate_synthase</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0001814/1">BGC0001814</a></td>
+              <td>NRP</td>
+              <td>47.0</td>
+              <td>95.7</td>
+              <td>484.0</td>
+              <td>5.47e-166</td>
+          </tr>
+
+          <tr>
+              <td>AMM63167.1</td>
+              <td>AniE</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0001371/1">BGC0001371</a></td>
+              <td>NRP</td>
+              <td>42.0</td>
+              <td>91.2</td>
+              <td>389.0</td>
+              <td>2.7e-128</td>
+          </tr>
+
+          <tr>
+              <td>AKJ70939.1</td>
+              <td>isopropyl_malate_synthase</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0002611/1">BGC0002611</a></td>
+              <td>NRP</td>
+              <td>41.0</td>
+              <td>91.3</td>
+              <td>387.0</td>
+              <td>1.3e-127</td>
+          </tr>
+
+          <tr>
+              <td>QIW91873.1</td>
+              <td>HtyA</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0002543/1">BGC0002543</a></td>
+              <td>NRP</td>
+              <td>46.0</td>
+              <td>75.6</td>
+              <td>383.0</td>
+              <td>1.11e-125</td>
+          </tr>
+
+          <tr>
+              <td>EPE34345.1</td>
+              <td>isopropyl_malate_synthase</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0001035/1">BGC0001035</a></td>
+              <td>Polyketide+NRP</td>
+              <td>42.0</td>
+              <td>78.9</td>
+              <td>378.0</td>
+              <td>7.52e-124</td>
+          </tr>
+
+          <tr>
+              <td>XP_020058094.1</td>
+              <td>uncharacterized_protein</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0001220/1">BGC0001220</a></td>
+              <td>NRP</td>
+              <td>41.0</td>
+              <td>93.8</td>
+              <td>365.0</td>
+              <td>2.03e-119</td>
+          </tr>
+
+    </tbody>
+  </table>
+</body>

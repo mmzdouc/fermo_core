@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../../css/style.css">
+
+<script type="text/javascript" src="../../js/jquery.js"></script>
+<script type="text/javascript" src="../../js/jquery.tablesorter.min.js"></script>
+
+<script type="text/javascript" >
+var counter = 1;
+function addInput(divName){
+     var newdiv = document.createElement('div');
+     newdiv.innerHTML = "<b>Locus " + (counter + 1) + "</b><br> GenBank accession: <input type='text' required name='myInputs[]'> Start nt: <input type='number' name='myStartCoords[]' placeholder='N/A'> End nt: <input type='number' name='myEndCoords[]' placeholder='N/A'> <br><br>";
+     document.getElementById(divName).appendChild(newdiv);
+     counter++;
+}
+</script>
+
+<script>
+$(document).ready(function()
+    {
+        $("#myTable").tablesorter();
+    }
+);
+
+</script>
+<style>
+table {
+    border-width: thin;
+    border-spacing: 2px;
+    border-style: none;
+    border-color: black;
+}
+</style>
+</head>
+<body>
+    <table id="myTable" class="tablesorter" border=1>
+    <thead>
+    <tr>
+        <th>MIBiG Protein</th>
+        <th>Description</th>
+        <th>MIBiG Cluster</th>
+        <th>MiBiG Product</th>
+        <th>% ID</th>
+        <th>% Coverage</th>
+        <th>BLAST Score</th>
+        <th>E-value</th>
+    </tr>
+    </thead>
+    <tbody>
+
+          <tr>
+              <td>ABP55143.1</td>
+              <td>ASPIC/UnbV_domain_protein</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0000150/1">BGC0000150</a></td>
+              <td>NRP+Polyketide:Enediyne type I polyketide</td>
+              <td>66.0</td>
+              <td>99.7</td>
+              <td>878.0</td>
+              <td>4.04e-318</td>
+          </tr>
+
+          <tr>
+              <td>AAQ17108.2</td>
+              <td>unknown</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0001008/1">BGC0001008</a></td>
+              <td>Polyketide:Iterative type I polyketide+Polyketide:Enediyne type I polyketide</td>
+              <td>63.0</td>
+              <td>99.7</td>
+              <td>824.0</td>
+              <td>1.23e-296</td>
+          </tr>
+
+          <tr>
+              <td>AAM70329.1</td>
+              <td>CalU14</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0000033/1">BGC0000033</a></td>
+              <td>Polyketide</td>
+              <td>61.0</td>
+              <td>99.2</td>
+              <td>789.0</td>
+              <td>3.04e-283</td>
+          </tr>
+
+          <tr>
+              <td>ATV95647.1</td>
+              <td>hypothetical_protein</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0001503/1">BGC0001503</a></td>
+              <td>Polyketide</td>
+              <td>59.0</td>
+              <td>100.6</td>
+              <td>774.0</td>
+              <td>3.14e-277</td>
+          </tr>
+
+          <tr>
+              <td>AFV52141.1</td>
+              <td>hypothetical_protein</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0000081/1">BGC0000081</a></td>
+              <td>NRP+Polyketide:Iterative type I polyketide+Polyketide:Enediyne type I polyketide</td>
+              <td>60.0</td>
+              <td>99.4</td>
+              <td>772.0</td>
+              <td>1.85e-276</td>
+          </tr>
+
+          <tr>
+              <td>AAL06701.1</td>
+              <td>Unknown</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0000965/1">BGC0000965</a></td>
+              <td>Polyketide:Iterative type I polyketide+Polyketide:Enediyne type I polyketide</td>
+              <td>57.0</td>
+              <td>101.2</td>
+              <td>746.0</td>
+              <td>1.55e-266</td>
+          </tr>
+
+          <tr>
+              <td>ALU98463.1</td>
+              <td>RNA-binding_protein</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0001397/1">BGC0001397</a></td>
+              <td>NRP+Polyketide</td>
+              <td>57.0</td>
+              <td>98.2</td>
+              <td>728.0</td>
+              <td>1.45e-259</td>
+          </tr>
+
+          <tr>
+              <td>ANY94472.1</td>
+              <td>hypothetical_protein</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0001584/1">BGC0001584</a></td>
+              <td>Polyketide</td>
+              <td>57.0</td>
+              <td>98.2</td>
+              <td>723.0</td>
+              <td>1.93e-257</td>
+          </tr>
+
+          <tr>
+              <td>AAM78014.1</td>
+              <td>Unknown</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0000112/1">BGC0000112</a></td>
+              <td>Polyketide:Iterative type I polyketide+Polyketide:Enediyne type I polyketide</td>
+              <td>56.0</td>
+              <td>99.5</td>
+              <td>718.0</td>
+              <td>1.48e-255</td>
+          </tr>
+
+          <tr>
+              <td>AMK92562.1</td>
+              <td>hypothetical_protein</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0001377/1">BGC0001377</a></td>
+              <td>Polyketide</td>
+              <td>48.0</td>
+              <td>99.5</td>
+              <td>562.0</td>
+              <td>4.42e-194</td>
+          </tr>
+
+          <tr>
+              <td>ACB47046.1</td>
+              <td>DynU14</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0001060/1">BGC0001060</a></td>
+              <td>Polyketide</td>
+              <td>45.0</td>
+              <td>98.9</td>
+              <td>486.0</td>
+              <td>1.7e-164</td>
+          </tr>
+
+          <tr>
+              <td>QIJ31519.1</td>
+              <td>SgdU14</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0002545/1">BGC0002545</a></td>
+              <td>Polyketide</td>
+              <td>42.0</td>
+              <td>98.6</td>
+              <td>470.0</td>
+              <td>2.86e-158</td>
+          </tr>
+
+          <tr>
+              <td>SCL57527.1</td>
+              <td>Repeat_domain-containing_protein</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0002387/1">BGC0002387</a></td>
+              <td>Polyketide</td>
+              <td>45.0</td>
+              <td>94.8</td>
+              <td>463.0</td>
+              <td>1.12e-155</td>
+          </tr>
+
+          <tr>
+              <td>AME18005.1</td>
+              <td>hypothetical_protein</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0001378/1">BGC0001378</a></td>
+              <td>Polyketide:Enediyne type I polyketide</td>
+              <td>41.0</td>
+              <td>100.6</td>
+              <td>457.0</td>
+              <td>5.75e-153</td>
+          </tr>
+
+          <tr>
+              <td>ACH85580.1</td>
+              <td>hypothetical_protein</td>
+              <td><a href="https://mibig.secondarymetabolites.org/go/BGC0000283/1">BGC0000283</a></td>
+              <td>Other:Cyclitol</td>
+              <td>40.0</td>
+              <td>94.4</td>
+              <td>405.0</td>
+              <td>4.06e-133</td>
+          </tr>
+
+    </tbody>
+  </table>
+</body>
