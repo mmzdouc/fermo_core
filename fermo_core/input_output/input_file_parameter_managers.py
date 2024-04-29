@@ -23,7 +23,7 @@ SOFTWARE.
 
 from typing import Self
 
-from pydantic import BaseModel, model_validator, FilePath, PositiveFloat
+from pydantic import BaseModel, model_validator, FilePath, PositiveFloat, DirectoryPath
 
 from fermo_core.input_output.class_validation_manager import ValidationManager
 
@@ -298,3 +298,20 @@ class MS2QueryResultsParameters(BaseModel):
             "filepath": str(self.filepath.resolve()),
             "score_cutoff": self.score_cutoff,
         }
+
+
+class AsResultsParameters(BaseModel):
+    """A Pydantic-based class for representing and validating an antiSMASH results dir.
+
+    Attributes:
+        directory_path: the output directory path
+
+    Raise:
+        pydantic.ValidationError: Pydantic validation failed during instantiation.
+    """
+
+    directory_path: DirectoryPath
+
+    def to_json(self: Self) -> dict:
+        """Convert attributes to json-compatible ones."""
+        return {"directory_path": str(self.directory_path.resolve())}

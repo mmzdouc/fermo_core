@@ -158,6 +158,20 @@
                         }
                     }
                 },
+                "as_results": {
+                    "title": "(Optional): antiSMASH results directory (single genome only).",
+                    "additionalProperties": false,
+                    "type": "object",
+                    "required": [
+                        "directory_path"
+                    ],
+                    "properties": {
+                        "directory_path": {
+                            "title": "Specifies the directory path. Absolute paths are preferred.",
+                            "type": "string"
+                        }
+                    }
+                },
                 "output": {
                     "title": "(Optional): fermo_core output location.",
                     "additionalProperties": false,
@@ -167,7 +181,7 @@
                     ],
                     "properties": {
                         "directory_path": {
-                            "title": "Specifies the directory path. Absolute paths are preferred. Default location: 'example_data/'",
+                            "title": "Specifies the directory path. Absolute paths are preferred. Default location: 'results/'",
                             "type": "string"
                         }
                     }
@@ -502,6 +516,82 @@
                             "type": "number",
                             "minimum": 0.1,
                             "maximum": 1.0
+                        }
+                    }
+                },
+                "as_kcb_matching": {
+                    "title": "(Optional): settings for antiSMASH KnownClusterBlast results matching. Will be only executed if a 'as_results' directory was provided.",
+                    "additionalProperties": false,
+                    "type": "object",
+                    "properties": {
+                        "modified_cosine": {
+                            "title": "(Optional): modified cosine algorithm. Most commonly used, quantifies the similarity between two spectra based on their dot-product. See 'https://matchms.readthedocs.io/en/latest/api/matchms.similarity.ModifiedCosine.html' for details.",
+                            "additionalProperties": false,
+                            "type": "object",
+                            "required": [
+                                "activate_module"
+                            ],
+                            "properties": {
+                                "activate_module": {
+                                    "title": "Specifies whether this module should be run. Default: False",
+                                    "type": "boolean"
+                                },
+                                "fragment_tol": {
+                                    "title": "(Optional): tolerance for matching two MS/MS fragments, in m/z units. Default value: 0.1",
+                                    "type": "number"
+                                },
+                                "min_nr_matched_peaks": {
+                                    "title": "(Optional): minimum number of fragments that must be matched between two MS/MS fragmentation spectra to consider two spectra related. Default value: 3",
+                                    "type": "integer",
+                                    "minimum": 1
+                                },
+                                "score_cutoff": {
+                                    "title": "(Optional): minimum modified cosine score that must be reached to consider two MS/MS fragmentation spectra to be related. Default value: 0.4",
+                                    "type": "number",
+                                    "minimum": 0.1,
+                                    "maximum": 1.0
+                                },
+                                "max_precursor_mass_diff": {
+                                    "title": "(Optional): maximum difference between the precursor masses of two MS/MS spectra, in m/z units. A high number may lead to serendipitous matching between unrelated spectra, while a low number may exclude possible analogues. Default value: 600 m/z.",
+                                    "type": "integer",
+                                    "minimum": 1
+                                },
+                                "maximum_runtime": {
+                                    "title": "(Optional): maximum running time of module, in seconds. A value of 0 (zero) indicates unlimited running time. Default value: 600 seconds.",
+                                    "type": "integer",
+                                    "minimum": 0
+                                }
+                            }
+                        },
+                        "ms2deepscore": {
+                            "title": "(Optional): MS2Deepscore algorithm. Quantifies the similarity between two spectra based on a spectral embedding (deep learning). See 'https://github.com/matchms/ms2deepscore' for details.",
+                            "additionalProperties": false,
+                            "type": "object",
+                            "required": [
+                                "activate_module"
+                            ],
+                            "properties": {
+                                "activate_module": {
+                                    "title": "Specifies whether this module should be run. Default: False",
+                                    "type": "boolean"
+                                },
+                                "score_cutoff": {
+                                    "title": "(Optional): minimum score that must be reached to consider two MS/MS fragmentation spectra to be related. Default value: 0.4",
+                                    "type": "number",
+                                    "minimum": 0.1,
+                                    "maximum": 1.0
+                                },
+                                "max_precursor_mass_diff": {
+                                    "title": "(Optional): maximum difference between the precursor masses of two MS/MS spectra, in m/z units. A high number may lead to serendipitous matching between unrelated spectra, while a low number may exclude possible analogues. Default value: 600 m/z.",
+                                    "type": "integer",
+                                    "minimum": 1
+                                },
+                                "maximum_runtime": {
+                                    "title": "(Optional): maximum running time of module, in seconds. A value of 0 (zero) indicates unlimited running time. Default value: 600 seconds.",
+                                    "type": "integer",
+                                    "minimum": 0
+                                }
+                            }
                         }
                     }
                 }

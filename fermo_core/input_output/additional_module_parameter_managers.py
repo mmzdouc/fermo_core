@@ -245,3 +245,81 @@ class Ms2QueryAnnotationParameters(BaseModel):
             }
         else:
             return {"activate_module": self.activate_module}
+
+
+class AsKcbCosineMatchingParams(BaseModel):
+    """Pydantic-based class for params of antiSMASH KCB results mod cosine matching.
+
+    Stores parameters for matching the in silico generated MS2 spectra of significant
+    KnownClusterBlast hits from antiSMASH against the feature spectra. A targeted
+    spectral library allows to use very loose similarity scores to allow for very
+    distant hits. Uses the modified cosine algorithm.
+
+    Attributes:
+        activate_module: bool to indicate if module should be executed.
+        fragment_tol: max tolerable diff to consider two fragments as equal, in m/z
+        min_nr_matched_peaks: peak cutoff to consider a match of two MS/MS spectra
+        score_cutoff: score cutoff to consider a match of two MS/MS spectra
+        max_precursor_mass_diff: maximum precursor mass difference
+        maximum_runtime: maximum runtime in seconds
+
+    Raise:
+        pydantic.ValidationError: Pydantic validation failed during instantiation.
+    """
+
+    activate_module: bool = False
+    fragment_tol: PositiveFloat = 0.1
+    min_nr_matched_peaks: PositiveInt = 3
+    score_cutoff: PositiveFloat = 0.4
+    max_precursor_mass_diff: PositiveInt = 600
+    maximum_runtime: int = 600
+
+    def to_json(self: Self) -> dict:
+        """Convert attributes to json-compatible ones."""
+        if self.activate_module:
+            return {
+                "activate_module": self.activate_module,
+                "fragment_tol": float(self.fragment_tol),
+                "min_nr_matched_peaks": int(self.min_nr_matched_peaks),
+                "score_cutoff": float(self.score_cutoff),
+                "max_precursor_mass_diff": int(self.max_precursor_mass_diff),
+                "maximum_runtime": int(self.maximum_runtime),
+            }
+        else:
+            return {"activate_module": self.activate_module}
+
+
+class AsKcbDeepscoreMatchingParams(BaseModel):
+    """Pydantic-based class for params of antiSMASH KCB results deepscore matching.
+
+    Stores parameters for matching the in silico generated MS2 spectra of significant
+    KnownClusterBlast hits from antiSMASH against the feature spectra. A targeted
+    spectral library allows to use very loose similarity scores to allow for very
+    distant hits. Uses the MS2DeepScore algorithm.
+
+    Attributes:
+        activate_module: bool to indicate if module should be executed.
+        score_cutoff: score cutoff to consider a match of two MS/MS spectra.
+        max_precursor_mass_diff: max allowed precursor mz difference to accept a match
+        maximum_runtime: maximum runtime in seconds
+
+    Raise:
+        pydantic.ValidationError: Pydantic validation failed during instantiation.
+    """
+
+    activate_module: bool = False
+    score_cutoff: PositiveFloat = 0.4
+    max_precursor_mass_diff: PositiveInt = 600
+    maximum_runtime: int = 600
+
+    def to_json(self: Self) -> dict:
+        """Convert attributes to json-compatible ones."""
+        if self.activate_module:
+            return {
+                "activate_module": self.activate_module,
+                "score_cutoff": float(self.score_cutoff),
+                "max_precursor_mass_diff": int(self.max_precursor_mass_diff),
+                "maximum_runtime": int(self.maximum_runtime),
+            }
+        else:
+            return {"activate_module": self.activate_module}
