@@ -305,13 +305,18 @@ class AsResultsParameters(BaseModel):
 
     Attributes:
         directory_path: the output directory path
+        similarity_cutoff: a fraction indicating the minimum shared similarity required
 
     Raise:
         pydantic.ValidationError: Pydantic validation failed during instantiation.
     """
 
     directory_path: DirectoryPath
+    similarity_cutoff: PositiveFloat = 0.7
 
     def to_json(self: Self) -> dict:
         """Convert attributes to json-compatible ones."""
-        return {"directory_path": str(self.directory_path.resolve())}
+        return {
+            "directory_path": str(self.directory_path.resolve()),
+            "similarity_cutoff": self.similarity_cutoff,
+        }

@@ -20,6 +20,7 @@ def ms2deepscore_annotator():
                 "precursor_mz": 105.0,
                 "id": 0,
                 "compound_name": "fakeomycin",
+                "mibigaccession": "BGC0000000",
             },
             metadata_harmonization=True,
         )
@@ -107,3 +108,19 @@ def test_extract_userlib_scores_valid(ms2deepscore_annotator):
     ms2deepscore_annotator.extract_userlib_scores()
     features = ms2deepscore_annotator.return_features()
     assert features.entries[1].Annotations is not None
+
+
+@pytest.mark.slow
+def test_extract_mibig_scores_valid(ms2deepscore_annotator):
+    ms2deepscore_annotator.prepare_queries()
+    ms2deepscore_annotator.calculate_scores_ms2deepscore()
+    ms2deepscore_annotator.extract_mibig_scores(
+        {"BGC0000000": {"bgc_sim": 80, "region": "dummy"}}
+    )
+    features = ms2deepscore_annotator.return_features()
+    assert features.entries[1].Annotations is not None
+
+
+def test_extract_mibig_scores_invalid(ms2deepscore_annotator):
+    with pytest.raises(RuntimeError):
+        ms2deepscore_annotator.extract_mibig_scores({})

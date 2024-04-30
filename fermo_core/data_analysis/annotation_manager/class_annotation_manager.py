@@ -1,6 +1,6 @@
 """Organize the calling of annotation modules.
 
-Copyright (c) 2022-2023 Mitja Maximilian Zdouc, PhD
+Copyright (c) 2022-2024 Mitja Maximilian Zdouc, PhD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -25,6 +25,7 @@ from typing import Self, Tuple
 
 from pydantic import BaseModel
 
+from fermo_core.config.class_default_settings import DefaultPaths
 from fermo_core.data_analysis.annotation_manager.class_adduct_annotator import (
     AdductAnnotator,
 )
@@ -43,6 +44,7 @@ from fermo_core.data_analysis.annotation_manager.class_ms2query_annotator import
 from fermo_core.data_processing.class_repository import Repository
 from fermo_core.data_processing.class_stats import Stats
 from fermo_core.input_output.class_parameter_manager import ParameterManager
+from fermo_core.utils.utility_method_manager import UtilityMethodManager
 
 logger = logging.getLogger("fermo_core")
 
@@ -77,6 +79,9 @@ class AnnotationManager(BaseModel):
         def _eval_ms2query_results_file() -> bool:
             return True if self.params.MS2QueryResultsParameters is not None else False
 
+        def _eval_as_results_file() -> bool:
+            return True if self.params.AsResultsParameters is not None else False
+
         modules = (
             (
                 self.params.SpectralLibMatchingCosineParameters.activate_module,
@@ -101,6 +106,14 @@ class AnnotationManager(BaseModel):
             (
                 self.params.Ms2QueryAnnotationParameters.activate_module,
                 self.run_ms2query_annotation,
+            ),
+            (
+                _eval_as_results_file,
+                self.run_as_kcb_cosine_annotation,
+            ),
+            (
+                _eval_as_results_file,
+                self.run_as_kcb_deepscore_annotation,
             ),
         )
 
@@ -323,3 +336,128 @@ class AnnotationManager(BaseModel):
             return
 
         logger.info("'AnnotationManager': completed annotation using MS2Query")
+
+    def run_as_kcb_cosine_annotation(self: Self):
+        """Match features against a antiSMASH knownclusterblast-derived library.
+
+        Allows modified cosine-based library matching against the in silico generated
+        MS2 spectra of significant antiSMASH KnownClusterBlast (MIBiG) matches.
+        """
+        logger.info(
+            "'AnnotationManager': started antiSMASH KnownClusterBlast "
+            "modified cosine annotation."
+        )
+
+        if self.params.PeaktableParameters.polarity == "negative":
+            logger.warning(
+                "'AnnotationManager': negative ion mode detected. antiSMASH "
+                "KnownClusterBlast result annotation only available for positive ion "
+                "mode - SKIP"
+            )
+            return
+
+        if self.params.AsKcbCosineMatchingParams.activate_module is False:
+            logger.warning(
+                "'AnnotationManager': antiSMASH results file provided but "
+                "'as_kcb_matching/modified_cosine' is turned off. Continue with "
+                "default settings for 'as_kcb_matching/modified_cosine'."
+            )
+            self.params.AsKcbCosineMatchingParams.activate_module = True
+
+        try:
+            kcb_results = UtilityMethodManager().extract_as_kcb_results(
+                as_results=self.params.AsResultsParameters.directory_path,
+                cutoff=self.params.AsResultsParameters.similarity_cutoff,
+            )
+            mibig_bgcs = set([key for key, value in kcb_results.items()])
+            spec_library = UtilityMethodManager().create_mibig_spec_lib(mibig_bgcs)
+
+            kcb_annotator = ModCosAnnotator(
+                features=self.features,
+                active_features=self.stats.active_features,
+                library=spec_library,
+                library_name=DefaultPaths().library_mibig_pos.name,
+                max_time=self.params.AsKcbCosineMatchingParams.maximum_runtime,
+                fragment_tol=self.params.AsKcbCosineMatchingParams.fragment_tol,
+                score_cutoff=self.params.AsKcbCosineMatchingParams.score_cutoff,
+                min_nr_matched_peaks=self.params.AsKcbCosineMatchingParams.min_nr_matched_peaks,
+                max_precursor_mass_diff=self.params.AsKcbCosineMatchingParams.max_precursor_mass_diff,
+            )
+            kcb_annotator.prepare_queries()
+            kcb_annotator.calculate_scores_mod_cosine()
+            kcb_annotator.extract_mibig_scores(kcb_results)
+            self.features = kcb_annotator.return_features()
+        except Exception as e:
+            logger.error(str(e))
+            logger.error(
+                "'AnnotationManager': Error during running of antiSMASH "
+                "KnownClusterBlast modified cosine annotation - SKIP"
+            )
+            return
+
+        logger.info(
+            "'AnnotationManager': completed antiSMASH KnownClusterBlast "
+            "modified cosine annotation."
+        )
+
+    def run_as_kcb_deepscore_annotation(self: Self):
+        """Match features against a antiSMASH knownclusterblast-derived library.
+
+        Allows MS2DeepScore-based library matching against the in silico generated
+        MS2 spectra of significant antiSMASH KnownClusterBlast (MIBiG) matches.
+        """
+        logger.info(
+            "'AnnotationManager': started antiSMASH KnownClusterBlast MS2DeepScore "
+            "annotation."
+        )
+
+        if self.params.PeaktableParameters.polarity == "negative":
+            logger.warning(
+                "'AnnotationManager': negative ion mode detected. antiSMASH "
+                "KnownClusterBlast result annotation only available for positive ion "
+                "mode - SKIP"
+            )
+            return
+
+        if self.params.AsKcbDeepscoreMatchingParams.activate_module is False:
+            logger.warning(
+                "'AnnotationManager': antiSMASH results file provided but "
+                "'as_kcb_matching/ms2deepscore' is turned off. Continue with default "
+                "settings for 'as_kcb_matching/ms2deepscore'."
+            )
+            self.params.AsKcbDeepscoreMatchingParams.activate_module = True
+
+        try:
+            kcb_results = UtilityMethodManager().extract_as_kcb_results(
+                as_results=self.params.AsResultsParameters.directory_path,
+                cutoff=self.params.AsResultsParameters.similarity_cutoff,
+            )
+            mibig_bgcs = set([key for key, value in kcb_results.items()])
+            spec_library = UtilityMethodManager().create_mibig_spec_lib(mibig_bgcs)
+
+            kcb_annotator = Ms2deepscoreAnnotator(
+                features=self.features,
+                active_features=self.stats.active_features,
+                polarity=self.params.PeaktableParameters.polarity,
+                library=spec_library,
+                library_name=DefaultPaths().library_mibig_pos.name,
+                max_time=self.params.AsKcbDeepscoreMatchingParams.maximum_runtime,
+                score_cutoff=self.params.AsKcbDeepscoreMatchingParams.score_cutoff,
+                max_precursor_mass_diff=self.params.AsKcbDeepscoreMatchingParams.max_precursor_mass_diff,
+            )
+            kcb_annotator.prepare_queries()
+            kcb_annotator.calculate_scores_ms2deepscore()
+            kcb_annotator.extract_mibig_scores(kcb_results)
+            self.features = kcb_annotator.return_features()
+        except Exception as e:
+            logger.error(str(e))
+            logger.error(
+                "'AnnotationManager': Error during running of antiSMASH "
+                "KnownClusterBlast MS2DeepScore annotation - SKIP"
+            )
+            return
+
+        logger.info(
+            "'AnnotationManager': completed antiSMASH KnownClusterBlast MS2DeepScore "
+            "annotation."
+        )

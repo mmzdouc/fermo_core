@@ -27,7 +27,8 @@
             "score_cutoff": 0.7
         },
         "as_results": {
-            "directory_path": "example_data/JABTEZ000000000.1/"
+            "directory_path": "example_data/JABTEZ000000000.1/",
+            "similarity_cutoff": 0.7
         },
         "output": {
             "directory_path": "results/"
@@ -117,7 +118,7 @@
             },
             "ms2deepscore": {
                 "activate_module": true,
-                "score_cutoff": 0.4,
+                "score_cutoff": 0.7,
                 "max_precursor_mass_diff": 600,
                 "maximum_runtime": 200
             }

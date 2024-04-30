@@ -169,6 +169,12 @@
                         "directory_path": {
                             "title": "Specifies the directory path. Absolute paths are preferred.",
                             "type": "string"
+                        },
+                        "similarity_cutoff": {
+                            "title": "(Optional): minimum gene cluster similarity to MIBiG matches to consider in analysis, as fraction. A value of 0.7 indicates that 70% or more genes of a MIBiG entry must be shared by the query to consider a KnownClusterBlast match. Default value: 0.7.",
+                            "type": "number",
+                            "minimum": 0.1,
+                            "maximum": 1.0
                         }
                     }
                 },

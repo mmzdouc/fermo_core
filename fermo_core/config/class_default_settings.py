@@ -97,6 +97,9 @@ class DefaultPaths(BaseModel):
     dirpath_output: DirectoryPath = Path(__file__).parent.parent.parent.joinpath(
         "results/"
     )
+    library_mibig_pos: FilePath = Path(__file__).parent.parent.joinpath(
+        "libraries/mibig/pos/mibig_in_silico_spectral_library_3_1.mgf"
+    )
 
 
 class DefaultMasses(BaseModel):

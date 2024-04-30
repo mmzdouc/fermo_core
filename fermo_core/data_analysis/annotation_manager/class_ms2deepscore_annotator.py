@@ -220,6 +220,71 @@ class Ms2deepscoreAnnotator(BaseModel):
                                 4,
                             ),
                             module="user-library-matching",
+                            smiles=match[0].metadata.get("smiles") or "unknown",
+                            inchikey=match[0].metadata.get("inchikey") or "unknown",
+                        )
+                    )
+
+            self.features.modify(int(spectrum.metadata.get("id")), feature)
+
+    def extract_mibig_scores(self: Self, kcb_results: dict):
+        """Extract matches against targeted mibig library, incorporate KCB results
+
+        Attributes:
+            kcb_results: A dict containing the knownclusterblast results
+
+        Raises:
+            RuntimeError: 'self.scores' None - no scores calculated
+        """
+        if self.scores is None:
+            raise RuntimeError(
+                "'AnnotationManager/Ms2deepscoreAnnotator': 'self.scores' is None."
+                "Did you run 'self.calculate_scores_ms2deepscore()'?"
+            )
+
+        for spectrum in self.queries:
+            feature = self.features.get(int(spectrum.metadata.get("id")))
+
+            sorted_matches = self.scores.scores_by_query(
+                spectrum, name="MS2DeepScore", sort=True
+            )
+            for match in sorted_matches:
+                if self.filter_match(match, feature.mz):
+                    if feature.Annotations is None:
+                        feature.Annotations = Annotations()
+                    if feature.Annotations.matches is None:
+                        feature.Annotations.matches = []
+
+                    mibig_id_list = match[0].metadata.get("mibigaccession").split(",")
+
+                    similarity = ""
+                    region = ""
+                    mibig_id = ""
+                    for id in mibig_id_list:
+                        if id in kcb_results:
+                            similarity = kcb_results[id].get("bgc_sim")
+                            region = kcb_results[id].get("region")
+                            mibig_id = id
+
+                    feature.Annotations.matches.append(
+                        Match(
+                            id=(
+                                f'{match[0].metadata.get("id")}|'
+                                f"{mibig_id}|"
+                                f"sim%:{similarity}|"
+                                f"{region}"
+                            ),
+                            library=self.library_name,
+                            algorithm="ms2deepscore",
+                            score=float(match[1].round(2)),
+                            mz=match[0].metadata.get("precursor_mz"),
+                            diff_mz=round(
+                                abs(match[0].metadata.get("precursor_mz") - feature.mz),
+                                4,
+                            ),
+                            module="antismash-knownclusterblast-matching",
+                            smiles=match[0].metadata.get("smiles") or "unknown",
+                            inchikey=match[0].metadata.get("inchikey") or "unknown",
                         )
                     )
 

@@ -20,6 +20,7 @@ def mod_cos_annotator():
                 "precursor_mz": 105.0,
                 "id": 0,
                 "compound_name": "fakeomycin",
+                "mibigaccession": "BGC0000000",
             },
             metadata_harmonization=True,
         )
@@ -108,3 +109,19 @@ def test_extract_userlib_scores_valid(mod_cos_annotator):
     mod_cos_annotator.extract_userlib_scores()
     features = mod_cos_annotator.return_features()
     assert features.entries[1].Annotations is not None
+
+
+@pytest.mark.slow
+def test_extract_mibig_scores_valid(mod_cos_annotator):
+    mod_cos_annotator.prepare_queries()
+    mod_cos_annotator.calculate_scores_mod_cosine()
+    mod_cos_annotator.extract_mibig_scores(
+        {"BGC0000000": {"bgc_sim": 80, "region": "dummy"}}
+    )
+    features = mod_cos_annotator.return_features()
+    assert features.entries[1].Annotations is not None
+
+
+def test_extract_mibig_scores_invalid(mod_cos_annotator):
+    with pytest.raises(RuntimeError):
+        mod_cos_annotator.extract_mibig_scores({})

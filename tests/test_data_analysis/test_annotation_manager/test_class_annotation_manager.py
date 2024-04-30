@@ -6,6 +6,7 @@ from fermo_core.data_analysis.annotation_manager.class_annotation_manager import
 )
 from fermo_core.input_output.input_file_parameter_managers import (
     MS2QueryResultsParameters,
+    AsResultsParameters,
 )
 from fermo_core.data_processing.builder_feature.dataclass_feature import (
     Match,
@@ -82,4 +83,26 @@ def test_run_ms2query_results_assignment_valid(annotation_manager_instance):
     annotation_manager_instance.run_ms2query_results_assignment()
     assert isinstance(
         annotation_manager_instance.features.get(76).Annotations.matches[0], Match
+    )
+
+
+@pytest.mark.slow
+def test_run_as_kcb_cosine_annotation_valid(annotation_manager_instance):
+    annotation_manager_instance.params.AsResultsParameters = AsResultsParameters(
+        directory_path=Path("example_data/JABTEZ000000000.1/"), similarity_cutoff=0.8
+    )
+    annotation_manager_instance.run_as_kcb_cosine_annotation()
+    assert isinstance(
+        annotation_manager_instance.features.get(146).Annotations.matches[0], Match
+    )
+
+
+@pytest.mark.slow
+def test_run_as_kcb_deepscore_annotation_valid(annotation_manager_instance):
+    annotation_manager_instance.params.AsResultsParameters = AsResultsParameters(
+        directory_path=Path("example_data/JABTEZ000000000.1/"), similarity_cutoff=0.8
+    )
+    annotation_manager_instance.run_as_kcb_deepscore_annotation()
+    assert isinstance(
+        annotation_manager_instance.features.get(149).Annotations.matches[0], Match
     )

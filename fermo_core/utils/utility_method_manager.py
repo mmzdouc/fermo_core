@@ -22,12 +22,14 @@ SOFTWARE.
 """
 import logging
 from pathlib import Path
-from typing import Self
+import re
+from typing import Self, List
 from urllib.parse import urlparse
 import urllib.request
 import urllib.error
 
 import matchms
+import pandas as pd
 from pydantic import BaseModel
 
 from fermo_core.config.class_default_settings import DefaultPaths
@@ -191,4 +193,120 @@ class UtilityMethodManager(BaseModel):
             raise ZeroDivisionError(
                 f"'UtilityMethodManager': Division through zero in mass deviation "
                 f"calculation. Feature with id '{f_id_m2}' has a mass of '{m2}' - SKIP"
+            )
+
+    @staticmethod
+    def extract_as_kcb_results(as_results: Path, cutoff: float) -> dict:
+        """Extract MIBiG IDs from antiSMASH full results folder
+
+        Arguments:
+            as_results: a path pointing towards the antiSMASH results folder
+            cutoff: the coverage cutoff value to restrict spurious hits
+
+        Returns:
+            A dict of regions with detected MIBiG knownclusterblast matches
+
+        Raises:
+            NotADirectoryError: the knownclusterblast directory was not found
+        """
+
+        def _extract_bgcs(content) -> list:
+            return re.findall(r"BGC\d{7}", content)
+
+        df_cds = pd.read_csv(
+            DefaultPaths().library_mibig_pos.parent.parent.joinpath(
+                "mibig_cds_count.csv"
+            )
+        )
+
+        if not as_results.joinpath("knownclusterblast").is_dir():
+            raise NotADirectoryError(
+                f"'UtilityMethodManager': could not find the directory "
+                f"'knownclusterblast' in the antiSMASH result folder "
+                f"'{as_results.resolve()}' - SKIP"
+            )
+
+        bgcs = {}
+        for f_path in as_results.joinpath("knownclusterblast").iterdir():
+            if f_path.is_file() and f_path.suffix == ".txt":
+                with open(f_path, "r") as f_handle:
+                    data = f_handle.read()
+
+                    if len(_extract_bgcs(data)) == 0:
+                        logger.debug(
+                            f"'UtilityMethodManager': no significant "
+                            f"KnownClusterBlast matches for region '{f_path.stem}' - "
+                            f"SKIP"
+                        )
+                        continue
+
+                    entries = data.split(">>")[1:]
+                    for entry in entries:
+                        bgc_id = _extract_bgcs(entry)[0]
+                        hits = entry.split(
+                            "Table of Blast hits (query gene, subject gene, %identity,"
+                            " blast score, %coverage, e-value):"
+                        )[1:][0].split("\n")
+                        nr_hits = len([item for item in hits if item != ""])
+                        cds_bgc = df_cds.loc[
+                            df_cds["mibig_id"] == bgc_id, "nr_cds"
+                        ].values[0]
+                        if (bgc_sim := round((nr_hits / cds_bgc), 2)) >= cutoff:
+                            if bgc_sim > 1.0:
+                                bgc_sim = 1.0
+                            try:
+                                if bgcs[bgc_id]["bgc_sim"] < bgc_sim:
+                                    bgcs[bgc_id] = {
+                                        "bgc_nr_cds": cds_bgc,
+                                        "matched_cds": nr_hits,
+                                        "bgc_sim": bgc_sim * 100,
+                                        "region": f_path.stem,
+                                    }
+                            except KeyError:
+                                bgcs[bgc_id] = {
+                                    "bgc_nr_cds": cds_bgc,
+                                    "matched_cds": nr_hits,
+                                    "bgc_sim": bgc_sim * 100,
+                                    "region": f_path.stem,
+                                }
+
+        if len(bgcs) != 0:
+            return bgcs
+        else:
+            raise RuntimeError(
+                "'UtilityMethodManager': could not find significant BGC matches in "
+                "antiSMASH KnownClusterBlast results."
+            )
+
+    @staticmethod
+    def create_mibig_spec_lib(mibig_ids: set) -> List[matchms.Spectrum]:
+        """Load MIBiG-derived in silico spectral library.
+
+        Attributes:
+            mibig_ids: A set of MIBiG IDs to create a targeted spectral library
+
+        Returns:
+            The spectral library
+
+        Raises:
+            RuntimeError: empty spectral library
+        """
+        spectra = list(
+            matchms.importing.load_from_mgf(DefaultPaths().library_mibig_pos)
+        )
+        spectra = [matchms.filtering.add_precursor_mz(i) for i in spectra]
+        spectra = [matchms.filtering.normalize_intensities(i) for i in spectra]
+
+        filtered_spectra = []
+        for spectrum in spectra:
+            ids = set(spectrum.metadata.get("mibigaccession").split(","))
+            if not mibig_ids.isdisjoint(ids):
+                filtered_spectra.append(spectrum)
+
+        if len(filtered_spectra) != 0:
+            return filtered_spectra
+        else:
+            raise RuntimeError(
+                "'UtilityMethodManager': MIBiG spectral library construction: "
+                "spectral library empty - SKIP."
             )
