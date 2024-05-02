@@ -1,0 +1,362 @@
+loss,descr,abbr
+43.07252,Ethanolamine,Eta
+67.09392,pyrrolidone,Pyr
+69.06674,dehydroalanine,dh-Ala
+70.051505,pyruvate,Pya
+70.14092,putrescine,Put
+71.08262,beta-Alanine,b-Ala
+71.08262,N-Methyl-Glycine,NMe-Gly
+72.06738,D-lactic acid,D-Lac
+72.06738,Lactic acid,Lac
+73.098495,Serinol,Serol
+83.09332,2-3-dehydro-2-aminobutyric acid,dhAbu
+83.09332,hydroxy pyrrolidone,OH-Pyr
+83.09332,homoserine lactone,HseL
+83.09332,N-Methyl-dehydroalanine,NMe-Dha
+85.066146,alpha-formylGlycine,aFo-Gly
+85.10921,2-Aminoisobutyric acid,Aib
+85.10921,D-3-methoxyalanine,D-3OMe-Ala
+85.10921,N-Methyl-Alanine,NMe-Ala
+85.10921,N-methyl-beta-alanine,NMe-bAla
+85.10921,D-2-Aminobutyric acid,D-Abu
+85.10921,2-Aminobutyric acid,Abu
+85.15226,isovalinol,Ivalol
+85.15226,valinol,Valol
+86.09726,2-3-Diaminopropionic acid,Dpr
+87.08202,D-Serine,D-Ser
+87.08202,isoserine,Iser
+96.13514,proline carboxamid,ProC
+97.1199,norcoronamic acid,norCMA
+97.1199,2-methylamino-2-dehydrobutyric acid,2Dh-Mabu
+97.1199,D-Proline,D-Pro
+98.14773,3-methylvaleric acid,Me-Vaa
+99.09272,N-formyl-Alanine,NFo-Ala
+99.09272,D-N-formyl-Alanine,D-NFo-Ala
+99.13578,N-dimethyl-Alanine,NdMe-Ala
+99.13578,Norvaline,Nva
+99.13578,D-Norvaline,D-Nva
+99.13578,D-Valine,D-Val
+99.13578,D-isovaline,D-Ival
+99.13578,isovaline,Ival
+99.13578,2-methyl-3-aminobutanoic acid,Mab
+99.17884,Isoleucinol,Ileol
+99.17884,Leucinol,Leuol
+100.120536,2-hydroxyisovalerate,Hiv
+100.120536,D-2-hydroxyisovalerate,D-Hiv
+100.12384,2-4-diaminobutyric acid,Dab
+100.12384,D-2-4-diaminobutyric acid,D-Dab
+100.12384,(2S)-2-3-diaminobutyric acid,Dbu
+100.12384,(2R-3R)-2-3-diaminobutyric acid,D-Dbu
+100.12384,(2S-3S)-2-3-diaminobutyric acid,L-Dbu
+101.108596,4-amino-3-hydroxybutyric acid,OH-4Abu
+101.108596,D-Threonine,D-Thr
+101.108596,allo-Threonine,aThr
+101.108596,D-allo-Threonine,D-aThr
+101.108596,Homoserine,Hse
+101.108596,D-Homoserine,D-Hse
+101.108596,N-Methyl-D-Serine,D-NMe-Ser
+101.108596,N-Methyl-Serine,NMe-Ser
+101.13174,dehydro-cysteine,dhCys
+103.14761,D-Cysteine,D-Cys
+104.110786,benzoic acid,Bz
+110.16171,N-methylglutamine,NMe-Gln
+110.18486,N-Methyl-Glycine-thiazole,NMe-Gly-Thz
+111.10342,pyroglutamic acid,pGlu
+111.10342,4-oxo-proline,4oxo-Pro
+111.14648,coronamic acid,CMA
+111.14648,homoproline,Hpr
+111.14648,D-homoproline,D-Hpr
+111.14648,3-methylproline,3Me-Pro
+111.14648,4-methylproline,4Me-Pro
+111.14648,5-methylproline,5Me-Pro
+112.13124,keto-Leucine,k-Leu
+112.13454,Hydroxy-cycloOrnithine,OH-cOrn
+112.13454,D-Hydroxy-cycloOrnithine,D-OH-cOrn
+113.07624,aziridine dicarboxylic acid,Azd
+113.11929,N-formyl-D-aminobyric acid,NFo-D-Abu
+113.11929,4-Hydroxyproline,4OH-Pro
+113.11929,D-hydroxyproline,D-4OH-Pro
+113.11929,3-Hydroxyproline,3OH-Pro
+113.16237,D-Isoleucine,D-Ile
+113.16237,allo-Isoleucine,aIle
+113.16237,D-allo-Isoleucine,D-aIle
+113.16237,D-tert-Leu,D-t-Leu
+113.16237,tert-Leu,t-Leu
+113.16237,D-Leucine,D-Leu
+113.16237,D-N-methyl-norvaline,D-NMe-Nva
+113.16237,D-N-Methylvaline,D-NMe-Val
+113.16237,N-Methyl-Valine,NMe-Val
+113.16237,2-methyl-3-aminopentanoic acid,Map
+113.20872,norspermidine,NSpd
+114.10406,hydroxyacetyl propionyl,Hap
+114.10406,pentanedioic acid,Pda
+114.10736,D-Asparagine,D-Asn
+114.10736,N1-formyl-2-3-Diaminopropionic acid,NFo-Dpr
+114.14712,2-hydroxy-3-methyl-pentanoic acid,Hmp
+114.14712,D-2-hydroxy-3-methylpentanoic acid,D-Hmp
+114.14712,4-Methyl-D-2-hydroxy-valeric acid,4Me-D-Hva
+114.15042,D-ornithine,D-Orn
+114.15042,Ornithine,Orn
+115.09213,D-aspartic acid,D-Asp
+115.09213,N-formyl-isoserine,NFo-Iser
+115.13518,D-beta-hydroxyvaline,D-bOH-Val
+115.13518,beta-hydroxyvaline,bOH-Val
+115.13518,O-methyl-threonine,OMe-Thr
+115.13518,N-methylthreonine,NMe-Thr
+117.108,4-Hydroxythreonine,4OH-Thr
+117.17421,alpha-methylcysteine,aMe-Cys
+117.17424,N-methylcysteine,NMe-Cys
+118.13736,phenylacetic acid,Pha
+120.11018,para-hydroxy-benzoic acid,pOH-Bz
+121.09825,hydroxypicolinic acid,Hpa
+125.13,4-oxo-homoproline,4oxo-Hpr
+125.13,N-Formyl-Proline,NFo-Pro
+125.13,4-oxo-5-methylproline,4oxo-5Me-Pro
+127.10611,beta-ureido-dehydroAlanine,bU-Ala
+127.14589,N-Acetyl-2-aminoisobutyric acid,Ac-Aib
+127.14589,N-formyl-Valine,NFo-Val
+127.14589,3-Hydroxy-5-methylproline,3OH-5Me-Pro
+127.18895,homoisoleucine,Hil
+127.18895,D-N-methyl-alloisoleucine,D-NMe-aIle
+127.18895,N-Methyl-Isoleucine,NMe-Ile
+127.18895,beta-methylisoleucine,bMe-Ile
+127.18895,N-methyl-alloIsoleucine,NMe-aIle
+127.18895,D-N-methyl-Leucine,D-NMe-Leu
+127.18895,N-Methyl-Leucine,NMe-Leu
+127.18895,alpha-ethylnorvaline,Et-Nva
+127.18895,Dolavaline,Dov
+127.2353,spermidine,Spd
+128.13394,D-N2-methyl-asparagine,D-N2Me-Asn
+128.13394,beta-methyl-asparagine,bMe-Asn
+128.13394,N-methylasparagine,NMe-Asn
+128.13394,N1-acetyl-2-3-Diaminopropionic acid,NAc-Dpr
+128.13394,D-Glutamine,D-Gln
+128.177,D-Lysine,D-Lys
+128.177,beta lysine,bLys
+128.177,N-Hydroxy-histamine,N-OH-Hta
+129.1187,D-beta-methyl-aspartic acid,D-bMe-Asp
+129.1187,beta-methyl-aspartic acid,bMe-Asp
+129.1187,beta-methoxy-aspartic acid,bOMe-Asp
+129.1187,D-Glutamic Acid,D-Glu
+129.1187,O-acetyl-Serine,Ac-Ser
+129.16177,L-acosamine,Aco
+129.16177,L-ristosamine,Ria
+129.16177,3-hydroxyleucine,3OH-Leu
+129.16177,gama-hydroxy-N-Methyl-Valine,gOH-NMe-Val
+129.16177,beta-hydroxy-N-Methyl-Valine,bOH-NMe-Val
+130.10676,Hydroxyasparagine,OH-Asn
+130.10676,D-HydroxyAsparagine,D-OH-Asn
+130.11006,alpha-guanidino Serine,gSer
+130.14981,hydroxy-beta lysine,OH-bLys
+130.14981,N5-hydroxy ornithine,OH-Orn
+130.14981,D-N5-HydroxyOrnithine,D-OH-Orn
+131.09152,Hydroxyaspartic acid,OH-Asp
+131.09152,D-Hydroxyaspartic acid,D-OH-Asp
+131.20074,N-S-dimethylcysteine,diMe-Cys
+132.11935,D-arabinose,D-Ara
+132.11935,Arabinose,Ara
+132.11935,lyxose,Lyx
+132.1624,L-Olivose,Oli
+133.15199,D-PhenylGlycine,D-ph-Gly
+133.15199,phenylglycine,Ph-Gly
+133.19507,phenylalaninol,Pheol
+135.55366,4-Chloro-Threonine,4Cl-Thr
+136.10959,2-3-dihydroxybenzoic acid,diOH-Bz
+138.12877,dehydropyrrolidone,dPyr
+139.15658,2-3-dimethylpyroglutamic acid,2Me-3Me-pGlu
+140.19099,arginal,Argal
+141.17247,4-oxovancosamine,4oxo-Van
+141.17247,N-formyl-Isoleucine,NFo-Ile
+141.17247,N-formyl-Leucine,NFo-Leu
+141.17247,N-acetyl-isovaline,Ac-Ival
+141.17247,N-Acetylvaline,Ac-Val
+141.17247,4-amino-2-2-dimethyl-3-oxopentanoic acid,Ibu
+141.21551,N-O-dimethyl-isoleucine,NMe-OMe-Ile
+141.21551,O-acetyl-leucinol,OAc-Leuol
+141.21551,N-beta-dimethylLeucine,NMe-bMe-Leu
+141.21554,N-gamma-alloisoleucine,diMe-aIle
+141.55978,N-methylchloropyrrole,MCP
+142.16052,D-beta-methylglutamine,D-bMe-Gln
+142.16052,beta-methylglutamine,bMe-Gln
+143.14528,2-Aminoadipic acid,Aad
+143.14528,Glutamic Acid methyl ester,MeO-Glu
+143.14528,D-Glutamic Acid methyl ester,D-MeO-Glu
+143.14528,D-Glutamic Acid methyl ester,MeO-D-Glu
+143.14528,3-Methyl-Glutamic acid,3Me-Glu
+143.18834,L-actinosamine,Act
+143.18834,L-eremosamine,Ere
+143.18834,N-methyl-hydroxyisoleucine,NMe-OH-Ile
+143.18834,norstatine,Nst
+144.13334,D-beta-hydroxy-N2-methyl-asparagine,D-N2Me-bOH-Asn
+144.13334,beta-hydroxyglutamine,bOH-Gln
+145.1181,methoxyaspartic acid,OMe-Asp
+146.14592,L-rhamnose,Rha
+147.17857,N-methyl-phenylglycine,NMe-Ph-Gly
+147.17857,beta phenylalanine,bPhe
+147.17857,D-Phenylalanine,D-Phe
+147.17857,D-beta-phenylalanine,D-bPhe
+147.20018,Methionine-S-oxide,O-Met
+147.60742,Chloro-Isoleucine,Cl-Ile
+148.12028,2-hydroxyphenyl-2-oxo-ethanoic acid,Hpoe
+148.16334,D-Phenyl-lactate,D-Ph-Lac
+148.16334,Phenyl-lactate,Ph-Lac
+149.1514,D-HydroxyPhenylGlycine,D-Hpg
+149.1514,HydroxyPhenylGlycine,Hpg
+151.14246,D-4-fluoroPhenylGlycine,D-F-ph-Gly
+151.14581,cysteic acid,CysA
+151.14581,D-cysteic acid,D-CysA
+153.1434,Hydroxyhistidine,OH-His
+153.22621,N-methyl homo vinylogous Valine,NMe-hv-Val
+154.17451,capreomycidine,Cap
+154.17451,enduracididine,End
+154.17451,D-enduracididine,D-End
+154.19437,Alanine-thiazole,Ala-Thz
+155.19904,O-desmethyldolaproine,dDap
+155.19904,N-acetyl-Leucine,NAc-Leu
+155.2421,methyl-2-aminooctanoic acid,Me-AOA
+156.14404,N-formyl-Glutamine,NFo-Gln
+156.14554,2-carboxyquinoxaline,COOH-Qui
+156.18381,hydroxyisovalerylpropionyl,Hip
+156.1871,3-4-dimethylglutamine,3Me-4Me-Gln
+156.25003,N-trimethyl-leucine,NtMe-Leu
+156.25003,N-dimethyl-leucine,NdMe-Leu
+157.17517,D-Citrulline,D-Cit
+157.17517,Citrulline,Cit
+157.1904,D-Arginine,D-Arg
+157.21492,isostatine,Ist
+157.21492,statine,Sta
+158.15991,N6-formyl-HydroxyOrnithine,Fo-OH-Orn
+158.15991,D-formyl-hydroxyOrnithine,D-Fo-OH-Orn
+159.14468,alpha-amino-hydroxyadipic acid,Ahad
+159.18928,N-methyl-2-3-dehydrophenylalanine,NMe-dPhe
+160.1725,O-methyl-L-rhamnose,2OMe-Rha
+161.20517,D-N-Methyl-Phenylalanine,D-NMe-Phe
+161.20517,3-methylphenylalanine,3Me-Phe
+161.20517,N-Methyl-Phenylalanine,NMe-Phe
+161.20517,Homophenylalanine,Hph
+162.14532,D-mannose,D-Man
+162.14532,beta-D-galactose,bD-Gal
+162.14532,D-galactose,D-Gal
+162.14532,D-Glucose,D-Glc
+162.14532,L-Glucose,Glc
+163.11627,phosphinothricin,PT
+163.13492,N-hydroxy-dehydro-HydroxyPhenylGlycine,OH-dHpg
+163.13492,D-N-hydroxy-dehydro-HydroxyPhenylGlycine,D-OH-dHpg
+163.17798,N-methyl-HydroxyPhenylGlycine,NMe-Hpg
+163.17798,phenylserine,Ph-Ser
+163.17798,D-Tyrosine,D-Tyr
+163.17798,beta-tyrosine,bTyr
+163.19958,Methionine sulfone,O2-Met
+164.16275,4-hydroxy-D-phenyl-lactate,4OH-D-Ph-Lac
+164.16604,propenoyl-alanyloxazole acid,PALOA
+165.1508,D-3-5-dihydroxyphenylglycine,D-Dhpg
+165.1508,3-5-dihydroxyphenylglycine,Dhpg
+166.01001,3-4-dichloro-proline,Cl2-Pro
+166.18523,cyclo alpha-ketoarginine,ck-Arg
+167.20973,2-carboxy-6-hydroxyoctahydroindole,Choi
+167.25281,3-Desoxy-Methyl-4-butenyl-4-methyl threonine,3d-NMe-Bmt
+168.22096,1-methoxy-beta-alanine-thiazole,OMe-bAla-Thz
+169.22562,4-butenyl-4-methyl threonine,Bmt
+169.22562,Dolaproine,Dap
+169.2753,guanylspermidine,GSpd
+170.17392,5-hydroxy-capreomycidine,5OH-Cap
+170.21039,hydroxysecbutyl acetyl propionyl,Hysp
+170.21699,homoarginine,Har
+171.19844,N-methoxyacetyl-valine,NOMe-Ac-Val
+171.2415,N-desmethyldolaisoleuine,dDil
+172.18651,N-acetyl-HydroxyOrnithine,Ac-OH-Orn
+172.18651,D-N-acetyl-HydroxyOrnithine,D-Ac-OH-Orn
+172.23111,tryptophanol,Trpol
+175.23174,alpha-amino-phenyl-valeric acid,Apv
+175.25334,beta-beta-dimethyl-Methionine-S-oxide,bbMe2-O-Met
+176.00485,N-methyldichloropyrrole-2-carboxylic acid,MdCP
+177.20456,beta-hydroxy-N-Methyl-Phenylalanine,bOH-NMe-Phe
+177.20456,Homotyrosine,Hty
+177.20456,N-methyltyrosine,NMe-Tyr
+178.19261,propenoyl-2-aminobutanoyloxazole acid,PAOA
+179.17738,3-4-dihydroxyphenylalanine,diOH-Phe
+179.17738,beta-hydroxy-tyrosine,bOH-Tyr
+181.19327,Anticapsin,Aca
+182.18462,D-homoarginine,D-Har
+182.22768,vinylogous arginine,v-Arg
+183.2522,N-methyl-4-butenyl-4-methyl threonine,NMe-Bmt
+183.59647,3-chloro-4-hydroxyphenylglycine,Cl-Hpg
+184.19874,2-3-Dehydro-Tryptophan,dh-Trp
+184.2005,alpha-ketoarginine,k-Arg
+185.22656,Dolapyrrolidone,Dpy
+185.26807,Dolaisoleucine,Dil
+186.21461,D-Tryptophan,D-Trp
+186.21638,hydrated alpha-ketoarginine,hk-Arg
+186.28082,Dolaphenine,Doe
+187.19939,dehydro vinylogous tyrosine,dv-Tyr
+188.18919,3-4-dihydroxyArginine,diOH-Arg
+189.21527,N-acetylphenylalanine,Ac-Phe
+189.21527,vinylogous tyrosine,v-Tyr
+190.20331,D-kynurenine,D-Kyn
+190.20331,kynurenine,Kyn
+190.24638,N-methyl-4-methylamino-phenylalanine,NMe-MeA-Phe
+190.24638,N-O-dimethyl-tyrosinecarboxamid,NMe-OMe-TyrC
+191.23114,alpha-amino-hydroxyphenyl-valeric acid,Ahv
+191.23114,N-methyl-homotyrosine,NMe-Hty
+191.23114,3-methyl-homotyrosine,3Me-Hty
+191.23114,D-N-O-dimethyl-tyrosine,D-NMe-OMe-Tyr
+191.23114,N-O-dimethyl-tyrosine,NMe-OMe-Tyr
+193.20396,beta-methoxy-tyrosine,bOMe-Tyr
+194.0632,di-chloro-N-methyl-dehydroLeucine,Cl2-NMe-dhLeu
+194.21033,O-sulfate-2-hydroxy-3-methylpentanoic acid,OSu-Hmp
+194.27814,methyloxazoline-isoleucine,MeOx-Ile
+196.07907,di-chloro-N-methyl-Leucine,Cl2-NMe-Leu
+197.27878,4-butenyl-4-methyl-N-4-methyl threonine,Me2-Bmt
+197.62304,chloro-tyrosine,Cl-Tyr
+200.19661,N-acetyl-N6-formyl-N6-hydroxyOrnithine,NAc-Fo-OH-Orn
+200.24119,N1-methyl-tryptophan,1Me-Trp
+202.21402,phototryptophan,pTrp
+202.21402,5-hydroxytryptophan,OH-Trp
+204.27295,N-methyl-4-dimethylamino-phenylalanine,NMe-Me2A-Phe
+205.21467,vinylogous hydroxy tyrosine,v-OH-Tyr
+205.25772,alpha-amino-methoxyphenyl-valeric acid,Amv
+208.17554,3-nitrotyrosine,3NO2-Tyr
+210.08665,D-PhosphateAsparagine,D-PO-Asn
+210.25761,propenoyl-O-methylserinylthiazole acid,PMST
+211.64961,D-3-chloro-N-methyl-Tyrosine,D-Cl-NMe-Tyr
+211.64961,Chloro-N-methyl-tyrosine,Cl-NMe-Tyr
+213.62245,beta-hydroxy-chloro-tyrosine,bOH-Cl-Tyr
+214.22317,3-amino-6-hydroxy-2-piperidone,Ahp
+216.23904,2-6-diamino-7-hydroxyazelaic acid,Daz
+216.2406,N-methyl-5-hydroxytryptophan,NMe-OH-Trp
+216.2406,methoxytryptophan,OMe-Trp
+216.24237,4-amino-7-guanidino-2-3-dihydroxyheptanoic acid,Agdha
+218.04154,3-5-dichloro-4-hydroxyphenylglycine,Cl2-Hpg
+219.1982,DHP-methyloxazolinyl group,DMOG
+219.24124,N-methoxyacetyl-D-phenylalanine,NOMe-Ac-D-Phe
+220.65968,D-6’-chloro-tryptophan,D-Cl-Trp
+221.2372,dihydroxyphenylthiazol group,DHPT
+226.07464,bromophenylalanine,Br-Phe
+228.2513,N-acetyltryptophan,Ac-Trp
+228.29437,beta-beta-N-trimethyltryptophan,bbMe-NMe-Trp
+228.50825,tri-chloro-N-methyl-dehydroLeucine,Cl3-NMe-dhLeu
+230.22412,D-2-carboxy-tryptophan,D-COOH-Trp
+230.29031,thiazolylphenylalanine,Phe-Thz
+230.52412,tri-chloro-N-methyl-Leucine,Cl3-NMe-Leu
+234.68626,N-methyl-6-chloro-tryptophan,NMe-Cl-Trp
+240.10124,beta-methyl-bromophenylalanine,bMe-Br-Phe
+242.07404,beta-hydroxy-bromophenylalanine,bOH-Br-Phe
+242.07404,bromotyrosine,Br-Tyr
+242.32094,beta-beta-N1-N-tetramethyltryptophan,bbNMe-NMe-Trp
+246.5235,tri-chloro-2-hydroxy-N-methyl-Leucine,Cl3-2OH-NMe-Leu
+246.5235,tri-chloro-5-hydroxy-N-methyl-Leucine,Cl3-5OH-NMe-Leu
+250.68567,N-methyl-6-chloro-5-hydroxytryptophan,NMe-Cl-OH-Trp
+256.10062,D-3-bromo-N-methyl-Tyrosine,D-Br-NMe-Tyr
+258.27731,N1-carboxy-bichomotryptophan,N1-COOH-bhTrp
+259.26534,pyoverdin chromophore,ChrP
+259.26534,isopyoverdin chromophore,ChrI
+261.28122,5-6-dihydropyoverdin chromophore,ChrD
+263.68442,D-6-chloro-N2-formamidotryptophan,D-Cl-CONH2-Trp
+265.11069,5-bromo-tryptophan,Br-Trp
+266.38054,8-10-Dimethyl-9-hydroxy-7-methoxytridecadienoic acid,DHMDA
+272.32704,4-propenoyl-2-tyrosylthiazole acid,PTTA
+279.13727,N-methyl-2-Bromo-tryptophan,NMe-Br-Trp
+281.11008,2-bromo-5-hydroxytryptophan,Br-OH-Trp
+285.25958,azotobactins chromophore,ChrA
+303.10107,D-3-iodo-N-methyl-Tyrosine,D-I-NMe-Tyr
+310.26572,actinomycin chromophore,ChrAct
