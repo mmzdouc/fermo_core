@@ -236,6 +236,10 @@ class ExportManager(BaseModel):
 
         self.df_full = self.df.copy(deep=True)
 
+        self.populate_abbrev_df()
+
+    def populate_abbrev_df(self: Self):
+        """Populate the abbreviated df, removing mzmine-specific information"""
         abbr_cols = ["id", "height", "area", "mz", "rt"]
         abbr_cols.extend([col for col in self.df if col.startswith("fermo")])
         self.df_abbrev = self.df[abbr_cols].copy(deep=True)
