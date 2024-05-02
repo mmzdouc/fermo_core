@@ -1,6 +1,6 @@
 from fermo_core.config.class_default_settings import (
     DefaultPaths,
-    NeutralMasses,
+    NeutralLosses,
     Loss,
 )
 
@@ -26,7 +26,7 @@ def test_class_loss_valid():
 
 
 def test_neutralmasses_valid():
-    neutral_masses = NeutralMasses()
+    neutral_masses = NeutralLosses()
     assert len(neutral_masses.ribosomal) != 0
     assert len(neutral_masses.nonribo) != 0
     assert len(neutral_masses.glycoside) != 0

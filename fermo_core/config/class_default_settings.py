@@ -157,7 +157,7 @@ class Loss(BaseModel):
     abbr: str
 
 
-class NeutralMasses(BaseModel):
+class NeutralLosses(BaseModel):
     """A Pydantic-based class for storing monoisotopic masses of neutral losses in MS2
 
     Sources:
