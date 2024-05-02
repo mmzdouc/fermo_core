@@ -1,12 +1,23 @@
 # Local files
-*.hdf5
-example_data/fermo.backup.session.json
-example_data/*.fermo.session.json
-example_data/*.fermo.full.csv
-example_data/*.fermo.abbrev.csv
-example_data/fermo.backup.csv
-example_data/*.graphml
-data_analysis/
+results/
+data_working/
+!fermo_core/data_analysis/annotation_manager/class_ms2query_annotator.py
+
+#ms2query files
+fermo_core/libraries/ms2query/results
+fermo_core/libraries/ms2query/queries/
+fermo_core/libraries/ms2query/neg/*
+!fermo_core/libraries/ms2query/neg/.placeholder
+fermo_core/libraries/ms2query/pos/*
+!fermo_core/libraries/ms2query/pos/.placeholder
+
+#ms2deepscore files
+fermo_core/libraries/ms2deepscore/neg/*
+!fermo_core/libraries/ms2deepscore/neg/.placeholder
+fermo_core/libraries/ms2deepscore/pos/*
+!fermo_core/libraries/ms2deepscore/pos/.placeholder
+
+
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

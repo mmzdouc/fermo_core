@@ -20,7 +20,6 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-from pathlib import Path
 from typing import List, Optional, Self
 
 from pydantic import (
@@ -28,7 +27,6 @@ from pydantic import (
     model_validator,
     PositiveInt,
     PositiveFloat,
-    DirectoryPath,
 )
 
 from fermo_core.input_output.class_validation_manager import ValidationManager
@@ -223,51 +221,105 @@ class Ms2QueryAnnotationParameters(BaseModel):
 
     Attributes:
         activate_module: bool to indicate if module should be executed.
-        directory_path: pathlib Path object pointing to dir with ms2query files.
-        consider_blank: indicates if blank-associated features are annotated too
-        filter_rel_int_range: only features inside range are annotated
+        exclude_blank: sets if blank-associated features should be excluded from annot
+        score_cutoff: only matches with a score higher or equal to are retained
+        maximum_runtime: maximum runtime in seconds
 
     Raise:
         pydantic.ValidationError: Pydantic validation failed during instantiation.
     """
 
     activate_module: bool = False
-    directory_path: DirectoryPath = Path(__file__).parent.parent.joinpath(
-        "libraries/ms2query"
-    )
-    consider_blank: bool = False
-    filter_rel_int_range: List[float] = None
-
-    @model_validator(mode="after")
-    def validate_attrs(self):
-        if self.filter_rel_int_range is not None:
-            self.filter_rel_int_range = self.order_and_validate_range(
-                self.filter_rel_int_range
-            )
-        return self
-
-    @staticmethod
-    def order_and_validate_range(r_list: List[float]) -> List[float]:
-        """Order the list and validate format.
-
-        Attributes:
-            r_list: a range of two floats
-
-        Returns:
-            The modified list of a range of two floats
-        """
-        r_list = [min(r_list), max(r_list)]
-        ValidationManager.validate_range_zero_one(r_list)
-        return r_list
+    exclude_blank: bool = False
+    score_cutoff: PositiveFloat = 0.7
+    maximum_runtime: int = 600
 
     def to_json(self: Self) -> dict:
         """Convert attributes to json-compatible ones."""
         if self.activate_module:
             return {
                 "activate_module": self.activate_module,
-                "directory_path": str(self.directory_path.resolve()),
-                "consider_blank": self.consider_blank,
-                "filter_rel_int_range": self.filter_rel_int_range,
+                "exclude_blank": self.exclude_blank,
+                "score_cutoff": self.score_cutoff,
+                "maximum_runtime": self.maximum_runtime,
+            }
+        else:
+            return {"activate_module": self.activate_module}
+
+
+class AsKcbCosineMatchingParams(BaseModel):
+    """Pydantic-based class for params of antiSMASH KCB results mod cosine matching.
+
+    Stores parameters for matching the in silico generated MS2 spectra of significant
+    KnownClusterBlast hits from antiSMASH against the feature spectra. A targeted
+    spectral library allows to use very loose similarity scores to allow for very
+    distant hits. Uses the modified cosine algorithm.
+
+    Attributes:
+        activate_module: bool to indicate if module should be executed.
+        fragment_tol: max tolerable diff to consider two fragments as equal, in m/z
+        min_nr_matched_peaks: peak cutoff to consider a match of two MS/MS spectra
+        score_cutoff: score cutoff to consider a match of two MS/MS spectra
+        max_precursor_mass_diff: maximum precursor mass difference
+        maximum_runtime: maximum runtime in seconds
+
+    Raise:
+        pydantic.ValidationError: Pydantic validation failed during instantiation.
+    """
+
+    activate_module: bool = False
+    fragment_tol: PositiveFloat = 0.1
+    min_nr_matched_peaks: PositiveInt = 3
+    score_cutoff: PositiveFloat = 0.4
+    max_precursor_mass_diff: PositiveInt = 600
+    maximum_runtime: int = 600
+
+    def to_json(self: Self) -> dict:
+        """Convert attributes to json-compatible ones."""
+        if self.activate_module:
+            return {
+                "activate_module": self.activate_module,
+                "fragment_tol": float(self.fragment_tol),
+                "min_nr_matched_peaks": int(self.min_nr_matched_peaks),
+                "score_cutoff": float(self.score_cutoff),
+                "max_precursor_mass_diff": int(self.max_precursor_mass_diff),
+                "maximum_runtime": int(self.maximum_runtime),
+            }
+        else:
+            return {"activate_module": self.activate_module}
+
+
+class AsKcbDeepscoreMatchingParams(BaseModel):
+    """Pydantic-based class for params of antiSMASH KCB results deepscore matching.
+
+    Stores parameters for matching the in silico generated MS2 spectra of significant
+    KnownClusterBlast hits from antiSMASH against the feature spectra. A targeted
+    spectral library allows to use very loose similarity scores to allow for very
+    distant hits. Uses the MS2DeepScore algorithm.
+
+    Attributes:
+        activate_module: bool to indicate if module should be executed.
+        score_cutoff: score cutoff to consider a match of two MS/MS spectra.
+        max_precursor_mass_diff: max allowed precursor mz difference to accept a match
+        maximum_runtime: maximum runtime in seconds
+
+    Raise:
+        pydantic.ValidationError: Pydantic validation failed during instantiation.
+    """
+
+    activate_module: bool = False
+    score_cutoff: PositiveFloat = 0.4
+    max_precursor_mass_diff: PositiveInt = 600
+    maximum_runtime: int = 600
+
+    def to_json(self: Self) -> dict:
+        """Convert attributes to json-compatible ones."""
+        if self.activate_module:
+            return {
+                "activate_module": self.activate_module,
+                "score_cutoff": float(self.score_cutoff),
+                "max_precursor_mass_diff": int(self.max_precursor_mass_diff),
+                "maximum_runtime": int(self.maximum_runtime),
             }
         else:
             return {"activate_module": self.activate_module}

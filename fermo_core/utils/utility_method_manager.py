@@ -22,11 +22,14 @@ SOFTWARE.
 """
 import logging
 from pathlib import Path
-from typing import Self
+import re
+from typing import Self, List
+from urllib.parse import urlparse
 import urllib.request
 import urllib.error
 
 import matchms
+import pandas as pd
 from pydantic import BaseModel
 
 from fermo_core.config.class_default_settings import DefaultPaths
@@ -37,52 +40,53 @@ logger = logging.getLogger("fermo_core")
 class UtilityMethodManager(BaseModel):
     """Pydantic-based base class to organize general utility methods for subclasses."""
 
-    @staticmethod
-    def check_ms2deepscore_req() -> bool:
-        """Checks and logs if file required for MS2DeepScore functionality are present
+    def check_ms2deepscore_req(self: Self, polarity: str):
+        """Checks if files required for ms2query functionality are present
 
-        Returns:
-            True - file present; False - file not present
+        Attributes:
+            polarity: the mass spectrometry data polarity
+
+        Raises:
+            RuntimeError: unexpected polarity (currently only positive mode supported)
         """
-        if (
-            not DefaultPaths()
-            .dirpath_ms2deepscore.joinpath(DefaultPaths().filename_ms2deepscore)
-            .exists()
-        ):
-            logger.warning(
-                f"'MS2DeepScore embedding file "
-                f"'{DefaultPaths().filename_ms2deepscore}' not found. "
-                f"Attempting to download file to default directory"
-                f"{DefaultPaths().dirpath_ms2deepscore.resolve()}'. This may take "
-                f"some time."
-            )
-            return False
+        if polarity == "positive":
+            file = urlparse(DefaultPaths().url_ms2deepscore_pos).path.split("/")[-1]
+            if not DefaultPaths().dirpath_ms2deepscore_pos.joinpath(file).exists():
+                self.download_file(
+                    url=DefaultPaths().url_ms2deepscore_pos,
+                    location=DefaultPaths().dirpath_ms2deepscore_pos.joinpath(file),
+                    timeout=600,
+                )
         else:
-            return True
+            RuntimeError(
+                "'UtilityMethodManager': the MS2DeepScore algorithm currently only "
+                "supports positive ionization mode mass spectrometry data - SKIP"
+            )
 
-    def download_ms2deepscore_req(self: Self, max_runtime: int):
-        """Download ms2deepscore required files as specified in DefaultSettings class
+    def check_ms2query_req(self: Self, polarity: str):
+        """Checks if files required for ms2query functionality are present
 
-        Arguments:
-            max_runtime: maximum time to download in seconds
-
+        Attributes:
+            polarity: the mass spectrometry data polarity
         """
-        if max_runtime != 0:
-            self.download_file(
-                url=DefaultPaths().url_ms2deepscore,
-                location=DefaultPaths().dirpath_ms2deepscore.joinpath(
-                    DefaultPaths().filename_ms2deepscore
-                ),
-                timeout=max_runtime,
-            )
+        if polarity == "positive":
+            for url in DefaultPaths().url_ms2query_pos:
+                file = urlparse(url).path.split("/")[-1]
+                if not DefaultPaths().dirpath_ms2query_pos.joinpath(file).exists():
+                    self.download_file(
+                        url=url,
+                        location=DefaultPaths().dirpath_ms2query_pos.joinpath(file),
+                        timeout=600,
+                    )
         else:
-            self.download_file(
-                url=DefaultPaths().url_ms2deepscore,
-                location=DefaultPaths().dirpath_ms2deepscore.joinpath(
-                    DefaultPaths().filename_ms2deepscore
-                ),
-                timeout=3600,
-            )
+            for url in DefaultPaths().url_ms2query_neg:
+                file = urlparse(url).path.split("/")[-1]
+                if not DefaultPaths().dirpath_ms2query_neg.joinpath(file).exists():
+                    self.download_file(
+                        url=url,
+                        location=DefaultPaths().dirpath_ms2query_neg.joinpath(file),
+                        timeout=600,
+                    )
 
     @staticmethod
     def download_file(url: str, location: Path, timeout: int):
@@ -94,11 +98,15 @@ class UtilityMethodManager(BaseModel):
             timeout: A timeout for the download
 
         Raises:
-            URLError
+            URLError: states the URL from where download failed
 
         Notes:
             `urlretrieve` considered legacy, therefore not used
         """
+        logger.info(
+            f"'UtilityMethodManager': attempt to download file from "
+            f"'{url}' to location '{location}' with a timeout of '{timeout}' seconds."
+        )
         try:
             with urllib.request.urlopen(url=url, timeout=timeout) as response, open(
                 location, "wb"
@@ -109,19 +117,18 @@ class UtilityMethodManager(BaseModel):
                 f"'UtilityMethodManager': successfully downloaded file from "
                 f"'{url}' to location '{location}'."
             )
-        except urllib.error.URLError as e:
-            logger.error(
+        except urllib.error.URLError:
+            raise urllib.error.URLError(
                 f"'UtilityMethodManager': could not download from url '{url}' - SKIP"
             )
-            raise e
 
     @staticmethod
     def create_spectrum_object(data: dict, intensity_from: float) -> matchms.Spectrum:
-        """Create matchms Spectrum instance, add neutral losses and normalize intensity
+        """Create matchms Spectrum, add neutral losses, normalize and filter intensity
 
         Arguments:
             data: a dict containing data to create a matchms Spectrum object.
-            intensity_from: a float between 0 and 1 to filter for intensity
+            intensity_from: a float between 0 and 1 to filter for MS2 rel intensity
 
         Returns:
             A matchms Spectrum object
@@ -153,9 +160,9 @@ class UtilityMethodManager(BaseModel):
             frag_diff = frag_before - len(spectrum.peaks.mz)
             logger.debug(
                 f"'UtilityMethodManager': feature id '{data['f_id']}': removed '"
-                f"{frag_diff}' MS2 fragments with relative intensity lower than '"
-                f"{intensity_from}'. '{len(spectrum.peaks.mz)}' fragments remaining ("
-                f"before: '{frag_before}')."
+                f"MS2 fragments with relative intensity lower than '"
+                f"{intensity_from}': {frag_diff}'. '{len(spectrum.peaks.mz)}' "
+                f"fragments remaining (before: '{frag_before}')."
             )
 
         spectrum = matchms.filtering.add_losses(spectrum)
@@ -169,23 +176,137 @@ class UtilityMethodManager(BaseModel):
         Arguments:
             m1: an m/z ratio
             m2: an m/z ratio
-            f_id_m2: the (feature) id of m2
+            f_id_m2: the (feature) id of m2 for error reporting
 
         Returns:
             The mass deviation in ppm
 
         Raises:
-            ZeroDivisionError
+            ZeroDivisionError: m2 is zero
 
         Notes:
             Taken from publication doi.org/10.1016/j.jasms.2010.06.006
         """
         try:
             return abs(((m1 - m2) / m2) * 10**6)
-        except ZeroDivisionError as e:
-            logger.error(
-                f"'AnnotationManager/AdductAnnotator': Division through zero. "
-                f"Feature with id '{f_id_m2}' has a mass of '{m2}'. This is illegal - "
-                f"SKIP"
+        except ZeroDivisionError:
+            raise ZeroDivisionError(
+                f"'UtilityMethodManager': Division through zero in mass deviation "
+                f"calculation. Feature with id '{f_id_m2}' has a mass of '{m2}' - SKIP"
             )
-            raise e
+
+    @staticmethod
+    def extract_as_kcb_results(as_results: Path, cutoff: float) -> dict:
+        """Extract MIBiG IDs from antiSMASH full results folder
+
+        Arguments:
+            as_results: a path pointing towards the antiSMASH results folder
+            cutoff: the coverage cutoff value to restrict spurious hits
+
+        Returns:
+            A dict of regions with detected MIBiG knownclusterblast matches
+
+        Raises:
+            NotADirectoryError: the knownclusterblast directory was not found
+        """
+
+        def _extract_bgcs(content) -> list:
+            return re.findall(r"BGC\d{7}", content)
+
+        df_cds = pd.read_csv(
+            DefaultPaths().library_mibig_pos.parent.parent.joinpath(
+                "mibig_cds_count.csv"
+            )
+        )
+
+        if not as_results.joinpath("knownclusterblast").is_dir():
+            raise NotADirectoryError(
+                f"'UtilityMethodManager': could not find the directory "
+                f"'knownclusterblast' in the antiSMASH result folder "
+                f"'{as_results.resolve()}' - SKIP"
+            )
+
+        bgcs = {}
+        for f_path in as_results.joinpath("knownclusterblast").iterdir():
+            if f_path.is_file() and f_path.suffix == ".txt":
+                with open(f_path, "r") as f_handle:
+                    data = f_handle.read()
+
+                    if len(_extract_bgcs(data)) == 0:
+                        logger.debug(
+                            f"'UtilityMethodManager': no significant "
+                            f"KnownClusterBlast matches for region '{f_path.stem}' - "
+                            f"SKIP"
+                        )
+                        continue
+
+                    entries = data.split(">>")[1:]
+                    for entry in entries:
+                        bgc_id = _extract_bgcs(entry)[0]
+                        hits = entry.split(
+                            "Table of Blast hits (query gene, subject gene, %identity,"
+                            " blast score, %coverage, e-value):"
+                        )[1:][0].split("\n")
+                        nr_hits = len([item for item in hits if item != ""])
+                        cds_bgc = df_cds.loc[
+                            df_cds["mibig_id"] == bgc_id, "nr_cds"
+                        ].values[0]
+                        if (bgc_sim := round((nr_hits / cds_bgc), 2)) >= cutoff:
+                            if bgc_sim > 1.0:
+                                bgc_sim = 1.0
+                            try:
+                                if bgcs[bgc_id]["bgc_sim"] < bgc_sim:
+                                    bgcs[bgc_id] = {
+                                        "bgc_nr_cds": cds_bgc,
+                                        "matched_cds": nr_hits,
+                                        "bgc_sim": bgc_sim * 100,
+                                        "region": f_path.stem,
+                                    }
+                            except KeyError:
+                                bgcs[bgc_id] = {
+                                    "bgc_nr_cds": cds_bgc,
+                                    "matched_cds": nr_hits,
+                                    "bgc_sim": bgc_sim * 100,
+                                    "region": f_path.stem,
+                                }
+
+        if len(bgcs) != 0:
+            return bgcs
+        else:
+            raise RuntimeError(
+                "'UtilityMethodManager': could not find significant BGC matches in "
+                "antiSMASH KnownClusterBlast results."
+            )
+
+    @staticmethod
+    def create_mibig_spec_lib(mibig_ids: set) -> List[matchms.Spectrum]:
+        """Load MIBiG-derived in silico spectral library.
+
+        Attributes:
+            mibig_ids: A set of MIBiG IDs to create a targeted spectral library
+
+        Returns:
+            The spectral library
+
+        Raises:
+            RuntimeError: empty spectral library
+        """
+        spectra = list(
+            matchms.importing.load_from_mgf(DefaultPaths().library_mibig_pos)
+        )
+        spectra = [matchms.filtering.add_precursor_mz(i) for i in spectra]
+        spectra = [matchms.filtering.normalize_intensities(i) for i in spectra]
+
+        filtered_spectra = []
+        for spectrum in spectra:
+            ids = set(spectrum.metadata.get("mibigaccession").split(","))
+            if not mibig_ids.isdisjoint(ids):
+                filtered_spectra.append(spectrum)
+
+        if len(filtered_spectra) != 0:
+            return filtered_spectra
+        else:
+            raise RuntimeError(
+                "'UtilityMethodManager': MIBiG spectral library construction: "
+                "spectral library empty - SKIP."
+            )

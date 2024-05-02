@@ -25,12 +25,14 @@ from datetime import datetime
 import json
 import logging
 import platform
+import shutil
 from typing import Self, Optional, Any
 
 import networkx as nx
 import pandas as pd
 from pydantic import BaseModel
 
+from fermo_core.config.class_default_settings import DefaultPaths
 from fermo_core.data_processing.class_repository import Repository
 from fermo_core.data_processing.class_stats import Stats
 from fermo_core.input_output.class_parameter_manager import ParameterManager
@@ -85,10 +87,11 @@ class ExportManager(BaseModel):
         self.write_fermo_json(version, starttime)
         self.write_csv_output()
         self.write_cytoscape_output()
+        self.write_raw_ms2query_results()
 
     def define_filename(self: Self):
         """Derive output filename base from peaktable"""
-        self.filename_base = self.params.PeaktableParameters.filepath.stem
+        self.filename_base = f"out_{self.params.PeaktableParameters.filepath.stem}"
 
     def write_cytoscape_output(self: Self):
         """Write cytoscape output if networking was performed"""
@@ -233,6 +236,10 @@ class ExportManager(BaseModel):
 
         self.df_full = self.df.copy(deep=True)
 
+        self.populate_abbrev_df()
+
+    def populate_abbrev_df(self: Self):
+        """Populate the abbreviated df, removing mzmine-specific information"""
         abbr_cols = ["id", "height", "area", "mz", "rt"]
         abbr_cols.extend([col for col in self.df if col.startswith("fermo")])
         self.df_abbrev = self.df[abbr_cols].copy(deep=True)
@@ -244,7 +251,18 @@ class ExportManager(BaseModel):
             try:
                 feature = self.features.get(f_id)
                 return "|".join([s for s in feature.samples])
-            except KeyError:
+            except KeyError as e:
+                logger.debug(str(e))
+                if f_id in self.stats.inactive_features:
+                    logger.debug(
+                        f"'ExportManager': Feature id '{f_id}' has been "
+                        f"filtered from 'active_features' due to filter settings."
+                    )
+                else:
+                    logger.warning(
+                        f"'ExportManager': Feature id '{f_id}' not found in  "
+                        f"'inactive_features'. This is suspicious."
+                    )
                 return None
 
         self.df["fermo:samples"] = self.df["id"].map(lambda x: _add_sample_info(f_id=x))
@@ -283,7 +301,18 @@ class ExportManager(BaseModel):
         for f_id in self.stats.active_features:
             try:
                 feature = self.features.get(f_id)
-            except KeyError:
+            except KeyError as e:
+                logger.debug(str(e))
+                if f_id in self.stats.inactive_features:
+                    logger.debug(
+                        f"'ExportManager': Feature id '{f_id}' has been "
+                        f"filtered from 'active_features' due to filter settings."
+                    )
+                else:
+                    logger.warning(
+                        f"'ExportManager': Feature id '{f_id}' not found in  "
+                        f"'inactive_features'. This is suspicious."
+                    )
                 continue
 
             try:
@@ -309,3 +338,27 @@ class ExportManager(BaseModel):
             self.df[f"fermo:annotation:{key}:monomers"] = self.df["id"].map(
                 lambda x: val.get(x)
             )
+
+    def write_raw_ms2query_results(self: Self) -> bool:
+        """If raw MS2Query results exist, write to output directory
+
+        Returns:
+            A bool indicating the outcome of the operation
+        """
+        if (
+            DefaultPaths().dirpath_ms2query_base.joinpath("results").exists()
+            and DefaultPaths()
+            .dirpath_ms2query_base.joinpath("results/f_queries.csv")
+            .exists()
+        ):
+            shutil.move(
+                src=DefaultPaths().dirpath_ms2query_base.joinpath(
+                    "results/f_queries.csv"
+                ),
+                dst=self.params.OutputParameters.dir_path.joinpath(
+                    self.filename_base
+                ).with_suffix(".ms2query_results.csv"),
+            )
+            return True
+        else:
+            return False

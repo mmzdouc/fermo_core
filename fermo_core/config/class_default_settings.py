@@ -32,25 +32,30 @@ class DefaultPaths(BaseModel):
     """A Pydantic-based class for storing shared hardcoded default settings.
 
     Attributes:
-        dirpath_ms2deepscore: points towards default ms2deepscore dir
-        filename_ms2deepscore: points towards default ms2deepscore dir
-        url_ms2deepscore: the url to download the default ms2deepscore file
-        dirpath_ms2query: points towards default ms2query dir
+        dirpath_ms2deepscore_pos: points towards default ms2deepscore dir
+        url_ms2deepscore_pos: the url to download the default ms2deepscore file
+        dirpath_ms2query_pos: points towards default ms2query dir positive mode
+        dirpath_ms2query_neg: points towards default ms2query dir negative mode
         url_ms2query_pos: urls to default ms2query files for positive ion mode
         url_ms2query_neg: urls to default ms2query files for negative ion mode
         dirpath_export: points towards default exports dir
     """
 
-    dirpath_ms2deepscore: DirectoryPath = Path(__file__).parent.parent.joinpath(
-        "libraries/ms2deepscore"
+    dirpath_ms2deepscore_pos: DirectoryPath = Path(__file__).parent.parent.joinpath(
+        "libraries/ms2deepscore/pos"
     )
-    filename_ms2deepscore: str = "ms2deepscore_positive_10k_1000_1000_1000_500.hdf5"
-    url_ms2deepscore: str = (
+    url_ms2deepscore_pos: str = (
         "https://zenodo.org/records/8274763/files/"
         "ms2deepscore_positive_10k_1000_1000_1000_500.hdf5?download=1"
     )
-    dirpath_ms2query: DirectoryPath = Path(__file__).parent.parent.joinpath(
-        "libraries/ms2query"
+    dirpath_ms2query_base: DirectoryPath = Path(__file__).parent.parent.joinpath(
+        "libraries/ms2query/"
+    )
+    dirpath_ms2query_pos: DirectoryPath = Path(__file__).parent.parent.joinpath(
+        "libraries/ms2query/pos"
+    )
+    dirpath_ms2query_neg: DirectoryPath = Path(__file__).parent.parent.joinpath(
+        "libraries/ms2query/neg"
     )
     url_ms2query_pos: tuple = (
         "https://zenodo.org/records/10527997/files"
@@ -90,7 +95,10 @@ class DefaultPaths(BaseModel):
         "?download=1",
     )
     dirpath_output: DirectoryPath = Path(__file__).parent.parent.parent.joinpath(
-        "example_data/"
+        "results/"
+    )
+    library_mibig_pos: FilePath = Path(__file__).parent.parent.joinpath(
+        "libraries/mibig/pos/mibig_in_silico_spectral_library_3_1.mgf"
     )
 
 

@@ -1,6 +1,6 @@
 """Organize the calling of annotation modules.
 
-Copyright (c) 2022-2023 Mitja Maximilian Zdouc, PhD
+Copyright (c) 2022-2024 Mitja Maximilian Zdouc, PhD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -22,11 +22,10 @@ SOFTWARE.
 """
 import logging
 from typing import Self, Tuple
-import urllib.error
 
-import func_timeout
 from pydantic import BaseModel
 
+from fermo_core.config.class_default_settings import DefaultPaths
 from fermo_core.data_analysis.annotation_manager.class_adduct_annotator import (
     AdductAnnotator,
 )
@@ -39,14 +38,13 @@ from fermo_core.data_analysis.annotation_manager.class_mod_cos_annotator import 
 from fermo_core.data_analysis.annotation_manager.class_ms2deepscore_annotator import (
     Ms2deepscoreAnnotator,
 )
-from fermo_core.data_processing.builder_feature.dataclass_feature import (
-    Feature,
-    Annotations,
-    Match,
+from fermo_core.data_analysis.annotation_manager.class_ms2query_annotator import (
+    MS2QueryAnnotator,
 )
 from fermo_core.data_processing.class_repository import Repository
 from fermo_core.data_processing.class_stats import Stats
 from fermo_core.input_output.class_parameter_manager import ParameterManager
+from fermo_core.utils.utility_method_manager import UtilityMethodManager
 
 logger = logging.getLogger("fermo_core")
 
@@ -78,6 +76,12 @@ class AnnotationManager(BaseModel):
         """Organizes calling of data analysis steps."""
         logger.info("'AnnotationManager': started analysis steps.")
 
+        def _eval_ms2query_results_file() -> bool:
+            return True if self.params.MS2QueryResultsParameters is not None else False
+
+        def _eval_as_results_file() -> bool:
+            return True if self.params.AsResultsParameters is not None else False
+
         modules = (
             (
                 self.params.SpectralLibMatchingCosineParameters.activate_module,
@@ -94,9 +98,23 @@ class AnnotationManager(BaseModel):
             (
                 self.params.NeutralLossParameters.activate_module,
                 self.run_neutral_loss_annotation,
-            )
-            # TODO(MMZ 13.03.24): Add additional annotation modules e.g. adduct,
-            #  ms2query
+            ),
+            (
+                _eval_ms2query_results_file,
+                self.run_ms2query_results_assignment,
+            ),
+            (
+                self.params.Ms2QueryAnnotationParameters.activate_module,
+                self.run_ms2query_annotation,
+            ),
+            (
+                _eval_as_results_file,
+                self.run_as_kcb_cosine_annotation,
+            ),
+            (
+                _eval_as_results_file,
+                self.run_as_kcb_deepscore_annotation,
+            ),
         )
 
         for module in modules:
@@ -105,21 +123,27 @@ class AnnotationManager(BaseModel):
 
         logger.info("'AnnotationManager': completed analysis steps.")
 
-    @staticmethod
-    def add_match_info(feature: Feature) -> Feature:
-        """Check annotation object instances if necessary
-
-        Arguments:
-            feature: feature object in modification
+    def verify_user_lib_params(self: Self) -> bool:
+        """Perform preliminary checks on user-provided library and params.
 
         Returns:
-            (modified) feature object
+            A bool indicating pass or fail
         """
-        if feature.Annotations is None:
-            feature.Annotations = Annotations()
-        if feature.Annotations.matches is None:
-            feature.Annotations.matches = []
-        return feature
+        if self.params.SpecLibParameters is None:
+            logger.warning(
+                "'AnnotationManager': no spectral library params provided - SKIP"
+            )
+            return False
+        elif self.stats.spectral_library is None:
+            logger.warning(
+                "'AnnotationManager': no spectral library file provided - SKIP"
+            )
+            return False
+        elif len(self.stats.spectral_library) == 0:
+            logger.warning("'AnnotationManager': spectral library file is empty - SKIP")
+            return False
+        else:
+            return True
 
     def run_user_lib_mod_cosine_matching(self: Self):
         """Match features against a user-provided spectral library using mod cosine."""
@@ -128,67 +152,30 @@ class AnnotationManager(BaseModel):
             "user-provided spectral library using the modified cosine algorithm."
         )
 
-        if self.params.SpecLibParameters is None:
-            logger.warning(
-                "'AnnotationManager': no spectral library parameters provided - SKIP"
-            )
-            return
-        elif self.stats.spectral_library is None:
-            logger.warning(
-                "'AnnotationManager': no spectral library file provided - SKIP"
-            )
-            return
-        elif len(self.stats.spectral_library) == 0:
-            logger.warning("'AnnotationManager': spectral library file is empty - SKIP")
+        if not self.verify_user_lib_params():
             return
 
-        mod_cosine_annotator = ModCosAnnotator(
-            features=self.features,
-            active_features=self.stats.active_features,
-            library=self.stats.spectral_library,
-            max_time=self.params.SpectralLibMatchingCosineParameters.maximum_runtime,
-            fragment_tol=self.params.SpectralLibMatchingCosineParameters.fragment_tol,
-            score_cutoff=self.params.SpectralLibMatchingCosineParameters.score_cutoff,
-            min_nr_matched_peaks=self.params.SpectralLibMatchingCosineParameters.min_nr_matched_peaks,
-            max_precursor_mass_diff=self.params.SpectralLibMatchingCosineParameters.max_precursor_mass_diff,
-        )
         try:
+            mod_cosine_annotator = ModCosAnnotator(
+                features=self.features,
+                active_features=self.stats.active_features,
+                library=self.stats.spectral_library,
+                library_name=self.params.SpecLibParameters.filepath.name,
+                max_time=self.params.SpectralLibMatchingCosineParameters.maximum_runtime,
+                fragment_tol=self.params.SpectralLibMatchingCosineParameters.fragment_tol,
+                score_cutoff=self.params.SpectralLibMatchingCosineParameters.score_cutoff,
+                min_nr_matched_peaks=self.params.SpectralLibMatchingCosineParameters.min_nr_matched_peaks,
+                max_precursor_mass_diff=self.params.SpectralLibMatchingCosineParameters.max_precursor_mass_diff,
+            )
             mod_cosine_annotator.prepare_queries()
             mod_cosine_annotator.calculate_scores_mod_cosine()
-            scores = mod_cosine_annotator.return_scores()
-
-            for spectrum in mod_cosine_annotator.queries:
-                feature = self.features.get(int(spectrum.metadata.get("id")))
-                sorted_matches = scores.scores_by_query(
-                    spectrum, name="ModifiedCosine_score", sort=True
-                )
-
-                for match in sorted_matches:
-                    if mod_cosine_annotator.filter_match(match, feature.mz):
-                        feature = self.add_match_info(feature)
-                        feature.Annotations.matches.append(
-                            Match(
-                                id=match[0].metadata.get("compound_name"),
-                                library=str(
-                                    self.params.SpecLibParameters.filepath.resolve()
-                                ),
-                                algorithm="modified cosine",
-                                score=float(match[1][0].round(2)),
-                                mz=match[0].metadata.get("precursor_mz"),
-                                diff_mz=round(
-                                    abs(
-                                        match[0].metadata.get("precursor_mz")
-                                        - feature.mz
-                                    ),
-                                    4,
-                                ),
-                                module="user-library-matching",
-                            )
-                        )
-                self.features.modify(int(spectrum.metadata.get("id")), feature)
-        except RuntimeError:
-            return
-        except func_timeout.FunctionTimedOut:
+            mod_cosine_annotator.extract_userlib_scores()
+            self.features = mod_cosine_annotator.return_features()
+        except Exception as e:
+            logger.error(str(e))
+            logger.error(
+                "'AnnotationManager': Error during running of ModCosineAnnotator - SKIP"
+            )
             return
 
         logger.info(
@@ -203,69 +190,30 @@ class AnnotationManager(BaseModel):
             "user-provided spectral library using the ms2deepscore algorithm."
         )
 
-        if self.params.SpecLibParameters is None:
-            logger.warning(
-                "'AnnotationManager': no spectral library parameters provided - SKIP"
-            )
+        if not self.verify_user_lib_params():
             return
-        elif self.stats.spectral_library is None:
-            logger.warning(
-                "'AnnotationManager': no spectral library file provided - SKIP"
-            )
-            return
-        elif len(self.stats.spectral_library) == 0:
-            logger.warning("'AnnotationManager': spectral library file is empty - SKIP")
-            return
-
-        ms2deepscore_annotator = Ms2deepscoreAnnotator(
-            features=self.features,
-            active_features=self.stats.active_features,
-            polarity=self.params.PeaktableParameters.polarity,
-            library=self.stats.spectral_library,
-            max_time=self.params.SpectralLibMatchingDeepscoreParameters.maximum_runtime,
-            score_cutoff=self.params.SpectralLibMatchingDeepscoreParameters.score_cutoff,
-            max_precursor_mass_diff=self.params.SpectralLibMatchingDeepscoreParameters.max_precursor_mass_diff,
-        )
 
         try:
+            ms2deepscore_annotator = Ms2deepscoreAnnotator(
+                features=self.features,
+                active_features=self.stats.active_features,
+                polarity=self.params.PeaktableParameters.polarity,
+                library=self.stats.spectral_library,
+                library_name=self.params.SpecLibParameters.filepath.name,
+                max_time=self.params.SpectralLibMatchingDeepscoreParameters.maximum_runtime,
+                score_cutoff=self.params.SpectralLibMatchingDeepscoreParameters.score_cutoff,
+                max_precursor_mass_diff=self.params.SpectralLibMatchingDeepscoreParameters.max_precursor_mass_diff,
+            )
             ms2deepscore_annotator.prepare_queries()
             ms2deepscore_annotator.calculate_scores_ms2deepscore()
-            scores = ms2deepscore_annotator.return_scores()
-
-            for spectrum in ms2deepscore_annotator.queries:
-                feature = self.features.get(int(spectrum.metadata.get("id")))
-                sorted_matches = scores.scores_by_query(
-                    spectrum, name="MS2DeepScore", sort=True
-                )
-
-                for match in sorted_matches:
-                    if ms2deepscore_annotator.filter_match(match, feature.mz):
-                        feature = self.add_match_info(feature)
-                        feature.Annotations.matches.append(
-                            Match(
-                                id=match[0].metadata.get("compound_name"),
-                                library=str(
-                                    self.params.SpecLibParameters.filepath.resolve()
-                                ),
-                                algorithm="ms2deepscore",
-                                score=float(match[1].round(2)),
-                                mz=match[0].metadata.get("precursor_mz"),
-                                diff_mz=round(
-                                    abs(
-                                        match[0].metadata.get("precursor_mz")
-                                        - feature.mz
-                                    ),
-                                    4,
-                                ),
-                                module="user-library-matching",
-                            )
-                        )
-                self.features.modify(int(spectrum.metadata.get("id")), feature)
-        except RuntimeError:
-            return
-        except func_timeout.FunctionTimedOut:
-            return
-        except urllib.error.URLError:
+            ms2deepscore_annotator.extract_userlib_scores()
+            self.features = ms2deepscore_annotator.return_features()
+        except Exception as e:
+            logger.error(str(e))
+            logger.error(
+                "'AnnotationManager': Error during running of Ms2deepscoreAnnotator "
+                "- SKIP"
+            )
             return
 
         logger.info(
@@ -277,24 +225,21 @@ class AnnotationManager(BaseModel):
         """Perform feature adduct annotation"""
         logger.info("'AnnotationManager': started feature adduct annotation.")
 
-        adduct_annotator = AdductAnnotator(
-            params=self.params,
-            stats=self.stats,
-            features=self.features,
-            samples=self.samples,
-        )
-
         try:
+            adduct_annotator = AdductAnnotator(
+                params=self.params,
+                stats=self.stats,
+                features=self.features,
+                samples=self.samples,
+            )
             adduct_annotator.run_analysis()
-        except ZeroDivisionError as e:
+            self.features = adduct_annotator.return_features()
+        except Exception as e:
             logger.error(str(e))
             logger.error(
-                "'AnnotationManager/AdductAnnotator': Attempted division through "
-                "zero when calculating mass deviation - SKIP"
+                "'AnnotationManager': Error during running of AdductAnnotator " "- SKIP"
             )
             return
-
-        self.features = adduct_annotator.return_features()
 
         logger.info("'AnnotationManager': completed feature adduct annotation.")
 
@@ -302,23 +247,217 @@ class AnnotationManager(BaseModel):
         """Perform feature MS2 neutral loss annotation"""
         logger.info("'AnnotationManager': started feature neutral loss annotation.")
 
-        neutralloss_annotator = NeutralLossAnnotator(
-            params=self.params,
-            stats=self.stats,
-            features=self.features,
-            samples=self.samples,
-        )
-
         try:
+            neutralloss_annotator = NeutralLossAnnotator(
+                params=self.params,
+                stats=self.stats,
+                features=self.features,
+                samples=self.samples,
+            )
             neutralloss_annotator.run_analysis()
-        except ZeroDivisionError as e:
+            self.features = neutralloss_annotator.return_features()
+        except Exception as e:
             logger.error(str(e))
             logger.error(
-                "'AnnotationManager/NeutralLossAnnotator': Attempted division through "
-                "zero when calculating mass deviation - SKIP"
+                "'AnnotationManager': Error during running of NeutralLossAnnotator "
+                "- SKIP"
             )
             return
 
-        self.features = neutralloss_annotator.return_features()
-
         logger.info("'AnnotationManager': completed feature neutral loss annotation.")
+
+    def run_ms2query_results_assignment(self: Self):
+        """Annotate Features from existing MS2Query results"""
+        if self.params.Ms2QueryAnnotationParameters.activate_module is True:
+            logger.warning(
+                f"'AnnotationManager': both an MS2Query result file and instructions "
+                f"for running the MS2Query algorithm were provided. In this case, "
+                f"the existing MS2Query results file "
+                f"'{self.params.MS2QueryResultsParameters.filepath.name}' takes "
+                f"precedence. "
+            )
+
+        logger.info(
+            "'AnnotationManager': started annotation from existing MS2Query results."
+        )
+
+        try:
+            ms2query_annotator = MS2QueryAnnotator(
+                params=self.params,
+                features=self.features,
+                active_features=self.stats.active_features,
+                cutoff=self.params.MS2QueryResultsParameters.score_cutoff,
+            )
+            ms2query_annotator.assign_feature_info(
+                self.params.MS2QueryResultsParameters.filepath,
+            )
+            self.features = ms2query_annotator.return_features()
+        except Exception as e:
+            logger.error(str(e))
+            logger.error(
+                "'AnnotationManager': Error during MS2Query Results Assignment - SKIP"
+            )
+            return
+
+        logger.info(
+            "'AnnotationManager': completed annotation from existing MS2Query "
+            "results"
+        )
+
+    def run_ms2query_annotation(self: Self):
+        """Perform annotation of feature MS2 using ms2query - run algorithm"""
+        if self.params.MS2QueryResultsParameters is not None:
+            logger.warning(
+                f"'AnnotationManager': both an MS2Query result file and instructions "
+                f"for running the MS2Query algorithm were provided. In this case, "
+                f"the existing MS2Query results file "
+                f"'{self.params.MS2QueryResultsParameters.filepath.name}' takes "
+                f"precedence. "
+            )
+            logger.warning("'AnnotationManager': MS2QueryAnnotator - SKIP ")
+            return
+
+        logger.info("'AnnotationManager': started annotation using MS2Query")
+
+        try:
+            ms2query_annotator = MS2QueryAnnotator(
+                params=self.params,
+                features=self.features,
+                active_features=self.stats.active_features,
+                cutoff=self.params.Ms2QueryAnnotationParameters.score_cutoff,
+            )
+            ms2query_annotator.run_ms2query()
+            self.features = ms2query_annotator.return_features()
+        except Exception as e:
+            logger.error(str(e))
+            logger.error(
+                "'AnnotationManager': Error during running of MS2QueryAnnotator - SKIP"
+            )
+            return
+
+        logger.info("'AnnotationManager': completed annotation using MS2Query")
+
+    def run_as_kcb_cosine_annotation(self: Self):
+        """Match features against a antiSMASH knownclusterblast-derived library.
+
+        Allows modified cosine-based library matching against the in silico generated
+        MS2 spectra of significant antiSMASH KnownClusterBlast (MIBiG) matches.
+        """
+        logger.info(
+            "'AnnotationManager': started antiSMASH KnownClusterBlast "
+            "modified cosine annotation."
+        )
+
+        if self.params.PeaktableParameters.polarity == "negative":
+            logger.warning(
+                "'AnnotationManager': negative ion mode detected. antiSMASH "
+                "KnownClusterBlast result annotation only available for positive ion "
+                "mode - SKIP"
+            )
+            return
+
+        if self.params.AsKcbCosineMatchingParams.activate_module is False:
+            logger.warning(
+                "'AnnotationManager': antiSMASH results file provided but "
+                "'as_kcb_matching/modified_cosine' is turned off. Continue with "
+                "default settings for 'as_kcb_matching/modified_cosine'."
+            )
+            self.params.AsKcbCosineMatchingParams.activate_module = True
+
+        try:
+            kcb_results = UtilityMethodManager().extract_as_kcb_results(
+                as_results=self.params.AsResultsParameters.directory_path,
+                cutoff=self.params.AsResultsParameters.similarity_cutoff,
+            )
+            mibig_bgcs = set([key for key, value in kcb_results.items()])
+            spec_library = UtilityMethodManager().create_mibig_spec_lib(mibig_bgcs)
+
+            kcb_annotator = ModCosAnnotator(
+                features=self.features,
+                active_features=self.stats.active_features,
+                library=spec_library,
+                library_name=DefaultPaths().library_mibig_pos.name,
+                max_time=self.params.AsKcbCosineMatchingParams.maximum_runtime,
+                fragment_tol=self.params.AsKcbCosineMatchingParams.fragment_tol,
+                score_cutoff=self.params.AsKcbCosineMatchingParams.score_cutoff,
+                min_nr_matched_peaks=self.params.AsKcbCosineMatchingParams.min_nr_matched_peaks,
+                max_precursor_mass_diff=self.params.AsKcbCosineMatchingParams.max_precursor_mass_diff,
+            )
+            kcb_annotator.prepare_queries()
+            kcb_annotator.calculate_scores_mod_cosine()
+            kcb_annotator.extract_mibig_scores(kcb_results)
+            self.features = kcb_annotator.return_features()
+        except Exception as e:
+            logger.error(str(e))
+            logger.error(
+                "'AnnotationManager': Error during running of antiSMASH "
+                "KnownClusterBlast modified cosine annotation - SKIP"
+            )
+            return
+
+        logger.info(
+            "'AnnotationManager': completed antiSMASH KnownClusterBlast "
+            "modified cosine annotation."
+        )
+
+    def run_as_kcb_deepscore_annotation(self: Self):
+        """Match features against a antiSMASH knownclusterblast-derived library.
+
+        Allows MS2DeepScore-based library matching against the in silico generated
+        MS2 spectra of significant antiSMASH KnownClusterBlast (MIBiG) matches.
+        """
+        logger.info(
+            "'AnnotationManager': started antiSMASH KnownClusterBlast MS2DeepScore "
+            "annotation."
+        )
+
+        if self.params.PeaktableParameters.polarity == "negative":
+            logger.warning(
+                "'AnnotationManager': negative ion mode detected. antiSMASH "
+                "KnownClusterBlast result annotation only available for positive ion "
+                "mode - SKIP"
+            )
+            return
+
+        if self.params.AsKcbDeepscoreMatchingParams.activate_module is False:
+            logger.warning(
+                "'AnnotationManager': antiSMASH results file provided but "
+                "'as_kcb_matching/ms2deepscore' is turned off. Continue with default "
+                "settings for 'as_kcb_matching/ms2deepscore'."
+            )
+            self.params.AsKcbDeepscoreMatchingParams.activate_module = True
+
+        try:
+            kcb_results = UtilityMethodManager().extract_as_kcb_results(
+                as_results=self.params.AsResultsParameters.directory_path,
+                cutoff=self.params.AsResultsParameters.similarity_cutoff,
+            )
+            mibig_bgcs = set([key for key, value in kcb_results.items()])
+            spec_library = UtilityMethodManager().create_mibig_spec_lib(mibig_bgcs)
+
+            kcb_annotator = Ms2deepscoreAnnotator(
+                features=self.features,
+                active_features=self.stats.active_features,
+                polarity=self.params.PeaktableParameters.polarity,
+                library=spec_library,
+                library_name=DefaultPaths().library_mibig_pos.name,
+                max_time=self.params.AsKcbDeepscoreMatchingParams.maximum_runtime,
+                score_cutoff=self.params.AsKcbDeepscoreMatchingParams.score_cutoff,
+                max_precursor_mass_diff=self.params.AsKcbDeepscoreMatchingParams.max_precursor_mass_diff,
+            )
+            kcb_annotator.prepare_queries()
+            kcb_annotator.calculate_scores_ms2deepscore()
+            kcb_annotator.extract_mibig_scores(kcb_results)
+            self.features = kcb_annotator.return_features()
+        except Exception as e:
+            logger.error(str(e))
+            logger.error(
+                "'AnnotationManager': Error during running of antiSMASH "
+                "KnownClusterBlast MS2DeepScore annotation - SKIP"
+            )
+            return
+
+        logger.info(
+            "'AnnotationManager': completed antiSMASH KnownClusterBlast MS2DeepScore "
+            "annotation."
+        )

@@ -192,19 +192,13 @@ class SimNetworksManager(BaseModel):
         """Run ms2deepscore-based spectral similarity networking on features."""
         logger.info("'SimNetworksManager/Ms2deepscoreNetworker': started calculation.")
 
-        if self.params.PeaktableParameters.polarity != "positive":
-            logger.warning(
-                "'SimNetworksManager/Ms2deepscoreNetworker': data polarity not "
-                "positive. Currently, only positive ion mode is supported - SKIP"
-            )
-            return
-
         try:
-            if not UtilityMethodManager().check_ms2deepscore_req():
-                UtilityMethodManager().download_ms2deepscore_req(
-                    self.params.SpecSimNetworkDeepscoreParameters.maximum_runtime
-                )
+            UtilityMethodManager().check_ms2deepscore_req(
+                self.params.PeaktableParameters.polarity
+            )
         except urllib.error.URLError:
+            return
+        except RuntimeError:
             return
 
         filtered_features = self.filter_input_spectra(

@@ -33,6 +33,8 @@ from fermo_core.input_output.input_file_parameter_managers import (
     PhenotypeParameters,
     GroupMetadataParameters,
     SpecLibParameters,
+    AsResultsParameters,
+    MS2QueryResultsParameters,
 )
 from fermo_core.input_output.output_file_parameter_managers import OutputParameters
 from fermo_core.input_output.core_module_parameter_managers import (
@@ -48,6 +50,8 @@ from fermo_core.input_output.additional_module_parameter_managers import (
     SpectralLibMatchingCosineParameters,
     SpectralLibMatchingDeepscoreParameters,
     Ms2QueryAnnotationParameters,
+    AsKcbCosineMatchingParams,
+    AsKcbDeepscoreMatchingParams,
 )
 
 logger = logging.getLogger("fermo_core")
@@ -67,6 +71,8 @@ class ParameterManager(BaseModel):
         PhenotypeParameters: class handling phenotype parameters or None
         GroupMetadataParameters: class handling metadata parameters or None
         SpecLibParameters: class handling spectra library parameters or None
+        MS2QueryResultsParameters: class handling ms2query results or None
+        AsResultsParameters: class handling antiSMASH results or None
         OutputParameters: class handling output file parameters
         AdductAnnotationParameters: class handling adduct annotation module parameter
         NeutralLossParameters: class handling neutral loss annotation module parameters
@@ -83,6 +89,8 @@ class ParameterManager(BaseModel):
         SpectralLibMatchingDeepscoreParameters: class handling ms2deepscore-based
             spectral library matching module parameter
         Ms2QueryAnnotationParameters: class handling ms2query annotation module params
+        AsKcbCosineMatchingParams: class handling antiSMASH KCB cosine module params
+        AsKcbDeepscoreMatchingParams: class handling antiSMASH KCB DS module params
     """
 
     PeaktableParameters: Optional[PeaktableParameters] = None
@@ -90,6 +98,8 @@ class ParameterManager(BaseModel):
     PhenotypeParameters: Optional[PhenotypeParameters] = None
     GroupMetadataParameters: Optional[GroupMetadataParameters] = None
     SpecLibParameters: Optional[SpecLibParameters] = None
+    MS2QueryResultsParameters: Optional[MS2QueryResultsParameters] = None
+    AsResultsParameters: Optional[AsResultsParameters] = None
     OutputParameters: OutputParameters = OutputParameters()
     AdductAnnotationParameters: AdductAnnotationParameters = (
         AdductAnnotationParameters()
@@ -117,6 +127,10 @@ class ParameterManager(BaseModel):
     Ms2QueryAnnotationParameters: Ms2QueryAnnotationParameters = (
         Ms2QueryAnnotationParameters()
     )
+    AsKcbCosineMatchingParams: AsKcbCosineMatchingParams = AsKcbCosineMatchingParams()
+    AsKcbDeepscoreMatchingParams: AsKcbDeepscoreMatchingParams = (
+        AsKcbDeepscoreMatchingParams()
+    )
 
     def to_json(self: Self) -> dict:
         """Export class attributes to json-dump compatible dict.
@@ -130,6 +144,8 @@ class ParameterManager(BaseModel):
             (self.PhenotypeParameters, "PhenotypeParameters"),
             (self.GroupMetadataParameters, "GroupMetadataParameters"),
             (self.SpecLibParameters, "SpecLibParameters"),
+            (self.MS2QueryResultsParameters, "MS2QueryResultsParameters"),
+            (self.AsResultsParameters, "AsResultsParameters"),
         )
 
         json_dict = {}
@@ -168,6 +184,12 @@ class ParameterManager(BaseModel):
         json_dict[
             "Ms2QueryAnnotationParameters"
         ] = self.Ms2QueryAnnotationParameters.to_json()
+        json_dict[
+            "AsKcbCosineMatchingParams"
+        ] = self.AsKcbCosineMatchingParams.to_json()
+        json_dict[
+            "AsKcbDeepscoreMatchingParams"
+        ] = self.AsKcbDeepscoreMatchingParams.to_json()
 
         return json_dict
 
@@ -218,6 +240,12 @@ class ParameterManager(BaseModel):
                 self.assign_spectral_library,
                 "spectral_library",
             ),
+            (
+                user_params.get("ms2query_results"),
+                self.assign_ms2query_results,
+                "ms2query_results",
+            ),
+            (user_params.get("as_results"), self.assign_as_results, "as_results"),
             (user_params.get("output"), self.assign_output, "output"),
         )
 
@@ -314,6 +342,16 @@ class ParameterManager(BaseModel):
                 user_params.get("ms2query_annotation"),
                 self.assign_ms2query,
                 "ms2query_annotation",
+            ),
+            (
+                user_params.get("as_kcb_matching", {}).get("modified_cosine"),
+                self.assign_as_kcb_matching_cosine,
+                "as_kcb_matching/modified_cosine",
+            ),
+            (
+                user_params.get("as_kcb_matching", {}).get("ms2deepscore"),
+                self.assign_as_kcb_matching_deepscore,
+                "as_kcb_matching/ms2deepscore",
             ),
         )
 
@@ -457,6 +495,40 @@ class ParameterManager(BaseModel):
             logger.warning(str(e))
             self.log_malformed_parameters_skip("spectral_library")
             self.SpecLibParameters = None
+
+    def assign_ms2query_results(self: Self, user_params: dict):
+        """Assign ms2query_results parameters to self.MS2QueryResultsParameters.
+
+        Parameters:
+            user_params: user-provided params, read from json file
+        """
+        try:
+            self.MS2QueryResultsParameters = MS2QueryResultsParameters(**user_params)
+            logger.info(
+                "'ParameterManager': validated and assigned parameters "
+                "for 'ms2query_results'."
+            )
+        except Exception as e:
+            logger.warning(str(e))
+            self.log_malformed_parameters_skip("ms2query_results")
+            self.MS2QueryResultsParameters = None
+
+    def assign_as_results(self: Self, user_params: dict):
+        """Assign antiSMASH results parameters to self.AsResultsParameters.
+
+        Parameters:
+            user_params: user-provided params, read from json file
+        """
+        try:
+            self.AsResultsParameters = AsResultsParameters(**user_params)
+            logger.info(
+                "'ParameterManager': validated and assigned parameters "
+                "for 'as_results'."
+            )
+        except Exception as e:
+            logger.warning(str(e))
+            self.log_malformed_parameters_skip("as_results")
+            self.AsResultsParameters = None
 
     def assign_output(self: Self, user_params: dict):
         """Assign output parameters to self.OutputParameters.
@@ -670,3 +742,43 @@ class ParameterManager(BaseModel):
             logger.warning(str(e))
             self.log_malformed_parameters_default("ms2query")
             self.Ms2QueryAnnotationParameters = Ms2QueryAnnotationParameters()
+
+    def assign_as_kcb_matching_cosine(self: Self, user_params: dict):
+        """Assign antismash kcb results parameters to self.AsKcbCosineMatchingParams.
+
+        Uses modified cosine algorithm
+
+        Parameters:
+            user_params: user-provided params, read from json file
+        """
+        try:
+            self.AsKcbCosineMatchingParams = AsKcbCosineMatchingParams(**user_params)
+            logger.info(
+                "'ParameterManager': validated and assigned parameters "
+                "for 'as_kcb_matching/modified_cosine'."
+            )
+        except Exception as e:
+            logger.warning(str(e))
+            self.log_malformed_parameters_default("as_kcb_matching/modified_cosine")
+            self.AsKcbCosineMatchingParams = AsKcbCosineMatchingParams()
+
+    def assign_as_kcb_matching_deepscore(self: Self, user_params: dict):
+        """Assign antismash kcb results parameters to self.AsKcbDeepscoreMatchingParams.
+
+        Uses MS2DeepScore algorithm
+
+        Parameters:
+            user_params: user-provided params, read from json file
+        """
+        try:
+            self.AsKcbDeepscoreMatchingParams = AsKcbDeepscoreMatchingParams(
+                **user_params
+            )
+            logger.info(
+                "'ParameterManager': validated and assigned parameters "
+                "for 'as_kcb_matching/ms2deepscore'."
+            )
+        except Exception as e:
+            logger.warning(str(e))
+            self.log_malformed_parameters_default("as_kcb_matching/ms2deepscore")
+            self.AsKcbDeepscoreMatchingParams = AsKcbDeepscoreMatchingParams()

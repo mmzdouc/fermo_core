@@ -12,4 +12,4 @@ def test_init_valid():
 
 def test_format_invalid():
     output = OutputParameters(filepath=Path("dgsdgfsdfgs/"))
-    assert output.dir_path.name == "example_data"
+    assert output.dir_path.name == "results"

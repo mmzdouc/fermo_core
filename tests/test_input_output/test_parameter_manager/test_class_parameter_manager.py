@@ -1,7 +1,7 @@
-import pytest
-
+from pathlib import Path
 
 from pydantic import ValidationError
+import pytest
 
 from fermo_core.input_output.class_file_manager import FileManager
 from fermo_core.input_output.class_parameter_manager import ParameterManager
@@ -10,7 +10,9 @@ from fermo_core.input_output.input_file_parameter_managers import (
     MsmsParameters,
     PhenotypeParameters,
     GroupMetadataParameters,
+    MS2QueryResultsParameters,
     SpecLibParameters,
+    AsResultsParameters,
 )
 from fermo_core.input_output.output_file_parameter_managers import OutputParameters
 from fermo_core.input_output.core_module_parameter_managers import (
@@ -26,6 +28,8 @@ from fermo_core.input_output.additional_module_parameter_managers import (
     SpectralLibMatchingCosineParameters,
     SpectralLibMatchingDeepscoreParameters,
     Ms2QueryAnnotationParameters,
+    AsKcbDeepscoreMatchingParams,
+    AsKcbCosineMatchingParams,
 )
 
 
@@ -137,6 +141,40 @@ def test_assign_spectral_library_invalid():
     assert params.SpecLibParameters is None
 
 
+def test_assign_ms2query_results_valid():
+    params = ParameterManager()
+    params.assign_ms2query_results(
+        {
+            "filepath": Path(
+                "tests/test_input_output/test_validation_manager/"
+                "example_results_ms2query.csv"
+            ),
+            "score_cutoff": 0.7,
+        }
+    )
+    assert isinstance(params.MS2QueryResultsParameters, MS2QueryResultsParameters)
+
+
+def test_assign_ms2query_results_invalid():
+    params = ParameterManager()
+    params.assign_ms2query_results({"score_cutoff": 0.7})
+    assert params.MS2QueryResultsParameters is None
+
+
+def test_assign_as_results_valid():
+    params = ParameterManager()
+    params.assign_as_results({"directory_path": "example_data/JABTEZ000000000.1/"})
+    assert isinstance(params.AsResultsParameters, AsResultsParameters)
+
+
+def test_assign_as_results_invalid():
+    params = ParameterManager()
+    params.assign_as_results(
+        {"directory_path": "example_data/case_study_peak_table_quant_full.csv"}
+    )
+    assert params.AsResultsParameters is None
+
+
 def test_assign_output_valid():
     params = ParameterManager()
     params.assign_output({"dir_path": "example_data"})
@@ -150,7 +188,7 @@ def test_assign_output_invalid():
             "sasd": "dasdas",
         }
     )
-    assert params.OutputParameters.dir_path.stem == "example_data"
+    assert params.OutputParameters.dir_path.stem == "results"
 
 
 def test_assign_adduct_annotation_valid():
@@ -317,9 +355,9 @@ def test_assign_ms2query_valid():
     params.assign_ms2query(
         {
             "activate_module": True,
-            "directory_path": "fermo_core/libraries",
-            "consider_blank": True,
-            "filter_rel_int_range": [0.0, 0.1],
+            "exclude_blank": False,
+            "score_cutoff": 0.7,
+            "maximum_runtime": 600,
         }
     )
     assert isinstance(params.Ms2QueryAnnotationParameters, Ms2QueryAnnotationParameters)
@@ -328,7 +366,47 @@ def test_assign_ms2query_valid():
 def test_assign_ms2query_invalid():
     params = ParameterManager()
     params.assign_ms2query({"asdfg": "asdfg"})
-    assert params.Ms2QueryAnnotationParameters.filter_rel_int_range is None
+    assert params.Ms2QueryAnnotationParameters.activate_module is False
+
+
+def test_assign_as_kcb_matching_cosine_valid():
+    params = ParameterManager()
+    params.assign_as_kcb_matching_cosine(
+        {
+            "activate_module": True,
+            "fragment_tol": 0.1,
+            "min_nr_matched_peaks": 3,
+            "score_cutoff": 0.4,
+            "max_precursor_mass_diff": 600,
+            "maximum_runtime": 200,
+        }
+    )
+    assert isinstance(params.AsKcbCosineMatchingParams, AsKcbCosineMatchingParams)
+
+
+def test_assign_as_kcb_matching_cosine_invalid():
+    params = ParameterManager()
+    params.assign_as_kcb_matching_cosine({"asdfg": "asdfg"})
+    assert params.AsKcbCosineMatchingParams.activate_module is False
+
+
+def test_assign_as_kcb_matching_deepscore_valid():
+    params = ParameterManager()
+    params.assign_as_kcb_matching_deepscore(
+        {
+            "activate_module": True,
+            "score_cutoff": 0.4,
+            "max_precursor_mass_diff": 600,
+            "maximum_runtime": 200,
+        }
+    )
+    assert isinstance(params.AsKcbDeepscoreMatchingParams, AsKcbDeepscoreMatchingParams)
+
+
+def test_assign_as_kcb_matching_deepscore_invalid():
+    params = ParameterManager()
+    params.assign_as_kcb_matching_deepscore({"asdfg": "asdfg"})
+    assert params.AsKcbDeepscoreMatchingParams.activate_module is False
 
 
 def test_assign_parameters_cli_valid():

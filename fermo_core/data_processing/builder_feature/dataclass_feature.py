@@ -71,6 +71,9 @@ class Match(BaseModel):
         mz: m/z ratio of matched molecule
         diff_mz: difference between m/z ratios of feature and matched molecule
         module: responsible for matching operation
+        smiles: optional smiles string (ms2query)
+        inchikey: optional inchi key (ms2query)
+        npc_class: NPClassifier class of analog (ms2query)
     """
 
     id: Any
@@ -80,9 +83,12 @@ class Match(BaseModel):
     mz: float
     diff_mz: float
     module: str
+    smiles: Optional[str] = None
+    inchikey: Optional[str] = None
+    npc_class: Optional[str] = None
 
     def to_json(self: Self) -> dict:
-        return {
+        temp_dict = {
             "id": self.id,
             "library": self.library,
             "algorithm": self.algorithm,
@@ -91,6 +97,17 @@ class Match(BaseModel):
             "diff_mz": self.diff_mz,
             "module": self.module,
         }
+
+        if self.smiles is not None:
+            temp_dict["smiles"] = self.smiles
+
+        if self.inchikey is not None:
+            temp_dict["inchikey"] = self.inchikey
+
+        if self.npc_class is not None:
+            temp_dict["npc_class"] = self.npc_class
+
+        return temp_dict
 
 
 class NeutralLoss(BaseModel):
