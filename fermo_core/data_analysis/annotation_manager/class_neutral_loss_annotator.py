@@ -117,8 +117,8 @@ class NeutralLossAnnotator(BaseModel):
                     feature.Annotations.losses.append(
                         NeutralLoss(
                             id=f"{ref_loss.descr}({ref_loss.abbr})",
-                            mz_det=loss,
-                            mz_ex=ref_loss.loss,
+                            loss_det=loss,
+                            loss_ex=ref_loss.loss,
                             mz_frag=(feature.mz - loss),
                             diff=ppm,
                         )
@@ -171,8 +171,8 @@ class NeutralLossAnnotator(BaseModel):
                                 f"{ref_loss.descr}(ribosomal, putatively from "
                                 f"{ref_loss.abbr})"
                             ),
-                            mz_det=loss,
-                            mz_ex=ref_loss.loss,
+                            loss_det=loss,
+                            loss_ex=ref_loss.loss,
                             mz_frag=(feature.mz - loss),
                             diff=ppm,
                         )
@@ -201,8 +201,8 @@ class NeutralLossAnnotator(BaseModel):
                                 f"{ref_loss.descr}({ref_loss.abbr}, putatively from "
                                 f"nonribosomal peptide)"
                             ),
-                            mz_det=loss,
-                            mz_ex=ref_loss.loss,
+                            loss_det=loss,
+                            loss_ex=ref_loss.loss,
                             mz_frag=(feature.mz - loss),
                             diff=ppm,
                         )
@@ -228,11 +228,11 @@ class NeutralLossAnnotator(BaseModel):
                     feature.Annotations.losses.append(
                         NeutralLoss(
                             id=(
-                                f"{ref_loss.descr}({ref_loss.abbr}, putatively from"
+                                f"{ref_loss.descr}({ref_loss.abbr}, putatively from "
                                 f"glycoside)"
                             ),
-                            mz_det=loss,
-                            mz_ex=ref_loss.loss,
+                            loss_det=loss,
+                            loss_ex=ref_loss.loss,
                             mz_frag=(feature.mz - loss),
                             diff=ppm,
                         )
@@ -261,8 +261,8 @@ class NeutralLossAnnotator(BaseModel):
                                 f"{ref_loss.descr}({ref_loss.abbr}, putatively from "
                                 f"metabolite)"
                             ),
-                            mz_det=loss,
-                            mz_ex=ref_loss.loss,
+                            loss_det=loss,
+                            loss_ex=ref_loss.loss,
                             mz_frag=(feature.mz - loss),
                             diff=ppm,
                         )
@@ -288,8 +288,8 @@ class NeutralLossAnnotator(BaseModel):
                     feature.Annotations.losses.append(
                         NeutralLoss(
                             id=f"{ref_loss.descr}({ref_loss.abbr})",
-                            mz_det=loss,
-                            mz_ex=ref_loss.loss,
+                            loss_det=loss,
+                            loss_ex=ref_loss.loss,
                             mz_frag=(feature.mz - loss),
                             diff=ppm,
                         )

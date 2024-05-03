@@ -115,23 +115,23 @@ class NeutralLoss(BaseModel):
 
     Attributes:
         id: neutral loss identifier
-        mz_det: detected m/z
-        mz_ex: expected m/z
+        loss_det: detected m/z
+        loss_ex: expected m/z
         mz_frag: the fragment m/z corresponding to neutral loss (parent m/z - loss)
         diff: difference in ppm
     """
 
     id: str
-    mz_det: float
-    mz_ex: float
+    loss_det: float
+    loss_ex: float
     mz_frag: float
     diff: float
 
     def to_json(self: Self) -> dict:
         return {
             "id": self.id,
-            "det_loss": round(self.mz_det, 4),
-            "exp_loss": self.mz_ex,
+            "det_loss": round(self.loss_det, 4),
+            "exp_loss": self.loss_ex,
             "mz_frag": round(self.mz_frag, 4),
             "diff_ppm": round(self.diff, 2),
         }
