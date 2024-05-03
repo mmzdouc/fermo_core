@@ -20,6 +20,10 @@ from fermo_core.input_output.class_parameter_manager import ParameterManager
 from fermo_core.data_processing.builder_feature.dataclass_feature import (
     Feature,
     SimNetworks,
+    Annotations,
+    Adduct,
+    NeutralLoss,
+    Match,
 )
 from fermo_core.data_processing.class_stats import Stats, SpecSimNet
 from fermo_core.data_processing.builder_sample.dataclass_sample import Sample
@@ -70,6 +74,10 @@ def csv_exporter():
         samples=Repository(),
         df=df,
     )
+    csv_exporter.params.SpectralLibMatchingCosineParameters.activate_module = True
+    csv_exporter.params.SpectralLibMatchingDeepscoreParameters.activate_module = True
+    csv_exporter.params.AsResultsParameters = "dummy"
+    csv_exporter.params.Ms2QueryAnnotationParameters.activate_module = True
     csv_exporter.stats.active_features = {1}
     csv_exporter.stats.networks = {
         "abc": SpecSimNet(
@@ -88,7 +96,55 @@ def csv_exporter():
             networks={"abc": SimNetworks(algorithm="abc", network_id=0)},
         ),
     )
-
+    csv_exporter.features.entries[1].Annotations = Annotations(
+        adducts=[
+            Adduct(
+                adduct_type="[M+H]+",
+                partner_adduct="[M+NH4]+",
+                partner_id=6,
+                partner_mz=261.1445,
+                diff_ppm=6,
+            )
+        ]
+    )
+    csv_exporter.features.entries[1].Annotations.losses = [
+        NeutralLoss(
+            id="Arg-oxazole(ribosomal, putatively from AAs R-S)",
+            loss_det=224.1121,
+            loss_ex=224.114,
+            mz_frag=191.0975,
+            diff=8.48,
+        ),
+    ]
+    csv_exporter.features.entries[1].Annotations.matches = [
+        Match(
+            id="fakeomycin",
+            algorithm="ms2deepscore",
+            library="user-lib",
+            score=0.9,
+            mz=123.456,
+            diff_mz=22.2,
+            module="user_library_annotation",
+        ),
+        Match(
+            id="fakeomycin",
+            algorithm="modified_cosine",
+            library="user-lib",
+            score=0.9,
+            mz=123.456,
+            diff_mz=22.2,
+            module="antismash_kcb_annotation",
+        ),
+        Match(
+            id="fakeomycin",
+            algorithm="ms2query",
+            library="user-lib",
+            score=0.9,
+            mz=123.456,
+            diff_mz=22.2,
+            module="ms2query_annotation",
+        ),
+    ]
     return csv_exporter
 
 
@@ -183,6 +239,29 @@ def test_add_sample_info_csv(csv_exporter):
 def test_add_networks_info_csv(csv_exporter):
     csv_exporter.add_networks_info_csv()
     assert csv_exporter.df.loc[0, "fermo:networks:abc:network_id"] == 0
+
+
+def test_add_adduct_info_csv(csv_exporter):
+    csv_exporter.add_adduct_info_csv()
+    assert isinstance(csv_exporter.df.loc[0, "fermo:annotation:adducts"], str)
+
+
+def test_add_loss_info_csv(csv_exporter):
+    csv_exporter.add_loss_info_csv()
+    assert isinstance(csv_exporter.df.loc[0, "fermo:annotation:neutral_losses"], str)
+
+
+def test_add_match_info_csv(csv_exporter):
+    csv_exporter.add_match_info_csv()
+    assert isinstance(
+        csv_exporter.df.loc[0, "fermo:annotation:matches:user_library_annotation"], str
+    )
+    assert isinstance(
+        csv_exporter.df.loc[0, "fermo:annotation:matches:ms2query_annotation"], str
+    )
+    assert isinstance(
+        csv_exporter.df.loc[0, "fermo:annotation:matches:antismash_kcb_annotation"], str
+    )
 
 
 def test_build_csv_output(csv_exporter):

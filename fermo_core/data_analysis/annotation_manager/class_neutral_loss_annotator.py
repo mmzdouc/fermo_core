@@ -168,7 +168,7 @@ class NeutralLossAnnotator(BaseModel):
                     feature.Annotations.losses.append(
                         NeutralLoss(
                             id=(
-                                f"{ref_loss.descr}(ribosomal, putatively from "
+                                f"{ref_loss.descr}(ribosomal, putatively from AAs "
                                 f"{ref_loss.abbr})"
                             ),
                             loss_det=loss,

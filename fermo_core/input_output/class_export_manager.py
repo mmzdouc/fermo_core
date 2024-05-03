@@ -138,8 +138,7 @@ class CsvExporter(BaseModel):
             if f_id in self.stats.active_features:
                 feature = self.features.get(f_id)
                 return "|".join([sample for sample in feature.samples])
-            else:
-                return None
+            return None
 
         self.df["fermo:samples"] = self.df["id"].map(lambda x: _add_sample_info(f_id=x))
 
@@ -163,10 +162,112 @@ class CsvExporter(BaseModel):
                 lambda x: _get_network_value(x, network)
             )
 
+    def add_adduct_info_csv(self: Self):
+        """Iterate through adduct annotation information and add to df"""
+
+        def _add_adduct_info(f_id: int) -> str | None:
+            if f_id in self.stats.active_features:
+                feature = self.features.get(f_id)
+                annot = []
+                try:
+                    for adct in feature.Annotations.adducts:
+                        annot.append(
+                            (
+                                f"{adct.adduct_type}"
+                                f"(partner_ID={adct.partner_id};"
+                                f"adduct={adct.partner_adduct};"
+                                f"m/z={adct.partner_mz})"
+                            )
+                        )
+                    return "|".join(annot)
+                except (TypeError, AttributeError, KeyError):
+                    return None
+            return None
+
+        if self.params.AdductAnnotationParameters.activate_module is False:
+            return
+
+        self.df["fermo:annotation:adducts"] = self.df["id"].map(
+            lambda x: _add_adduct_info(f_id=x)
+        )
+
+    def add_loss_info_csv(self: Self):
+        """Iterate through neutral loss annotation information and add to df"""
+
+        def _add_loss_info(f_id: int) -> str | None:
+            if f_id in self.stats.active_features:
+                feature = self.features.get(f_id)
+                losses = []
+                try:
+                    for loss in feature.Annotations.losses:
+                        losses.append(
+                            (
+                                f"'{loss.id}'"
+                                f"(detected_loss={round(loss.loss_det, 4)};"
+                                f"diff_ppm={round(loss.diff, 1)})"
+                            )
+                        )
+                    return "|".join(losses)
+                except (TypeError, AttributeError, KeyError):
+                    return None
+            return None
+
+        if self.params.NeutralLossParameters.activate_module is False:
+            return
+
+        self.df["fermo:annotation:neutral_losses"] = self.df["id"].map(
+            lambda x: _add_loss_info(f_id=x)
+        )
+
+    def add_match_info_csv(self: Self):
+        """Iterate through user library match annotation information and add to df"""
+
+        def _add_match_info(f_id: int, var: str) -> str | None:
+            if f_id in self.stats.active_features:
+                feature = self.features.get(f_id)
+                matches = []
+                try:
+                    for match in feature.Annotations.matches:
+                        if match.module == var:
+                            matches.append(
+                                (
+                                    f"'{match.id}'"
+                                    f"(score={match.score};"
+                                    f"algorithm={match.algorithm};"
+                                    f"diff_mz={match.diff_mz})"
+                                )
+                            )
+                    return "|".join(matches)
+                except (TypeError, AttributeError, KeyError):
+                    return None
+            return None
+
+        modules = []
+        if (
+            self.params.SpectralLibMatchingDeepscoreParameters.activate_module
+            or self.params.SpectralLibMatchingCosineParameters.activate_module
+        ):
+            modules.append("user_library_annotation")
+        if (
+            self.params.MS2QueryResultsParameters is not None
+            or self.params.Ms2QueryAnnotationParameters.activate_module
+        ):
+            modules.append("ms2query_annotation")
+        if self.params.AsResultsParameters is not None:
+            modules.append("antismash_kcb_annotation")
+
+        for module in modules:
+            self.df[f"fermo:annotation:matches:{module}"] = self.df["id"].map(
+                lambda x: _add_match_info(f_id=x, var=module)
+            )
+
     def build_csv_output(self: Self):
         """Assemble data for csv export"""
         self.add_sample_info_csv()
         self.add_networks_info_csv()
+        self.add_adduct_info_csv()
+        self.add_loss_info_csv()
+        self.add_match_info_csv()
 
     def return_dfs(self: Self) -> tuple:
         """Return the generated df objects to calling method for export
