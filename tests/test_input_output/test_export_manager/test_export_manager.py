@@ -40,7 +40,7 @@ def real_data_export(
         features=feature_instance,
         samples=sample_instance,
     )
-    real_data_export.params.OutputParameters.dir_path = Path(
+    real_data_export.params.OutputParameters.directory_path = Path(
         "tests/test_input_output/test_export_manager/"
     )
     real_data_export.filename_base = "dummy"

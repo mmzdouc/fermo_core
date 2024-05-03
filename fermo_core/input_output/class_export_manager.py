@@ -336,7 +336,7 @@ class ExportManager(BaseModel):
         json_exporter.build_json_dict()
         session = json_exporter.return_session()
 
-        session_path = self.params.OutputParameters.dir_path.joinpath(
+        session_path = self.params.OutputParameters.directory_path.joinpath(
             self.filename_base
         ).with_suffix(".fermo.session.json")
 
@@ -361,10 +361,10 @@ class ExportManager(BaseModel):
         csv_exporter.build_csv_output()
         df_full, df_abbr = csv_exporter.return_dfs()
 
-        path_df_full = self.params.OutputParameters.dir_path.joinpath(
+        path_df_full = self.params.OutputParameters.directory_path.joinpath(
             self.filename_base
         ).with_suffix(".fermo.full.csv")
-        path_df_abbr = self.params.OutputParameters.dir_path.joinpath(
+        path_df_abbr = self.params.OutputParameters.directory_path.joinpath(
             self.filename_base
         ).with_suffix(".fermo.abbrev.csv")
 
@@ -379,7 +379,7 @@ class ExportManager(BaseModel):
     def write_raw_ms2query_results(self: Self):
         """If raw MS2Query results exist, write to output directory"""
         src = DefaultPaths().dirpath_ms2query_base.joinpath("results/f_queries.csv")
-        dst = self.params.OutputParameters.dir_path.joinpath(
+        dst = self.params.OutputParameters.directory_path.joinpath(
             self.filename_base
         ).with_suffix(".ms2query_results.csv")
 
@@ -401,7 +401,7 @@ class ExportManager(BaseModel):
             return
 
         for network in self.stats.networks:
-            path_graphml = self.params.OutputParameters.dir_path.joinpath(
+            path_graphml = self.params.OutputParameters.directory_path.joinpath(
                 self.filename_base
             ).with_suffix(f".fermo.{network}.graphml")
             nx.write_graphml(self.stats.networks[network].network, path_graphml)

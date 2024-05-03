@@ -35,27 +35,27 @@ class OutputParameters(BaseModel):
     """A Pydantic-based class for representing and validating output parameters.
 
     Attributes:
-        dir_path: the output directory path
+        directory_path: the output directory path
 
     Raise:
         pydantic.ValidationError: Pydantic validation failed during instantiation.
     """
 
-    dir_path: Path = DefaultPaths().dirpath_output
+    directory_path: Path = DefaultPaths().dirpath_output
 
     @model_validator(mode="after")
     def validate_output_dir(self):
-        if not self.dir_path.exists():
+        if not self.directory_path.exists():
             logger.warning(
                 f"'ParameterManager/OutputParameters': specified output directory '"
-                f"{self.dir_path}' cannot be found. Fall back to default output "
+                f"{self.directory_path}' cannot be found. Fall back to default output "
                 f"directory '{DefaultPaths().dirpath_output}'."
             )
-            self.dir_path = DefaultPaths().dirpath_output
+            self.directory_path = DefaultPaths().dirpath_output
         return self
 
     def to_json(self: Self) -> dict:
         """Convert attributes to json-compatible ones."""
         return {
-            "dir_path": str(self.dir_path.resolve()),
+            "directory_path": str(self.directory_path.resolve()),
         }
