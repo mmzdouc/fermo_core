@@ -100,7 +100,7 @@ class AnnotationManager(BaseModel):
                 self.run_neutral_loss_annotation,
             ),
             (
-                _eval_ms2query_results_file,
+                _eval_ms2query_results_file(),
                 self.run_ms2query_results_assignment,
             ),
             (
@@ -108,7 +108,7 @@ class AnnotationManager(BaseModel):
                 self.run_ms2query_annotation,
             ),
             (
-                _eval_as_results_file,
+                _eval_as_results_file(),
                 self.run_as_kcb_cosine_annotation,
             ),
             (
