@@ -15,8 +15,6 @@ from fermo_core.input_output.input_file_parameter_managers import PeaktableParam
 from fermo_core.data_processing.builder_feature.dataclass_feature import (
     SimNetworks,
     Feature,
-    Annotations,
-    Ribosomal,
 )
 from fermo_core.data_processing.class_stats import Stats
 from fermo_core.data_processing.class_repository import Repository
@@ -127,21 +125,6 @@ def test_get_network_value_valid(export_m_dummy):
 
 def test_get_network_value_invalid(export_m_dummy):
     assert export_m_dummy.get_network_value(1, "fermo:networks:xyz:network_id") is None
-
-
-def test_add_class_evidence_csv(real_data_export):
-    feature = Feature()
-    feature.Annotations = Annotations(
-        classes={"ribosomal": Ribosomal(aa_tags=["F", "Q-T"])}
-    )
-    real_data_export.features.modify(1, feature)
-    real_data_export.df = pd.read_csv(
-        real_data_export.params.PeaktableParameters.filepath
-    )
-    real_data_export.add_class_evidence_csv()
-    assert (
-        real_data_export.df["fermo:annotation:ribosomal:monomers"].values[0] is not None
-    )
 
 
 def test_add_sample_info_csv(real_data_export):

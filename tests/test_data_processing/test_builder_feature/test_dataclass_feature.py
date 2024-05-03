@@ -6,9 +6,7 @@ from fermo_core.data_processing.builder_feature.dataclass_feature import (
     Annotations,
     Feature,
     Match,
-    NonRibosomal,
     NeutralLoss,
-    Ribosomal,
     SimNetworks,
 )
 
@@ -93,29 +91,3 @@ def test_to_json_neural_loss_valid():
     ]
     f_dict = feature.to_json()
     assert f_dict["annotations"]["losses"][0]["id"] == "alanine"
-
-
-def test_to_json_ribosomal_valid():
-    feature = Feature()
-    feature.Annotations = Annotations()
-    feature.Annotations.classes = {
-        "ribosomal": Ribosomal(
-            aa_tags=["A", "W", "R"], evidence=["not real", "made-up"]
-        )
-    }
-    f_dict = feature.to_json()
-    assert f_dict["annotations"]["classes"]["ribosomal"]["chem_class"] == "ribosomal"
-
-
-def test_to_json_nonribosomal_valid():
-    feature = Feature()
-    feature.Annotations = Annotations()
-    feature.Annotations.classes = {
-        "nonribosomal": NonRibosomal(
-            monomer_tags=["Dhb"], evidence=["not real", "made-up"]
-        )
-    }
-    f_dict = feature.to_json()
-    assert (
-        f_dict["annotations"]["classes"]["nonribosomal"]["chem_class"] == "nonribosomal"
-    )
