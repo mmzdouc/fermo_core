@@ -104,8 +104,8 @@ class JsonExporter(BaseModel):
     def build_json_dict(self: Self):
         """Driver method to assemble data for json dump"""
         self.export_metadata_json()
-        self.export_stats_json()
         self.export_params_json()
+        self.export_stats_json()
         self.export_features_json()
         self.export_samples_json()
 
