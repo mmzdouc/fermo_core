@@ -212,7 +212,7 @@ class ModCosAnnotator(BaseModel):
                                 abs(match[0].metadata.get("precursor_mz") - feature.mz),
                                 4,
                             ),
-                            module="user-library-matching",
+                            module="user_library_annotation",
                             smiles=match[0].metadata.get("smiles") or "unknown",
                             inchikey=match[0].metadata.get("inchikey") or "unknown",
                         )
@@ -275,7 +275,7 @@ class ModCosAnnotator(BaseModel):
                                 abs(match[0].metadata.get("precursor_mz") - feature.mz),
                                 4,
                             ),
-                            module="antismash-knownclusterblast-matching",
+                            module="antismash_kcb_annotation",
                             smiles=match[0].metadata.get("smiles") or "unknown",
                             inchikey=match[0].metadata.get("inchikey") or "unknown",
                         )

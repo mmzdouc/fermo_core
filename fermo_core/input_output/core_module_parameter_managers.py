@@ -155,7 +155,7 @@ class SpecSimNetworkDeepscoreParameters(BaseModel):
     """
 
     activate_module: bool = True
-    score_cutoff: PositiveFloat = 0.7
+    score_cutoff: PositiveFloat = 0.8
     max_nr_links: PositiveInt = 10
     msms_min_frag_nr: PositiveInt = 5
     maximum_runtime: int = 1200

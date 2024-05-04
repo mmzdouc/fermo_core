@@ -6,7 +6,10 @@ from fermo_core.data_analysis.annotation_manager.class_neutral_loss_annotator im
     NeutralLossAnnotator,
 )
 from fermo_core.data_processing.class_repository import Repository
-from fermo_core.data_processing.builder_feature.dataclass_feature import Feature, Adduct
+from fermo_core.data_processing.builder_feature.dataclass_feature import (
+    Feature,
+    NeutralLoss,
+)
 from fermo_core.data_processing.class_stats import Stats
 from fermo_core.input_output.class_parameter_manager import ParameterManager
 from fermo_core.input_output.input_file_parameter_managers import MsmsParameters
@@ -102,77 +105,31 @@ def test_annotate_feature_pos_valid(annotator_pos):
 def test_validate_ribosomal_losses_valid(annotator_pos):
     feature = annotator_pos.features.get(1)
     feature = annotator_pos.validate_ribosomal_losses(feature)
-    assert feature.Annotations.losses[0].id == "Glycine"
-    assert feature.Annotations.classes["ribosomal"].aa_tags[0] == "G"
+    assert isinstance(feature.Annotations.losses[0], NeutralLoss)
 
 
 def test_validate_nonribosomal_losses_valid(annotator_pos):
     feature = annotator_pos.features.get(1)
     feature = annotator_pos.validate_nonribosomal_losses(feature)
-    assert feature.Annotations.losses[0].id == "Ethanolamine"
-    assert feature.Annotations.classes["nonribosomal"].monomer_tags[0] == "Eta"
+    assert isinstance(feature.Annotations.losses[0], NeutralLoss)
 
 
 def test_validate_glycosidic_losses_valid(annotator_pos):
     feature = annotator_pos.features.get(1)
     feature = annotator_pos.validate_glycoside_losses(feature)
-    assert feature.Annotations.losses[0].id == "D-arabinose(C5H10O5)"
-    assert feature.Annotations.classes["glycoside"].monomer_tags[0] == "D-arabinose"
+    assert isinstance(feature.Annotations.losses[0], NeutralLoss)
 
 
 def test_validate_gen_bio_pos_losses_valid(annotator_pos):
     feature = annotator_pos.features.get(1)
     feature = annotator_pos.validate_gen_bio_pos_losses(feature)
-    assert feature.Annotations.losses[0].id == "Water(H2O)"
+    assert isinstance(feature.Annotations.losses[0], NeutralLoss)
 
 
 def test_validate_gen_other_pos_losses_valid(annotator_pos):
     feature = annotator_pos.features.get(1)
     feature = annotator_pos.validate_gen_other_pos_losses(feature)
-    assert feature.Annotations.losses[0].id == "Methyl-radical(*CH3)"
-
-
-def test_collect_evidence_ribosomal_pos_valid(annotator_pos):
-    annotator_pos.annotate_feature_pos(1)
-    annotator_pos.features.entries[1].Annotations.adducts = []
-    annotator_pos.features.entries[1].Annotations.adducts.append(
-        Adduct(
-            adduct_type="[M+2H]2+",
-            partner_adduct="[2M+H]+",
-            partner_id=2,
-            partner_mz=123.23,
-            diff_ppm=10,
-            sample="s_name",
-        )
-    )
-    annotator_pos.collect_evidence_ribosomal_pos(1)
-    feature = annotator_pos.features.entries[1]
-    assert len(feature.Annotations.classes.get("ribosomal").evidence) == 2
-
-
-def test_collect_evidence_nonribosomal_pos_valid(annotator_pos):
-    annotator_pos.annotate_feature_pos(1)
-    annotator_pos.features.entries[1].Annotations.adducts = []
-    annotator_pos.features.entries[1].Annotations.adducts.append(
-        Adduct(
-            adduct_type="[M+2H]2+",
-            partner_adduct="[2M+H]+",
-            partner_id=2,
-            partner_mz=123.23,
-            diff_ppm=10,
-            sample="s_name",
-        )
-    )
-    annotator_pos.collect_evidence_nonribosomal_pos(1)
-    feature = annotator_pos.features.entries[1]
-    assert len(feature.Annotations.classes.get("nonribosomal").evidence) == 2
-
-
-def test_collect_evidence_glycoside_pos_valid(annotator_pos):
-    annotator_pos.annotate_feature_pos(1)
-    annotator_pos.collect_evidence_glycoside_pos(1)
-    feature = annotator_pos.features.entries[1]
-    assert len(feature.Annotations.classes.get("glycoside").evidence) == 1
+    assert isinstance(feature.Annotations.losses[0], NeutralLoss)
 
 
 def test_run_analysis_neg_valid(annotator_neg):

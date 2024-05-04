@@ -177,7 +177,7 @@ def test_assign_as_results_invalid():
 
 def test_assign_output_valid():
     params = ParameterManager()
-    params.assign_output({"dir_path": "example_data"})
+    params.assign_output({"directory_path": "example_data"})
     assert isinstance(params.OutputParameters, OutputParameters)
 
 
@@ -188,7 +188,7 @@ def test_assign_output_invalid():
             "sasd": "dasdas",
         }
     )
-    assert params.OutputParameters.dir_path.stem == "results"
+    assert params.OutputParameters.directory_path.stem == "results"
 
 
 def test_assign_adduct_annotation_valid():
@@ -259,7 +259,7 @@ def test_assign_spec_sim_networking_ms2deepscore_valid():
 def test_assign_spec_sim_networking_ms2deepscore_invalid():
     params = ParameterManager()
     params.assign_spec_sim_networking_ms2deepscore({"asdfg": "asdfg"})
-    assert params.SpecSimNetworkDeepscoreParameters.score_cutoff == 0.7
+    assert params.SpecSimNetworkDeepscoreParameters.score_cutoff == 0.8
 
 
 def test_assign_feature_filtering_valid():
@@ -347,7 +347,7 @@ def test_assign_spec_lib_matching_ms2deepscore_valid():
 def test_assign_spec_lib_matching_ms2deepscore_invalid():
     params = ParameterManager()
     params.assign_spec_lib_matching_ms2deepscore({"asdfg": "asdfg"})
-    assert params.SpectralLibMatchingDeepscoreParameters.score_cutoff == 0.7
+    assert params.SpectralLibMatchingDeepscoreParameters.score_cutoff == 0.8
 
 
 def test_assign_ms2query_valid():
@@ -475,4 +475,4 @@ def test_to_json_files_valid():
 def test_to_json_output():
     params = ParameterManager()
     json_dict = params.to_json()
-    assert json_dict["OutputParameters"]["dir_path"] is not None
+    assert json_dict["OutputParameters"]["directory_path"] is not None

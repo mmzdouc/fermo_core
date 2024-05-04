@@ -55,7 +55,7 @@
             },
             "ms2deepscore": {
                 "activate_module": true,
-                "score_cutoff": 0.7,
+                "score_cutoff": 0.8,
                 "max_nr_links": 10,
                 "msms_min_frag_nr": 5,
                 "maximum_runtime": 200
@@ -96,7 +96,7 @@
             },
             "ms2deepscore": {
                 "activate_module": true,
-                "score_cutoff": 0.7,
+                "score_cutoff": 0.8,
                 "max_precursor_mass_diff": 600,
                 "maximum_runtime": 200
             }
@@ -111,8 +111,8 @@
             "modified_cosine": {
                 "activate_module": true,
                 "fragment_tol": 0.1,
-                "min_nr_matched_peaks": 3,
-                "score_cutoff": 0.4,
+                "min_nr_matched_peaks": 5,
+                "score_cutoff": 0.5,
                 "max_precursor_mass_diff": 600,
                 "maximum_runtime": 200
             },

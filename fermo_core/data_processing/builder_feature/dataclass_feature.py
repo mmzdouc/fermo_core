@@ -115,88 +115,25 @@ class NeutralLoss(BaseModel):
 
     Attributes:
         id: neutral loss identifier
-        mz_det: detected m/z
-        mz_ex: expected m/z
+        loss_det: detected m/z
+        loss_ex: expected m/z
         mz_frag: the fragment m/z corresponding to neutral loss (parent m/z - loss)
         diff: difference in ppm
     """
 
     id: str
-    mz_det: float
-    mz_ex: float
+    loss_det: float
+    loss_ex: float
     mz_frag: float
     diff: float
 
     def to_json(self: Self) -> dict:
         return {
             "id": self.id,
-            "det_loss": round(self.mz_det, 4),
-            "exp_loss": self.mz_ex,
+            "det_loss": round(self.loss_det, 4),
+            "exp_loss": self.loss_ex,
             "mz_frag": round(self.mz_frag, 4),
             "diff_ppm": round(self.diff, 2),
-        }
-
-
-class Ribosomal(BaseModel):
-    """A Pydantic-based class to represent ribosomal peptide-specific information
-
-    Attributes:
-        chem_class: the peptide class identifier
-        aa_tags: detected losses corresp. to ribosomal amino acids, one-letter code
-        evidence: a list of evidences pointing toward the class
-    """
-
-    chem_class: str = "ribosomal"
-    aa_tags: List = []
-    evidence: List = []
-
-    def to_json(self: Self) -> dict:
-        return {
-            "chem_class": self.chem_class,
-            "aa_tags": self.aa_tags,
-            "evidence": sorted(self.evidence, reverse=False),
-        }
-
-
-class NonRibosomal(BaseModel):
-    """A Pydantic-based class to represent nonribosomal peptide-specific information
-
-    Attributes:
-        chem_class: the peptide class identifier
-        monomer_tags: detected losses corresp. to nonribosomal amino acids, NORINE code
-        evidence: a list of evidences pointing toward the class
-    """
-
-    chem_class: str = "nonribosomal"
-    monomer_tags: List = []
-    evidence: List = []
-
-    def to_json(self: Self) -> dict:
-        return {
-            "chem_class": self.chem_class,
-            "monomer_tags": self.monomer_tags,
-            "evidence": sorted(self.evidence, reverse=False),
-        }
-
-
-class Glycoside(BaseModel):
-    """A Pydantic-based class to represent glycoside-specific information
-
-    Attributes:
-        chem_class: the peptide class identifier
-        monomer_tags: the detected glycoside loss
-        evidence: a list of evidences pointing toward the class
-    """
-
-    chem_class: str = "glycoside"
-    monomer_tags: List = []
-    evidence: List = []
-
-    def to_json(self: Self) -> dict:
-        return {
-            "chem_class": self.chem_class,
-            "monomer_tags": self.monomer_tags,
-            "evidence": sorted(self.evidence, reverse=False),
         }
 
 
@@ -207,13 +144,11 @@ class Annotations(BaseModel):
         adducts: list of Adduct objects representing putative adducts of this feature
         matches: list of Match objects repr. putative library matching hits
         losses: list of NeutralLoss objects annotating functional groups of feature
-        classes: dict of objects to annotate putative chemical classes of feature
     """
 
     adducts: Optional[List[Adduct]] = None
     matches: Optional[List[Match]] = None
     losses: Optional[List[NeutralLoss]] = None
-    classes: Optional[dict] = None
 
     def to_json(self: Self) -> dict:
         json_dict = {}
@@ -225,11 +160,6 @@ class Annotations(BaseModel):
 
         if self.losses is not None:
             json_dict["losses"] = [loss.to_json() for loss in self.losses]
-
-        if self.classes is not None:
-            json_dict["classes"] = {}
-            for key, value in self.classes.items():
-                json_dict["classes"][key] = value.to_json()
 
         return json_dict
 

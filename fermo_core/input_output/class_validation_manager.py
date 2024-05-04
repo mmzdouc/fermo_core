@@ -334,8 +334,7 @@ class ValidationManager:
                 f"'ExportManager': Successfully wrote file " f"'{filepath.resolve()}'."
             )
         else:
-            logger.fatal(
+            raise FileNotFoundError(
                 f"'ExportManager': File '{filepath}' should have been written but "
                 f"cannot be found - ABORT"
             )
-            raise FileNotFoundError

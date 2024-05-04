@@ -30,7 +30,7 @@ from typing import Self, Optional, Any
 
 import networkx as nx
 import pandas as pd
-from pydantic import BaseModel
+from pydantic import BaseModel, model_validator
 
 from fermo_core.config.class_default_settings import DefaultPaths
 from fermo_core.data_processing.class_repository import Repository
@@ -41,128 +41,33 @@ from fermo_core.input_output.class_validation_manager import ValidationManager
 logger = logging.getLogger("fermo_core")
 
 
-class ExportManager(BaseModel):
-    """A Pydantic-based class for methods on exporting data.
+class JsonExporter(BaseModel):
+    """A Pydantic-based class for methods on exporting data in json format.
 
     Attributes:
         params: a Parameter object with specified user parameters
         stats: a Stats object containing general information
         features: a Repository object containing feature and general information
         samples: a Repository object containing sample information
-        filename_base: the export filename derived from peaktable
+        version: currently running version of fermo_core
+        starttime: the date and time at start of fermo_core processing
         session: a dict for collecting data for json dump
-        df: a Pandas dataframe acting as aggregator for data
-        df_full: a Pandas dataframe to dump modified full peaktable as csv
-        df_full: a Pandas dataframe to dump modified abbreviated peaktable as csv
     """
 
     params: ParameterManager
     stats: Stats
     features: Repository
     samples: Repository
-    filename_base: Optional[str] = None
+    version: str
+    starttime: datetime
     session: dict = dict()
-    df: Optional[Any] = None
-    df_full: Optional[Any] = None
-    df_abbrev: Optional[Any] = None
 
-    @staticmethod
-    def log_start_module(file: str):
-        """Log the start of the export of the corresponding file"""
-        logger.debug(f"'ExportManager': started export of '{file}'.")
-
-    @staticmethod
-    def log_complete_module(file: str):
-        """Log the completion of the export of the corresponding file"""
-        logger.debug(f"'ExportManager': completed export of '{file}'.")
-
-    def run(self: Self, version: str, starttime: datetime):
-        """Call export methods based on user-input
-
-        Arguments:
-            version: a str indicating the currently running version of fermo_core
-            starttime: the date and time at start of fermo_core processing
-        """
-        self.define_filename()
-        self.write_fermo_json(version, starttime)
-        self.write_csv_output()
-        self.write_cytoscape_output()
-        self.write_raw_ms2query_results()
-
-    def define_filename(self: Self):
-        """Derive output filename base from peaktable"""
-        self.filename_base = f"out_{self.params.PeaktableParameters.filepath.stem}"
-
-    def write_cytoscape_output(self: Self):
-        """Write cytoscape output if networking was performed"""
-
-        # check the network files and log it
-        self.log_start_module(".cytoscape.json")
-
-        if self.stats.networks is None:
-            logger.warning(
-                "'ExportManager': no spectral similarity networks generated - SKIP"
-            )
-            return
-
-        for network in self.stats.networks:
-            path_graphml = self.params.OutputParameters.dir_path.joinpath(
-                self.filename_base
-            ).with_suffix(f".fermo.{network}.graphml")
-            nx.write_graphml(self.stats.networks[network].network, path_graphml)
-            ValidationManager().validate_output_created(path_graphml)
-
-        self.log_complete_module(".cytoscape.json")
-
-    def write_fermo_json(self: Self, version: str, starttime: datetime):
-        """Write collected data in session dict into a json file on disk
-
-        Arguments:
-            version: a str indicating the currently running version of fermo_core
-            starttime: the date and time at start of fermo_core processing
-
-        Raises:
-            FileNotFoundError: Could not write or find written json file.
-        """
-        self.log_start_module("fermo.session.json")
-
-        self.build_json_dict(version, starttime)
-
-        filepath = self.params.OutputParameters.dir_path.joinpath(
-            self.filename_base
-        ).with_suffix(".fermo.session.json")
-        with open(filepath, "w", encoding="utf-8") as outfile:
-            outfile.write(json.dumps(self.session, indent=2, ensure_ascii=False))
-
-        ValidationManager().validate_output_created(filepath)
-
-        self.log_complete_module("fermo.session.json")
-
-    def build_json_dict(self: Self, version: str, starttime: datetime):
-        """Driver method to assemble data for json dump
-
-        Arguments:
-            version: a str indicating the currently running version of fermo_core
-            starttime: the date and time at start of fermo_core processing
-        """
-        self.export_metadata_json(version, starttime)
-        self.export_stats_json()
-        self.export_params_json()
-        self.export_features_json()
-        self.export_samples_json()
-
-    def export_metadata_json(self: Self, version: str, starttime: datetime):
-        """Export metadata on analysis run.
-
-        Arguments:
-            version: a str indicating the currently running version of fermo_core
-            starttime: the date and time at start of fermo_core processing
-
-        """
+    def export_metadata_json(self: Self):
+        """Export metadata on analysis run."""
         self.session["metadata"] = {
-            "fermo_core_version": version,
+            "fermo_core_version": self.version,
             "file_created_isoformat": datetime.now().isoformat(),
-            "runtime_seconds": (datetime.now() - starttime).total_seconds(),
+            "runtime_seconds": (datetime.now() - self.starttime).total_seconds(),
             "system": platform.system(),
             "version": platform.version(),
             "architecture": platform.architecture(),
@@ -196,169 +101,322 @@ class ExportManager(BaseModel):
                 sample = self.samples.get(sample_id)
                 self.session["samples"][sample_id] = sample.to_json()
 
-    def write_csv_output(self: Self):
-        """Write modified peaktable as csv on disk
+    def build_json_dict(self: Self):
+        """Driver method to assemble data for json dump"""
+        self.export_metadata_json()
+        self.export_params_json()
+        self.export_stats_json()
+        self.export_features_json()
+        self.export_samples_json()
 
-        Raises:
-            FileNotFoundError: Could not write or find written csv output file.
-        """
-        self.log_start_module("fermo.full.csv/fermo.abbrev.csv")
+    def return_session(self: Self) -> dict:
+        """Return the generated session object to calling method"""
+        return self.session
 
-        self.build_csv_output()
 
-        filepath_df_full = self.params.OutputParameters.dir_path.joinpath(
-            self.filename_base
-        ).with_suffix(".fermo.full.csv")
-        self.df_full.to_csv(filepath_df_full, encoding="utf-8", index=False, sep=",")
-        ValidationManager().validate_output_created(filepath_df_full)
+class CsvExporter(BaseModel):
+    """A Pydantic-based class for methods on exporting data in csv format.
 
-        filepath_df_abbrev = self.params.OutputParameters.dir_path.joinpath(
-            self.filename_base
-        ).with_suffix(".fermo.abbrev.csv")
-        self.df_abbrev.to_csv(
-            filepath_df_abbrev, encoding="utf-8", index=False, sep=","
-        )
-        ValidationManager().validate_output_created(filepath_df_abbrev)
+    Attributes:
+        params: a Parameter object with specified user parameters
+        stats: a Stats object containing general information
+        features: a Repository object containing feature and general information
+        samples: a Repository object containing sample information
+        df: a Pandas dataframe acting as aggregator for data
+    """
 
-        self.log_complete_module("fermo.full.csv/fermo.abbrev.csv")
-
-    def build_csv_output(self: Self):
-        """Driver method to assemble data for csv output"""
-        self.df = pd.read_csv(self.params.PeaktableParameters.filepath)
-
-        self.add_sample_info_csv()
-
-        if self.stats.networks is not None:
-            self.add_networks_info_csv()
-
-        if self.params.NeutralLossParameters.activate_module:
-            self.add_class_evidence_csv()
-
-        self.df_full = self.df.copy(deep=True)
-
-        self.populate_abbrev_df()
-
-    def populate_abbrev_df(self: Self):
-        """Populate the abbreviated df, removing mzmine-specific information"""
-        abbr_cols = ["id", "height", "area", "mz", "rt"]
-        abbr_cols.extend([col for col in self.df if col.startswith("fermo")])
-        self.df_abbrev = self.df[abbr_cols].copy(deep=True)
+    params: ParameterManager
+    stats: Stats
+    features: Repository
+    samples: Repository
+    df: Any
 
     def add_sample_info_csv(self: Self):
         """Iterate through feature sample information and prepare for export"""
 
         def _add_sample_info(f_id: int) -> str | None:
-            try:
+            if f_id in self.stats.active_features:
                 feature = self.features.get(f_id)
-                return "|".join([s for s in feature.samples])
-            except KeyError as e:
-                logger.debug(str(e))
-                if f_id in self.stats.inactive_features:
-                    logger.debug(
-                        f"'ExportManager': Feature id '{f_id}' has been "
-                        f"filtered from 'active_features' due to filter settings."
-                    )
-                else:
-                    logger.warning(
-                        f"'ExportManager': Feature id '{f_id}' not found in  "
-                        f"'inactive_features'. This is suspicious."
-                    )
-                return None
+                return "|".join([sample for sample in feature.samples])
+            return None
 
         self.df["fermo:samples"] = self.df["id"].map(lambda x: _add_sample_info(f_id=x))
 
     def add_networks_info_csv(self: Self):
         """Iterate through network information and prepare for export"""
-        networks = []
-        for network in self.stats.networks:
-            networks.append(f"fermo:networks:{network}:network_id")
 
-        if len(networks) == 0:
+        def _get_network_value(f_id: int, attr: str) -> str | None:
+            try:
+                attrs = attr.split(":")
+                feature = self.features.get(f_id)
+                return getattr(getattr(feature, attrs[1])[attrs[2]], attrs[3])
+            except (TypeError, AttributeError, KeyError):
+                return None
+
+        if self.stats.networks is None or len(self.stats.networks) == 0:
             return
 
+        networks = [f"fermo:networks:{nw}:network_id" for nw in self.stats.networks]
         for network in networks:
             self.df[network] = self.df["id"].map(
-                lambda x: self.get_network_value(x, network)
+                lambda x: _get_network_value(x, network)
             )
 
-    def get_network_value(self: Self, feature_id: int, attribute: str):
-        """Retrieve network value attribute of feature id
+    def add_adduct_info_csv(self: Self):
+        """Iterate through adduct annotation information and add to df"""
 
-        Arguments:
-            feature_id: an integer feature id
-            attribute: a string allowing to retrieve the feature information
-        """
-        attrs = attribute.split(":")
-        try:
-            feature = self.features.get(feature_id)
-            return getattr(getattr(feature, attrs[1])[attrs[2]], attrs[3])
-        except (TypeError, AttributeError, KeyError):
+        def _add_adduct_info(f_id: int) -> str | None:
+            if f_id in self.stats.active_features:
+                feature = self.features.get(f_id)
+                annot = []
+                try:
+                    for adct in feature.Annotations.adducts:
+                        annot.append(
+                            (
+                                f"{adct.adduct_type}"
+                                f"(partner_ID={adct.partner_id};"
+                                f"adduct={adct.partner_adduct};"
+                                f"m/z={adct.partner_mz})"
+                            )
+                        )
+                    return "|".join(annot)
+                except (TypeError, AttributeError, KeyError):
+                    return None
             return None
 
-    def add_class_evidence_csv(self: Self):
-        """Iterate through evidence information and prepare for export"""
-        tags = {"ribosomal": {}, "nonribosomal": {}, "glycoside": {}}
-        for f_id in self.stats.active_features:
-            try:
+        if self.params.AdductAnnotationParameters.activate_module is False:
+            return
+
+        self.df["fermo:annotation:adducts"] = self.df["id"].map(
+            lambda x: _add_adduct_info(f_id=x)
+        )
+
+    def add_loss_info_csv(self: Self):
+        """Iterate through neutral loss annotation information and add to df"""
+
+        def _add_loss_info(f_id: int) -> str | None:
+            if f_id in self.stats.active_features:
                 feature = self.features.get(f_id)
-            except KeyError as e:
-                logger.debug(str(e))
-                if f_id in self.stats.inactive_features:
-                    logger.debug(
-                        f"'ExportManager': Feature id '{f_id}' has been "
-                        f"filtered from 'active_features' due to filter settings."
-                    )
-                else:
-                    logger.warning(
-                        f"'ExportManager': Feature id '{f_id}' not found in  "
-                        f"'inactive_features'. This is suspicious."
-                    )
-                continue
+                losses = []
+                try:
+                    for loss in feature.Annotations.losses:
+                        losses.append(
+                            (
+                                f"'{loss.id}'"
+                                f"(detected_loss={round(loss.loss_det, 4)};"
+                                f"diff_ppm={round(loss.diff, 1)})"
+                            )
+                        )
+                    return "|".join(losses)
+                except (TypeError, AttributeError, KeyError):
+                    return None
+            return None
 
-            try:
-                tags["ribosomal"][f_id] = "|".join(
-                    feature.Annotations.classes["ribosomal"].evidence
-                )
-            except (TypeError, AttributeError, KeyError):
-                pass
-            try:
-                tags["nonribosomal"][f_id] = "|".join(
-                    feature.Annotations.classes["nonribosomal"].evidence
-                )
-            except (TypeError, AttributeError, KeyError):
-                pass
-            try:
-                tags["glycoside"][f_id] = "|".join(
-                    feature.Annotations.classes["glycoside"].evidence
-                )
-            except (TypeError, AttributeError, KeyError):
-                pass
+        if self.params.NeutralLossParameters.activate_module is False:
+            return
 
-        for key, val in tags.items():
-            self.df[f"fermo:annotation:{key}:monomers"] = self.df["id"].map(
-                lambda x: val.get(x)
+        self.df["fermo:annotation:neutral_losses"] = self.df["id"].map(
+            lambda x: _add_loss_info(f_id=x)
+        )
+
+    def add_match_info_csv(self: Self):
+        """Iterate through user library match annotation information and add to df"""
+
+        def _add_match_info(f_id: int, var: str) -> str | None:
+            if f_id in self.stats.active_features:
+                feature = self.features.get(f_id)
+                matches = []
+                try:
+                    for match in feature.Annotations.matches:
+                        if match.module == var:
+                            matches.append(
+                                (
+                                    f"'{match.id}'"
+                                    f"(score={match.score};"
+                                    f"algorithm={match.algorithm};"
+                                    f"diff_mz={match.diff_mz})"
+                                )
+                            )
+                    return "|".join(matches)
+                except (TypeError, AttributeError, KeyError):
+                    return None
+            return None
+
+        modules = []
+        if (
+            self.params.SpectralLibMatchingDeepscoreParameters.activate_module
+            or self.params.SpectralLibMatchingCosineParameters.activate_module
+        ):
+            modules.append("user_library_annotation")
+        if (
+            self.params.MS2QueryResultsParameters is not None
+            or self.params.Ms2QueryAnnotationParameters.activate_module
+        ):
+            modules.append("ms2query_annotation")
+        if self.params.AsResultsParameters is not None:
+            modules.append("antismash_kcb_annotation")
+
+        for module in modules:
+            self.df[f"fermo:annotation:matches:{module}"] = self.df["id"].map(
+                lambda x: _add_match_info(f_id=x, var=module)
             )
 
-    def write_raw_ms2query_results(self: Self) -> bool:
-        """If raw MS2Query results exist, write to output directory
+    def build_csv_output(self: Self):
+        """Assemble data for csv export"""
+        self.add_sample_info_csv()
+        self.add_networks_info_csv()
+        self.add_adduct_info_csv()
+        self.add_loss_info_csv()
+        self.add_match_info_csv()
+
+    def return_dfs(self: Self) -> tuple:
+        """Return the generated df objects to calling method for export
 
         Returns:
-            A bool indicating the outcome of the operation
+            Tuple of a full dataframe and an abbreviated one
         """
-        if (
-            DefaultPaths().dirpath_ms2query_base.joinpath("results").exists()
-            and DefaultPaths()
-            .dirpath_ms2query_base.joinpath("results/f_queries.csv")
-            .exists()
-        ):
-            shutil.move(
-                src=DefaultPaths().dirpath_ms2query_base.joinpath(
-                    "results/f_queries.csv"
-                ),
-                dst=self.params.OutputParameters.dir_path.joinpath(
-                    self.filename_base
-                ).with_suffix(".ms2query_results.csv"),
+        df_full = self.df.copy(deep=True)
+
+        abbr_cols = ["id", "height", "area", "mz", "rt"]
+        abbr_cols.extend([col for col in self.df if col.startswith("fermo")])
+        df_abbr = self.df[abbr_cols].copy(deep=True)
+
+        return df_full, df_abbr
+
+
+class ExportManager(BaseModel):
+    """A Pydantic-based class managing data export.
+
+    Attributes:
+        params: a Parameter object with specified user parameters
+        stats: a Stats object containing general information
+        features: a Repository object containing feature and general information
+        samples: a Repository object containing sample information
+        filename_base: the export filename derived from peaktable
+    """
+
+    params: ParameterManager
+    stats: Stats
+    features: Repository
+    samples: Repository
+    filename_base: Optional[str] = None
+
+    @model_validator(mode="after")
+    def define_filename_base(self):
+        self.filename_base = f"out_{self.params.PeaktableParameters.filepath.stem}"
+        return self
+
+    @staticmethod
+    def log_start_module(file: str):
+        """Log the start of the export of the corresponding file"""
+        logger.debug(f"'ExportManager': started export of '{file}'.")
+
+    @staticmethod
+    def log_complete_module(file: str):
+        """Log the completion of the export of the corresponding file"""
+        logger.debug(f"'ExportManager': completed export of '{file}'.")
+
+    def write_fermo_json(self: Self, version: str, starttime: datetime):
+        """Write collected data in session dict into a json file on disk
+
+        Arguments:
+            version: a str indicating the currently running version of fermo_core
+            starttime: the date and time at start of fermo_core processing
+        """
+        self.log_start_module("fermo.session.json")
+
+        json_exporter = JsonExporter(
+            params=self.params,
+            stats=self.stats,
+            features=self.features,
+            samples=self.samples,
+            version=version,
+            starttime=starttime,
+        )
+        json_exporter.build_json_dict()
+        session = json_exporter.return_session()
+
+        session_path = self.params.OutputParameters.directory_path.joinpath(
+            self.filename_base
+        ).with_suffix(".fermo.session.json")
+
+        with open(session_path, "w", encoding="utf-8") as outfile:
+            outfile.write(json.dumps(session, indent=2, ensure_ascii=False))
+
+        ValidationManager().validate_output_created(session_path)
+
+        self.log_complete_module("fermo.session.json")
+
+    def write_csv_output(self: Self):
+        """Write modified peaktable as csv on disk"""
+        self.log_start_module("fermo.full.csv/fermo.abbrev.csv")
+
+        csv_exporter = CsvExporter(
+            params=self.params,
+            stats=self.stats,
+            features=self.features,
+            samples=self.samples,
+            df=pd.read_csv(self.params.PeaktableParameters.filepath),
+        )
+        csv_exporter.build_csv_output()
+        df_full, df_abbr = csv_exporter.return_dfs()
+
+        path_df_full = self.params.OutputParameters.directory_path.joinpath(
+            self.filename_base
+        ).with_suffix(".fermo.full.csv")
+        path_df_abbr = self.params.OutputParameters.directory_path.joinpath(
+            self.filename_base
+        ).with_suffix(".fermo.abbrev.csv")
+
+        df_full.to_csv(path_df_full, encoding="utf-8", index=False, sep=",")
+        df_abbr.to_csv(path_df_abbr, encoding="utf-8", index=False, sep=",")
+
+        ValidationManager().validate_output_created(path_df_full)
+        ValidationManager().validate_output_created(path_df_abbr)
+
+        self.log_complete_module("fermo.full.csv/fermo.abbrev.csv")
+
+    def write_raw_ms2query_results(self: Self):
+        """If raw MS2Query results exist, write to output directory"""
+        src = DefaultPaths().dirpath_ms2query_base.joinpath("results/f_queries.csv")
+        dst = self.params.OutputParameters.directory_path.joinpath(
+            self.filename_base
+        ).with_suffix(".ms2query_results.csv")
+
+        if src.exists():
+            self.log_start_module(".ms2query_results.csv")
+            shutil.move(src=src, dst=dst)
+            ValidationManager().validate_output_created(dst)
+            self.log_complete_module(".ms2query_results.csv")
+
+    def write_cytoscape_output(self: Self):
+        """Write cytoscape output if networking was performed"""
+
+        self.log_start_module(".cytoscape.json")
+
+        if self.stats.networks is None:
+            logger.warning(
+                "'ExportManager': no spectral similarity networks generated - SKIP"
             )
-            return True
-        else:
-            return False
+            return
+
+        for network in self.stats.networks:
+            path_graphml = self.params.OutputParameters.directory_path.joinpath(
+                self.filename_base
+            ).with_suffix(f".fermo.{network}.graphml")
+            nx.write_graphml(self.stats.networks[network].network, path_graphml)
+            ValidationManager().validate_output_created(path_graphml)
+
+        self.log_complete_module(".cytoscape.json")
+
+    def run(self: Self, version: str, starttime: datetime):
+        """Call export methods based on user-input
+
+        Arguments:
+            version: a str indicating the currently running version of fermo_core
+            starttime: the date and time at start of fermo_core processing
+        """
+        self.write_fermo_json(version, starttime)
+        self.write_csv_output()
+        self.write_raw_ms2query_results()
+        self.write_cytoscape_output()

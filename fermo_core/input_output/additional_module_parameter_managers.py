@@ -199,7 +199,7 @@ class SpectralLibMatchingDeepscoreParameters(BaseModel):
     """
 
     activate_module: bool = False
-    score_cutoff: PositiveFloat = 0.7
+    score_cutoff: PositiveFloat = 0.8
     max_precursor_mass_diff: PositiveInt = 600
     maximum_runtime: int = 600
 
@@ -269,8 +269,8 @@ class AsKcbCosineMatchingParams(BaseModel):
 
     activate_module: bool = False
     fragment_tol: PositiveFloat = 0.1
-    min_nr_matched_peaks: PositiveInt = 3
-    score_cutoff: PositiveFloat = 0.4
+    min_nr_matched_peaks: PositiveInt = 5
+    score_cutoff: PositiveFloat = 0.5
     max_precursor_mass_diff: PositiveInt = 600
     maximum_runtime: int = 600
 
@@ -308,7 +308,7 @@ class AsKcbDeepscoreMatchingParams(BaseModel):
     """
 
     activate_module: bool = False
-    score_cutoff: PositiveFloat = 0.4
+    score_cutoff: PositiveFloat = 0.7
     max_precursor_mass_diff: PositiveInt = 600
     maximum_runtime: int = 600
 

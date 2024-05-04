@@ -120,8 +120,8 @@ class MsmsParameters(BaseModel):
         """Convert attributes to json-compatible ones."""
         return {
             "filepath": str(self.filepath.resolve()),
-            "format": str(self.format),
-            "rel_int_from": str(self.rel_int_from),
+            "format": self.format,
+            "rel_int_from": self.rel_int_from,
         }
 
 

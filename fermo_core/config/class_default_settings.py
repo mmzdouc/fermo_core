@@ -21,7 +21,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from typing import List, Optional
+from typing import List
 from pathlib import Path
 
 import pandas as pd
@@ -34,11 +34,14 @@ class DefaultPaths(BaseModel):
     Attributes:
         dirpath_ms2deepscore_pos: points towards default ms2deepscore dir
         url_ms2deepscore_pos: the url to download the default ms2deepscore file
+        dirpath_ms2query_base: points towards default ms2query dir
         dirpath_ms2query_pos: points towards default ms2query dir positive mode
         dirpath_ms2query_neg: points towards default ms2query dir negative mode
         url_ms2query_pos: urls to default ms2query files for positive ion mode
         url_ms2query_neg: urls to default ms2query files for negative ion mode
-        dirpath_export: points towards default exports dir
+        dirpath_output: points towards default results output dir
+        dirpath_losses: point towards neutral loss dir
+        library_mibig_pos: points towards mibig spectral library for positive ion mode
     """
 
     dirpath_ms2deepscore_pos: DirectoryPath = Path(__file__).parent.parent.joinpath(
@@ -97,6 +100,9 @@ class DefaultPaths(BaseModel):
     dirpath_output: DirectoryPath = Path(__file__).parent.parent.parent.joinpath(
         "results/"
     )
+    dirpath_losses: DirectoryPath = Path(__file__).parent.parent.joinpath(
+        "libraries/loss_libs/"
+    )
     library_mibig_pos: FilePath = Path(__file__).parent.parent.joinpath(
         "libraries/mibig/pos/mibig_in_silico_spectral_library_3_1.mgf"
     )
@@ -137,46 +143,21 @@ class DefaultMasses(BaseModel):
     Ac: float = 59.013851
 
 
-class PeptideHintAdducts(BaseModel):
-    """A Pydantic-based class for referencing peptide-hinting adduct identifiers
-
-    Attributes:
-        adducts: a set of peptide-hinting adducts
-    """
-
-    adducts: set = {
-        "[M+3H]3+",
-        "[M+1+2H]2+",
-        "[M+2+2H]2+",
-        "[M+3+2H]2+",
-        "[M+4+2H]2+",
-        "[M+5+2H]2+",
-        "[2M+H]+",
-        "[M+2H]2+",
-    }
-
-
 class Loss(BaseModel):
     """A Pydantic-based class for storing information on neutral losses
 
     Attributes:
-        id: the identifier/description
-        mass: the neutral loss in Da
-        ribo_tag: the ribosomal amino acids the loss derives from, single letter code
-        nribo_tag: the non-ribosomal amino acid tag (NORINE-code)
-        nribo_mon: putative monomer the non-ribosomal AA derives from
-        formula: the molecular formula, if available
+        loss: the neutral loss in Da
+        descr: the neutral loss description
+        abbr: the neutral loss abbreviation
     """
 
-    id: str
-    mass: float
-    ribo_tag: Optional[str] = None
-    nribo_tag: Optional[str] = None
-    nribo_mon: Optional[str] = None
-    formula: Optional[str] = None
+    loss: float
+    descr: str
+    abbr: str
 
 
-class NeutralMasses(BaseModel):
+class NeutralLosses(BaseModel):
     """A Pydantic-based class for storing monoisotopic masses of neutral losses in MS2
 
     Sources:
@@ -202,28 +183,28 @@ class NeutralMasses(BaseModel):
         gen_other_neg: generic neutral losses (metabolite+synthetics), negative mode
     """
 
-    ribosomal_src: FilePath = Path(__file__).parent.joinpath(
-        "loss_libs/kersten_ribosomal.csv"
+    ribosomal_src: FilePath = DefaultPaths().dirpath_losses.joinpath(
+        "kersten_ribosomal.csv"
     )
     ribosomal: List[Loss] = []
-    nonribo_src: FilePath = Path(__file__).parent.joinpath(
-        "loss_libs/kersten_nonribosomal.csv"
+    nonribo_src: FilePath = DefaultPaths().dirpath_losses.joinpath(
+        "kersten_nonribosomal.csv"
     )
     nonribo: List[Loss] = []
-    glycoside_src: FilePath = Path(__file__).parent.joinpath(
-        "loss_libs/kersten_glycosides.csv"
+    glycoside_src: FilePath = DefaultPaths().dirpath_losses.joinpath(
+        "kersten_glycosides.csv"
     )
     glycoside: List[Loss] = []
-    gen_bio_pos_src: FilePath = Path(__file__).parent.joinpath(
-        "loss_libs/generic_bio_pos.csv"
+    gen_bio_pos_src: FilePath = DefaultPaths().dirpath_losses.joinpath(
+        "generic_bio_pos.csv"
     )
     gen_bio_pos: List[Loss] = []
-    gen_other_pos_src: FilePath = Path(__file__).parent.joinpath(
-        "loss_libs/generic_other_pos.csv"
+    gen_other_pos_src: FilePath = DefaultPaths().dirpath_losses.joinpath(
+        "generic_other_pos.csv"
     )
     gen_other_pos: List[Loss] = []
-    gen_other_neg_src: FilePath = Path(__file__).parent.joinpath(
-        "loss_libs/generic_other_neg.csv"
+    gen_other_neg_src: FilePath = DefaultPaths().dirpath_losses.joinpath(
+        "generic_other_neg.csv"
     )
     gen_other_neg: List[Loss] = []
 
@@ -232,41 +213,37 @@ class NeutralMasses(BaseModel):
         df = pd.read_csv(self.ribosomal_src)
         for _, row in df.iterrows():
             self.ribosomal.append(
-                Loss(
-                    id=row["description"],
-                    mass=row["loss"],
-                    ribo_tag=row["tag"],
-                )
+                Loss(loss=row["loss"], descr=row["descr"], abbr=row["abbr"])
             )
+
         df = pd.read_csv(self.nonribo_src)
         for _, row in df.iterrows():
             self.nonribo.append(
-                Loss(
-                    id=row["description"],
-                    mass=row["loss"],
-                    nribo_tag=row["tag"],
-                    nribo_mon=row["monomer"],
-                )
+                Loss(loss=row["loss"], descr=row["descr"], abbr=row["abbr"])
             )
+
         df = pd.read_csv(self.glycoside_src)
         for _, row in df.iterrows():
             self.glycoside.append(
-                Loss(id=row["description"], mass=row["loss"], formula=row["formula"])
+                Loss(loss=row["loss"], descr=row["descr"], abbr=row["abbr"])
             )
+
         df = pd.read_csv(self.gen_bio_pos_src)
         for _, row in df.iterrows():
             self.gen_bio_pos.append(
-                Loss(id=row["description"], mass=row["loss"], formula=row["tag"])
+                Loss(loss=row["loss"], descr=row["descr"], abbr=row["abbr"])
             )
+
         df = pd.read_csv(self.gen_other_pos_src)
         for _, row in df.iterrows():
             self.gen_other_pos.append(
-                Loss(id=row["description"], mass=row["loss"], formula=row["tag"])
+                Loss(loss=row["loss"], descr=row["descr"], abbr=row["abbr"])
             )
+
         df = pd.read_csv(self.gen_other_neg_src)
         for _, row in df.iterrows():
             self.gen_other_neg.append(
-                Loss(id=row["description"], mass=row["loss"], formula=row["tag"])
+                Loss(loss=row["loss"], descr=row["descr"], abbr=row["abbr"])
             )
 
         return self
