@@ -131,6 +131,19 @@ class CsvExporter(BaseModel):
     samples: Repository
     df: Any
 
+    def add_activity_info_csv(self: Self):
+        """Iterate through active/inactive feature info and prepare for export"""
+
+        def _add_activity_info(f_id: int) -> str:
+            if f_id in self.stats.active_features:
+                return "true"
+            else:
+                return "false"
+
+        self.df["fermo:active"] = self.df["id"].map(
+            lambda x: _add_activity_info(f_id=x)
+        )
+
     def add_sample_info_csv(self: Self):
         """Iterate through feature sample information and prepare for export"""
 
@@ -140,7 +153,16 @@ class CsvExporter(BaseModel):
                 return "|".join([sample for sample in feature.samples])
             return None
 
+        def _add_sample_count_info(f_id: int) -> int | None:
+            if f_id in self.stats.active_features:
+                feature = self.features.get(f_id)
+                return len([sample for sample in feature.samples])
+            return None
+
         self.df["fermo:samples"] = self.df["id"].map(lambda x: _add_sample_info(f_id=x))
+        self.df["fermo:samples:count"] = self.df["id"].map(
+            lambda x: _add_sample_count_info(f_id=x)
+        )
 
     def add_networks_info_csv(self: Self):
         """Iterate through network information and prepare for export"""
@@ -263,6 +285,7 @@ class CsvExporter(BaseModel):
 
     def build_csv_output(self: Self):
         """Assemble data for csv export"""
+        self.add_activity_info_csv()
         self.add_sample_info_csv()
         self.add_networks_info_csv()
         self.add_adduct_info_csv()

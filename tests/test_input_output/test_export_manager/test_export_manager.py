@@ -231,9 +231,15 @@ def test_return_session(json_exporter):
     assert session == {}
 
 
+def test_add_activity_info_csv(csv_exporter):
+    csv_exporter.add_activity_info_csv()
+    assert csv_exporter.df.loc[0, "fermo:active"] == "true"
+
+
 def test_add_sample_info_csv(csv_exporter):
     csv_exporter.add_sample_info_csv()
     assert csv_exporter.df.loc[0, "fermo:samples"] == "d1|d2"
+    assert csv_exporter.df.loc[0, "fermo:samples:count"] == 2
 
 
 def test_add_networks_info_csv(csv_exporter):

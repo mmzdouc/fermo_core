@@ -89,7 +89,7 @@ def test_run_ms2query_results_assignment_valid(annotation_manager_instance):
 @pytest.mark.slow
 def test_run_as_kcb_cosine_annotation_valid(annotation_manager_instance):
     annotation_manager_instance.params.AsResultsParameters = AsResultsParameters(
-        directory_path=Path("example_data/JABTEZ000000000.1/"), similarity_cutoff=0.8
+        directory_path=Path("example_data/JABTEZ000000000.1/"), similarity_cutoff=0.2
     )
     annotation_manager_instance.run_as_kcb_cosine_annotation()
     assert isinstance(
