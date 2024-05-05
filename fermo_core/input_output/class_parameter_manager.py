@@ -40,6 +40,7 @@ from fermo_core.input_output.output_file_parameter_managers import OutputParamet
 from fermo_core.input_output.core_module_parameter_managers import (
     AdductAnnotationParameters,
     NeutralLossParameters,
+    FragmentAnnParameters,
     SpecSimNetworkCosineParameters,
     SpecSimNetworkDeepscoreParameters,
 )
@@ -76,6 +77,7 @@ class ParameterManager(BaseModel):
         OutputParameters: class handling output file parameters
         AdductAnnotationParameters: class handling adduct annotation module parameter
         NeutralLossParameters: class handling neutral loss annotation module parameters
+        FragmentAnnParameters: class handling fragment annotation module parameters
         SpecSimNetworkCosineParameters: class handling cosine-based spectral
             similarity networking module parameter
         SpecSimNetworkDeepscoreParameters: class handling ms2deepscore-based spectral
@@ -105,6 +107,7 @@ class ParameterManager(BaseModel):
         AdductAnnotationParameters()
     )
     NeutralLossParameters: NeutralLossParameters = NeutralLossParameters()
+    FragmentAnnParameters: FragmentAnnParameters = FragmentAnnParameters()
     SpecSimNetworkCosineParameters: SpecSimNetworkCosineParameters = (
         SpecSimNetworkCosineParameters()
     )
@@ -160,6 +163,7 @@ class ParameterManager(BaseModel):
             "AdductAnnotationParameters"
         ] = self.AdductAnnotationParameters.to_json()
         json_dict["NeutralLossParameters"] = self.NeutralLossParameters.to_json()
+        json_dict["FragmentAnnParameters"] = self.FragmentAnnParameters.to_json()
         json_dict[
             "SpecSimNetworkCosineParameters"
         ] = self.SpecSimNetworkCosineParameters.to_json()
@@ -281,6 +285,11 @@ class ParameterManager(BaseModel):
                 user_params.get("neutral_loss_annotation"),
                 self.assign_neutral_loss_annotation,
                 "neutral_loss_annotation",
+            ),
+            (
+                user_params.get("fragment_annotation"),
+                self.assign_fragment_annotation,
+                "fragment_annotation",
             ),
             (
                 user_params.get("spec_sim_networking", {}).get("modified_cosine"),
@@ -562,6 +571,23 @@ class ParameterManager(BaseModel):
             logger.warning(str(e))
             self.log_malformed_parameters_default("adduct_annotation")
             self.AdductAnnotationParameters = AdductAnnotationParameters()
+
+    def assign_fragment_annotation(self: Self, user_params: dict):
+        """Assign fragment_annotation parameters to self.FragmentAnnParameters.
+
+        Parameters:
+            user_params: user-provided params, read from json file
+        """
+        try:
+            self.FragmentAnnParameters = FragmentAnnParameters(**user_params)
+            logger.info(
+                "'ParameterManager': validated and assigned parameters "
+                "for 'fragment_annotation'."
+            )
+        except Exception as e:
+            logger.warning(str(e))
+            self.log_malformed_parameters_default("adduct_annotation")
+            self.FragmentAnnParameters = FragmentAnnParameters()
 
     def assign_neutral_loss_annotation(self: Self, user_params: dict):
         """Assign neutral_loss_annotation parameters to self.NeutralLossParameters.

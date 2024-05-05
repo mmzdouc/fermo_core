@@ -18,6 +18,7 @@ from fermo_core.input_output.output_file_parameter_managers import OutputParamet
 from fermo_core.input_output.core_module_parameter_managers import (
     AdductAnnotationParameters,
     NeutralLossParameters,
+    FragmentAnnParameters,
     SpecSimNetworkCosineParameters,
     SpecSimNetworkDeepscoreParameters,
 )
@@ -200,7 +201,7 @@ def test_assign_adduct_annotation_valid():
 def test_assign_adduct_annotation_invalid():
     params = ParameterManager()
     params.assign_adduct_annotation({"activate_module": True})
-    assert params.AdductAnnotationParameters.mass_dev_ppm == 20.0
+    assert params.AdductAnnotationParameters.mass_dev_ppm == 10.0
 
 
 def test_assign_neutral_loss_valid():
@@ -214,7 +215,19 @@ def test_assign_neutral_loss_valid():
 def test_assign_neutral_loss_invalid():
     params = ParameterManager()
     params.assign_neutral_loss_annotation({"activate_module": True})
-    assert params.NeutralLossParameters.mass_dev_ppm == 20.0
+    assert params.NeutralLossParameters.mass_dev_ppm == 10.0
+
+
+def test_assign_fragment_annotation_valid():
+    params = ParameterManager()
+    params.assign_fragment_annotation({"activate_module": True, "mass_dev_ppm": 20.0})
+    assert isinstance(params.FragmentAnnParameters, FragmentAnnParameters)
+
+
+def test_assign_fragment_annotation_invalid():
+    params = ParameterManager()
+    params.assign_fragment_annotation({})
+    assert params.FragmentAnnParameters.mass_dev_ppm == 10.0
 
 
 def test_assign_spec_sim_networking_cosine_valid():
@@ -439,13 +452,13 @@ def test_assign_core_modules_parameters_valid():
     json_in = FileManager.load_json_file("example_data/case_study_parameters.json")
     params = ParameterManager()
     params.assign_core_modules_parameters(json_in)
-    assert params.AdductAnnotationParameters.mass_dev_ppm == 20.0
+    assert params.AdductAnnotationParameters.mass_dev_ppm == 10.0
 
 
 def test_assign_core_modules_parameters_invalid():
     params = ParameterManager()
     params.assign_core_modules_parameters({"adsasd": "dsfaa"})
-    assert params.AdductAnnotationParameters.mass_dev_ppm == 20.0
+    assert params.AdductAnnotationParameters.mass_dev_ppm == 10.0
 
 
 def test_assign_additional_modules_parameters_valid():

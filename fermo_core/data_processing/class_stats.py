@@ -143,6 +143,10 @@ class Stats(BaseModel):
         )
 
         json_dict = {}
+
+        if self.samples is not None:
+            json_dict["nr_samples"] = len(self.samples)
+
         for attribute in attributes:
             if attribute[1] is not None:
                 json_dict[attribute[0]] = attribute[2](attribute[1])

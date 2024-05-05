@@ -95,7 +95,7 @@ class MsmsParameters(BaseModel):
 
     filepath: FilePath
     format: str
-    rel_int_from: float = 0.001
+    rel_int_from: float = 0.01
 
     @model_validator(mode="after")
     def validate_msms_format(self):

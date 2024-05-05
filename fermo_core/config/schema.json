@@ -65,7 +65,7 @@
                             ]
                         },
                         "rel_int_from": {
-                            "title": "(Optional): Specifies minimal relative intensity of fragments to be retained. Must be a value between (and including) 0 and 1.0. Default: 0.001.",
+                            "title": "(Optional): Specifies minimal relative intensity of fragments to be retained. Must be a value between (and including) 0 and 1.0. Default: 0.01.",
                             "type": "number",
                             "minimum": 0.0,
                             "maximum": 1.0
@@ -212,7 +212,7 @@
                             "type": "boolean"
                         },
                         "mass_dev_ppm": {
-                            "title": "(Optional): expected mass deviation tolerance in parts per million. Default value: 20 ppm.",
+                            "title": "(Optional): expected mass deviation tolerance in parts per million. Default value: 10 ppm.",
                             "type": "number",
                             "minimum": 0.0,
                             "maximum": 100.0
@@ -232,7 +232,7 @@
                             "type": "boolean"
                         },
                         "mass_dev_ppm": {
-                            "title": "(Optional): expected mass deviation tolerance in parts per million. Default value: 20 ppm.",
+                            "title": "(Optional): expected mass deviation tolerance in parts per million. Default value: 10 ppm.",
                             "type": "number",
                             "minimum": 0.0,
                             "maximum": 100.0
@@ -240,6 +240,26 @@
                         "nonbiological": {
                             "title": "(Optional): Specifies whether neutral losses should be compared to losses originating from synthetic molecules. Default: False",
                             "type": "boolean"
+                        }
+                    }
+                },
+                "fragment_annotation": {
+                    "title": "(Optional): settings for fragment annotation of MS/MS fragments.",
+                    "additionalProperties": false,
+                    "type": "object",
+                    "required": [
+                        "activate_module"
+                    ],
+                    "properties": {
+                        "activate_module": {
+                            "title": "Specifies whether this module should be run. Default: True",
+                            "type": "boolean"
+                        },
+                        "mass_dev_ppm": {
+                            "title": "(Optional): expected mass deviation tolerance in parts per million. Default value: 10 ppm.",
+                            "type": "number",
+                            "minimum": 0.0,
+                            "maximum": 100.0
                         }
                     }
                 },

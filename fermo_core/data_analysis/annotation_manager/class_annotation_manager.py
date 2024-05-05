@@ -32,6 +32,9 @@ from fermo_core.data_analysis.annotation_manager.class_adduct_annotator import (
 from fermo_core.data_analysis.annotation_manager.class_neutral_loss_annotator import (
     NeutralLossAnnotator,
 )
+from fermo_core.data_analysis.annotation_manager.class_fragment_annotator import (
+    FragmentAnnotator,
+)
 from fermo_core.data_analysis.annotation_manager.class_mod_cos_annotator import (
     ModCosAnnotator,
 )
@@ -98,6 +101,10 @@ class AnnotationManager(BaseModel):
             (
                 self.params.NeutralLossParameters.activate_module,
                 self.run_neutral_loss_annotation,
+            ),
+            (
+                self.params.FragmentAnnParameters.activate_module,
+                self.run_fragment_annotation,
             ),
             (
                 _eval_ms2query_results_file(),
@@ -265,6 +272,29 @@ class AnnotationManager(BaseModel):
             return
 
         logger.info("'AnnotationManager': completed feature neutral loss annotation.")
+
+    def run_fragment_annotation(self: Self):
+        """Perform feature MS2 fragment annotation"""
+        logger.info("'AnnotationManager': started feature fragment annotation.")
+
+        try:
+            fragment_annotator = FragmentAnnotator(
+                params=self.params,
+                stats=self.stats,
+                features=self.features,
+                samples=self.samples,
+            )
+            fragment_annotator.run_analysis()
+            self.features = fragment_annotator.return_features()
+        except Exception as e:
+            logger.error(str(e))
+            logger.error(
+                "'AnnotationManager': Error during running of FragmentAnnotator "
+                "- SKIP"
+            )
+            return
+
+        logger.info("'AnnotationManager': completed feature fragment annotation.")
 
     def run_ms2query_results_assignment(self: Self):
         """Annotate Features from existing MS2Query results"""

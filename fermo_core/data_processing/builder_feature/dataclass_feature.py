@@ -137,6 +137,30 @@ class NeutralLoss(BaseModel):
         }
 
 
+class CharFrag(BaseModel):
+    """A Pydantic-based class to represent characteristic ion fragments in MS2 spectrum
+
+    Attributes:
+        id: fragment identifier
+        frag_det: detected m/z
+        frag_ex: expected m/z
+        diff: difference in ppm
+    """
+
+    id: str
+    frag_det: float
+    frag_ex: float
+    diff: float
+
+    def to_json(self: Self) -> dict:
+        return {
+            "id": self.id,
+            "frag_det": round(self.frag_det, 4),
+            "frag_ex": round(self.frag_ex, 4),
+            "diff_ppm": round(self.diff, 2),
+        }
+
+
 class Annotations(BaseModel):
     """A Pydantic-based class to represent annotation information
 
@@ -144,11 +168,13 @@ class Annotations(BaseModel):
         adducts: list of Adduct objects representing putative adducts of this feature
         matches: list of Match objects repr. putative library matching hits
         losses: list of NeutralLoss objects annotating functional groups of feature
+        fragments: list of CharFrag objects annotating characteristic ion fragments
     """
 
     adducts: Optional[List[Adduct]] = None
     matches: Optional[List[Match]] = None
     losses: Optional[List[NeutralLoss]] = None
+    fragments: Optional[List[CharFrag]] = None
 
     def to_json(self: Self) -> dict:
         json_dict = {}
@@ -160,6 +186,9 @@ class Annotations(BaseModel):
 
         if self.losses is not None:
             json_dict["losses"] = [loss.to_json() for loss in self.losses]
+
+        if self.fragments is not None:
+            json_dict["fragments"] = [frag.to_json() for frag in self.fragments]
 
         return json_dict
 

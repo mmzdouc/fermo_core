@@ -8,6 +8,7 @@ from fermo_core.data_processing.builder_feature.dataclass_feature import (
     Match,
     NeutralLoss,
     SimNetworks,
+    CharFrag,
 )
 
 
@@ -93,3 +94,13 @@ def test_to_json_neural_loss_valid():
     ]
     f_dict = feature.to_json()
     assert f_dict["annotations"]["losses"][0]["id"] == "alanine"
+
+
+def test_to_json_fragments_valid():
+    feature = Feature()
+    feature.Annotations = Annotations()
+    feature.Annotations.fragments = [
+        CharFrag(id="Ala-Ala", frag_det=100.0, frag_ex=100.01, diff=12.0)
+    ]
+    f_dict = feature.to_json()
+    assert f_dict["annotations"]["fragments"][0]["id"] == "Ala-Ala"

@@ -24,6 +24,7 @@ from fermo_core.data_processing.builder_feature.dataclass_feature import (
     Adduct,
     NeutralLoss,
     Match,
+    CharFrag,
 )
 from fermo_core.data_processing.class_stats import Stats, SpecSimNet
 from fermo_core.data_processing.builder_sample.dataclass_sample import Sample
@@ -145,6 +146,14 @@ def csv_exporter():
             module="ms2query_annotation",
         ),
     ]
+    csv_exporter.features.entries[1].Annotations.fragments = [
+        CharFrag(
+            id="ala-ala",
+            frag_ex=123.456,
+            frag_det=123.455,
+            diff=10.0,
+        )
+    ]
     return csv_exporter
 
 
@@ -231,9 +240,15 @@ def test_return_session(json_exporter):
     assert session == {}
 
 
+def test_add_activity_info_csv(csv_exporter):
+    csv_exporter.add_activity_info_csv()
+    assert csv_exporter.df.loc[0, "fermo:active"] == "true"
+
+
 def test_add_sample_info_csv(csv_exporter):
     csv_exporter.add_sample_info_csv()
     assert csv_exporter.df.loc[0, "fermo:samples"] == "d1|d2"
+    assert csv_exporter.df.loc[0, "fermo:samples:count"] == 2
 
 
 def test_add_networks_info_csv(csv_exporter):
@@ -262,6 +277,11 @@ def test_add_match_info_csv(csv_exporter):
     assert isinstance(
         csv_exporter.df.loc[0, "fermo:annotation:matches:antismash_kcb_annotation"], str
     )
+
+
+def test_add_fragment_info_csv(csv_exporter):
+    csv_exporter.add_fragment_info_csv()
+    assert isinstance(csv_exporter.df.loc[0, "fermo:annotation:fragments"], str)
 
 
 def test_build_csv_output(csv_exporter):
