@@ -283,6 +283,34 @@ class CsvExporter(BaseModel):
                 lambda x: _add_match_info(f_id=x, var=module)
             )
 
+    def add_fragment_info_csv(self: Self):
+        """Iterate through user library fragment annotation information and add to df"""
+
+        def _add_fragment_info(f_id: int) -> str | None:
+            if f_id in self.stats.active_features:
+                feature = self.features.get(f_id)
+                fragments = []
+                try:
+                    for frag in feature.Annotations.fragments:
+                        fragments.append(
+                            (
+                                f"'{frag.id}'"
+                                f"(detected_fragment={round(frag.frag_det, 4)};"
+                                f"diff_ppm={round(frag.diff, 1)})"
+                            )
+                        )
+                    return "|".join(fragments)
+                except (TypeError, AttributeError, KeyError):
+                    return None
+            return None
+
+        if self.params.FragmentAnnParameters.activate_module is False:
+            return
+
+        self.df["fermo:annotation:fragments"] = self.df["id"].map(
+            lambda x: _add_fragment_info(f_id=x)
+        )
+
     def build_csv_output(self: Self):
         """Assemble data for csv export"""
         self.add_activity_info_csv()
@@ -291,6 +319,7 @@ class CsvExporter(BaseModel):
         self.add_adduct_info_csv()
         self.add_loss_info_csv()
         self.add_match_info_csv()
+        self.add_fragment_info_csv()
 
     def return_dfs(self: Self) -> tuple:
         """Return the generated df objects to calling method for export

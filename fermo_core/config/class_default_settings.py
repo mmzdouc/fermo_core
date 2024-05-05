@@ -41,6 +41,7 @@ class DefaultPaths(BaseModel):
         url_ms2query_neg: urls to default ms2query files for negative ion mode
         dirpath_output: points towards default results output dir
         dirpath_losses: point towards neutral loss dir
+        dirpath_frags: point towards fragment dir
         library_mibig_pos: points towards mibig spectral library for positive ion mode
     """
 
@@ -103,6 +104,9 @@ class DefaultPaths(BaseModel):
     dirpath_losses: DirectoryPath = Path(__file__).parent.parent.joinpath(
         "libraries/loss_libs/"
     )
+    dirpath_frags: DirectoryPath = Path(__file__).parent.parent.joinpath(
+        "libraries/frag_libs/"
+    )
     library_mibig_pos: FilePath = Path(__file__).parent.parent.joinpath(
         "libraries/mibig/pos/mibig_in_silico_spectral_library_3_1.mgf"
     )
@@ -115,6 +119,7 @@ class DefaultMasses(BaseModel):
         https://fiehnlab.ucdavis.edu/staff/kind/Metabolomics/MS-Adduct-Calculator/
         https://media.iupac.org/publications/pac/2003/pdf/7506x0683.pdf
         https://pubchem.ncbi.nlm.nih.gov/compound/Bicarbonate-Ion
+        https://pubchem.ncbi.nlm.nih.gov/compound/Water
 
     Attributes:
         Na: sodium monoisotopic mass
@@ -136,7 +141,7 @@ class DefaultMasses(BaseModel):
     Fe56: float = 55.934941
     NH4: float = 18.033823
     K: float = 38.963158
-    H2O: float = 18.011114
+    H2O: float = 18.010565
     Cl35: float = 34.969402
     HCO2: float = 60.992568
     TFA: float = 112.985586
@@ -246,4 +251,48 @@ class NeutralLosses(BaseModel):
                 Loss(loss=row["loss"], descr=row["descr"], abbr=row["abbr"])
             )
 
+        return self
+
+
+class Fragment(BaseModel):
+    """A Pydantic-based class for storing information on characteristic fragments
+
+    Attributes:
+        mass: the m/z value of the fragment
+        descr: the neutral loss description
+    """
+
+    mass: float
+    descr: str
+
+
+class CharFragments(BaseModel):
+    """A Pydantic-based class for storing characteristic ion fragment masses
+
+    Attributes:
+        aa_frags_src: path to the file location
+        aa_frags: b2 and y2 series of (proteinogenic) amino acids
+    """
+
+    aa_frags_src: FilePath = DefaultPaths().dirpath_frags.joinpath(
+        "aa_m+h_fragment_series.csv"
+    )
+    aa_frags: List[Fragment] = []
+
+    @model_validator(mode="after")
+    def read_files(self):
+        df = pd.read_csv(self.aa_frags_src)
+        for _, row in df.iterrows():
+            self.aa_frags.append(
+                Fragment(
+                    mass=row["y2"],
+                    descr=f"{row['pair']}(y2, [M+H]+)",
+                )
+            )
+            self.aa_frags.append(
+                Fragment(
+                    mass=row["b2"],
+                    descr=f"{row['pair']}(b2, [M+H]+)",
+                )
+            )
         return self

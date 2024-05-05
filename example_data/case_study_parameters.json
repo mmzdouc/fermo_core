@@ -37,12 +37,16 @@
     "core_modules": {
         "adduct_annotation": {
             "activate_module": true,
-            "mass_dev_ppm": 20.0
+            "mass_dev_ppm": 10.0
         },
         "neutral_loss_annotation": {
             "activate_module": true,
-            "mass_dev_ppm": 20.0,
+            "mass_dev_ppm": 10.0,
             "nonbiological": true
+        },
+        "fragment_annotation": {
+            "activate_module": true,
+            "mass_dev_ppm": 10.0
         },
         "spec_sim_networking": {
             "modified_cosine": {
