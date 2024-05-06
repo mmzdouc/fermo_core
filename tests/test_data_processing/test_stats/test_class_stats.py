@@ -3,13 +3,9 @@ import pandas as pd
 from pydantic import ValidationError
 import pytest
 
-from fermo_core.data_processing.class_stats import Stats, SpecSimNet
+from fermo_core.data_processing.class_stats import Stats, SpecSimNet, Group, GroupMData
 from fermo_core.input_output.class_parameter_manager import ParameterManager
 from fermo_core.input_output.class_file_manager import FileManager
-
-
-def test_init_stats_valid():
-    assert isinstance(Stats(), Stats)
 
 
 @pytest.fixture
@@ -28,6 +24,10 @@ def dummy_df():
             "datafile:sampleB:intensity_range:max": [20, 200, 1000],
         }
     )
+
+
+def test_init_stats_valid():
+    assert isinstance(Stats(), Stats)
 
 
 def test_setattr_stats_valid(stats):
@@ -84,8 +84,10 @@ def test_to_json_rt_min_valid():
 
 def test_to_json_groups_valid():
     stats = Stats()
+    stats.samples = ("s1", "s2")
+    stats.GroupMData.default_s_ids = {"s1", "s2"}
     json_dict = stats.to_json()
-    assert json_dict["groups"] == {"DEFAULT": []}
+    assert json_dict["groups"]["default_s_ids"] is not None
 
 
 def test_to_json_networks_valid():
@@ -107,3 +109,18 @@ def test_to_json_phenotypes_valid():
     stats.phenotypes = {"test1": ("a", "b"), "test2": ("a", "c")}
     json_dict = stats.to_json()
     assert json_dict["phenotypes"]["test1"] == ["a", "b"]
+
+
+def test_group_valid():
+    group = Group(s_ids={"s1", "s2"}, f_ids={1, 3, 4})
+    json_dict = group.to_json()
+    assert len(json_dict["s_ids"]) == 2
+
+
+def test_groupmdata_valid():
+    groupmdata = GroupMData(
+        default_s_ids={"s1", "s2"},
+        ctgrs={"phenotype": {"G": Group(s_ids={"s1", "s2"}, f_ids={1, 3, 4})}},
+    )
+    json_dict = groupmdata.to_json()
+    assert len(json_dict["categories"]["phenotype"]["G"]["s_ids"]) == 2

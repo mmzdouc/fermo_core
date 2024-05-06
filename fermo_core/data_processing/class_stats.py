@@ -21,12 +21,65 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 from pydantic import BaseModel
-from typing import Self, Tuple, Optional, Set, Dict, Any
+from typing import Self, Tuple, Optional, Dict, Any
 
 import networkx as nx
 import pandas as pd
 
 from fermo_core.input_output.class_parameter_manager import ParameterManager
+
+
+class Group(BaseModel):
+    """Pydantic-based class to organize group info belonging to a metadata category
+
+    Attributes:
+        name: group identifier
+        s_ids: a set of sample ids belonging to group
+        f_ids: a set of feature ids detected in samples of group
+    """
+
+    s_ids: set = set()
+    f_ids: set = set()
+
+    def to_json(self) -> dict:
+        """Convert attributes to json-compatible ones."""
+        return {"s_ids": list(self.s_ids), "f_ids": list(self.f_ids)}
+
+
+class GroupMData(BaseModel):
+    """Pydantic-based class to organize group metadata information
+
+    Attributes:
+        default_s_ids: containing ungrouped samples ("DEFAULT")
+        blank_s_ids: containing sample blank ids
+        blank_f_ids: containing ids of sample blank-associated features
+        ctgrs: dict containing category:{group-id: Group}, key-value pairs
+    """
+
+    default_s_ids: set = set()
+    blank_s_ids: set = set()
+    blank_f_ids: set = set()
+    ctgrs: dict = {}
+
+    def to_json(self) -> dict:
+        """Convert attributes to json-compatible ones."""
+        json_dict = {}
+
+        if len(self.default_s_ids) != 0:
+            json_dict["default_s_ids"] = list(self.default_s_ids)
+
+        if len(self.blank_s_ids) != 0:
+            json_dict["blank_s_ids"] = list(self.blank_s_ids)
+            json_dict["blank_f_ids"] = list(self.blank_f_ids)
+
+        if len(self.ctgrs) != 0:
+            json_dict["categories"] = {}
+            for key, val in self.ctgrs.items():
+                json_dict["categories"][key] = {}
+                for name, obj in val.items():
+                    json_dict["categories"][key][name] = obj.to_json()
+
+        return json_dict
 
 
 class SpecSimNet(BaseModel):
@@ -69,8 +122,7 @@ class Stats(BaseModel):
         features: total number of features
         active_features: retained in analysis run
         inactive_features: filtered out during analysis run by FeatureFilter module
-        blank_features: all blank-associated features in analysis run
-        groups: dict of sets of sample IDs repr. group membership (default in DEFAULT)
+        GroupMData: instance of the GroupMData object containing group metadata
         networks: all similarity networks in analysis run
         phenotypes: dict of tuples of active sample IDs
         spectral_library: a list of matchms.Spectrum instances
@@ -83,11 +135,10 @@ class Stats(BaseModel):
     area_min: Optional[int] = None
     area_max: Optional[int] = None
     samples: Optional[tuple] = None
-    features: Optional[tuple] = None
+    features: Optional[int] = None
     active_features: set = set()
     inactive_features: set = set()
-    blank_features: set = set()
-    groups: Dict[str, Set] = {"DEFAULT": set()}
+    GroupMData: GroupMData = GroupMData()
     networks: Optional[Dict[str, SpecSimNet]] = None
     phenotypes: Optional[Dict[str, Tuple[str, ...]]] = None
     spectral_library: Optional[list] = None
@@ -112,7 +163,7 @@ class Stats(BaseModel):
         self.samples = tuple(
             sample.split(":")[1] for sample in df.filter(regex=":feature_state").columns
         )
-        self.groups["DEFAULT"] = set(self.samples)
+        self.GroupMData.default_s_ids = set(self.samples)
         self.features = len(df["id"].tolist())
         self.active_features = set(df["id"].tolist())
 
@@ -138,12 +189,10 @@ class Stats(BaseModel):
             ("nr_inactive_features", len(self.inactive_features), int),
             ("active_features", self.active_features, list),
             ("inactive_features", self.inactive_features, list),
-            ("blank_features", self.blank_features, list),
             ("analysis_log", self.analysis_log, list),
         )
 
         json_dict = {}
-
         if self.samples is not None:
             json_dict["nr_samples"] = len(self.samples)
 
@@ -151,10 +200,7 @@ class Stats(BaseModel):
             if attribute[1] is not None:
                 json_dict[attribute[0]] = attribute[2](attribute[1])
 
-        if self.groups is not None:
-            json_dict["groups"] = dict()
-            for group in self.groups:
-                json_dict["groups"][group] = list(self.groups[group])
+        json_dict["groups"] = self.GroupMData.to_json()
 
         if self.networks is not None:
             json_dict["networks"] = dict()

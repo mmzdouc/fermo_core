@@ -79,14 +79,13 @@ def test_parse_msms_invalid(params_manager, general_parser):
 
 def test_parse_group_metadata_valid(params_manager, general_parser):
     general_parser.parse_group_metadata(params_manager)
-    assert len(general_parser.stats.groups.get("DEFAULT")) == 0
+    assert len(general_parser.stats.GroupMData.ctgrs) == 2
 
 
 def test_parse_group_metadata_invalid(params_manager, general_parser):
     params_manager.GroupMetadataParameters = None
-    general_parser.stats.groups = {"DEFAULT": set()}
     general_parser.parse_group_metadata(params_manager)
-    assert general_parser.stats.groups == {"DEFAULT": set()}
+    assert len(general_parser.stats.GroupMData.default_s_ids) == 0
 
 
 def test_parse_phenotype_valid(params_manager, general_parser):

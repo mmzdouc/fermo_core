@@ -23,11 +23,13 @@ SOFTWARE.
 import logging
 from typing import Tuple, Self, Optional
 
+import pandas as pd
+from pydantic import BaseModel
+
 from fermo_core.input_output.class_parameter_manager import ParameterManager
 from fermo_core.data_processing.parser.peaktable_parser.class_mzmine3_parser import (
     PeakMzmine3Parser,
 )
-
 from fermo_core.data_processing.parser.msms_parser.class_mgf_parser import MgfParser
 from fermo_core.data_processing.parser.group_metadata_parser.class_fermo_metadata_parser import (
     MetadataFermoParser,
@@ -44,8 +46,8 @@ from fermo_core.data_processing.class_stats import Stats
 logger = logging.getLogger("fermo_core")
 
 
-class GeneralParser:
-    """Interface to organize calling of specific parser classes and their logger
+class GeneralParser(BaseModel):
+    """Pydantic-based class to organize calling of specific parser classes + logger
 
     Attributes:
         stats: Stats object, holds stats on molecular features and samples
@@ -53,10 +55,9 @@ class GeneralParser:
         samples: Repository object, holds "Sample" objects
     """
 
-    def __init__(self):
-        self.stats: Optional[Stats] = None
-        self.features: Optional[Repository] = None
-        self.samples: Optional[Repository] = None
+    stats: Optional[Stats] = None
+    features: Optional[Repository] = None
+    samples: Optional[Repository] = None
 
     def return_attributes(self: Self) -> Tuple[Stats, Repository, Repository]:
         """Returns created attributes to the calling function
@@ -125,9 +126,23 @@ class GeneralParser:
 
         match params.GroupMetadataParameters.format:
             case "fermo":
-                self.stats, self.samples = MetadataFermoParser().parse(
-                    self.stats, self.samples, params
+                try:
+                    metadata_parser = MetadataFermoParser(
+                        stats=self.stats,
+                        df=pd.read_csv(params.GroupMetadataParameters.filepath),
+                    )
+                    metadata_parser.run_parser()
+                    self.stats = metadata_parser.return_stats()
+                except Exception as e:
+                    logger.warning(str(e))
+                    return
+            case _:
+                logger.warning(
+                    f"'GeneralParser': detected unsupported format "
+                    f"'{params.GroupMetadataParameters.format}' for 'group_metadata' "
+                    f"- SKIP"
                 )
+                return
 
     def parse_phenotype(self: Self, params: ParameterManager):
         """Parses user-provided phenotype/bioactivity data file.

@@ -45,7 +45,6 @@ class Sample(BaseModel):
         s_id: string identifier of sample
         features: dict of features objects with sample-specific information.
         feature_ids: set of feature ids included in sample
-        groups: group association of sample (if provided, else default group DEFAULT)
         networks: for each network algorithm, a set of subnetwork ids found in sample
         max_intensity: the highest intensity of a feature in the sample (absolute)
         max_area: the highest area of a feature in the sample (absolute)
@@ -56,7 +55,6 @@ class Sample(BaseModel):
     s_id: Optional[str] = None
     features: Optional[dict] = None
     feature_ids: Optional[set[int]] = None
-    groups: set[str] = {"DEFAULT"}
     networks: Optional[Dict[str, set]] = None
     max_intensity: Optional[int] = None
     max_area: Optional[int] = None
@@ -71,7 +69,6 @@ class Sample(BaseModel):
         attributes = (
             ("s_id", self.s_id, str),
             ("feature_ids", self.feature_ids, list),
-            ("groups", self.groups, list),
             ("max_intensity", self.max_intensity, int),
             ("max_area", self.max_area, int),
         )

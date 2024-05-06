@@ -41,7 +41,7 @@ def test_phenotype_assignment_valid():
 def test_to_json_empty_valid():
     sample = Sample()
     json_dict = sample.to_json()
-    assert json_dict == {"groups": ["DEFAULT"]}
+    assert json_dict == {}
 
 
 def test_to_json_s_id_valid():
