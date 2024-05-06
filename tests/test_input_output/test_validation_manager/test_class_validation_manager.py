@@ -229,7 +229,7 @@ def test_validate_group_metadata_fermo_invalid():
         ValidationManager.validate_group_metadata_fermo(
             Path(
                 "tests/test_input_output/test_validation_manager/"
-                "example_duplicate_entries.csv"
+                "example_invalid_group_fermo.csv"
             )
         )
 

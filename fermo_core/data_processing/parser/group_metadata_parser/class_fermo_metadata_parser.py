@@ -109,7 +109,7 @@ class MetadataFermoParser(BaseModel):
         logger.info(
             "'MetadataFermoParser': started parsing fermo-style group metadata file."
         )
-
+        self.df = self.df.astype(str)
         self.validate_sample_names()
         self.unassign_default_set()
         self.extract_blanks()
