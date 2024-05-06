@@ -105,6 +105,54 @@ def test_set_samples_valid():
     assert feature1.samples == ("5440_5439_mod.mzXML", "5432_5431_mod2.mzXML")
 
 
+def test_set_area_per_sample_valid():
+    s = pd.Series(
+        {
+            "datafile:s1:feature_state": "DETECTED",
+            "datafile:s1:area": 100,
+            "datafile:s2:feature_state": "DETECTED",
+            "datafile:s2:area": 200,
+        }
+    )
+    feature1 = FeatureBuilder().set_samples(s).set_area_per_sample(s).get_result()
+    assert feature1.area_per_sample[0].value == 200
+
+
+def test_set_area_per_sample_invalid():
+    s = pd.Series(
+        {
+            "datafile:s1:feature_state": "DETECTED",
+            "datafile:s1:area": 100,
+        }
+    )
+    with pytest.raises(ValueError):
+        FeatureBuilder().set_area_per_sample(s).get_result()
+
+
+def test_set_height_per_sample_valid():
+    s = pd.Series(
+        {
+            "datafile:s1:feature_state": "DETECTED",
+            "datafile:s1:intensity_range:max": 100,
+            "datafile:s2:feature_state": "DETECTED",
+            "datafile:s2:intensity_range:max": 200,
+        }
+    )
+    feature1 = FeatureBuilder().set_samples(s).set_height_per_sample(s).get_result()
+    assert feature1.height_per_sample[0].value == 200
+
+
+def test_set_height_per_sample_invalid():
+    s = pd.Series(
+        {
+            "datafile:s1:feature_state": "DETECTED",
+            "datafile:s1:intensity_range:max": 100,
+        }
+    )
+    with pytest.raises(ValueError):
+        FeatureBuilder().set_area_per_sample(s).get_result()
+
+
 def test_get_result_valid():
     feature1 = FeatureBuilder().get_result()
     assert isinstance(feature1, Feature)

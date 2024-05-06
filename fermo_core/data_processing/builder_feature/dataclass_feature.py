@@ -21,7 +21,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 import logging
-from typing import Optional, Tuple, Dict, Set, Self, List, Any
+from typing import Optional, Dict, Set, Self, List, Any
 
 from pydantic import BaseModel
 
@@ -211,6 +211,24 @@ class SimNetworks(BaseModel):
         }
 
 
+class SampleInfo(BaseModel):
+    """A Pydantic-based class to represent spectral similarity network information
+
+    Attributes:
+        s_id: identifier of sample
+        value: an integer indicating the respective value (area or height)
+    """
+
+    s_id: str
+    value: int
+
+    def to_json(self: Self) -> dict:
+        return {
+            "s_id": str(self.s_id),
+            "value": int(self.value),
+        }
+
+
 class Feature(BaseModel):
     """A Pydantic-based class to represent a molecular feature.
 
@@ -230,6 +248,8 @@ class Feature(BaseModel):
         rel_area: the area relative to the feature with the highest area in the sample.
         Spectrum: a matchms Spectrum object instance using data from msms
         samples: a tuple of samples to which feature is associated.
+        area_per_sample: list of SampleInfo instances
+        height_per_sample: list of SampleInfo instances
         blank: bool to indicate if feature is blank-associated (if provided).
         groups: association to groups if such metadata was provided.
         groups_fold: indicates the fold differences between groups if provided. Should
@@ -246,15 +266,17 @@ class Feature(BaseModel):
     rt_start: Optional[float] = None
     rt_stop: Optional[float] = None
     rt_range: Optional[float] = None
-    trace_rt: Optional[Tuple] = None
-    trace_int: Optional[Tuple] = None
+    trace_rt: Optional[tuple] = None
+    trace_int: Optional[tuple] = None
     fwhm: Optional[float] = None
     intensity: Optional[int] = None
     rel_intensity: Optional[float] = None
     area: Optional[int] = None
     rel_area: Optional[float] = None
     Spectrum: Optional[Any] = None
-    samples: Optional[Tuple] = None
+    samples: Optional[tuple] = None
+    area_per_sample: Optional[list] = None
+    height_per_sample: Optional[list] = None
     blank: Optional[bool] = None
     groups: Optional[Set] = None
     groups_fold: Optional[Dict] = None
@@ -292,6 +314,16 @@ class Feature(BaseModel):
         for attribute in attributes:
             if attribute[1] is not None:
                 json_dict[attribute[0]] = attribute[2](attribute[1])
+
+        if self.area_per_sample is not None:
+            json_dict["area_per_sample"] = [
+                val.to_json() for val in self.area_per_sample
+            ]
+
+        if self.height_per_sample is not None:
+            json_dict["height_per_sample"] = [
+                val.to_json() for val in self.height_per_sample
+            ]
 
         if self.Spectrum is not None:
             json_dict["spectrum"] = dict()

@@ -51,5 +51,7 @@ class GeneralFeatureDirector:
             .set_rt_start(float(row["rt_range:min"]))
             .set_rt_stop(float(row["rt_range:max"]))
             .set_samples(row)
+            .set_area_per_sample(row)
+            .set_height_per_sample(row)
             .get_result()
         )
