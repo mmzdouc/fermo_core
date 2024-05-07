@@ -295,7 +295,7 @@ def test_assign_feature_filtering_invalid():
 
 def test_assign_blank_assignment_valid():
     params = ParameterManager()
-    params.assign_blank_assignment({"activate_module": True, "column_ret_fold": 10})
+    params.assign_blank_assignment({"activate_module": True})
     assert isinstance(params.BlankAssignmentParameters, BlankAssignmentParameters)
 
 
@@ -303,6 +303,18 @@ def test_assign_blank_assignment_invalid():
     params = ParameterManager()
     params.assign_blank_assignment({"asdfg": "asdfg"})
     assert params.BlankAssignmentParameters.factor == 10
+
+
+def test_assign_group_factor_assignment_valid():
+    params = ParameterManager()
+    params.assign_group_factor_assignment({"activate_module": True})
+    assert params.GroupFactAssignmentParameters.activate_module is True
+
+
+def test_assign_group_factor_assignment_invalid():
+    params = ParameterManager()
+    params.assign_group_factor_assignment({"asdfg": "asdfg"})
+    assert params.GroupFactAssignmentParameters.activate_module is False
 
 
 def test_assign_phenotype_assignment_fold_valid():

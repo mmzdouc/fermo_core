@@ -72,3 +72,8 @@ def test_run_group_assignment_invalid_file(analysis_manager_instance):
         len(analysis_manager_instance.stats.GroupMData.ctgrs["phylogroup"]["A2"].f_ids)
         == 0
     )
+
+
+def test_run_group_factor_assignment_invalid(analysis_manager_instance):
+    analysis_manager_instance.run_group_factor_assignment()
+    assert analysis_manager_instance.features.entries[13].group_factors is None

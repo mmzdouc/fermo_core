@@ -423,6 +423,37 @@
                         }
                     }
                 },
+                "group_factor_assignment": {
+                    "title": "(Optional): settings for group factor assignment (fold change between groups). Is only executed if a 'group_metadata' file is provided.",
+                    "additionalProperties": false,
+                    "type": "object",
+                    "required": [
+                        "activate_module"
+                    ],
+                    "properties": {
+                        "activate_module": {
+                            "title": "Specifies whether this module should be run. Default: False",
+                            "type": "boolean"
+                        },
+                        "algorithm": {
+                            "title": "(Optional): Algorithm to summarize value over samples/blanks. Default value: 'mean'.",
+                            "type": "string",
+                            "enum": [
+                                "mean",
+                                "median",
+                                "maximum"
+                            ]
+                        },
+                        "value": {
+                            "title": "(Optional): Specifies which value type should be considered. Default: 'area'.",
+                            "type": "string",
+                            "enum": [
+                                "height",
+                                "area"
+                            ]
+                        }
+                    }
+                },
                 "phenotype_assignment": {
                     "title": "(Optional): settings for determination of phenotype-associated molecular features. Is only executed if a 'phenotype' file is provided.",
                     "additionalProperties": false,

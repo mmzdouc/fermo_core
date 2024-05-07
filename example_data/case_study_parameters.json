@@ -84,6 +84,11 @@
             "algorithm": "mean",
             "value": "area"
         },
+        "group_factor_assignment": {
+            "activate_module": true,
+            "algorithm": "mean",
+            "value": "area"
+        },
         "phenotype_assignment": {
             "fold_difference": {
                 "activate_module": true,

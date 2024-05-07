@@ -47,6 +47,7 @@ from fermo_core.input_output.core_module_parameter_managers import (
 from fermo_core.input_output.additional_module_parameter_managers import (
     FeatureFilteringParameters,
     BlankAssignmentParameters,
+    GroupFactAssignmentParameters,
     PhenotypeAssignmentFoldParameters,
     SpectralLibMatchingCosineParameters,
     SpectralLibMatchingDeepscoreParameters,
@@ -84,6 +85,7 @@ class ParameterManager(BaseModel):
             similarity networking module parameter
         FeatureFilteringParameters: class handling feature filter module parameter
         BlankAssignmentParameters: class handling blank-assignment module parameter
+        GroupFactAssignmentParameters: class handling group factor assignment mod params
         PhenotypeAssignmentFoldParameters: class handling phenotype-assignment module
             parameter
         SpectralLibMatchingCosineParameters: class handling cosine-based spectral
@@ -118,6 +120,9 @@ class ParameterManager(BaseModel):
         FeatureFilteringParameters()
     )
     BlankAssignmentParameters: BlankAssignmentParameters = BlankAssignmentParameters()
+    GroupFactAssignmentParameters: GroupFactAssignmentParameters = (
+        GroupFactAssignmentParameters()
+    )
     PhenotypeAssignmentFoldParameters: PhenotypeAssignmentFoldParameters = (
         PhenotypeAssignmentFoldParameters()
     )
@@ -176,6 +181,9 @@ class ParameterManager(BaseModel):
         json_dict[
             "BlankAssignmentParameters"
         ] = self.BlankAssignmentParameters.to_json()
+        json_dict[
+            "GroupFactAssignmentParameters"
+        ] = self.GroupFactAssignmentParameters.to_json()
         json_dict[
             "PhenotypeAssignmentFoldParameters"
         ] = self.PhenotypeAssignmentFoldParameters.to_json()
@@ -331,6 +339,11 @@ class ParameterManager(BaseModel):
                 user_params.get("blank_assignment"),
                 self.assign_blank_assignment,
                 "blank_assignment",
+            ),
+            (
+                user_params.get("group_factor_assignment"),
+                self.assign_group_factor_assignment,
+                "group_factor_assignment",
             ),
             (
                 user_params.get("phenotype_assignment", {}).get("fold_difference"),
@@ -679,6 +692,25 @@ class ParameterManager(BaseModel):
             logger.warning(str(e))
             self.log_malformed_parameters_default("blank_assignment")
             self.BlankAssignmentParameters = BlankAssignmentParameters()
+
+    def assign_group_factor_assignment(self: Self, user_params: dict):
+        """Assign parameters to self.GroupFactAssignmentParameters.
+
+        Parameters:
+            user_params: user-provided params, read from json file
+        """
+        try:
+            self.GroupFactAssignmentParameters = GroupFactAssignmentParameters(
+                **user_params
+            )
+            logger.info(
+                "'ParameterManager': validated and assigned parameters "
+                "for 'group_factor_assignment'."
+            )
+        except Exception as e:
+            logger.warning(str(e))
+            self.log_malformed_parameters_default("group_factor_assignment")
+            self.GroupFactAssignmentParameters = GroupFactAssignmentParameters()
 
     def assign_phenotype_assignment_fold(self: Self, user_params: dict):
         """Assign phenotype_assignment/fold_difference parameters to

@@ -1,6 +1,6 @@
 """Organize the calling of data analysis modules.
 
-Copyright (c) 2022-2023 Mitja Maximilian Zdouc, PhD
+Copyright (c) 2022 to present Mitja Maximilian Zdouc, PhD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -38,6 +38,9 @@ from fermo_core.data_analysis.chrom_trace_calculator.class_chrom_trace_calculato
 from fermo_core.data_analysis.group_assigner.class_group_assigner import GroupAssigner
 from fermo_core.data_analysis.blank_assigner.class_blank_assigner import (
     BlankAssigner,
+)
+from fermo_core.data_analysis.group_factor_assigner.class_group_factor_assigner import (
+    GroupFactorAssigner,
 )
 from fermo_core.data_analysis.feature_filter.class_feature_filter import FeatureFilter
 from fermo_core.data_analysis.sim_networks_manager.class_sim_networks_manager import (
@@ -80,6 +83,7 @@ class AnalysisManager(BaseModel):
         self.run_feature_filter()
         self.run_blank_assignment()
         self.run_group_assignment()
+        self.run_group_factor_assignment()
         self.run_sim_networks_manager()
         self.run_annotation_manager()
         self.run_chrom_trace_calculator()
@@ -159,6 +163,37 @@ class AnalysisManager(BaseModel):
             return
 
         self.stats.analysis_log.append("Ran module 'GroupAssigner'.")
+
+    def run_group_factor_assignment(self: Self):
+        """Run optional group_assignment analysis step
+
+        Notes: must be called after BlankAssigner and GroupAssigner
+        """
+
+        if self.params.GroupMetadataParameters is None:
+            logger.info("'GroupFactorAssigner': no group metadata file provided - SKIP")
+            return
+        if self.params.GroupFactAssignmentParameters.activate_module is False:
+            logger.info(
+                "'GroupFactorAssigner': "
+                "'group_factor_assignment/activate_module' disabled - SKIP"
+            )
+            return
+
+        try:
+            group_fact_ass = GroupFactorAssigner(
+                features=self.features, stats=self.stats, params=self.params
+            )
+            group_fact_ass.run_analysis()
+            self.features = group_fact_ass.return_features()
+        except Exception as e:
+            logger.warning(str(e))
+            return
+
+        self.stats.analysis_log.append(
+            "Ran module 'GroupFactorAssigner'. For parameters, "
+            "see 'additional_modules/group_factor_assignment'."
+        )
 
     def run_sim_networks_manager(self: Self):
         """Run optional SimNetworksManager analysis step"""

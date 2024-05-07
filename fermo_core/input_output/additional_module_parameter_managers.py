@@ -111,7 +111,7 @@ class BlankAssignmentParameters(BaseModel):
     value: str = "area"
 
     @model_validator(mode="after")
-    def validate_polarity_format(self):
+    def validate_strs(self):
         if self.algorithm not in ["mean", "median", "maximum"]:
             logger.warning(
                 f"Unsupported 'algorithm' format: '{self.algorithm}'. "
@@ -131,6 +131,46 @@ class BlankAssignmentParameters(BaseModel):
             return {
                 "activate_module": self.activate_module,
                 "factor": int(self.factor),
+                "algorithm": str(self.algorithm),
+                "value": str(self.value),
+            }
+        else:
+            return {"activate_module": self.activate_module}
+
+
+class GroupFactAssignmentParameters(BaseModel):
+    """A Pydantic-based class for repr. and valid. of group factor assignment params.
+
+    Attributes:
+        activate_module: bool to indicate if module should be executed.
+        algorithm: the algorithm to summarize values of different samples.
+        value: the type of value to use for comparison
+    """
+
+    activate_module: bool = False
+    algorithm: str = "mean"
+    value: str = "area"
+
+    @model_validator(mode="after")
+    def validate_strs(self):
+        if self.algorithm not in ["mean", "median", "maximum"]:
+            logger.warning(
+                f"Unsupported 'algorithm' format: '{self.algorithm}'. "
+                "Set to default value 'mean'."
+            )
+            self.algorithm = "mean"
+        if self.value not in ["height", "area"]:
+            logger.warning(
+                f"Unsupported 'value' format: '{self.value}'. "
+                "Set to default value 'area'."
+            )
+            self.value = "area"
+        return self
+
+    def to_json(self: Self) -> dict:
+        if self.activate_module:
+            return {
+                "activate_module": self.activate_module,
                 "algorithm": str(self.algorithm),
                 "value": str(self.value),
             }

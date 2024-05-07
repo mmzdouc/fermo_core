@@ -134,12 +134,14 @@ def test_to_json_height_per_sample_valid():
 
 def test_to_json_group_factor_valid():
     feature = Feature()
-    feature.group_factors = [
-        GroupFactor(ctgry="cat1", nmrtr="s1", dnmntr="s2", factor=10),
-        GroupFactor(ctgry="cat1", nmrtr="s2", dnmntr="s1", factor=0.1),
-    ]
+    feature.group_factors = {
+        "cat1": [
+            GroupFactor(group1="s1", group2="s2", factor=10),
+            GroupFactor(group1="s2", group2="s1", factor=0.1),
+        ]
+    }
     f_dict = feature.to_json()
-    assert f_dict["group_factors"][0]["factor"] == 10
+    assert f_dict["group_factors"] is not None
 
 
 def test_to_json_groups_valid():

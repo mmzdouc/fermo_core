@@ -233,23 +233,20 @@ class GroupFactor(BaseModel):
     """A Pydantic-based class to represent group factor (fold difference) information
 
     Attributes:
-        ctgry: category identifier
-        nmrtr: group identifier of the numerator
-        dnmntr: group identifier of the denominator
-        factor: group factor (fold difference) as fraction of nmrtr/dnmntr
+        group1: comparison group 1
+        group2: comparison group 2
+        factor: group factor (fold difference), with the greater number taken
     """
 
-    ctgry: str
-    nmrtr: str
-    dnmntr: str
+    group1: str
+    group2: str
     factor: float
 
     def to_json(self: Self) -> dict:
         return {
-            "ctgry": str(self.ctgry),
-            "nmrtr": str(self.nmrtr),
-            "dnmntr": str(self.dnmntr),
-            "factor": float(self.factor),
+            "group1": str(self.group1),
+            "group2": str(self.group2),
+            "factor": round(self.factor, 2),
         }
 
 
@@ -302,7 +299,7 @@ class Feature(BaseModel):
     height_per_sample: Optional[list] = None
     blank: Optional[bool] = None
     groups: Optional[dict] = None
-    group_factors: Optional[list] = None
+    group_factors: Optional[dict] = None
     phenotypes: Optional[Dict] = None
     Annotations: Optional[Annotations] = None
     networks: Optional[Dict] = None
@@ -351,7 +348,10 @@ class Feature(BaseModel):
             json_dict["groups"] = {key: list(val) for key, val in self.groups.items()}
 
         if self.group_factors is not None:
-            json_dict["group_factors"] = [val.to_json() for val in self.group_factors]
+            json_dict["group_factors"] = {
+                key: [item.to_json() for item in val]
+                for key, val in self.group_factors.items()
+            }
 
         if self.Spectrum is not None:
             json_dict["spectrum"] = dict()
