@@ -369,7 +369,15 @@ class Feature(BaseModel):
         if self.Annotations is not None:
             json_dict["annotations"] = self.Annotations.to_json()
 
-        # TODO(MMZ 20.1.24): implement assignment for complex attributes group_folds,
-        #  annotations, phenotypes, scores - check if everything was covered
+        logger.fatal(
+            "Export: dummy values for 'phenotypes' and 'scores' written. Remove ASAP"
+        )
+        json_dict["phenotypes"] = {
+            "category1": {"score": 0.9, "datatype": "concentration"},
+            "category2": {"score": 0.9, "datatype": "concentration"},
+        }
+        json_dict["scores"] = {"prioritization": 1.0, "novelty": 0.5, "phenotype": 0.3}
+
+        # TODO(MMZ 20.1.24): - check if everything was covered by export
 
         return json_dict
