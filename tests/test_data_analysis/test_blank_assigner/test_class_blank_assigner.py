@@ -79,7 +79,7 @@ def test_collect_height_invalid(blank_assigner):
 
 
 def test_determine_blank_nonblank(blank_assigner):
-    blank_assigner.features.entries[1].samples = ("s1", "s2")
+    blank_assigner.features.entries[1].samples = {"s1", "s2"}
     blank_assigner.stats.GroupMData.nonblank_s_ids.update({"s1", "s2"})
     blank_assigner.stats.GroupMData.blank_s_ids.add("s3")
     blank_assigner.determine_blank()
@@ -88,7 +88,7 @@ def test_determine_blank_nonblank(blank_assigner):
 
 
 def test_determine_blank_blank(blank_assigner):
-    blank_assigner.features.entries[1].samples = ("s1", "s2")
+    blank_assigner.features.entries[1].samples = {"s1", "s2"}
     blank_assigner.stats.GroupMData.blank_s_ids.update({"s1", "s2"})
     blank_assigner.stats.GroupMData.nonblank_s_ids.add("s3")
     blank_assigner.determine_blank()
@@ -97,7 +97,7 @@ def test_determine_blank_blank(blank_assigner):
 
 
 def test_determine_blank_comparison_nonblank(blank_assigner):
-    blank_assigner.features.entries[1].samples = ("s1", "s2", "s3")
+    blank_assigner.features.entries[1].samples = {"s1", "s2", "s3"}
     blank_assigner.stats.GroupMData.blank_s_ids.add("s1")
     blank_assigner.stats.GroupMData.nonblank_s_ids.update({"s2", "s3"})
     blank_assigner.params.BlankAssignmentParameters.algorithm = "mean"
@@ -108,7 +108,7 @@ def test_determine_blank_comparison_nonblank(blank_assigner):
 
 
 def test_determine_blank_comparison_blank(blank_assigner):
-    blank_assigner.features.entries[1].samples = ("s1", "s2", "s3")
+    blank_assigner.features.entries[1].samples = {"s1", "s2", "s3"}
     blank_assigner.stats.GroupMData.blank_s_ids.add("s1")
     blank_assigner.stats.GroupMData.nonblank_s_ids.update({"s2", "s3"})
     blank_assigner.params.BlankAssignmentParameters.algorithm = "mean"

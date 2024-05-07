@@ -63,3 +63,12 @@ def test_run_blank_assignment_invalid_switched_off(analysis_manager_instance):
     analysis_manager_instance.params.BlankAssignmentParameters.activate_module = False
     analysis_manager_instance.run_blank_assignment()
     assert len(analysis_manager_instance.stats.GroupMData.blank_f_ids) == 0
+
+
+def test_run_group_assignment_invalid_file(analysis_manager_instance):
+    analysis_manager_instance.params.GroupMetadataParameters = None
+    analysis_manager_instance.run_group_assignment()
+    assert (
+        len(analysis_manager_instance.stats.GroupMData.ctgrs["phylogroup"]["A2"].f_ids)
+        == 0
+    )

@@ -10,6 +10,7 @@ from fermo_core.data_processing.builder_feature.dataclass_feature import (
     SimNetworks,
     CharFrag,
     SampleInfo,
+    GroupFactor,
 )
 
 
@@ -129,3 +130,20 @@ def test_to_json_height_per_sample_valid():
     ]
     f_dict = feature.to_json()
     assert f_dict["height_per_sample"][0]["value"] == 100
+
+
+def test_to_json_group_factor_valid():
+    feature = Feature()
+    feature.group_factors = [
+        GroupFactor(ctgry="cat1", nmrtr="s1", dnmntr="s2", factor=10),
+        GroupFactor(ctgry="cat1", nmrtr="s2", dnmntr="s1", factor=0.1),
+    ]
+    f_dict = feature.to_json()
+    assert f_dict["group_factors"][0]["factor"] == 10
+
+
+def test_to_json_groups_valid():
+    feature = Feature()
+    feature.groups = {"cat1": {"gr1", "gr2", "gr3"}, "cat2": {"m1", "m2"}}
+    f_dict = feature.to_json()
+    assert len(f_dict["groups"]["cat1"]) == 3

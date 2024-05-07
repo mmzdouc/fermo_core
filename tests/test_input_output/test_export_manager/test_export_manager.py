@@ -88,14 +88,16 @@ def csv_exporter():
             network=nx.Graph(),
         )
     }
+    csv_exporter.stats.GroupMData.ctgrs = {"abcde": {"a": "b"}}
     csv_exporter.features.add(
         1,
         Feature(
             f_id=1,
             mz=123.45,
-            samples=("d1", "d2"),
+            samples={"d1", "d2"},
             networks={"abc": SimNetworks(algorithm="abc", network_id=0)},
             blank=True,
+            groups={"abcde": {"a", "b", "c"}},
         ),
     )
     csv_exporter.features.entries[1].Annotations = Annotations(
@@ -253,7 +255,7 @@ def test_add_blank_info_csv(csv_exporter):
 
 def test_add_sample_info_csv(csv_exporter):
     csv_exporter.add_sample_info_csv()
-    assert csv_exporter.df.loc[0, "fermo:samples"] == "d1|d2"
+    assert isinstance(csv_exporter.df.loc[0, "fermo:samples"], str)
     assert csv_exporter.df.loc[0, "fermo:samples:count"] == 2
 
 
@@ -290,9 +292,14 @@ def test_add_fragment_info_csv(csv_exporter):
     assert isinstance(csv_exporter.df.loc[0, "fermo:annotation:fragments"], str)
 
 
+def test_add_group_info_csv(csv_exporter):
+    csv_exporter.add_group_info_csv()
+    assert isinstance(csv_exporter.df.loc[0, "fermo:category:abcde"], str)
+
+
 def test_build_csv_output(csv_exporter):
     csv_exporter.build_csv_output()
-    assert csv_exporter.df.loc[0, "fermo:samples"] == "d1|d2"
+    assert isinstance(csv_exporter.df.loc[0, "fermo:samples"], str)
 
 
 def test_return_dfs_invalid(csv_exporter):

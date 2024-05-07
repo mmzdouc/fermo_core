@@ -181,6 +181,23 @@ class CsvExporter(BaseModel):
 
         self.df["fermo:isblank"] = self.df["id"].map(lambda x: _add_blank(f_id=x))
 
+    def add_group_info_csv(self: Self):
+        """Iterate through feature group information and prepare for export"""
+
+        def _add_cat_groups(f_id: int, cat: str) -> str | None:
+            try:
+                feature = self.features.get(f_id)
+                return "|".join(list(feature.groups[cat]))
+            except (TypeError, AttributeError, KeyError):
+                return None
+
+        categories = [str(key) for key, val in self.stats.GroupMData.ctgrs.items()]
+        if len(categories) != 0:
+            for categ in categories:
+                self.df[f"fermo:category:{categ}"] = self.df["id"].map(
+                    lambda x: _add_cat_groups(f_id=x, cat=categ)
+                )
+
     def add_networks_info_csv(self: Self):
         """Iterate through network information and prepare for export"""
 
@@ -333,6 +350,7 @@ class CsvExporter(BaseModel):
         self.add_activity_info_csv()
         self.add_sample_info_csv()
         self.add_blank_info_csv()
+        self.add_group_info_csv()
         self.add_networks_info_csv()
         self.add_adduct_info_csv()
         self.add_loss_info_csv()

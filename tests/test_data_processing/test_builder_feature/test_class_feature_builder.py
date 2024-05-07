@@ -102,7 +102,7 @@ def test_set_samples_valid():
         }
     )
     feature1 = FeatureBuilder().set_samples(series).get_result()
-    assert feature1.samples == ("5440_5439_mod.mzXML", "5432_5431_mod2.mzXML")
+    assert feature1.samples == {"5440_5439_mod.mzXML", "5432_5431_mod2.mzXML"}
 
 
 def test_set_area_per_sample_valid():

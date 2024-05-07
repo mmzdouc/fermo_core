@@ -21,7 +21,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 import logging
-from typing import Optional, Dict, Set, Self, List, Any
+from typing import Optional, Dict, Self, List, Any
 
 from pydantic import BaseModel
 
@@ -212,7 +212,7 @@ class SimNetworks(BaseModel):
 
 
 class SampleInfo(BaseModel):
-    """A Pydantic-based class to represent spectral similarity network information
+    """A Pydantic-based class to represent sample->value information
 
     Attributes:
         s_id: identifier of sample
@@ -226,6 +226,30 @@ class SampleInfo(BaseModel):
         return {
             "s_id": str(self.s_id),
             "value": int(self.value),
+        }
+
+
+class GroupFactor(BaseModel):
+    """A Pydantic-based class to represent group factor (fold difference) information
+
+    Attributes:
+        ctgry: category identifier
+        nmrtr: group identifier of the numerator
+        dnmntr: group identifier of the denominator
+        factor: group factor (fold difference) as fraction of nmrtr/dnmntr
+    """
+
+    ctgry: str
+    nmrtr: str
+    dnmntr: str
+    factor: float
+
+    def to_json(self: Self) -> dict:
+        return {
+            "ctgry": str(self.ctgry),
+            "nmrtr": str(self.nmrtr),
+            "dnmntr": str(self.dnmntr),
+            "factor": float(self.factor),
         }
 
 
@@ -251,9 +275,8 @@ class Feature(BaseModel):
         area_per_sample: list of SampleInfo instances
         height_per_sample: list of SampleInfo instances
         blank: bool to indicate if feature is blank-associated (if provided).
-        groups: association to groups if such metadata was provided.
-        groups_fold: indicates the fold differences between groups if provided. Should
-            be sorted from highest to lowest.
+        groups: association to categories and groups is such data was provided.
+        group_factors: indicates the group factors(fold differences) if provided.
         phenotypes: dict of objects representing associated phenotype data
         Annotations: objects summarizing associated annotation data
         networks: dict of objects representing associated networking data
@@ -274,12 +297,12 @@ class Feature(BaseModel):
     area: Optional[int] = None
     rel_area: Optional[float] = None
     Spectrum: Optional[Any] = None
-    samples: Optional[tuple] = None
+    samples: Optional[set] = None
     area_per_sample: Optional[list] = None
     height_per_sample: Optional[list] = None
     blank: Optional[bool] = None
-    groups: Optional[Set] = None
-    groups_fold: Optional[Dict] = None
+    groups: Optional[dict] = None
+    group_factors: Optional[list] = None
     phenotypes: Optional[Dict] = None
     Annotations: Optional[Annotations] = None
     networks: Optional[Dict] = None
@@ -307,7 +330,6 @@ class Feature(BaseModel):
             ("rel_area", self.rel_area, float),
             ("samples", self.samples, list),
             ("blank", self.blank, bool),
-            ("groups", self.groups, list),
         )
 
         json_dict = {}
@@ -324,6 +346,12 @@ class Feature(BaseModel):
             json_dict["height_per_sample"] = [
                 val.to_json() for val in self.height_per_sample
             ]
+
+        if self.groups is not None and len(self.groups) != 0:
+            json_dict["groups"] = {key: list(val) for key, val in self.groups.items()}
+
+        if self.group_factors is not None:
+            json_dict["group_factors"] = [val.to_json() for val in self.group_factors]
 
         if self.Spectrum is not None:
             json_dict["spectrum"] = dict()
@@ -342,6 +370,6 @@ class Feature(BaseModel):
             json_dict["annotations"] = self.Annotations.to_json()
 
         # TODO(MMZ 20.1.24): implement assignment for complex attributes group_folds,
-        #  annotations, phenotypes, scores
+        #  annotations, phenotypes, scores - check if everything was covered
 
         return json_dict

@@ -35,6 +35,7 @@ from fermo_core.data_analysis.annotation_manager.class_annotation_manager import
 from fermo_core.data_analysis.chrom_trace_calculator.class_chrom_trace_calculator import (
     ChromTraceCalculator,
 )
+from fermo_core.data_analysis.group_assigner.class_group_assigner import GroupAssigner
 from fermo_core.data_analysis.blank_assigner.class_blank_assigner import (
     BlankAssigner,
 )
@@ -77,13 +78,10 @@ class AnalysisManager(BaseModel):
         logger.info("'AnalysisManager': started analysis steps.")
 
         self.run_feature_filter()
-
         self.run_blank_assignment()
-
+        self.run_group_assignment()
         self.run_sim_networks_manager()
-
         self.run_annotation_manager()
-
         self.run_chrom_trace_calculator()
 
         logger.info("'AnalysisManager': completed analysis steps.")
@@ -139,9 +137,28 @@ class AnalysisManager(BaseModel):
             return
 
         self.stats.analysis_log.append(
-            "Ran module 'SimNetworksManager'. For parameters, "
-            "see 'core_modules/spec_sim_networking'."
+            "Ran module 'BlankAssigner'. For parameters, "
+            "see 'additional_modules/blank_assignment'."
         )
+
+    def run_group_assignment(self: Self):
+        """Run optional group_assignment analysis step
+
+        Notes: must be called after BlankAssigner
+        """
+        if self.params.GroupMetadataParameters is None:
+            logger.info("'GroupAssigner': no group metadata file provided - SKIP")
+            return
+
+        try:
+            group_assigner = GroupAssigner(features=self.features, stats=self.stats)
+            group_assigner.run_analysis()
+            self.stats, self.features = group_assigner.return_attrs()
+        except Exception as e:
+            logger.warning(str(e))
+            return
+
+        self.stats.analysis_log.append("Ran module 'GroupAssigner'.")
 
     def run_sim_networks_manager(self: Self):
         """Run optional SimNetworksManager analysis step"""

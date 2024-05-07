@@ -50,7 +50,7 @@ class BlankAssigner(BaseModel):
         """Returns modified attributes to the calling function
 
         Returns:
-            Tuple containing Stats and Feature Repository objects.
+            Tuple containing modified Stats and Feature Repository objects.
         """
         return self.stats, self.features
 
@@ -125,11 +125,11 @@ class BlankAssigner(BaseModel):
         """Determine blank/nonblank status of features based on presence in samples"""
         for f_id in self.stats.active_features:
             feature = self.features.get(f_id)
-            if set(feature.samples).isdisjoint(self.stats.GroupMData.blank_s_ids):
+            if feature.samples.isdisjoint(self.stats.GroupMData.blank_s_ids):
                 feature.blank = False
                 self.features.modify(f_id, feature)
                 self.stats.GroupMData.nonblank_f_ids.add(f_id)
-            elif set(feature.samples).isdisjoint(self.stats.GroupMData.nonblank_s_ids):
+            elif feature.samples.isdisjoint(self.stats.GroupMData.nonblank_s_ids):
                 feature.blank = True
                 self.features.modify(f_id, feature)
                 self.stats.GroupMData.blank_f_ids.add(f_id)

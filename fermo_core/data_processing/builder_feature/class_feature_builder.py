@@ -160,7 +160,7 @@ class FeatureBuilder(BaseModel):
             if row[f"datafile:{sample_id}:feature_state"] == "DETECTED":
                 samples.append(sample_id)
 
-        self.feature.samples = tuple(samples)
+        self.feature.samples = set(samples)
         return self
 
     def set_area_per_sample(self, row: pd.Series):
