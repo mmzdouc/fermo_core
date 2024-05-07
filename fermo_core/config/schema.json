@@ -388,7 +388,7 @@
                     }
                 },
                 "blank_assignment": {
-                    "title": "(Optional): settings for assignment of (sample/medium-)blank-associated molecular features. Is only executed if a 'group_metadata' file is provided where blank samples are declared.",
+                    "title": "(Optional): settings for sample blank determination (subtraction). Is only executed if a 'group_metadata' file is provided and sample BLANKS are declared.",
                     "additionalProperties": false,
                     "type": "object",
                     "required": [
@@ -399,10 +399,27 @@
                             "title": "Specifies whether this module should be run. Default: False",
                             "type": "boolean"
                         },
-                        "column_ret_fold": {
-                            "title": "(Optional): factor to retain metabolites that were detected in (sample/medium-)blank due to cross-contamination. Molecular features with an average area across samples that is n-times higher than across blanks will be retained. The higher the value, the more discriminate. Default value: 10.",
+                        "factor": {
+                            "title": "(Optional): factor to determine subtraction of features detected in both blank and non-blank samples. Feature value (height or area) be n-times higher across samples than across blanks (determined by 'algorithm') to not be considered blank. Default value: 10.",
                             "type": "integer",
                             "minimum": 1
+                        },
+                        "algorithm": {
+                            "title": "(Optional): Algorithm to summarize value over samples/blanks. Default value: 'mean'.",
+                            "type": "string",
+                            "enum": [
+                                "mean",
+                                "median",
+                                "maximum"
+                            ]
+                        },
+                        "value": {
+                            "title": "(Optional): Specifies which value type should be considered. Default: 'area'.",
+                            "type": "string",
+                            "enum": [
+                                "height",
+                                "area"
+                            ]
                         }
                     }
                 },

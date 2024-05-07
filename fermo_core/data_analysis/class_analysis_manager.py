@@ -35,6 +35,9 @@ from fermo_core.data_analysis.annotation_manager.class_annotation_manager import
 from fermo_core.data_analysis.chrom_trace_calculator.class_chrom_trace_calculator import (
     ChromTraceCalculator,
 )
+from fermo_core.data_analysis.blank_assigner.class_blank_assigner import (
+    BlankAssigner,
+)
 from fermo_core.data_analysis.feature_filter.class_feature_filter import FeatureFilter
 from fermo_core.data_analysis.sim_networks_manager.class_sim_networks_manager import (
     SimNetworksManager,
@@ -75,6 +78,8 @@ class AnalysisManager(BaseModel):
 
         self.run_feature_filter()
 
+        self.run_blank_assignment()
+
         self.run_sim_networks_manager()
 
         self.run_annotation_manager()
@@ -101,6 +106,41 @@ class AnalysisManager(BaseModel):
         self.stats, self.features, self.samples = feature_filter.return_values()
         self.stats.analysis_log.append(
             "Ran module 'FeatureFilter'. For parameters, see 'feature_filtering'."
+        )
+
+    def run_blank_assignment(self: Self):
+        """Run optional blank_assignment analysis step"""
+        if self.params.GroupMetadataParameters is None:
+            logger.info("'BlankAssigner': no group metadata file provided - SKIP")
+            return
+
+        if len(self.stats.GroupMData.blank_s_ids) == 0:
+            logger.info("'BlankAssigner': no sample marked as 'BLANK' - SKIP")
+            return
+
+        if len(self.stats.GroupMData.nonblank_s_ids) == 0:
+            logger.info("'BlankAssigner': all sample marked as 'BLANK' - SKIP")
+            return
+
+        if self.params.BlankAssignmentParameters.activate_module is False:
+            logger.info(
+                "'BlankAssigner': 'blank_assignment/activate_module' disabled - SKIP"
+            )
+            return
+
+        try:
+            blank_assigner = BlankAssigner(
+                params=self.params, features=self.features, stats=self.stats
+            )
+            blank_assigner.run_analysis()
+            self.stats, self.features = blank_assigner.return_attrs()
+        except Exception as e:
+            logger.warning(str(e))
+            return
+
+        self.stats.analysis_log.append(
+            "Ran module 'SimNetworksManager'. For parameters, "
+            "see 'core_modules/spec_sim_networking'."
         )
 
     def run_sim_networks_manager(self: Self):

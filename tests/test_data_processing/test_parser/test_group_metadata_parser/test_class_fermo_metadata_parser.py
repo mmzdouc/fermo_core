@@ -42,6 +42,7 @@ def test_unassign_default_set_valid(fermo_meta_parser):
 def test_extract_blanks_valid(fermo_meta_parser):
     fermo_meta_parser.extract_blanks()
     assert fermo_meta_parser.stats.GroupMData.blank_s_ids == {"s3"}
+    assert len(fermo_meta_parser.stats.GroupMData.nonblank_s_ids) == 2
 
 
 def test_extract_blanks_invalid(fermo_meta_parser):

@@ -95,6 +95,7 @@ def csv_exporter():
             mz=123.45,
             samples=("d1", "d2"),
             networks={"abc": SimNetworks(algorithm="abc", network_id=0)},
+            blank=True,
         ),
     )
     csv_exporter.features.entries[1].Annotations = Annotations(
@@ -243,6 +244,11 @@ def test_return_session(json_exporter):
 def test_add_activity_info_csv(csv_exporter):
     csv_exporter.add_activity_info_csv()
     assert csv_exporter.df.loc[0, "fermo:active"] == "true"
+
+
+def test_add_blank_info_csv(csv_exporter):
+    csv_exporter.add_blank_info_csv()
+    assert csv_exporter.df.loc[0, "fermo:isblank"] == "true"
 
 
 def test_add_sample_info_csv(csv_exporter):

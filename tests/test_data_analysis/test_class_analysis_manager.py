@@ -33,3 +33,33 @@ def test_analyze_valid(analysis_manager_instance):
         .trace_rt
     )
     assert isinstance(value, tuple)
+
+
+@pytest.mark.slow
+def test_run_blank_assignment_valid(analysis_manager_instance):
+    analysis_manager_instance.run_blank_assignment()
+    assert len(analysis_manager_instance.stats.GroupMData.blank_f_ids) != 0
+
+
+def test_run_blank_assignment_invalid_file(analysis_manager_instance):
+    analysis_manager_instance.params.GroupMetadataParameters = None
+    analysis_manager_instance.run_blank_assignment()
+    assert len(analysis_manager_instance.stats.GroupMData.blank_f_ids) == 0
+
+
+def test_run_blank_assignment_invalid_blanks(analysis_manager_instance):
+    analysis_manager_instance.stats.GroupMData.blank_s_ids = set()
+    analysis_manager_instance.run_blank_assignment()
+    assert len(analysis_manager_instance.stats.GroupMData.blank_f_ids) == 0
+
+
+def test_run_blank_assignment_invalid_nonblanks(analysis_manager_instance):
+    analysis_manager_instance.stats.GroupMData.nonblank_s_ids = set()
+    analysis_manager_instance.run_blank_assignment()
+    assert len(analysis_manager_instance.stats.GroupMData.blank_f_ids) == 0
+
+
+def test_run_blank_assignment_invalid_switched_off(analysis_manager_instance):
+    analysis_manager_instance.params.BlankAssignmentParameters.activate_module = False
+    analysis_manager_instance.run_blank_assignment()
+    assert len(analysis_manager_instance.stats.GroupMData.blank_f_ids) == 0

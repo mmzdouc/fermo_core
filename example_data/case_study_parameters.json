@@ -80,7 +80,9 @@
         },
         "blank_assignment": {
             "activate_module": true,
-            "column_ret_fold": 10
+            "factor": 10,
+            "algorithm": "mean",
+            "value": "area"
         },
         "phenotype_assignment": {
             "fold_difference": {

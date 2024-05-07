@@ -85,6 +85,7 @@ class MetadataFermoParser(BaseModel):
 
         if len(df_filtered) < len(self.df):
             self.stats.GroupMData.blank_s_ids = set(df_blank["sample_name"])
+            self.stats.GroupMData.nonblank_s_ids = set(df_filtered["sample_name"])
             self.df = df_filtered
             logger.debug(
                 f"'MetadataFermoParser': Samples marked as 'BLANK' detected. The "

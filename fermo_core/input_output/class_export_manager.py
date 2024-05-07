@@ -164,6 +164,23 @@ class CsvExporter(BaseModel):
             lambda x: _add_sample_count_info(f_id=x)
         )
 
+    def add_blank_info_csv(self: Self):
+        """Iterate through feature blank information and prepare for export"""
+
+        def _add_blank(f_id: int) -> str | None:
+            try:
+                feature = self.features.get(f_id)
+                if feature.blank is None:
+                    return None
+                elif feature.blank is True:
+                    return "true"
+                else:
+                    return "false"
+            except (TypeError, AttributeError, KeyError):
+                return None
+
+        self.df["fermo:isblank"] = self.df["id"].map(lambda x: _add_blank(f_id=x))
+
     def add_networks_info_csv(self: Self):
         """Iterate through network information and prepare for export"""
 
@@ -315,6 +332,7 @@ class CsvExporter(BaseModel):
         """Assemble data for csv export"""
         self.add_activity_info_csv()
         self.add_sample_info_csv()
+        self.add_blank_info_csv()
         self.add_networks_info_csv()
         self.add_adduct_info_csv()
         self.add_loss_info_csv()

@@ -20,6 +20,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
+import logging
 from typing import List, Optional, Self
 
 from pydantic import (
@@ -30,6 +31,8 @@ from pydantic import (
 )
 
 from fermo_core.input_output.class_validation_manager import ValidationManager
+
+logger = logging.getLogger("fermo_core")
 
 
 class FeatureFilteringParameters(BaseModel):
@@ -94,21 +97,42 @@ class BlankAssignmentParameters(BaseModel):
 
     Attributes:
         activate_module: bool to indicate if module should be executed.
-        column_ret_fold: An integer fold-change to differentiate blank features.
+        factor: An integer fold-change to differentiate blank features.
+        algorithm: the algorithm to summarize values of different samples.
+        value: the type of value to use for determination
 
     Raise:
         pydantic.ValidationError: Pydantic validation failed during instantiation.
     """
 
     activate_module: bool = False
-    column_ret_fold: PositiveInt = 10
+    factor: PositiveInt = 10
+    algorithm: str = "mean"
+    value: str = "area"
+
+    @model_validator(mode="after")
+    def validate_polarity_format(self):
+        if self.algorithm not in ["mean", "median", "maximum"]:
+            logger.warning(
+                f"Unsupported 'algorithm' format: '{self.algorithm}'. "
+                "Set to default value 'mean'."
+            )
+            self.algorithm = "mean"
+        if self.value not in ["height", "area"]:
+            logger.warning(
+                f"Unsupported 'value' format: '{self.value}'. "
+                "Set to default value 'area'."
+            )
+            self.value = "area"
+        return self
 
     def to_json(self: Self) -> dict:
-        """Convert attributes to json-compatible ones."""
         if self.activate_module:
             return {
                 "activate_module": self.activate_module,
-                "column_ret_fold": int(self.column_ret_fold),
+                "factor": int(self.factor),
+                "algorithm": str(self.algorithm),
+                "value": str(self.value),
             }
         else:
             return {"activate_module": self.activate_module}

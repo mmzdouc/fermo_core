@@ -302,7 +302,7 @@ def test_assign_blank_assignment_valid():
 def test_assign_blank_assignment_invalid():
     params = ParameterManager()
     params.assign_blank_assignment({"asdfg": "asdfg"})
-    assert params.BlankAssignmentParameters.column_ret_fold == 10
+    assert params.BlankAssignmentParameters.factor == 10
 
 
 def test_assign_phenotype_assignment_fold_valid():

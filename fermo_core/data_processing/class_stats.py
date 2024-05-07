@@ -51,12 +51,16 @@ class GroupMData(BaseModel):
 
     Attributes:
         default_s_ids: containing ungrouped samples ("DEFAULT")
+        nonblank_s_ids: containing nonblank sample ids
+        nonblank_f_ids:containing ids of nonblank sample-associated features
         blank_s_ids: containing sample blank ids
         blank_f_ids: containing ids of sample blank-associated features
         ctgrs: dict containing category:{group-id: Group}, key-value pairs
     """
 
     default_s_ids: set = set()
+    nonblank_s_ids: set = set()
+    nonblank_f_ids: set = set()
     blank_s_ids: set = set()
     blank_f_ids: set = set()
     ctgrs: dict = {}
@@ -67,6 +71,10 @@ class GroupMData(BaseModel):
 
         if len(self.default_s_ids) != 0:
             json_dict["default_s_ids"] = list(self.default_s_ids)
+
+        if len(self.nonblank_s_ids) != 0:
+            json_dict["nonblank_s_ids"] = list(self.nonblank_s_ids)
+            json_dict["nonblank_f_ids"] = list(self.nonblank_f_ids)
 
         if len(self.blank_s_ids) != 0:
             json_dict["blank_s_ids"] = list(self.blank_s_ids)
