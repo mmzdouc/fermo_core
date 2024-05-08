@@ -1,6 +1,6 @@
 """Parses fermo-style group metadata file
 
-Copyright (c) 2022-2023 Mitja Maximilian Zdouc, PhD
+Copyright (c) 2022 to present Mitja Maximilian Zdouc, PhD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -92,6 +92,8 @@ class MetadataFermoParser(BaseModel):
                 f"following samples will not partake in group comparisons: "
                 f"{', '.join(self.stats.GroupMData.blank_s_ids)}'"
             )
+        else:
+            return
 
     def prepare_ctgrs(self: Self):
         """Extract categories and groups from dataframe and assign to stats"""

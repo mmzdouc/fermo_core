@@ -90,7 +90,7 @@ def test_parse_group_metadata_invalid(params_manager, general_parser):
 
 def test_parse_phenotype_valid(params_manager, general_parser):
     general_parser.parse_phenotype(params_manager)
-    assert len(general_parser.stats.phenotypes.get("quant_data")) == 4
+    assert len(general_parser.stats.phenotypes["qualitative"].s_negative) == 7
 
 
 def test_parse_phenotype_invalid(params_manager, general_parser):

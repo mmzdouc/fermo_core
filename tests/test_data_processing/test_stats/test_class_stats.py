@@ -3,7 +3,14 @@ import pandas as pd
 from pydantic import ValidationError
 import pytest
 
-from fermo_core.data_processing.class_stats import Stats, SpecSimNet, Group, GroupMData
+from fermo_core.data_processing.class_stats import (
+    Stats,
+    SpecSimNet,
+    Group,
+    GroupMData,
+    SamplePhenotype,
+    PhenoData,
+)
 from fermo_core.input_output.class_parameter_manager import ParameterManager
 from fermo_core.input_output.class_file_manager import FileManager
 
@@ -104,11 +111,34 @@ def test_to_json_networks_valid():
     assert json_dict["networks"]["xyz"]["algorithm"] == "xyz"
 
 
+def test_sample_phenotype_json():
+    obj = SamplePhenotype(s_id="s1")
+    json_dict = obj.to_json()
+    assert json_dict["s_id"] == "s1"
+    assert json_dict.get("value") is None
+
+
+def test_pheno_data_json():
+    obj = PhenoData(
+        category="assay1",
+        datatype="qualitative",
+        s_phen_data=[SamplePhenotype(s_id="s1")],
+    )
+    json_dict = obj.to_json()
+    assert json_dict["s_phen_data"][0]["s_id"] == "s1"
+
+
 def test_to_json_phenotypes_valid():
     stats = Stats()
-    stats.phenotypes = {"test1": ("a", "b"), "test2": ("a", "c")}
+    stats.phenotypes = [
+        PhenoData(
+            category="assay1",
+            datatype="qualitative",
+            s_phen_data=[SamplePhenotype(s_id="s1")],
+        )
+    ]
     json_dict = stats.to_json()
-    assert json_dict["phenotypes"]["test1"] == ["a", "b"]
+    assert json_dict["phenotypes"][0] is not None
 
 
 def test_group_valid():

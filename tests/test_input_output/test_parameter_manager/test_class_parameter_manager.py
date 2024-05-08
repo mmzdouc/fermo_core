@@ -25,7 +25,7 @@ from fermo_core.input_output.core_module_parameter_managers import (
 from fermo_core.input_output.additional_module_parameter_managers import (
     FeatureFilteringParameters,
     BlankAssignmentParameters,
-    PhenotypeAssignmentFoldParameters,
+    PhenoQuantAssgnParams,
     SpectralLibMatchingCosineParameters,
     SpectralLibMatchingDeepscoreParameters,
     Ms2QueryAnnotationParameters,
@@ -91,7 +91,10 @@ def test_assign_msms_invalid():
 def test_assign_phenotype_valid():
     params = ParameterManager()
     params.assign_phenotype(
-        {"filepath": "example_data/case_study_bioactivity.csv", "format": "fermo"}
+        {
+            "filepath": "example_data/case_study_bioactivity_qualitative.csv",
+            "format": "qualitative",
+        }
     )
     assert isinstance(params.PhenotypeParameters, PhenotypeParameters)
 
@@ -317,20 +320,16 @@ def test_assign_group_factor_assignment_invalid():
     assert params.GroupFactAssignmentParameters.activate_module is False
 
 
-def test_assign_phenotype_assignment_fold_valid():
+def test_assign_phenotype_qualitative_valid():
     params = ParameterManager()
-    params.assign_phenotype_assignment_fold(
-        {"activate_module": True, "fold_diff": 10, "data_type": "percentage"}
-    )
-    assert isinstance(
-        params.PhenotypeAssignmentFoldParameters, PhenotypeAssignmentFoldParameters
-    )
+    params.assign_phenotype_qualitative({"activate_module": True})
+    assert isinstance(params.PhenoQuantAssgnParams, PhenoQuantAssgnParams)
 
 
-def test_assign_phenotype_assignment_fold_invalid():
+def test_assign_phenotype_qualitative_invalid():
     params = ParameterManager()
-    params.assign_phenotype_assignment_fold({"asdfg": "asdfg"})
-    assert params.PhenotypeAssignmentFoldParameters.fold_diff == 10
+    params.assign_phenotype_qualitative({"asdfg": "asdfg"})
+    assert params.PhenoQuantAssgnParams.activate_module is False
 
 
 def test_assign_spec_lib_matching_cosine_valid():

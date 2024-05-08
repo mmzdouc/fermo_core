@@ -250,6 +250,33 @@ class GroupFactor(BaseModel):
         }
 
 
+class Phenotype(BaseModel):
+    """A Pydantic-based class to represent phenotype information
+
+    Attributes:
+        score: the score calculated
+        format: the format of the phenotype file
+        category: the assay category (column) if applicable
+        descr: additional data if applicable
+    """
+
+    score: float
+    format: str
+    category: Optional[str] = None
+    descr: Optional[str] = None
+
+    def to_json(self: Self) -> dict:
+        json_dict = {"score": round(self.score, 2), "format": self.format}
+
+        if self.category is not None:
+            json_dict["category"] = self.category
+
+        if self.descr is not None:
+            json_dict["descr"] = self.descr
+
+        return json_dict
+
+
 class Feature(BaseModel):
     """A Pydantic-based class to represent a molecular feature.
 
@@ -274,7 +301,7 @@ class Feature(BaseModel):
         blank: bool to indicate if feature is blank-associated (if provided).
         groups: association to categories and groups is such data was provided.
         group_factors: indicates the group factors(fold differences) if provided.
-        phenotypes: dict of objects representing associated phenotype data
+        phenotypes: a list of Phenotype objects if phenotype was assigned
         Annotations: objects summarizing associated annotation data
         networks: dict of objects representing associated networking data
         scores: dict of objects representing associated scores
@@ -300,7 +327,7 @@ class Feature(BaseModel):
     blank: Optional[bool] = None
     groups: Optional[dict] = None
     group_factors: Optional[dict] = None
-    phenotypes: Optional[Dict] = None
+    phenotypes: Optional[list] = None
     Annotations: Optional[Annotations] = None
     networks: Optional[Dict] = None
     scores: Optional[Dict] = None
@@ -369,13 +396,11 @@ class Feature(BaseModel):
         if self.Annotations is not None:
             json_dict["annotations"] = self.Annotations.to_json()
 
-        logger.fatal(
-            "Export: dummy values for 'phenotypes' and 'scores' written. Remove ASAP"
-        )
-        json_dict["phenotypes"] = {
-            "category1": {"score": 0.9, "datatype": "concentration"},
-            "category2": {"score": 0.9, "datatype": "concentration"},
-        }
+        if self.phenotypes is not None:
+            json_dict["phenotypes"] = [obj.to_json() for obj in self.phenotypes]
+
+        logger.fatal("Export: dummy values for 'scores' written. Remove ASAP")
+
         json_dict["scores"] = {"prioritization": 1.0, "novelty": 0.5, "phenotype": 0.3}
 
         # TODO(MMZ 20.1.24): - check if everything was covered by export

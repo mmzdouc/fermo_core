@@ -11,6 +11,7 @@ from fermo_core.data_processing.builder_feature.dataclass_feature import (
     CharFrag,
     SampleInfo,
     GroupFactor,
+    Phenotype,
 )
 
 
@@ -149,3 +150,10 @@ def test_to_json_groups_valid():
     feature.groups = {"cat1": {"gr1", "gr2", "gr3"}, "cat2": {"m1", "m2"}}
     f_dict = feature.to_json()
     assert len(f_dict["groups"]["cat1"]) == 3
+
+
+def test_to_json_phenotypes_valid():
+    feature = Feature()
+    feature.phenotypes = [Phenotype(score=0.1, format="qualitative", descr="asdf")]
+    f_dict = feature.to_json()
+    assert f_dict["phenotypes"][0]["score"] == 0.1

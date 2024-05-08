@@ -190,21 +190,21 @@ def test_validate_mgf_file_invalid():
         )
 
 
-def test_validate_phenotype_fermo_valid():
+def test_validate_pheno_qualitative_fermo_valid():
     assert (
-        ValidationManager.validate_phenotype_fermo(
+        ValidationManager.validate_pheno_qualitative_fermo(
             Path(
                 "tests/test_input_output/test_validation_manager/"
-                "example_phenotype_fermo.csv"
+                "example_phenotype_qualitative.csv"
             )
         )
         is None
     )
 
 
-def test_validate_phenotype_fermo_invalid():
+def test_validate_pheno_qualitative_fermo_invalid():
     with pytest.raises(ValueError):
-        ValidationManager.validate_phenotype_fermo(
+        ValidationManager.validate_pheno_qualitative_fermo(
             Path(
                 "tests/test_input_output/test_validation_manager/"
                 "example_duplicate_entries.csv"

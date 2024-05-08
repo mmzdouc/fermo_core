@@ -37,8 +37,8 @@ from fermo_core.data_processing.parser.group_metadata_parser.class_fermo_metadat
 from fermo_core.data_processing.parser.spec_library_parser.class_spec_lib_mgf_parser import (
     SpecLibMgfParser,
 )
-from fermo_core.data_processing.parser.phenotype_parser.class_fermo_phenotype_parser import (
-    PhenotypeFermoParser,
+from fermo_core.data_processing.parser.phenotype_parser.class_phenotype_parser import (
+    PhenotypeParser,
 )
 from fermo_core.data_processing.class_repository import Repository
 from fermo_core.data_processing.class_stats import Stats
@@ -158,10 +158,27 @@ class GeneralParser(BaseModel):
             return
 
         match params.PhenotypeParameters.format:
-            case "fermo":
-                self.stats, self.samples = PhenotypeFermoParser().parse(
-                    self.stats, self.samples, params
+            case "qualitative":
+                try:
+                    phenotype_parser = PhenotypeParser(
+                        stats=self.stats,
+                        df=pd.read_csv(params.PhenotypeParameters.filepath),
+                    )
+                    phenotype_parser.message("started")
+                    phenotype_parser.validate_sample_names()
+                    phenotype_parser.parse_qualitative()
+                    self.stats = phenotype_parser.return_stats()
+                    phenotype_parser.message("completed")
+                except Exception as e:
+                    logger.warning(str(e))
+                    return
+            case _:
+                logger.warning(
+                    f"'GeneralParser': detected unsupported format "
+                    f"'{params.PhenotypeParameters.format}' for 'phenotype' "
+                    f"- SKIP"
                 )
+                return
 
     def parse_spectral_library(self: Self, params: ParameterManager):
         """Parses user-provided spectral_library file.

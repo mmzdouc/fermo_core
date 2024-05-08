@@ -2,7 +2,7 @@
 
 Interface to collect and hold user input from both command line and GUI.
 
-Copyright (c) 2022-2023 Mitja Maximilian Zdouc, PhD
+Copyright (c) 2022 to present Mitja Maximilian Zdouc, PhD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -48,7 +48,7 @@ from fermo_core.input_output.additional_module_parameter_managers import (
     FeatureFilteringParameters,
     BlankAssignmentParameters,
     GroupFactAssignmentParameters,
-    PhenotypeAssignmentFoldParameters,
+    PhenoQuantAssgnParams,
     SpectralLibMatchingCosineParameters,
     SpectralLibMatchingDeepscoreParameters,
     Ms2QueryAnnotationParameters,
@@ -86,8 +86,7 @@ class ParameterManager(BaseModel):
         FeatureFilteringParameters: class handling feature filter module parameter
         BlankAssignmentParameters: class handling blank-assignment module parameter
         GroupFactAssignmentParameters: class handling group factor assignment mod params
-        PhenotypeAssignmentFoldParameters: class handling phenotype-assignment module
-            parameter
+        PhenoQuantAssgnParams: class handling phenotype quant assignmentparameter
         SpectralLibMatchingCosineParameters: class handling cosine-based spectral
             library matching module parameter
         SpectralLibMatchingDeepscoreParameters: class handling ms2deepscore-based
@@ -123,9 +122,7 @@ class ParameterManager(BaseModel):
     GroupFactAssignmentParameters: GroupFactAssignmentParameters = (
         GroupFactAssignmentParameters()
     )
-    PhenotypeAssignmentFoldParameters: PhenotypeAssignmentFoldParameters = (
-        PhenotypeAssignmentFoldParameters()
-    )
+    PhenoQuantAssgnParams: PhenoQuantAssgnParams = PhenoQuantAssgnParams()
     SpectralLibMatchingCosineParameters: SpectralLibMatchingCosineParameters = (
         SpectralLibMatchingCosineParameters()
     )
@@ -184,9 +181,7 @@ class ParameterManager(BaseModel):
         json_dict[
             "GroupFactAssignmentParameters"
         ] = self.GroupFactAssignmentParameters.to_json()
-        json_dict[
-            "PhenotypeAssignmentFoldParameters"
-        ] = self.PhenotypeAssignmentFoldParameters.to_json()
+        json_dict["PhenoQuantAssgnParams"] = self.PhenoQuantAssgnParams.to_json()
         json_dict[
             "SpectralLibMatchingCosineParameters"
         ] = self.SpectralLibMatchingCosineParameters.to_json()
@@ -346,9 +341,9 @@ class ParameterManager(BaseModel):
                 "group_factor_assignment",
             ),
             (
-                user_params.get("phenotype_assignment", {}).get("fold_difference"),
-                self.assign_phenotype_assignment_fold,
-                "phenotype_assignment/fold_difference",
+                user_params.get("phenotype_assignment", {}).get("qualitative"),
+                self.assign_phenotype_qualitative,
+                "phenotype_assignment/qualitative",
             ),
             (
                 user_params.get("spectral_library_matching", {}).get("modified_cosine"),
@@ -712,27 +707,23 @@ class ParameterManager(BaseModel):
             self.log_malformed_parameters_default("group_factor_assignment")
             self.GroupFactAssignmentParameters = GroupFactAssignmentParameters()
 
-    def assign_phenotype_assignment_fold(self: Self, user_params: dict):
-        """Assign phenotype_assignment/fold_difference parameters to
-            self.PhenotypeAssignmentFoldParameters.
+    def assign_phenotype_qualitative(self: Self, user_params: dict):
+        """Assign phenotype_assignment/qualitative parameters to
+            self.PhenoQuantAssgnParams.
 
         Parameters:
             user_params: user-provided params, read from json file
         """
         try:
-            self.PhenotypeAssignmentFoldParameters = PhenotypeAssignmentFoldParameters(
-                **user_params
-            )
+            self.PhenoQuantAssgnParams = PhenoQuantAssgnParams(**user_params)
             logger.info(
                 "'ParameterManager': validated and assigned parameters "
-                "for 'phenotype_assignment/fold_difference'."
+                "for 'phenotype_assignment/qualitative'."
             )
         except Exception as e:
             logger.warning(str(e))
-            self.log_malformed_parameters_default(
-                "phenotype_assignment/fold_difference"
-            )
-            self.PhenotypeAssignmentFoldParameters = PhenotypeAssignmentFoldParameters()
+            self.log_malformed_parameters_default("phenotype_assignment/qualitative")
+            self.PhenoQuantAssgnParams = PhenoQuantAssgnParams()
 
     def assign_spec_lib_matching_cosine(self: Self, user_params: dict):
         """Assign spectral_library_matching/modified_cosine parameters to

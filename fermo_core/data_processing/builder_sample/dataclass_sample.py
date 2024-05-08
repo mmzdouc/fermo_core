@@ -20,22 +20,9 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-from typing import Optional, Dict, Union, Self
+from typing import Optional, Dict, Self
 
 from pydantic import BaseModel
-
-
-class Phenotype(BaseModel):
-    """Pydantic-based class to organize phenotype/bioactivity info of Sample object
-
-    Attributes:
-        value: the measured original value for the sample in an experiment
-        conc: the concentration of the sample (if all samples were measured
-            at the same concentration, this is 1)
-    """
-
-    value: Union[int, float]
-    conc: Union[int, float]
 
 
 class Sample(BaseModel):
@@ -48,8 +35,6 @@ class Sample(BaseModel):
         networks: for each network algorithm, a set of subnetwork ids found in sample
         max_intensity: the highest intensity of a feature in the sample (absolute)
         max_area: the highest area of a feature in the sample (absolute)
-        phenotypes: indicates the conditions in which the sample showed activity. A
-            dict of condition : Phenotype() pairs.
     """
 
     s_id: Optional[str] = None
@@ -58,7 +43,6 @@ class Sample(BaseModel):
     networks: Optional[Dict[str, set]] = None
     max_intensity: Optional[int] = None
     max_area: Optional[int] = None
-    phenotypes: Optional[Dict[str, Phenotype]] = None
 
     def to_json(self: Self) -> dict:
         """Convert class attributes to json-compatible dict.
@@ -89,13 +73,5 @@ class Sample(BaseModel):
                 json_dict["sample_spec_features"][feature_id] = self.features[
                     feature_id
                 ].to_json()
-
-        if self.phenotypes is not None:
-            json_dict["phenotypes"] = dict()
-            for entry in self.phenotypes:
-                json_dict["phenotypes"][entry] = {
-                    "value": float(self.phenotypes[entry].value),
-                    "conc": float(self.phenotypes[entry].conc),
-                }
 
         return json_dict

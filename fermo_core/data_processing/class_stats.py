@@ -21,7 +21,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 from pydantic import BaseModel
-from typing import Self, Tuple, Optional, Dict, Any
+from typing import Self, Optional, Dict, Any
 
 import networkx as nx
 import pandas as pd
@@ -90,6 +90,50 @@ class GroupMData(BaseModel):
         return json_dict
 
 
+class SamplePhenotype(BaseModel):
+    """Pydantic-based class to organize phenotype data per sample
+
+    Attributes:
+        s_id: the sample identifier
+        value: the corresponding value if any
+    """
+
+    s_id: str
+    value: Optional[float] = None
+
+    def to_json(self: Self):
+        json_dict = {"s_id": str(self.s_id)}
+        if self.value is not None:
+            json_dict["value"] = self.value
+        return json_dict
+
+
+class PhenoData(BaseModel):
+    """Pydantic-based class to organize phenotype data from file
+
+    Attributes:
+        datatype: a string indicating the data type and the algorithm to use
+        category: identifier
+        s_phen_data: a list of SamplePhenotype instances of positive (active) samples
+        s_negative: a list of sample IDs with no data - inactive (negative) samples
+    """
+
+    datatype: str
+    category: str
+    s_phen_data: list = []
+    s_negative: Optional[list] = None
+
+    def to_json(self: Self):
+        json_dict = {
+            "category": self.category,
+            "datatype": self.datatype,
+            "s_phen_data": [obj.to_json() for obj in self.s_phen_data],
+        }
+        if self.s_negative is not None:
+            json_dict["s_negative"] = self.s_negative
+        return json_dict
+
+
 class SpecSimNet(BaseModel):
     """Pydantic-based class to organize info on a spectral similarity analysis run
 
@@ -132,7 +176,7 @@ class Stats(BaseModel):
         inactive_features: filtered out during analysis run by FeatureFilter module
         GroupMData: instance of the GroupMData object containing group metadata
         networks: all similarity networks in analysis run
-        phenotypes: dict of tuples of active sample IDs
+        phenotypes: list of PhenoData objects containing phenotype data
         spectral_library: a list of matchms.Spectrum instances
         analysis_log: a list of performed steps by the AnalysisManager
     """
@@ -148,7 +192,7 @@ class Stats(BaseModel):
     inactive_features: set = set()
     GroupMData: GroupMData = GroupMData()
     networks: Optional[Dict[str, SpecSimNet]] = None
-    phenotypes: Optional[Dict[str, Tuple[str, ...]]] = None
+    phenotypes: Optional[list] = None
     spectral_library: Optional[list] = None
     analysis_log: list = []
 
@@ -216,8 +260,6 @@ class Stats(BaseModel):
                 json_dict["networks"][network] = self.networks[network].to_json()
 
         if self.phenotypes is not None:
-            json_dict["phenotypes"] = dict()
-            for entry in self.phenotypes:
-                json_dict["phenotypes"][entry] = list(self.phenotypes[entry])
+            json_dict["phenotypes"] = [val.to_json() for val in self.phenotypes]
 
         return json_dict

@@ -46,6 +46,9 @@ from fermo_core.data_analysis.feature_filter.class_feature_filter import Feature
 from fermo_core.data_analysis.sim_networks_manager.class_sim_networks_manager import (
     SimNetworksManager,
 )
+from fermo_core.data_analysis.phenotype_manager.class_phenotype_manager import (
+    PhenotypeManager,
+)
 
 logger = logging.getLogger("fermo_core")
 
@@ -84,6 +87,7 @@ class AnalysisManager(BaseModel):
         self.run_blank_assignment()
         self.run_group_assignment()
         self.run_group_factor_assignment()
+        self.run_phenotype_manager()
         self.run_sim_networks_manager()
         self.run_annotation_manager()
         self.run_chrom_trace_calculator()
@@ -193,6 +197,35 @@ class AnalysisManager(BaseModel):
         self.stats.analysis_log.append(
             "Ran module 'GroupFactorAssigner'. For parameters, "
             "see 'additional_modules/group_factor_assignment'."
+        )
+
+    def run_phenotype_manager(self: Self):
+        """Run optional PhenotypeManager analysis step"""
+        if self.params.PhenotypeParameters is None:
+            logger.info("'PhenotypeManager': no phenotype data provided - SKIP.")
+            return
+        elif not any(
+            [
+                self.params.PhenoQuantAssgnParams.activate_module,
+            ]
+        ):
+            logger.info(
+                "'PhenotypeManager': no modules in 'phenotype_assignment' activated - "
+                "SKIP."
+            )
+            return
+
+        phenotype_manager = PhenotypeManager(
+            params=self.params,
+            features=self.features,
+            stats=self.stats,
+            samples=self.samples,
+        )
+        phenotype_manager.run_analysis()
+        self.stats, self.features = phenotype_manager.return_attrs()
+        self.stats.analysis_log.append(
+            "Ran module 'PhenotypeManager'. For parameters, "
+            "see 'additional_modules/phenotype_assignment'."
         )
 
     def run_sim_networks_manager(self: Self):

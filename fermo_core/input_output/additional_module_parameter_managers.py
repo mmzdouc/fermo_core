@@ -178,31 +178,44 @@ class GroupFactAssignmentParameters(BaseModel):
             return {"activate_module": self.activate_module}
 
 
-class PhenotypeAssignmentFoldParameters(BaseModel):
-    """A Pydantic-based class for repr. and valid. of phenotype assignment parameters.
-
-    This class addresses parameters for the fold-difference algorithm.
+class PhenoQuantAssgnParams(BaseModel):
+    """A Pydantic-based class for phenotype quantitative assignment parameters
 
     Attributes:
         activate_module: bool to indicate if module should be executed.
-        fold_diff: An integer fold-change to differentiate phenotype-assoc. features.
-        data_type: Type of data ('percentage'- or 'concentration'-like).
-
-    Raise:
-        pydantic.ValidationError: Pydantic validation failed during instantiation.
+        factor: An integer fold-change to differentiate phenotype-assoc. features.
+        algorithm: the algorithm to summarize values of active vs inactive samples.
+        value: the type of value to use for determination
     """
 
     activate_module: bool = False
-    fold_diff: PositiveInt = 10
-    data_type: str = "percentage"
+    factor: PositiveInt = 10
+    algorithm: str = "minmax"
+    value: str = "area"
+
+    @model_validator(mode="after")
+    def validate_strs(self):
+        if self.algorithm not in ["mean", "median", "minmax"]:
+            logger.warning(
+                f"Unsupported 'algorithm' format: '{self.algorithm}'. "
+                "Set to default value 'minmax'."
+            )
+            self.algorithm = "minmax"
+        if self.value not in ["height", "area"]:
+            logger.warning(
+                f"Unsupported 'value' format: '{self.value}'. "
+                "Set to default value 'area'."
+            )
+            self.value = "area"
+        return self
 
     def to_json(self: Self) -> dict:
-        """Convert attributes to json-compatible ones."""
         if self.activate_module:
             return {
                 "activate_module": self.activate_module,
-                "fold_diff": int(self.fold_diff),
-                "data_type": str(self.data_type),
+                "factor": int(self.factor),
+                "algorithm": str(self.algorithm),
+                "value": str(self.value),
             }
         else:
             return {"activate_module": self.activate_module}

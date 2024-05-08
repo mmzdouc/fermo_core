@@ -73,7 +73,7 @@
                     }
                 },
                 "phenotype": {
-                    "title": "(Optional): file containing phenotype information. Also set the specifications for the phenotype module below.",
+                    "title": "(Optional): file containing phenotype information. 'Format' requires respective 'phenotype_assignment' settings below.",
                     "additionalProperties": false,
                     "type": "object",
                     "required": [
@@ -89,7 +89,9 @@
                             "title": "Specifies the format of the file. Must be one of the allowed formats in 'enum'.",
                             "type": "string",
                             "enum": [
-                                "fermo"
+                                "qualitative",
+                                "quantitative-percentage",
+                                "quantitative-concentration"
                             ]
                         }
                     }
@@ -459,8 +461,8 @@
                     "additionalProperties": false,
                     "type": "object",
                     "properties": {
-                        "fold_difference": {
-                            "title": "Fold-difference algorithm. Molecular features detected in both phenotype positive/negative samples are separated by the fold-difference between the lowest area in positive samples and the highest area in negative samples. If the difference is >= to the fold-change parameter, molecular features are still considered phenotype-associated.",
+                        "qualitative": {
+                            "title": "Fold-difference algorithm. Molecular features are binned into activity-associated and -non-associated based on factor (fold difference) between active/inactive samples.",
                             "additionalProperties": false,
                             "type": "object",
                             "required": [
@@ -471,17 +473,26 @@
                                     "title": "Specifies whether this module should be run. Default: False",
                                     "type": "boolean"
                                 },
-                                "fold_diff": {
-                                    "title": "(Optional): fold-change difference to be used for molecular feature differentiation. Default value: 10",
+                                "factor": {
+                                    "title": "(Optional): factor difference to be used for molecular feature differentiation. Default value: 5",
                                     "type": "integer",
                                     "minimum": 1
                                 },
-                                "data_type": {
-                                    "title": "(Optional): specifies how the data type is interpreted. Is the data 'percentage-like' ('the higher the better)' or 'concentration-like' ('the lower, the better')? Default value: 'percentage'.",
+                                "algorithm": {
+                                    "title": "(Optional): Algorithm to summarize value over active/inactive samples. Default value: 'minmax'.",
                                     "type": "string",
                                     "enum": [
-                                        "percentage",
-                                        "concentration"
+                                        "minmax",
+                                        "mean",
+                                        "median"
+                                    ]
+                                },
+                                "value": {
+                                    "title": "(Optional): Specifies which value type should be considered. Default: 'area'.",
+                                    "type": "string",
+                                    "enum": [
+                                        "height",
+                                        "area"
                                     ]
                                 }
                             }
