@@ -1,6 +1,6 @@
 """Organize the calling of data analysis modules.
 
-Copyright (c) 2022-2023 Mitja Maximilian Zdouc, PhD
+Copyright (c) 2022 to present Mitja Maximilian Zdouc, PhD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -35,9 +35,19 @@ from fermo_core.data_analysis.annotation_manager.class_annotation_manager import
 from fermo_core.data_analysis.chrom_trace_calculator.class_chrom_trace_calculator import (
     ChromTraceCalculator,
 )
+from fermo_core.data_analysis.group_assigner.class_group_assigner import GroupAssigner
+from fermo_core.data_analysis.blank_assigner.class_blank_assigner import (
+    BlankAssigner,
+)
+from fermo_core.data_analysis.group_factor_assigner.class_group_factor_assigner import (
+    GroupFactorAssigner,
+)
 from fermo_core.data_analysis.feature_filter.class_feature_filter import FeatureFilter
 from fermo_core.data_analysis.sim_networks_manager.class_sim_networks_manager import (
     SimNetworksManager,
+)
+from fermo_core.data_analysis.phenotype_manager.class_phenotype_manager import (
+    PhenotypeManager,
 )
 
 logger = logging.getLogger("fermo_core")
@@ -74,11 +84,12 @@ class AnalysisManager(BaseModel):
         logger.info("'AnalysisManager': started analysis steps.")
 
         self.run_feature_filter()
-
+        self.run_blank_assignment()
+        self.run_group_assignment()
+        self.run_group_factor_assignment()
+        self.run_phenotype_manager()
         self.run_sim_networks_manager()
-
         self.run_annotation_manager()
-
         self.run_chrom_trace_calculator()
 
         logger.info("'AnalysisManager': completed analysis steps.")
@@ -91,17 +102,136 @@ class AnalysisManager(BaseModel):
             )
             return
 
-        feature_filter = FeatureFilter(
-            params=self.params,
-            stats=self.stats,
-            features=self.features,
-            samples=self.samples,
-        )
-        feature_filter.filter()
-        self.stats, self.features, self.samples = feature_filter.return_values()
-        self.stats.analysis_log.append(
-            "Ran module 'FeatureFilter'. For parameters, see 'feature_filtering'."
-        )
+        try:
+            feature_filter = FeatureFilter(
+                params=self.params,
+                stats=self.stats,
+                features=self.features,
+                samples=self.samples,
+            )
+            feature_filter.filter()
+            self.stats, self.features, self.samples = feature_filter.return_values()
+            self.stats.analysis_log.append(
+                "Ran module 'FeatureFilter'. For parameters, see 'feature_filtering'."
+            )
+        except Exception as e:
+            logger.warning(str(e))
+            return
+
+    def run_blank_assignment(self: Self):
+        """Run optional blank_assignment analysis step"""
+        if self.params.GroupMetadataParameters is None:
+            logger.info("'BlankAssigner': no group metadata file provided - SKIP")
+            return
+
+        if len(self.stats.GroupMData.blank_s_ids) == 0:
+            logger.info("'BlankAssigner': no sample marked as 'BLANK' - SKIP")
+            return
+
+        if len(self.stats.GroupMData.nonblank_s_ids) == 0:
+            logger.info("'BlankAssigner': all sample marked as 'BLANK' - SKIP")
+            return
+
+        if self.params.BlankAssignmentParameters.activate_module is False:
+            logger.info(
+                "'BlankAssigner': 'blank_assignment/activate_module' disabled - SKIP"
+            )
+            return
+
+        try:
+            blank_assigner = BlankAssigner(
+                params=self.params, features=self.features, stats=self.stats
+            )
+            blank_assigner.run_analysis()
+            self.stats, self.features = blank_assigner.return_attrs()
+            self.stats.analysis_log.append(
+                "Ran module 'BlankAssigner'. For parameters, "
+                "see 'additional_modules/blank_assignment'."
+            )
+        except Exception as e:
+            logger.warning(str(e))
+            return
+
+    def run_group_assignment(self: Self):
+        """Run optional group_assignment analysis step
+
+        Notes: must be called after BlankAssigner
+        """
+        if self.params.GroupMetadataParameters is None:
+            logger.info("'GroupAssigner': no group metadata file provided - SKIP")
+            return
+
+        try:
+            group_assigner = GroupAssigner(features=self.features, stats=self.stats)
+            group_assigner.run_analysis()
+            self.stats, self.features = group_assigner.return_attrs()
+            self.stats.analysis_log.append("Ran module 'GroupAssigner'.")
+        except Exception as e:
+            logger.warning(str(e))
+            return
+
+    def run_group_factor_assignment(self: Self):
+        """Run optional group_assignment analysis step
+
+        Notes: must be called after BlankAssigner and GroupAssigner
+        """
+
+        if self.params.GroupMetadataParameters is None:
+            logger.info("'GroupFactorAssigner': no group metadata file provided - SKIP")
+            return
+        if self.params.GroupFactAssignmentParameters.activate_module is False:
+            logger.info(
+                "'GroupFactorAssigner': "
+                "'group_factor_assignment/activate_module' disabled - SKIP"
+            )
+            return
+
+        try:
+            group_fact_ass = GroupFactorAssigner(
+                features=self.features, stats=self.stats, params=self.params
+            )
+            group_fact_ass.run_analysis()
+            self.features = group_fact_ass.return_features()
+            self.stats.analysis_log.append(
+                "Ran module 'GroupFactorAssigner'. For parameters, "
+                "see 'additional_modules/group_factor_assignment'."
+            )
+        except Exception as e:
+            logger.warning(str(e))
+            return
+
+    def run_phenotype_manager(self: Self):
+        """Run optional PhenotypeManager analysis step"""
+        if self.params.PhenotypeParameters is None:
+            logger.info("'PhenotypeManager': no phenotype data provided - SKIP.")
+            return
+        elif not any(
+            [
+                self.params.PhenoQuantAssgnParams.activate_module,
+            ]
+        ):
+            logger.info(
+                "'PhenotypeManager': no modules in 'phenotype_assignment' activated - "
+                "SKIP."
+            )
+            return
+
+        try:
+            phenotype_manager = PhenotypeManager(
+                params=self.params,
+                features=self.features,
+                stats=self.stats,
+                samples=self.samples,
+            )
+            phenotype_manager.run_analysis()
+            self.stats, self.features = phenotype_manager.return_attrs()
+            self.stats.analysis_log.append(
+                "Ran module 'PhenotypeManager'. For parameters, "
+                "see 'additional_modules/phenotype_assignment'."
+            )
+        except Exception as e:
+            logger.warning(str(e))
+            return
 
     def run_sim_networks_manager(self: Self):
         """Run optional SimNetworksManager analysis step"""
@@ -120,33 +250,46 @@ class AnalysisManager(BaseModel):
             )
             return
 
-        sim_networks_manager = SimNetworksManager(
-            params=self.params,
-            stats=self.stats,
-            features=self.features,
-            samples=self.samples,
-        )
-        sim_networks_manager.run_analysis()
-        self.stats, self.features, self.samples = sim_networks_manager.return_attrs()
-        self.stats.analysis_log.append(
-            "Ran module 'SimNetworksManager'. For parameters, "
-            "see 'core_modules/spec_sim_networking'."
-        )
+        try:
+            sim_networks_manager = SimNetworksManager(
+                params=self.params,
+                stats=self.stats,
+                features=self.features,
+                samples=self.samples,
+            )
+            sim_networks_manager.run_analysis()
+            (
+                self.stats,
+                self.features,
+                self.samples,
+            ) = sim_networks_manager.return_attrs()
+            self.stats.analysis_log.append(
+                "Ran module 'SimNetworksManager'. For parameters, "
+                "see 'core_modules/spec_sim_networking'."
+            )
+        except Exception as e:
+            logger.warning(str(e))
+            return
 
     def run_annotation_manager(self: Self):
         """Run optional AnnotationManager analysis step"""
-        annotation_manager = AnnotationManager(
-            params=self.params,
-            stats=self.stats,
-            features=self.features,
-            samples=self.samples,
-        )
-        annotation_manager.run_analysis()
-        self.stats, self.features, self.samples = annotation_manager.return_attrs()
-        self.stats.analysis_log.append(
-            "Ran module 'AnnotationManager'. For parameters, "
-            "see 'core_modules' and 'additional_modules'."
-        )
+
+        try:
+            annotation_manager = AnnotationManager(
+                params=self.params,
+                stats=self.stats,
+                features=self.features,
+                samples=self.samples,
+            )
+            annotation_manager.run_analysis()
+            self.stats, self.features, self.samples = annotation_manager.return_attrs()
+            self.stats.analysis_log.append(
+                "Ran module 'AnnotationManager'. For parameters, "
+                "see 'core_modules' and 'additional_modules'."
+            )
+        except Exception as e:
+            logger.warning(str(e))
+            return
 
     def run_chrom_trace_calculator(self: Self):
         """Run mandatory ChromTraceCalculator analysis step."""

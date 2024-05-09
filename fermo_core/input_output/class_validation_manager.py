@@ -24,12 +24,14 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 import json
-import jsonschema
 import logging
-import pandas as pd
 from pathlib import Path
-from pyteomics import mgf
 from typing import List
+
+import jsonschema
+import pandas as pd
+from pyteomics import mgf
+
 
 logger = logging.getLogger("fermo_core")
 
@@ -215,14 +217,14 @@ class ValidationManager:
             raise ValueError(f"File '{mgf_file.name}' is not a .mgf-file or is empty.")
 
     @staticmethod
-    def validate_phenotype_fermo(pheno_file: Path):
-        """Validate that file is a phenotype file in fermo style.
+    def validate_pheno_qualitative_fermo(pheno_file: Path):
+        """Validate that file is a qualitative phenotype file
 
         Args:
-           pheno_file: A pathlib Path object pointing towards a fermo-bioactivity file
+           pheno_file: A pathlib Path object
 
         Raises:
-            ValueError: Not a fermo style bioactivity/phenotype file
+            ValueError: Incorrect format
         """
 
         def _raise_error(message):
@@ -232,19 +234,10 @@ class ValidationManager:
 
         if df.filter(regex="^sample_name$").columns.empty:
             _raise_error("No column labelled 'sample_name'")
-        elif not len(df.columns) > 1:
-            _raise_error("No data column(s)")
         elif df.isnull().any().any():
-            _raise_error("Empty fields in 'sample_name' or data column(s)")
+            _raise_error("Empty fields in 'sample_name'")
         elif df.applymap(lambda x: str(x).isspace()).any().any():
             _raise_error("Fields containing only (white)space")
-        elif (
-            df.loc[:, df.columns != "sample_name"]
-            .select_dtypes(include="object")
-            .any()
-            .any()
-        ):
-            _raise_error("Data column(s) with non-numeric values")
 
     @staticmethod
     def validate_group_metadata_fermo(group_file: Path):
@@ -258,20 +251,24 @@ class ValidationManager:
         """
 
         def _raise_error(message):
-            raise ValueError(f"{message}  in file '{group_file.name}' detected.")
+            raise ValueError(f"{message} in file '{group_file.name}' detected.")
 
         df = pd.read_csv(group_file)
 
         if df.filter(regex="^sample_name$").columns.empty:
             _raise_error("No column labelled 'sample_name'")
-        elif not len(df.columns) > 1:
-            _raise_error("No data column(s)")
+        elif len(df.columns) < 2:
+            _raise_error("No category column(s)")
+        elif len(df.columns) > 7:
+            _raise_error("Too many category columns (maximum allowed: 7)")
         elif df.isnull().any().any():
-            _raise_error("Empty fields in 'sample_name' or data column(s)")
+            _raise_error("Empty fields")
         elif df.applymap(lambda x: str(x).isspace()).any().any():
             _raise_error("Fields containing only (white)space")
-        elif df.applymap(lambda x: x == "DEFAULT").any().any():
-            _raise_error("Fields with prohibited value 'DEFAULT'")
+        elif df.applymap(lambda x: " " in str(x)).any().any():
+            _raise_error("Fields containing (white)space")
+        elif any(df.columns.str.contains(r"\s")):
+            _raise_error("Whitespace in column(s)")
 
     @staticmethod
     def validate_range_zero_one(user_range: List[float]):

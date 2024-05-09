@@ -25,7 +25,10 @@ import logging
 import pandas as pd
 from pydantic import BaseModel
 
-from fermo_core.data_processing.builder_feature.dataclass_feature import Feature
+from fermo_core.data_processing.builder_feature.dataclass_feature import (
+    Feature,
+    SampleInfo,
+)
 
 logger = logging.getLogger("fermo_core")
 
@@ -84,19 +87,14 @@ class FeatureBuilder(BaseModel):
         """Calculate and set attribute for retention time range
 
         Raises:
-            ValueError: called out of order: self.feature.rt_start or
-            self.feature.rt_stop are not set yet.
+            ValueError: method called out of order
         """
-        try:
-            if self.feature.rt_start is None or self.feature.rt_stop is None:
-                raise ValueError(
-                    "'FeatureBuilder': self.set_rt_range() called out of order. "
-                    "'self.feature.rt_start' and 'self.feature.rt_stop' must "
-                    "not be 'None'."
-                )
-        except ValueError as e:
-            logger.error(str(e))
-            raise e
+        if self.feature.rt_start is None or self.feature.rt_stop is None:
+            raise ValueError(
+                "'FeatureBuilder': self.set_rt_range() called out of order. "
+                "'self.feature.rt_start' and 'self.feature.rt_stop' must "
+                "not be 'None'."
+            )
 
         self.feature.rt_range = round(
             float(self.feature.rt_stop - self.feature.rt_start), 2
@@ -151,7 +149,7 @@ class FeatureBuilder(BaseModel):
         return self
 
     def set_samples(self, row: pd.Series):
-        """Set attribute
+        """Extract and set sample ids
 
         Arguments:
             row: a pandas Series to extract IDs of samples in which feature was detected
@@ -162,7 +160,57 @@ class FeatureBuilder(BaseModel):
             if row[f"datafile:{sample_id}:feature_state"] == "DETECTED":
                 samples.append(sample_id)
 
-        self.feature.samples = tuple(samples)
+        self.feature.samples = set(samples)
+        return self
+
+    def set_area_per_sample(self, row: pd.Series):
+        """Extract and set area per sample
+
+        Arguments:
+            row: a pandas Series to extract sample IDs and areas from
+
+        Raises:
+            ValueError: method called out of order
+        """
+        if self.feature.samples is None:
+            raise ValueError(
+                "'FeatureBuilder': self.set_area_per_sample() called out of order. "
+                "'self.feature.samples' must not be 'None'."
+            )
+
+        area_per_sample = []
+        for s_id in self.feature.samples:
+            area_per_sample.append(
+                SampleInfo(s_id=s_id, value=row[f"datafile:{s_id}:area"])
+            )
+        area_per_sample = sorted(area_per_sample, key=lambda x: x.value, reverse=True)
+        self.feature.area_per_sample = area_per_sample
+        return self
+
+    def set_height_per_sample(self, row: pd.Series):
+        """Extract and set max height per sample
+
+        Arguments:
+            row: a pandas Series to extract sample IDs and max height from
+
+        Raises:
+            ValueError: method called out of order
+        """
+        if self.feature.samples is None:
+            raise ValueError(
+                "'FeatureBuilder': self.set_height_per_sample() called out of order. "
+                "'self.feature.samples' must not be 'None'."
+            )
+
+        height_per_sample = []
+        for s_id in self.feature.samples:
+            height_per_sample.append(
+                SampleInfo(s_id=s_id, value=row[f"datafile:{s_id}:intensity_range:max"])
+            )
+        height_per_sample = sorted(
+            height_per_sample, key=lambda x: x.value, reverse=True
+        )
+        self.feature.height_per_sample = height_per_sample
         return self
 
     def get_result(self):

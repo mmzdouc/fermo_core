@@ -9,6 +9,9 @@ from fermo_core.data_processing.builder_feature.dataclass_feature import (
     NeutralLoss,
     SimNetworks,
     CharFrag,
+    SampleInfo,
+    GroupFactor,
+    Phenotype,
 )
 
 
@@ -18,6 +21,10 @@ def test_init_feature_valid():
 
 def test_init_sim_networks_valid():
     assert isinstance(SimNetworks(algorithm="mod_cosine", network_id=0), SimNetworks)
+
+
+def test_init_sample_info_valid():
+    assert isinstance(SampleInfo(s_id="s1", value=100), SampleInfo)
 
 
 def test_to_json_f_id_valid():
@@ -104,3 +111,49 @@ def test_to_json_fragments_valid():
     ]
     f_dict = feature.to_json()
     assert f_dict["annotations"]["fragments"][0]["id"] == "Ala-Ala"
+
+
+def test_to_json_area_per_sample_valid():
+    feature = Feature()
+    feature.area_per_sample = [
+        SampleInfo(s_id="s1", value=100),
+        SampleInfo(s_id="s2", value=200),
+    ]
+    f_dict = feature.to_json()
+    assert f_dict["area_per_sample"][0]["value"] == 100
+
+
+def test_to_json_height_per_sample_valid():
+    feature = Feature()
+    feature.height_per_sample = [
+        SampleInfo(s_id="s1", value=100),
+        SampleInfo(s_id="s2", value=200),
+    ]
+    f_dict = feature.to_json()
+    assert f_dict["height_per_sample"][0]["value"] == 100
+
+
+def test_to_json_group_factor_valid():
+    feature = Feature()
+    feature.group_factors = {
+        "cat1": [
+            GroupFactor(group1="s1", group2="s2", factor=10),
+            GroupFactor(group1="s2", group2="s1", factor=0.1),
+        ]
+    }
+    f_dict = feature.to_json()
+    assert f_dict["group_factors"] is not None
+
+
+def test_to_json_groups_valid():
+    feature = Feature()
+    feature.groups = {"cat1": {"gr1", "gr2", "gr3"}, "cat2": {"m1", "m2"}}
+    f_dict = feature.to_json()
+    assert len(f_dict["groups"]["cat1"]) == 3
+
+
+def test_to_json_phenotypes_valid():
+    feature = Feature()
+    feature.phenotypes = [Phenotype(score=0.1, format="qualitative", descr="asdf")]
+    f_dict = feature.to_json()
+    assert f_dict["phenotypes"][0]["score"] == 0.1

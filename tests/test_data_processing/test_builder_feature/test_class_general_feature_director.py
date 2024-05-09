@@ -16,6 +16,8 @@ def dummy_row():
             "rt": 5.1,
             "rt_range:min": 4.9,
             "rt_range:max": 5.2,
+            "datafile:s1:area": 100,
+            "datafile:S1:intensity_range:max": 100,
         }
     )
 

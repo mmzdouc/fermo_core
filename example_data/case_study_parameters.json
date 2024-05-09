@@ -11,8 +11,8 @@
             "rel_int_from": 0.01
         },
         "phenotype": {
-            "filepath": "example_data/case_study_bioactivity.csv",
-            "format": "fermo"
+            "filepath": "example_data/case_study_bioactivity_qualitative.csv",
+            "format": "qualitative"
         },
         "group_metadata": {
             "filepath": "example_data/case_study_group_metadata.csv",
@@ -80,13 +80,21 @@
         },
         "blank_assignment": {
             "activate_module": true,
-            "column_ret_fold": 10
+            "factor": 10,
+            "algorithm": "mean",
+            "value": "area"
+        },
+        "group_factor_assignment": {
+            "activate_module": true,
+            "algorithm": "mean",
+            "value": "area"
         },
         "phenotype_assignment": {
-            "fold_difference": {
+            "qualitative": {
                 "activate_module": true,
-                "fold_diff": 10,
-                "data_type": "percentage"
+                "factor": 5,
+                "algorithm": "minmax",
+                "value": "area"
             }
         },
         "spectral_library_matching": {

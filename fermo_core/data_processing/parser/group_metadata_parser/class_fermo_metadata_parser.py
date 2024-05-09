@@ -1,6 +1,6 @@
 """Parses fermo-style group metadata file
 
-Copyright (c) 2022-2023 Mitja Maximilian Zdouc, PhD
+Copyright (c) 2022 to present Mitja Maximilian Zdouc, PhD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -21,110 +21,103 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 import logging
-import pandas as pd
-from typing import Self, Tuple
+from typing import Self, Any
 
-from fermo_core.data_processing.class_stats import Stats
-from fermo_core.data_processing.class_repository import Repository
-from fermo_core.data_processing.parser.group_metadata_parser.abc_group_metadata_parser import (
-    GroupMetadataParser,
-)
-from fermo_core.input_output.class_parameter_manager import ParameterManager
+from pydantic import BaseModel
+
+from fermo_core.data_processing.class_stats import Stats, Group
 
 logger = logging.getLogger("fermo_core")
 
 
-class MetadataFermoParser(GroupMetadataParser):
-    """Interface to parse fermo-style group metadata file."""
+class MetadataFermoParser(BaseModel):
+    """Interface to parse fermo-style group metadata file.
 
-    def parse(
-        self: Self, stats: Stats, sample_repo: Repository, params: ParameterManager
-    ) -> Tuple[Stats, Repository]:
-        """Parses a fermo-style group metadata file.
+    Attributes:
+        stats: a Stats object instance
+        df: a Pandas dataframe to extract data from
+    """
 
-        Arguments:
-            stats: Instance of class Stats, holding summarized information
-            sample_repo: a Repository instance holding Sample objects
-            params: a ParameterManager instance holding user input data
+    stats: Stats
+    df: Any
+
+    def return_stats(self: Self) -> Stats:
+        """Return the modified objects
 
         Returns:
-            Tuple of Stats and Sample repository objects with added group info.
+             The modified stats object
         """
-        logger.info(
-            f"'MetadataFermoParser': started parsing fermo-style group metadata file "
-            f"'{params.GroupMetadataParameters.filepath.name}'"
+        return self.stats
+
+    def validate_sample_names(self: Self):
+        """Validate overlap of sample names from peaktable and group metadata file
+
+        Raises:
+            RuntimeError: sample names in df do not match peaktable-extracted ones
+        """
+        diff_samples = set(self.df["sample_name"]).difference(set(self.stats.samples))
+
+        if len(diff_samples) != 0:
+            raise RuntimeError(
+                f"'MetadataFermoParser': sample names in group metadata file do not "
+                f"match the ones extracted from the peaktable. Offending sample names: "
+                f"'{', '.join(diff_samples)}' - SKIP."
+            )
+
+    def unassign_default_set(self: Self):
+        """Validate that all samples from peaktable can be found in metadata file"""
+        self.stats.GroupMData.default_s_ids = (
+            self.stats.GroupMData.default_s_ids.difference(set(self.df["sample_name"]))
         )
 
-        for _, row in pd.read_csv(params.GroupMetadataParameters.filepath).iterrows():
-            sample_id = row["sample_name"]
-            stats = self.remove_sample_id_from_group_default(stats, sample_id)
-            for group_id in row:
-                if group_id == sample_id:
-                    pass
-                elif group_id not in stats.groups:
-                    stats.groups[group_id] = {sample_id}
-                    sample_repo = self.add_group_id_to_sample_repo(
-                        sample_repo, sample_id, group_id
-                    )
+        if len(self.stats.GroupMData.default_s_ids) != 0:
+            logger.warning(
+                f"'MetadataFermoParser': group metadata assignment not found for all "
+                f"samples. The following samples will not partake in group comparison: "
+                f"'{', '.join(self.stats.GroupMData.default_s_ids)}'"
+            )
+
+    def extract_blanks(self: Self):
+        """Extract all samples that were assigned the signal word 'BLANK'."""
+        result = self.df.isin(["BLANK"])
+        df_blank = self.df[result.any(axis=1)]
+        df_filtered = self.df[~result.any(axis=1)]
+
+        if len(df_filtered) < len(self.df):
+            self.stats.GroupMData.blank_s_ids = set(df_blank["sample_name"])
+            self.stats.GroupMData.nonblank_s_ids = set(df_filtered["sample_name"])
+            self.df = df_filtered
+            logger.debug(
+                f"'MetadataFermoParser': Samples marked as 'BLANK' detected. The "
+                f"following samples will not partake in group comparisons: "
+                f"{', '.join(self.stats.GroupMData.blank_s_ids)}'"
+            )
+        else:
+            return
+
+    def prepare_ctgrs(self: Self):
+        """Extract categories and groups from dataframe and assign to stats"""
+        ctgrs = [col for col in self.df.columns if col != "sample_name"]
+        for ctg in ctgrs:
+            self.stats.GroupMData.ctgrs[ctg] = {}
+            for group in self.df[ctg].unique():
+                s_ids = self.df[self.df[ctg] == group]["sample_name"].tolist()
+                if group in self.stats.GroupMData.ctgrs[ctg]:
+                    self.stats.GroupMData.ctgrs[ctg][group].s_ids.update(set(s_ids))
                 else:
-                    stats.groups[group_id].add(sample_id)
-                    sample_repo = self.add_group_id_to_sample_repo(
-                        sample_repo, sample_id, group_id
-                    )
+                    self.stats.GroupMData.ctgrs[ctg][group] = Group(s_ids=set(s_ids))
+
+    def run_parser(self: Self):
+        """Parse the corresponding metadata file and assign data"""
+        logger.info(
+            "'MetadataFermoParser': started parsing fermo-style group metadata file."
+        )
+        self.df = self.df.astype(str)
+        self.validate_sample_names()
+        self.unassign_default_set()
+        self.extract_blanks()
+        self.prepare_ctgrs()
 
         logger.info(
-            f"'MetadataFermoParser': completed parsing fermo-style group metadata file "
-            f"'{params.GroupMetadataParameters.filepath.name}'"
+            "'MetadataFermoParser': completed parsing fermo-style group metadata file."
         )
-        return stats, sample_repo
-
-    @staticmethod
-    def remove_sample_id_from_group_default(stats_obj: Stats, sample_id: str) -> Stats:
-        """Removes the sample id from the group 'DEFAULT' in Stats object.
-
-        Arguments:
-            stats_obj: holds group information among other info
-            sample_id: a sample identifier string
-
-        Returns:
-            A (modified) stats object
-        """
-        try:
-            stats_obj.groups.get("DEFAULT").remove(sample_id)
-            return stats_obj
-        except KeyError:
-            logger.warning(
-                f"'MetadataFermoParser': Could not find sample ID '{sample_id}' in "
-                f"previously processed peaktable file. Did you provide the correct "
-                f"group metadata file?"
-            )
-            return stats_obj
-
-    @staticmethod
-    def add_group_id_to_sample_repo(
-        sample_repo: Repository, sample_id: str, group_id: str
-    ) -> Repository:
-        """Adds the group information to the Sample objects in the Repository.
-
-        Arguments:
-            sample_repo: Repository holding sample objects
-            sample_id: a sample identifier string
-            group_id: a group identifier string
-
-        Returns:
-            A (modified) Repository object
-        """
-        try:
-            sample = sample_repo.get(sample_id)
-            sample.groups.add(group_id)
-            if "DEFAULT" in sample.groups:
-                sample.groups.remove("DEFAULT")
-            sample_repo.modify(sample_id, sample)
-            return sample_repo
-        except KeyError:
-            logger.warning(
-                f"'MetadataFermoParser': Could not find sample ID '{sample_id}' in "
-                f"previously processed peaktable file. Did you provide the correct "
-                f"group metadata file?"
-            )
-            return sample_repo

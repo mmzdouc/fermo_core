@@ -1,0 +1,94 @@
+"""Parses phenotype data files.
+
+Copyright (c) 2022 to present Mitja Maximilian Zdouc, PhD
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+"""
+import logging
+from typing import Self, Any
+
+from pydantic import BaseModel
+
+from fermo_core.data_processing.class_stats import Stats, PhenoData, SamplePhenotype
+
+logger = logging.getLogger("fermo_core")
+
+
+class PhenotypeParser(BaseModel):
+    """Interface to parse phenotype files.
+
+    Attributes:
+        stats: a Stats object instance
+        df: a Pandas dataframe to extract data from
+    """
+
+    stats: Stats
+    df: Any
+
+    def return_stats(self: Self) -> Stats:
+        """Return the modified objects
+
+        Returns:
+             The modified stats object
+        """
+        return self.stats
+
+    @staticmethod
+    def message(msg: str):
+        logger.info(f"'PhenotypeParser': {msg} parsing phenotype data file.")
+
+    def validate_sample_names(self: Self):
+        """Validate overlap of sample names from peaktable and phenotype file
+
+        Raises:
+            RuntimeError: sample names in df do not match peaktable-extracted ones
+        """
+        diff_samples = set(self.df["sample_name"]).difference(set(self.stats.samples))
+
+        if len(diff_samples) != 0:
+            raise RuntimeError(
+                f"'PhenotypeParser': sample names in phenotype file do not "
+                f"match the ones extracted from the peaktable. Offending sample names: "
+                f"'{', '.join(diff_samples)}'."
+            )
+
+    def parse_qualitative(self: Self):
+        """Parse data from qualitative phenotype file
+
+        Raises:
+            RuntimeError: no negative (inactive) samples: no active/inactive
+            determination possible
+        """
+        s_ids_active = set(self.df["sample_name"])
+        s_negative = set(self.stats.samples).difference(s_ids_active)
+
+        if len(s_negative) == 0:
+            raise RuntimeError(
+                "'PhenotypeParser': no negative (inactive) samples found and "
+                "therefore, factor (fold)-based phenotype determination not possible."
+            )
+
+        self.stats.phenotypes = [
+            PhenoData(
+                datatype="qualitative",
+                category="qualitative",
+                s_phen_data=[SamplePhenotype(s_id=s_id) for s_id in s_ids_active],
+                s_negative=s_negative,
+            )
+        ]

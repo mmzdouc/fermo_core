@@ -23,13 +23,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-#  External
 from datetime import datetime
 from importlib import metadata
 from pathlib import Path
 from sys import argv
 
-#  Internal
 from fermo_core.config.class_logger import LoggerSetup
 from fermo_core.data_processing.parser.class_general_parser import GeneralParser
 from fermo_core.data_analysis.class_analysis_manager import AnalysisManager

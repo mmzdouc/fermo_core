@@ -134,22 +134,6 @@ class PhenotypeParameters(BaseModel):
 
     Raise:
         ValueError: Unsupported phenotype file format.
-        pydantic.ValidationError: Pydantic validation failed during instantiation.
-
-    Notes:
-        A fermo-style phenotype data file is a .csv-file with the layout:
-
-        sample_name,phenotype_col_1,phenotype_col_2,...,phenotype_col_n \n
-        sample1,1,0.1 \n
-        sample2,10,0.01 \n
-        sample3,100,0.001 \n
-
-        Ad columns: "sample_name" mandatory, one or more additional columns
-        Ad values: One experiment per column. All experiments must be of the
-        same type (e.g. concentration, percentage inhibition).
-        This is indicated by the "mode" of the file:
-        -> percentage-like (the higher the better),
-        -> concentration-like (the lower the better)
     """
 
     filepath: FilePath
@@ -160,11 +144,11 @@ class PhenotypeParameters(BaseModel):
         path_phenotype = self.filepath
         format_phenotype = self.format
         match format_phenotype:
-            case "fermo":
+            case "qualitative":
                 ValidationManager.validate_file_extension(path_phenotype, ".csv")
                 ValidationManager.validate_csv_file(path_phenotype)
                 ValidationManager.validate_csv_has_rows(path_phenotype)
-                ValidationManager.validate_phenotype_fermo(path_phenotype)
+                ValidationManager.validate_pheno_qualitative_fermo(path_phenotype)
                 ValidationManager.validate_no_duplicate_entries_csv_column(
                     path_phenotype, "sample_name"
                 )

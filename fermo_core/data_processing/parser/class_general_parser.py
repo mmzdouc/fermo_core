@@ -23,11 +23,13 @@ SOFTWARE.
 import logging
 from typing import Tuple, Self, Optional
 
+import pandas as pd
+from pydantic import BaseModel
+
 from fermo_core.input_output.class_parameter_manager import ParameterManager
 from fermo_core.data_processing.parser.peaktable_parser.class_mzmine3_parser import (
     PeakMzmine3Parser,
 )
-
 from fermo_core.data_processing.parser.msms_parser.class_mgf_parser import MgfParser
 from fermo_core.data_processing.parser.group_metadata_parser.class_fermo_metadata_parser import (
     MetadataFermoParser,
@@ -35,8 +37,8 @@ from fermo_core.data_processing.parser.group_metadata_parser.class_fermo_metadat
 from fermo_core.data_processing.parser.spec_library_parser.class_spec_lib_mgf_parser import (
     SpecLibMgfParser,
 )
-from fermo_core.data_processing.parser.phenotype_parser.class_fermo_phenotype_parser import (
-    PhenotypeFermoParser,
+from fermo_core.data_processing.parser.phenotype_parser.class_phenotype_parser import (
+    PhenotypeParser,
 )
 from fermo_core.data_processing.class_repository import Repository
 from fermo_core.data_processing.class_stats import Stats
@@ -44,8 +46,8 @@ from fermo_core.data_processing.class_stats import Stats
 logger = logging.getLogger("fermo_core")
 
 
-class GeneralParser:
-    """Interface to organize calling of specific parser classes and their logger
+class GeneralParser(BaseModel):
+    """Pydantic-based class to organize calling of specific parser classes + logger
 
     Attributes:
         stats: Stats object, holds stats on molecular features and samples
@@ -53,10 +55,9 @@ class GeneralParser:
         samples: Repository object, holds "Sample" objects
     """
 
-    def __init__(self):
-        self.stats: Optional[Stats] = None
-        self.features: Optional[Repository] = None
-        self.samples: Optional[Repository] = None
+    stats: Optional[Stats] = None
+    features: Optional[Repository] = None
+    samples: Optional[Repository] = None
 
     def return_attributes(self: Self) -> Tuple[Stats, Repository, Repository]:
         """Returns created attributes to the calling function
@@ -115,6 +116,9 @@ class GeneralParser:
 
         Arguments:
             params: ParameterManager holding validated user input
+
+        Raises:
+            RuntimeError: unsupported group metadata format
         """
         if params.GroupMetadataParameters is None:
             logger.info(
@@ -125,8 +129,17 @@ class GeneralParser:
 
         match params.GroupMetadataParameters.format:
             case "fermo":
-                self.stats, self.samples = MetadataFermoParser().parse(
-                    self.stats, self.samples, params
+                metadata_parser = MetadataFermoParser(
+                    stats=self.stats,
+                    df=pd.read_csv(params.GroupMetadataParameters.filepath),
+                )
+                metadata_parser.run_parser()
+                self.stats = metadata_parser.return_stats()
+            case _:
+                raise RuntimeError(
+                    f"'GeneralParser': detected unsupported format "
+                    f"'{params.GroupMetadataParameters.format}' for 'group_metadata'."
+                    f"- SKIP"
                 )
 
     def parse_phenotype(self: Self, params: ParameterManager):
@@ -134,6 +147,9 @@ class GeneralParser:
 
         Arguments:
             params: ParameterManager holding validated user input
+
+        Raises:
+            RuntimeError: unsupported group metadata format
         """
         if params.PhenotypeParameters is None:
             logger.info(
@@ -143,9 +159,20 @@ class GeneralParser:
             return
 
         match params.PhenotypeParameters.format:
-            case "fermo":
-                self.stats, self.samples = PhenotypeFermoParser().parse(
-                    self.stats, self.samples, params
+            case "qualitative":
+                phenotype_parser = PhenotypeParser(
+                    stats=self.stats,
+                    df=pd.read_csv(params.PhenotypeParameters.filepath),
+                )
+                phenotype_parser.message("started")
+                phenotype_parser.validate_sample_names()
+                phenotype_parser.parse_qualitative()
+                self.stats = phenotype_parser.return_stats()
+                phenotype_parser.message("completed")
+            case _:
+                raise RuntimeError(
+                    f"'GeneralParser': detected unsupported format "
+                    f"'{params.PhenotypeParameters.format}' for 'phenotype'."
                 )
 
     def parse_spectral_library(self: Self, params: ParameterManager):

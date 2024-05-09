@@ -26,7 +26,7 @@ from fermo_core.data_processing.builder_feature.dataclass_feature import (
     Match,
     CharFrag,
 )
-from fermo_core.data_processing.class_stats import Stats, SpecSimNet
+from fermo_core.data_processing.class_stats import Stats, SpecSimNet, PhenoData
 from fermo_core.data_processing.builder_sample.dataclass_sample import Sample
 from fermo_core.data_processing.class_repository import Repository
 
@@ -88,13 +88,16 @@ def csv_exporter():
             network=nx.Graph(),
         )
     }
+    csv_exporter.stats.GroupMData.ctgrs = {"abcde": {"a": "b"}}
     csv_exporter.features.add(
         1,
         Feature(
             f_id=1,
             mz=123.45,
-            samples=("d1", "d2"),
+            samples={"d1", "d2"},
             networks={"abc": SimNetworks(algorithm="abc", network_id=0)},
+            blank=True,
+            groups={"abcde": {"a", "b", "c"}},
         ),
     )
     csv_exporter.features.entries[1].Annotations = Annotations(
@@ -152,6 +155,15 @@ def csv_exporter():
             frag_ex=123.456,
             frag_det=123.455,
             diff=10.0,
+        )
+    ]
+    csv_exporter.stats.phenotypes = [
+        PhenoData(
+            datatype="qualitative",
+            category="qualitative",
+            f_ids_positive={
+                1,
+            },
         )
     ]
     return csv_exporter
@@ -245,9 +257,14 @@ def test_add_activity_info_csv(csv_exporter):
     assert csv_exporter.df.loc[0, "fermo:active"] == "true"
 
 
+def test_add_blank_info_csv(csv_exporter):
+    csv_exporter.add_blank_info_csv()
+    assert csv_exporter.df.loc[0, "fermo:isblank"] == "true"
+
+
 def test_add_sample_info_csv(csv_exporter):
     csv_exporter.add_sample_info_csv()
-    assert csv_exporter.df.loc[0, "fermo:samples"] == "d1|d2"
+    assert isinstance(csv_exporter.df.loc[0, "fermo:samples"], str)
     assert csv_exporter.df.loc[0, "fermo:samples:count"] == 2
 
 
@@ -284,9 +301,19 @@ def test_add_fragment_info_csv(csv_exporter):
     assert isinstance(csv_exporter.df.loc[0, "fermo:annotation:fragments"], str)
 
 
+def test_add_group_info_csv(csv_exporter):
+    csv_exporter.add_group_info_csv()
+    assert isinstance(csv_exporter.df.loc[0, "fermo:category:abcde"], str)
+
+
+def test_add_phenotype_info_csv(csv_exporter):
+    csv_exporter.add_phenotype_info_csv()
+    assert isinstance(csv_exporter.df.loc[0, "fermo:phenotype:qualitative"], str)
+
+
 def test_build_csv_output(csv_exporter):
     csv_exporter.build_csv_output()
-    assert csv_exporter.df.loc[0, "fermo:samples"] == "d1|d2"
+    assert isinstance(csv_exporter.df.loc[0, "fermo:samples"], str)
 
 
 def test_return_dfs_invalid(csv_exporter):

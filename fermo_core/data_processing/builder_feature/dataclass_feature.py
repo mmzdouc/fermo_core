@@ -21,7 +21,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 import logging
-from typing import Optional, Tuple, Dict, Set, Self, List, Any
+from typing import Optional, Dict, Self, List, Any
 
 from pydantic import BaseModel
 
@@ -211,6 +211,72 @@ class SimNetworks(BaseModel):
         }
 
 
+class SampleInfo(BaseModel):
+    """A Pydantic-based class to represent sample->value information
+
+    Attributes:
+        s_id: identifier of sample
+        value: an integer indicating the respective value (area or height)
+    """
+
+    s_id: str
+    value: int
+
+    def to_json(self: Self) -> dict:
+        return {
+            "s_id": str(self.s_id),
+            "value": int(self.value),
+        }
+
+
+class GroupFactor(BaseModel):
+    """A Pydantic-based class to represent group factor (fold difference) information
+
+    Attributes:
+        group1: comparison group 1
+        group2: comparison group 2
+        factor: group factor (fold difference), with the greater number taken
+    """
+
+    group1: str
+    group2: str
+    factor: float
+
+    def to_json(self: Self) -> dict:
+        return {
+            "group1": str(self.group1),
+            "group2": str(self.group2),
+            "factor": round(self.factor, 2),
+        }
+
+
+class Phenotype(BaseModel):
+    """A Pydantic-based class to represent phenotype information
+
+    Attributes:
+        score: the score calculated
+        format: the format of the phenotype file
+        category: the assay category (column) if applicable
+        descr: additional data if applicable
+    """
+
+    score: float
+    format: str
+    category: Optional[str] = None
+    descr: Optional[str] = None
+
+    def to_json(self: Self) -> dict:
+        json_dict = {"score": round(self.score, 2), "format": self.format}
+
+        if self.category is not None:
+            json_dict["category"] = self.category
+
+        if self.descr is not None:
+            json_dict["descr"] = self.descr
+
+        return json_dict
+
+
 class Feature(BaseModel):
     """A Pydantic-based class to represent a molecular feature.
 
@@ -230,11 +296,12 @@ class Feature(BaseModel):
         rel_area: the area relative to the feature with the highest area in the sample.
         Spectrum: a matchms Spectrum object instance using data from msms
         samples: a tuple of samples to which feature is associated.
+        area_per_sample: list of SampleInfo instances
+        height_per_sample: list of SampleInfo instances
         blank: bool to indicate if feature is blank-associated (if provided).
-        groups: association to groups if such metadata was provided.
-        groups_fold: indicates the fold differences between groups if provided. Should
-            be sorted from highest to lowest.
-        phenotypes: dict of objects representing associated phenotype data
+        groups: association to categories and groups is such data was provided.
+        group_factors: indicates the group factors(fold differences) if provided.
+        phenotypes: a list of Phenotype objects if phenotype was assigned
         Annotations: objects summarizing associated annotation data
         networks: dict of objects representing associated networking data
         scores: dict of objects representing associated scores
@@ -246,19 +313,21 @@ class Feature(BaseModel):
     rt_start: Optional[float] = None
     rt_stop: Optional[float] = None
     rt_range: Optional[float] = None
-    trace_rt: Optional[Tuple] = None
-    trace_int: Optional[Tuple] = None
+    trace_rt: Optional[tuple] = None
+    trace_int: Optional[tuple] = None
     fwhm: Optional[float] = None
     intensity: Optional[int] = None
     rel_intensity: Optional[float] = None
     area: Optional[int] = None
     rel_area: Optional[float] = None
     Spectrum: Optional[Any] = None
-    samples: Optional[Tuple] = None
+    samples: Optional[set] = None
+    area_per_sample: Optional[list] = None
+    height_per_sample: Optional[list] = None
     blank: Optional[bool] = None
-    groups: Optional[Set] = None
-    groups_fold: Optional[Dict] = None
-    phenotypes: Optional[Dict] = None
+    groups: Optional[dict] = None
+    group_factors: Optional[dict] = None
+    phenotypes: Optional[list] = None
     Annotations: Optional[Annotations] = None
     networks: Optional[Dict] = None
     scores: Optional[Dict] = None
@@ -285,13 +354,31 @@ class Feature(BaseModel):
             ("rel_area", self.rel_area, float),
             ("samples", self.samples, list),
             ("blank", self.blank, bool),
-            ("groups", self.groups, list),
         )
 
         json_dict = {}
         for attribute in attributes:
             if attribute[1] is not None:
                 json_dict[attribute[0]] = attribute[2](attribute[1])
+
+        if self.area_per_sample is not None:
+            json_dict["area_per_sample"] = [
+                val.to_json() for val in self.area_per_sample
+            ]
+
+        if self.height_per_sample is not None:
+            json_dict["height_per_sample"] = [
+                val.to_json() for val in self.height_per_sample
+            ]
+
+        if self.groups is not None and len(self.groups) != 0:
+            json_dict["groups"] = {key: list(val) for key, val in self.groups.items()}
+
+        if self.group_factors is not None:
+            json_dict["group_factors"] = {
+                key: [item.to_json() for item in val]
+                for key, val in self.group_factors.items()
+            }
 
         if self.Spectrum is not None:
             json_dict["spectrum"] = dict()
@@ -309,7 +396,12 @@ class Feature(BaseModel):
         if self.Annotations is not None:
             json_dict["annotations"] = self.Annotations.to_json()
 
-        # TODO(MMZ 20.1.24): implement assignment for complex attributes group_folds,
-        #  annotations, phenotypes, scores
+        if self.phenotypes is not None:
+            json_dict["phenotypes"] = [obj.to_json() for obj in self.phenotypes]
+
+        logger.fatal("Export feature: dummy values for 'scores' written. Remove ASAP")
+        json_dict["scores"] = {"prioritization": 1.0, "novelty": 0.5, "phenotype": 0.3}
+        # TODO (MMZ 9.5.): implement proper score writing
+        # TODO(MMZ 20.1.24): - check if everything was covered by export
 
         return json_dict

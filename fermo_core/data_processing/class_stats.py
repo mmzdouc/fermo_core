@@ -21,12 +21,118 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 from pydantic import BaseModel
-from typing import Self, Tuple, Optional, Set, Dict, Any
+from typing import Self, Optional, Dict, Any
 
 import networkx as nx
 import pandas as pd
 
 from fermo_core.input_output.class_parameter_manager import ParameterManager
+
+
+class Group(BaseModel):
+    """Pydantic-based class to organize group info belonging to a metadata category
+
+    Attributes:
+        name: group identifier
+        s_ids: a set of sample ids belonging to group
+        f_ids: a set of feature ids detected in samples of group
+    """
+
+    s_ids: set = set()
+    f_ids: set = set()
+
+    def to_json(self) -> dict:
+        """Convert attributes to json-compatible ones."""
+        return {"s_ids": list(self.s_ids), "f_ids": list(self.f_ids)}
+
+
+class GroupMData(BaseModel):
+    """Pydantic-based class to organize group metadata information
+
+    Attributes:
+        default_s_ids: containing ungrouped samples ("DEFAULT")
+        nonblank_s_ids: containing nonblank sample ids
+        nonblank_f_ids:containing ids of nonblank sample-associated features
+        blank_s_ids: containing sample blank ids
+        blank_f_ids: containing ids of sample blank-associated features
+        ctgrs: dict containing category:{group-id: Group}, key-value pairs
+    """
+
+    default_s_ids: set = set()
+    nonblank_s_ids: set = set()
+    nonblank_f_ids: set = set()
+    blank_s_ids: set = set()
+    blank_f_ids: set = set()
+    ctgrs: dict = {}
+
+    def to_json(self) -> dict:
+        """Convert attributes to json-compatible ones."""
+        json_dict = {}
+
+        if len(self.default_s_ids) != 0:
+            json_dict["default_s_ids"] = list(self.default_s_ids)
+
+        if len(self.nonblank_s_ids) != 0:
+            json_dict["nonblank_s_ids"] = list(self.nonblank_s_ids)
+            json_dict["nonblank_f_ids"] = list(self.nonblank_f_ids)
+
+        if len(self.blank_s_ids) != 0:
+            json_dict["blank_s_ids"] = list(self.blank_s_ids)
+            json_dict["blank_f_ids"] = list(self.blank_f_ids)
+
+        if len(self.ctgrs) != 0:
+            json_dict["categories"] = {}
+            for key, val in self.ctgrs.items():
+                json_dict["categories"][key] = {}
+                for name, obj in val.items():
+                    json_dict["categories"][key][name] = obj.to_json()
+
+        return json_dict
+
+
+class SamplePhenotype(BaseModel):
+    """Pydantic-based class to organize phenotype data per sample
+
+    Attributes:
+        s_id: the sample identifier
+        value: the corresponding value if any
+    """
+
+    s_id: str
+    value: Optional[float] = None
+
+    def to_json(self: Self):
+        json_dict = {"s_id": str(self.s_id)}
+        if self.value is not None:
+            json_dict["value"] = self.value
+        return json_dict
+
+
+class PhenoData(BaseModel):
+    """Pydantic-based class to organize phenotype data from file
+
+    Attributes:
+        datatype: a string indicating the data type and the algorithm to use
+        category: identifier assay
+        s_phen_data: a list of SamplePhenotype instances of positive (active) samples
+        s_negative: a list of sample IDs with no data - inactive (negative) samples
+        f_ids_positive: a set of ids determined to be phenotype-associated
+    """
+
+    datatype: str
+    category: str
+    s_phen_data: list = []
+    s_negative: set = set()
+    f_ids_positive: set = set()
+
+    def to_json(self: Self):
+        return {
+            "category": self.category,
+            "datatype": self.datatype,
+            "s_phen_data": [obj.to_json() for obj in self.s_phen_data],
+            "s_negative": list(self.s_negative),
+            "f_ids_positive": list(self.f_ids_positive),
+        }
 
 
 class SpecSimNet(BaseModel):
@@ -69,10 +175,9 @@ class Stats(BaseModel):
         features: total number of features
         active_features: retained in analysis run
         inactive_features: filtered out during analysis run by FeatureFilter module
-        blank_features: all blank-associated features in analysis run
-        groups: dict of sets of sample IDs repr. group membership (default in DEFAULT)
+        GroupMData: instance of the GroupMData object containing group metadata
         networks: all similarity networks in analysis run
-        phenotypes: dict of tuples of active sample IDs
+        phenotypes: list of PhenoData objects containing phenotype data
         spectral_library: a list of matchms.Spectrum instances
         analysis_log: a list of performed steps by the AnalysisManager
     """
@@ -83,13 +188,12 @@ class Stats(BaseModel):
     area_min: Optional[int] = None
     area_max: Optional[int] = None
     samples: Optional[tuple] = None
-    features: Optional[tuple] = None
+    features: Optional[int] = None
     active_features: set = set()
     inactive_features: set = set()
-    blank_features: set = set()
-    groups: Dict[str, Set] = {"DEFAULT": set()}
+    GroupMData: GroupMData = GroupMData()
     networks: Optional[Dict[str, SpecSimNet]] = None
-    phenotypes: Optional[Dict[str, Tuple[str, ...]]] = None
+    phenotypes: Optional[list] = None
     spectral_library: Optional[list] = None
     analysis_log: list = []
 
@@ -112,7 +216,7 @@ class Stats(BaseModel):
         self.samples = tuple(
             sample.split(":")[1] for sample in df.filter(regex=":feature_state").columns
         )
-        self.groups["DEFAULT"] = set(self.samples)
+        self.GroupMData.default_s_ids = set(self.samples)
         self.features = len(df["id"].tolist())
         self.active_features = set(df["id"].tolist())
 
@@ -138,12 +242,10 @@ class Stats(BaseModel):
             ("nr_inactive_features", len(self.inactive_features), int),
             ("active_features", self.active_features, list),
             ("inactive_features", self.inactive_features, list),
-            ("blank_features", self.blank_features, list),
             ("analysis_log", self.analysis_log, list),
         )
 
         json_dict = {}
-
         if self.samples is not None:
             json_dict["nr_samples"] = len(self.samples)
 
@@ -151,10 +253,7 @@ class Stats(BaseModel):
             if attribute[1] is not None:
                 json_dict[attribute[0]] = attribute[2](attribute[1])
 
-        if self.groups is not None:
-            json_dict["groups"] = dict()
-            for group in self.groups:
-                json_dict["groups"][group] = list(self.groups[group])
+        json_dict["groups"] = self.GroupMData.to_json()
 
         if self.networks is not None:
             json_dict["networks"] = dict()
@@ -162,8 +261,6 @@ class Stats(BaseModel):
                 json_dict["networks"][network] = self.networks[network].to_json()
 
         if self.phenotypes is not None:
-            json_dict["phenotypes"] = dict()
-            for entry in self.phenotypes:
-                json_dict["phenotypes"][entry] = list(self.phenotypes[entry])
+            json_dict["phenotypes"] = [val.to_json() for val in self.phenotypes]
 
         return json_dict
