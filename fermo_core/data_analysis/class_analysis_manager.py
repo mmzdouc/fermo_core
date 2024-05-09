@@ -102,17 +102,21 @@ class AnalysisManager(BaseModel):
             )
             return
 
-        feature_filter = FeatureFilter(
-            params=self.params,
-            stats=self.stats,
-            features=self.features,
-            samples=self.samples,
-        )
-        feature_filter.filter()
-        self.stats, self.features, self.samples = feature_filter.return_values()
-        self.stats.analysis_log.append(
-            "Ran module 'FeatureFilter'. For parameters, see 'feature_filtering'."
-        )
+        try:
+            feature_filter = FeatureFilter(
+                params=self.params,
+                stats=self.stats,
+                features=self.features,
+                samples=self.samples,
+            )
+            feature_filter.filter()
+            self.stats, self.features, self.samples = feature_filter.return_values()
+            self.stats.analysis_log.append(
+                "Ran module 'FeatureFilter'. For parameters, see 'feature_filtering'."
+            )
+        except Exception as e:
+            logger.warning(str(e))
+            return
 
     def run_blank_assignment(self: Self):
         """Run optional blank_assignment analysis step"""
@@ -140,14 +144,13 @@ class AnalysisManager(BaseModel):
             )
             blank_assigner.run_analysis()
             self.stats, self.features = blank_assigner.return_attrs()
+            self.stats.analysis_log.append(
+                "Ran module 'BlankAssigner'. For parameters, "
+                "see 'additional_modules/blank_assignment'."
+            )
         except Exception as e:
             logger.warning(str(e))
             return
-
-        self.stats.analysis_log.append(
-            "Ran module 'BlankAssigner'. For parameters, "
-            "see 'additional_modules/blank_assignment'."
-        )
 
     def run_group_assignment(self: Self):
         """Run optional group_assignment analysis step
@@ -162,11 +165,10 @@ class AnalysisManager(BaseModel):
             group_assigner = GroupAssigner(features=self.features, stats=self.stats)
             group_assigner.run_analysis()
             self.stats, self.features = group_assigner.return_attrs()
+            self.stats.analysis_log.append("Ran module 'GroupAssigner'.")
         except Exception as e:
             logger.warning(str(e))
             return
-
-        self.stats.analysis_log.append("Ran module 'GroupAssigner'.")
 
     def run_group_factor_assignment(self: Self):
         """Run optional group_assignment analysis step
@@ -190,14 +192,13 @@ class AnalysisManager(BaseModel):
             )
             group_fact_ass.run_analysis()
             self.features = group_fact_ass.return_features()
+            self.stats.analysis_log.append(
+                "Ran module 'GroupFactorAssigner'. For parameters, "
+                "see 'additional_modules/group_factor_assignment'."
+            )
         except Exception as e:
             logger.warning(str(e))
             return
-
-        self.stats.analysis_log.append(
-            "Ran module 'GroupFactorAssigner'. For parameters, "
-            "see 'additional_modules/group_factor_assignment'."
-        )
 
     def run_phenotype_manager(self: Self):
         """Run optional PhenotypeManager analysis step"""
@@ -215,22 +216,22 @@ class AnalysisManager(BaseModel):
             )
             return
 
-        # TODO (MMZ 9.5.24): implement try/except: should not fail here; extend to
-        #  other run methods too? Should not assign back to self if any errors were
-        #  raised
-
-        phenotype_manager = PhenotypeManager(
-            params=self.params,
-            features=self.features,
-            stats=self.stats,
-            samples=self.samples,
-        )
-        phenotype_manager.run_analysis()
-        self.stats, self.features = phenotype_manager.return_attrs()
-        self.stats.analysis_log.append(
-            "Ran module 'PhenotypeManager'. For parameters, "
-            "see 'additional_modules/phenotype_assignment'."
-        )
+        try:
+            phenotype_manager = PhenotypeManager(
+                params=self.params,
+                features=self.features,
+                stats=self.stats,
+                samples=self.samples,
+            )
+            phenotype_manager.run_analysis()
+            self.stats, self.features = phenotype_manager.return_attrs()
+            self.stats.analysis_log.append(
+                "Ran module 'PhenotypeManager'. For parameters, "
+                "see 'additional_modules/phenotype_assignment'."
+            )
+        except Exception as e:
+            logger.warning(str(e))
+            return
 
     def run_sim_networks_manager(self: Self):
         """Run optional SimNetworksManager analysis step"""
@@ -249,33 +250,46 @@ class AnalysisManager(BaseModel):
             )
             return
 
-        sim_networks_manager = SimNetworksManager(
-            params=self.params,
-            stats=self.stats,
-            features=self.features,
-            samples=self.samples,
-        )
-        sim_networks_manager.run_analysis()
-        self.stats, self.features, self.samples = sim_networks_manager.return_attrs()
-        self.stats.analysis_log.append(
-            "Ran module 'SimNetworksManager'. For parameters, "
-            "see 'core_modules/spec_sim_networking'."
-        )
+        try:
+            sim_networks_manager = SimNetworksManager(
+                params=self.params,
+                stats=self.stats,
+                features=self.features,
+                samples=self.samples,
+            )
+            sim_networks_manager.run_analysis()
+            (
+                self.stats,
+                self.features,
+                self.samples,
+            ) = sim_networks_manager.return_attrs()
+            self.stats.analysis_log.append(
+                "Ran module 'SimNetworksManager'. For parameters, "
+                "see 'core_modules/spec_sim_networking'."
+            )
+        except Exception as e:
+            logger.warning(str(e))
+            return
 
     def run_annotation_manager(self: Self):
         """Run optional AnnotationManager analysis step"""
-        annotation_manager = AnnotationManager(
-            params=self.params,
-            stats=self.stats,
-            features=self.features,
-            samples=self.samples,
-        )
-        annotation_manager.run_analysis()
-        self.stats, self.features, self.samples = annotation_manager.return_attrs()
-        self.stats.analysis_log.append(
-            "Ran module 'AnnotationManager'. For parameters, "
-            "see 'core_modules' and 'additional_modules'."
-        )
+
+        try:
+            annotation_manager = AnnotationManager(
+                params=self.params,
+                stats=self.stats,
+                features=self.features,
+                samples=self.samples,
+            )
+            annotation_manager.run_analysis()
+            self.stats, self.features, self.samples = annotation_manager.return_attrs()
+            self.stats.analysis_log.append(
+                "Ran module 'AnnotationManager'. For parameters, "
+                "see 'core_modules' and 'additional_modules'."
+            )
+        except Exception as e:
+            logger.warning(str(e))
+            return
 
     def run_chrom_trace_calculator(self: Self):
         """Run mandatory ChromTraceCalculator analysis step."""
