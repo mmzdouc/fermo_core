@@ -116,6 +116,9 @@ class GeneralParser(BaseModel):
 
         Arguments:
             params: ParameterManager holding validated user input
+
+        Raises:
+            RuntimeError: unsupported group metadata format
         """
         if params.GroupMetadataParameters is None:
             logger.info(
@@ -126,29 +129,27 @@ class GeneralParser(BaseModel):
 
         match params.GroupMetadataParameters.format:
             case "fermo":
-                try:
-                    metadata_parser = MetadataFermoParser(
-                        stats=self.stats,
-                        df=pd.read_csv(params.GroupMetadataParameters.filepath),
-                    )
-                    metadata_parser.run_parser()
-                    self.stats = metadata_parser.return_stats()
-                except Exception as e:
-                    logger.warning(str(e))
-                    return
+                metadata_parser = MetadataFermoParser(
+                    stats=self.stats,
+                    df=pd.read_csv(params.GroupMetadataParameters.filepath),
+                )
+                metadata_parser.run_parser()
+                self.stats = metadata_parser.return_stats()
             case _:
-                logger.warning(
+                raise RuntimeError(
                     f"'GeneralParser': detected unsupported format "
-                    f"'{params.GroupMetadataParameters.format}' for 'group_metadata' "
+                    f"'{params.GroupMetadataParameters.format}' for 'group_metadata'."
                     f"- SKIP"
                 )
-                return
 
     def parse_phenotype(self: Self, params: ParameterManager):
         """Parses user-provided phenotype/bioactivity data file.
 
         Arguments:
             params: ParameterManager holding validated user input
+
+        Raises:
+            RuntimeError: unsupported group metadata format
         """
         if params.PhenotypeParameters is None:
             logger.info(
@@ -159,26 +160,20 @@ class GeneralParser(BaseModel):
 
         match params.PhenotypeParameters.format:
             case "qualitative":
-                try:
-                    phenotype_parser = PhenotypeParser(
-                        stats=self.stats,
-                        df=pd.read_csv(params.PhenotypeParameters.filepath),
-                    )
-                    phenotype_parser.message("started")
-                    phenotype_parser.validate_sample_names()
-                    phenotype_parser.parse_qualitative()
-                    self.stats = phenotype_parser.return_stats()
-                    phenotype_parser.message("completed")
-                except Exception as e:
-                    logger.warning(str(e))
-                    return
-            case _:
-                logger.warning(
-                    f"'GeneralParser': detected unsupported format "
-                    f"'{params.PhenotypeParameters.format}' for 'phenotype' "
-                    f"- SKIP"
+                phenotype_parser = PhenotypeParser(
+                    stats=self.stats,
+                    df=pd.read_csv(params.PhenotypeParameters.filepath),
                 )
-                return
+                phenotype_parser.message("started")
+                phenotype_parser.validate_sample_names()
+                phenotype_parser.parse_qualitative()
+                self.stats = phenotype_parser.return_stats()
+                phenotype_parser.message("completed")
+            case _:
+                raise RuntimeError(
+                    f"'GeneralParser': detected unsupported format "
+                    f"'{params.PhenotypeParameters.format}' for 'phenotype'."
+                )
 
     def parse_spectral_library(self: Self, params: ParameterManager):
         """Parses user-provided spectral_library file.

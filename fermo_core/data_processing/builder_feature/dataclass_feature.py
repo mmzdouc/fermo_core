@@ -399,10 +399,9 @@ class Feature(BaseModel):
         if self.phenotypes is not None:
             json_dict["phenotypes"] = [obj.to_json() for obj in self.phenotypes]
 
-        logger.fatal("Export: dummy values for 'scores' written. Remove ASAP")
-
+        logger.fatal("Export feature: dummy values for 'scores' written. Remove ASAP")
         json_dict["scores"] = {"prioritization": 1.0, "novelty": 0.5, "phenotype": 0.3}
-
+        # TODO (MMZ 9.5.): implement proper score writing
         # TODO(MMZ 20.1.24): - check if everything was covered by export
 
         return json_dict

@@ -46,7 +46,6 @@ class PhenotypeManager(BaseModel):
         samples: Repository object, holds "Sample" objects
     """
 
-    # TODO(MMZ 08.05): TEST THIS CLASS
     params: ParameterManager
     stats: Stats
     features: Repository

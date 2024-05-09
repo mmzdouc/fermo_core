@@ -345,6 +345,17 @@ class CsvExporter(BaseModel):
             lambda x: _add_fragment_info(f_id=x)
         )
 
+    def add_phenotype_info_csv(self: Self):
+        """Iterate through phenotype annotation and add to df"""
+
+        if self.stats.phenotypes is None:
+            return
+
+        for categ in self.stats.phenotypes:
+            self.df[f"fermo:phenotype:{categ.category}"] = self.df["id"].map(
+                lambda x: "true" if x in categ.f_ids_positive else None
+            )
+
     def build_csv_output(self: Self):
         """Assemble data for csv export"""
         self.add_activity_info_csv()
@@ -352,6 +363,7 @@ class CsvExporter(BaseModel):
         self.add_blank_info_csv()
         self.add_group_info_csv()
         self.add_networks_info_csv()
+        self.add_phenotype_info_csv()
         self.add_adduct_info_csv()
         self.add_loss_info_csv()
         self.add_match_info_csv()

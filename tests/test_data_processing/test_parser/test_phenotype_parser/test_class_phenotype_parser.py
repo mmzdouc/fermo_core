@@ -26,7 +26,9 @@ def test_validate_sample_names_invalid(qualitative_p):
 
 def test_parse_qualitative_valid(qualitative_p):
     qualitative_p.parse_qualitative()
-    assert qualitative_p.stats.phenotypes[0].s_negative == ["s4"]
+    assert qualitative_p.stats.phenotypes[0].s_negative == {
+        "s4",
+    }
 
 
 def test_parse_qualitative_invalid(qualitative_p):

@@ -215,6 +215,10 @@ class AnalysisManager(BaseModel):
             )
             return
 
+        # TODO (MMZ 9.5.24): implement try/except: should not fail here; extend to
+        #  other run methods too? Should not assign back to self if any errors were
+        #  raised
+
         phenotype_manager = PhenotypeManager(
             params=self.params,
             features=self.features,

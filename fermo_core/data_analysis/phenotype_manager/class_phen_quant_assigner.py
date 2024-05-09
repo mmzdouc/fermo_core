@@ -45,7 +45,6 @@ class PhenQuantAssigner(BaseModel):
         f_ids_intersect: the intersection of positive and negative feature IDs
     """
 
-    # TODO(MMZ 08.05): TEST THIS CLASS
     params: ParameterManager
     stats: Stats
     features: Repository
@@ -62,28 +61,23 @@ class PhenQuantAssigner(BaseModel):
 
     def collect_sets(self: Self):
         """Collect sets of active and inactive features and assign actives"""
-        f_ids_in_inactives = set()
-        for s_id in set(self.stats.phenotypes[0].s_negative):
-            sample = self.samples.get(s_id)
-            f_ids_in_inactives.update(set(sample.feature_ids))
-
-        f_ids_in_actives = set()
+        f_ids_all_actives = set()
         for s_id in set(self.stats.samples).difference(
-            set(self.stats.phenotypes[0].s_negative)
+            self.stats.phenotypes[0].s_negative
         ):
             sample = self.samples.get(s_id)
-            f_ids_in_actives.update(set(sample.feature_ids))
+            f_ids_all_actives.update(sample.feature_ids)
+        f_ids_all_actives.difference_update(self.stats.GroupMData.blank_f_ids)
 
-        f_ids_in_actives = f_ids_in_actives.difference(
-            self.stats.GroupMData.blank_f_ids
-        )
-        f_ids_in_inactives = f_ids_in_inactives.difference(
-            self.stats.GroupMData.blank_f_ids
-        )
+        f_ids_all_inactives = set()
+        for s_id in self.stats.phenotypes[0].s_negative:
+            sample = self.samples.get(s_id)
+            f_ids_all_inactives.update(sample.feature_ids)
+        f_ids_all_inactives.difference_update(self.stats.GroupMData.blank_f_ids)
 
-        self.f_ids_intersect = f_ids_in_actives.intersection(f_ids_in_inactives)
-
-        for f_id in f_ids_in_actives.difference(f_ids_in_inactives):
+        f_ids_only_actives = f_ids_all_actives.difference(f_ids_all_inactives)
+        self.stats.phenotypes[0].f_ids_positive.update(f_ids_only_actives)
+        for f_id in f_ids_only_actives:
             feature = self.features.get(f_id)
             feature.phenotypes = [
                 Phenotype(
@@ -91,6 +85,8 @@ class PhenQuantAssigner(BaseModel):
                 )
             ]
             self.features.modify(f_id, feature)
+
+        self.f_ids_intersect = f_ids_all_actives.intersection(f_ids_all_inactives)
 
     def get_value(self: Self, f_id: int, sample_ids: set) -> list:
         """Retrieve values based on area or height
@@ -101,6 +97,9 @@ class PhenQuantAssigner(BaseModel):
 
         Returns:
             A list of collected values
+
+        Raises:
+            RuntimeError: empty list detected - no values determined
         """
         feature = self.features.get(f_id)
         values_s_ids = []
@@ -114,9 +113,15 @@ class PhenQuantAssigner(BaseModel):
                 if entry.s_id in sample_ids:
                     values_s_ids.append(entry.value)
 
-        return values_s_ids
+        if len(values_s_ids) == 0:
+            raise RuntimeError(
+                "'PhenQuantAssigner': empty list detected, would lead "
+                "to ZeroDivisionError."
+            )
+        else:
+            return values_s_ids
 
-    def bin_intersection(self):
+    def bin_intersection(self: Self):
         """Bin the intersection between positive and negative f_ids based on factor
 
         Raises:
@@ -126,12 +131,12 @@ class PhenQuantAssigner(BaseModel):
             feature = self.features.get(f_id)
 
             s_actv = set(self.stats.samples).difference(
-                set(self.stats.phenotypes[0].s_negative)
+                self.stats.phenotypes[0].s_negative
             )
             s_actv = s_actv.intersection(feature.samples)
             vals_act = self.get_value(f_id, s_actv)
 
-            s_inactv = set(self.stats.phenotypes[0].s_negative)
+            s_inactv = self.stats.phenotypes[0].s_negative
             s_inactv = s_inactv.intersection(feature.samples)
             vals_inact = self.get_value(f_id, s_inactv)
 
@@ -142,20 +147,23 @@ class PhenQuantAssigner(BaseModel):
                         feature.phenotypes = [
                             Phenotype(score=factor, format="qualitative")
                         ]
+                        self.stats.phenotypes[0].f_ids_positive.add(f_id)
                 case "mean":
                     factor = mean(vals_act) / mean(vals_inact)
                     if factor >= self.params.PhenoQuantAssgnParams.factor:
                         feature.phenotypes = [
                             Phenotype(score=factor, format="qualitative")
                         ]
+                        self.stats.phenotypes[0].f_ids_positive.add(f_id)
                 case "median":
                     factor = median(vals_act) / median(vals_inact)
                     if factor >= self.params.PhenoQuantAssgnParams.factor:
                         feature.phenotypes = [
                             Phenotype(score=factor, format="qualitative")
                         ]
+                        self.stats.phenotypes[0].f_ids_positive.add(f_id)
                 case _:
-                    raise RuntimeError("Unsupported algorithm.")
+                    raise RuntimeError("'PhenQuantAssigner': Unsupported algorithm.")
 
             self.features.modify(f_id, feature)
 

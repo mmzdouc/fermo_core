@@ -113,25 +113,26 @@ class PhenoData(BaseModel):
 
     Attributes:
         datatype: a string indicating the data type and the algorithm to use
-        category: identifier
+        category: identifier assay
         s_phen_data: a list of SamplePhenotype instances of positive (active) samples
         s_negative: a list of sample IDs with no data - inactive (negative) samples
+        f_ids_positive: a set of ids determined to be phenotype-associated
     """
 
     datatype: str
     category: str
     s_phen_data: list = []
-    s_negative: Optional[list] = None
+    s_negative: set = set()
+    f_ids_positive: set = set()
 
     def to_json(self: Self):
-        json_dict = {
+        return {
             "category": self.category,
             "datatype": self.datatype,
             "s_phen_data": [obj.to_json() for obj in self.s_phen_data],
+            "s_negative": list(self.s_negative),
+            "f_ids_positive": list(self.f_ids_positive),
         }
-        if self.s_negative is not None:
-            json_dict["s_negative"] = self.s_negative
-        return json_dict
 
 
 class SpecSimNet(BaseModel):

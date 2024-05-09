@@ -65,7 +65,7 @@ class PhenotypeParser(BaseModel):
             raise RuntimeError(
                 f"'PhenotypeParser': sample names in phenotype file do not "
                 f"match the ones extracted from the peaktable. Offending sample names: "
-                f"'{', '.join(diff_samples)}' - SKIP."
+                f"'{', '.join(diff_samples)}'."
             )
 
     def parse_qualitative(self: Self):
@@ -81,8 +81,7 @@ class PhenotypeParser(BaseModel):
         if len(s_negative) == 0:
             raise RuntimeError(
                 "'PhenotypeParser': no negative (inactive) samples found and "
-                "therefore, factor (fold)-based phenotype determination not possible - "
-                "SKIP."
+                "therefore, factor (fold)-based phenotype determination not possible."
             )
 
         self.stats.phenotypes = [
@@ -90,6 +89,6 @@ class PhenotypeParser(BaseModel):
                 datatype="qualitative",
                 category="qualitative",
                 s_phen_data=[SamplePhenotype(s_id=s_id) for s_id in s_ids_active],
-                s_negative=list(s_negative),
+                s_negative=s_negative,
             )
         ]

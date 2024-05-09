@@ -20,9 +20,27 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
+import logging
 from typing import Optional, Dict, Self
 
 from pydantic import BaseModel
+
+logger = logging.getLogger("fermo_core")
+
+
+class SampleScores(BaseModel):
+    """Organize sample-specific data, including sample-specific mol feature info.
+
+    Attributes:
+        diversity: indicates the est chemical diversity in this sample vs all samples
+        specificity: indicates the unique chemistry compared to other samples
+    """
+
+    diversity: float
+    specificity: float
+
+    def to_json(self: Self):
+        return {"diversity": self.diversity, "specificity": self.specificity}
 
 
 class Sample(BaseModel):
@@ -35,14 +53,16 @@ class Sample(BaseModel):
         networks: for each network algorithm, a set of subnetwork ids found in sample
         max_intensity: the highest intensity of a feature in the sample (absolute)
         max_area: the highest area of a feature in the sample (absolute)
+        scores: a SampleScores object summarizing scores calculated for sample
     """
 
     s_id: Optional[str] = None
     features: Optional[dict] = None
-    feature_ids: Optional[set[int]] = None
+    feature_ids: Optional[set] = None
     networks: Optional[Dict[str, set]] = None
     max_intensity: Optional[int] = None
     max_area: Optional[int] = None
+    scores: Optional[SampleScores] = None
 
     def to_json(self: Self) -> dict:
         """Convert class attributes to json-compatible dict.
@@ -61,6 +81,10 @@ class Sample(BaseModel):
         for attribute in attributes:
             if attribute[1] is not None:
                 json_dict[attribute[0]] = attribute[2](attribute[1])
+
+        logger.fatal("Export sample: dummy values for 'scores' written. Remove ASAP")
+        json_dict["scores"] = {"diversity": 1.0, "specificity": 0.5}
+        # TODO (MMZ 9.5.): implement proper score writing
 
         if self.networks is not None:
             json_dict["networks"] = dict()

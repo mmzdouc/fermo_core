@@ -26,7 +26,7 @@ from fermo_core.data_processing.builder_feature.dataclass_feature import (
     Match,
     CharFrag,
 )
-from fermo_core.data_processing.class_stats import Stats, SpecSimNet
+from fermo_core.data_processing.class_stats import Stats, SpecSimNet, PhenoData
 from fermo_core.data_processing.builder_sample.dataclass_sample import Sample
 from fermo_core.data_processing.class_repository import Repository
 
@@ -155,6 +155,15 @@ def csv_exporter():
             frag_ex=123.456,
             frag_det=123.455,
             diff=10.0,
+        )
+    ]
+    csv_exporter.stats.phenotypes = [
+        PhenoData(
+            datatype="qualitative",
+            category="qualitative",
+            f_ids_positive={
+                1,
+            },
         )
     ]
     return csv_exporter
@@ -295,6 +304,11 @@ def test_add_fragment_info_csv(csv_exporter):
 def test_add_group_info_csv(csv_exporter):
     csv_exporter.add_group_info_csv()
     assert isinstance(csv_exporter.df.loc[0, "fermo:category:abcde"], str)
+
+
+def test_add_phenotype_info_csv(csv_exporter):
+    csv_exporter.add_phenotype_info_csv()
+    assert isinstance(csv_exporter.df.loc[0, "fermo:phenotype:qualitative"], str)
 
 
 def test_build_csv_output(csv_exporter):

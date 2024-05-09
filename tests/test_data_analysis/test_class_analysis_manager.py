@@ -77,3 +77,8 @@ def test_run_group_assignment_invalid_file(analysis_manager_instance):
 def test_run_group_factor_assignment_invalid(analysis_manager_instance):
     analysis_manager_instance.run_group_factor_assignment()
     assert analysis_manager_instance.features.entries[13].group_factors is None
+
+
+def test_run_phenotype_manager_valid(analysis_manager_instance):
+    analysis_manager_instance.run_phenotype_manager()
+    assert 82 in analysis_manager_instance.stats.phenotypes[0].f_ids_positive
