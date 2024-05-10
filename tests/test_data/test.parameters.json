@@ -1,33 +1,33 @@
 {
     "files": {
         "peaktable": {
-            "filepath": "example_data/case_study_peak_table_quant_full.csv",
+            "filepath": "tests/test_data/test.peak_table_quant_full.csv",
             "format": "mzmine3",
             "polarity": "positive"
         },
         "msms": {
-            "filepath": "example_data/case_study_MSMS.mgf",
+            "filepath": "tests/test_data/test.msms.mgf",
             "format": "mgf",
             "rel_int_from": 0.01
         },
         "phenotype": {
-            "filepath": "example_data/dummy_bioactivity_quant_percentage.csv",
-            "format": "quantitative-percentage"
+            "filepath": "tests/test_data/test.bioactivity.qualitative.csv",
+            "format": "qualitative"
         },
         "group_metadata": {
-            "filepath": "example_data/case_study_group_metadata.csv",
+            "filepath": "tests/test_data/test.group_metadata.csv",
             "format": "fermo"
         },
         "spectral_library": {
-            "filepath": "example_data/case_study_spectral_library.mgf",
+            "filepath": "tests/test_data/test.spectral_library.mgf",
             "format": "mgf"
         },
         "ms2query_results": {
-            "filepath": "example_data/case_study.ms2query_results.csv",
+            "filepath": "tests/test_data/test.ms2query_results.csv",
             "score_cutoff": 0.7
         },
         "as_results": {
-            "directory_path": "example_data/JABTEZ000000000.1/",
+            "directory_path": "tests/test_data/JABTEZ000000000.1/",
             "similarity_cutoff": 0.7
         },
         "output": {
@@ -91,13 +91,13 @@
         },
         "phenotype_assignment": {
             "qualitative": {
-                "activate_module": false,
+                "activate_module": true,
                 "factor": 5,
                 "algorithm": "minmax",
                 "value": "area"
             },
             "quantitative-percentage": {
-                "activate_module": true,
+                "activate_module": false,
                 "sample_avg": "mean",
                 "value": "area",
                 "algorithm": "pearson",

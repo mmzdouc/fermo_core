@@ -217,7 +217,7 @@ class ValidationManager:
             raise ValueError(f"File '{mgf_file.name}' is not a .mgf-file or is empty.")
 
     @staticmethod
-    def validate_pheno_qualitative_fermo(pheno_file: Path):
+    def validate_pheno_qualitative(pheno_file: Path):
         """Validate that file is a qualitative phenotype file
 
         Args:
@@ -238,6 +238,50 @@ class ValidationManager:
             _raise_error("Empty fields in 'sample_name'")
         elif df.applymap(lambda x: str(x).isspace()).any().any():
             _raise_error("Fields containing only (white)space")
+
+    @staticmethod
+    def validate_pheno_quant_percentage(pheno_file: Path):
+        """Validate that file is a quantitative-percentage phenotype file
+
+        Args:
+           pheno_file: A pathlib Path object
+
+        Raises:
+            ValueError: Incorrect format
+        """
+
+        def _raise_error(message):
+            raise ValueError(f"{message} in file '{pheno_file.name}' detected.")
+
+        def _test_non_numeric_col(cols: list) -> bool:
+            for col in cols:
+                numeric_values = pd.to_numeric(df[col], errors="coerce")
+                non_numeric_indices = numeric_values.isna()
+                if non_numeric_indices.any():
+                    return True
+
+        df = pd.read_csv(pheno_file, sep=",")
+
+        if df.filter(regex="^sample_name$").columns.empty:
+            _raise_error("No column labelled 'sample_name'")
+        elif df.filter(regex="^well$").columns.empty:
+            _raise_error("No column labelled 'well'")
+        elif len(df.columns) < 3:
+            _raise_error("No assay column(s)")
+        elif len(df.columns) > 8:
+            _raise_error("Too many assay columns (maximum allowed: 6)")
+        elif df["sample_name"].nunique() < 10:
+            _raise_error("Less than 10 samples")
+        elif df.isnull().any().any():
+            _raise_error("Empty fields")
+        elif df.applymap(lambda x: str(x).isspace()).any().any():
+            _raise_error("Fields containing only (white)space")
+        elif any(df.columns.str.contains(r"\s")):
+            _raise_error("Whitespace in column(s)")
+        elif not any([col for col in df.columns if col.startswith("assay:")]):
+            _raise_error("No columns starting with 'assay:'")
+        elif _test_non_numeric_col([c for c in df.columns if c.startswith("assay:")]):
+            _raise_error("Non-numeric values in assay column(s)")
 
     @staticmethod
     def validate_group_metadata_fermo(group_file: Path):

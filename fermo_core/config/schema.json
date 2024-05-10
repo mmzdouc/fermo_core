@@ -496,6 +496,54 @@
                                     ]
                                 }
                             }
+                        },
+                        "quantitative-percentage": {
+                            "title": "Pearson correlation of percentage activity per sample with molecular feature area per sample.",
+                            "additionalProperties": false,
+                            "type": "object",
+                            "required": [
+                                "activate_module"
+                            ],
+                            "properties": {
+                                "activate_module": {
+                                    "title": "Specifies whether this module should be run. Default: False",
+                                    "type": "boolean"
+                                },
+                                "sample_avg": {
+                                    "title": "(Optional): Specifies algorithm to summarize multiple measurments per sample for same assay. Default value: 'mean'.",
+                                    "type": "string",
+                                    "enum": [
+                                        "mean",
+                                        "median"
+                                    ]
+                                },
+                                "value": {
+                                    "title": "(Optional): Specifies which value type should be considered. Default: 'area'.",
+                                    "type": "string",
+                                    "enum": [
+                                        "area"
+                                    ]
+                                },
+                                "algorithm": {
+                                    "title": "(Optional): Specifies the statistical algorithm to use. Default: 'pearson'.",
+                                    "type": "string",
+                                    "enum": [
+                                        "pearson"
+                                    ]
+                                },
+                                "p_val_cutoff": {
+                                    "title": "(Optional): Minimum Bonferroni-corrected p-value to consider. Default: 0.05",
+                                    "type": "number",
+                                    "minimum": 0.0,
+                                    "maximum": 1.0
+                                },
+                                "coeff_cutoff": {
+                                    "title": "(Optional): Minimum correlation coefficient to consider. Default: 0.7",
+                                    "type": "number",
+                                    "minimum": 0.0,
+                                    "maximum": 1.0
+                                }
+                            }
                         }
                     }
                 },

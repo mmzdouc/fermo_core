@@ -14,6 +14,30 @@ def qualitative_p():
     return PhenotypeParser(stats=stats, df=df)
 
 
+@pytest.fixture
+def quant_percent_p():
+    stats = Stats(samples=("s1", "s2"))
+    df = pd.DataFrame(
+        {
+            "sample_name": ["s1", "s1", "s2", "s2", "s2"],
+            "well": [1, 2, 3, 4, 5],
+            "assay:assay1": [6, -6, 80, 85, 88],
+            "assay:assay2": [80, 70, -20, 5, 2],
+        }
+    )
+    return PhenotypeParser(stats=stats, df=df)
+
+
+def test_parse_quantitative_percentage_mean(quant_percent_p):
+    quant_percent_p.parse_quantitative_percentage("mean")
+    assert round(quant_percent_p.stats.phenotypes[0].s_phen_data[1].value, 0) == 84
+
+
+def test_parse_quantitative_percentage_median(quant_percent_p):
+    quant_percent_p.parse_quantitative_percentage("median")
+    assert quant_percent_p.stats.phenotypes[0].s_phen_data[1].value == 85
+
+
 def test_validate_sample_names_valid(qualitative_p):
     assert qualitative_p.validate_sample_names() is None
 

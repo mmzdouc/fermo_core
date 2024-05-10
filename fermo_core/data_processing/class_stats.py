@@ -126,13 +126,16 @@ class PhenoData(BaseModel):
     f_ids_positive: set = set()
 
     def to_json(self: Self):
-        return {
+        json_dict = {
             "category": self.category,
             "datatype": self.datatype,
             "s_phen_data": [obj.to_json() for obj in self.s_phen_data],
-            "s_negative": list(self.s_negative),
-            "f_ids_positive": list(self.f_ids_positive),
         }
+        if len(self.s_negative) != 0:
+            json_dict["s_negative"] = list(self.s_negative)
+        if len(self.f_ids_positive) != 0:
+            json_dict["f_ids_positive"] = list(self.f_ids_positive)
+        return json_dict
 
 
 class SpecSimNet(BaseModel):

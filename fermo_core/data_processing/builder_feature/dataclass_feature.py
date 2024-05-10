@@ -254,25 +254,38 @@ class Phenotype(BaseModel):
     """A Pydantic-based class to represent phenotype information
 
     Attributes:
-        score: the score calculated
         format: the format of the phenotype file
         category: the assay category (column) if applicable
         descr: additional data if applicable
+        score: the score calculated
+        p_value: the calculated p-value if applicable
+        p_value_corr: the Bonferroni-corrected p-value if applicable
+
     """
 
-    score: float
     format: str
     category: Optional[str] = None
     descr: Optional[str] = None
+    score: float
+    p_value: Optional[float] = None
+    p_value_corr: Optional[float] = None
 
     def to_json(self: Self) -> dict:
-        json_dict = {"score": round(self.score, 2), "format": self.format}
+        json_dict = {"format": self.format}
 
         if self.category is not None:
             json_dict["category"] = self.category
 
         if self.descr is not None:
             json_dict["descr"] = self.descr
+
+        json_dict["score"] = round(self.score, 6)
+
+        if self.p_value is not None:
+            json_dict["p_value"] = round(self.p_value, 10)
+
+        if self.p_value_corr is not None:
+            json_dict["p_value_corr"] = round(self.p_value_corr, 10)
 
         return json_dict
 

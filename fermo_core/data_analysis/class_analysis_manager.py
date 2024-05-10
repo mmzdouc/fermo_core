@@ -207,7 +207,8 @@ class AnalysisManager(BaseModel):
             return
         elif not any(
             [
-                self.params.PhenoQuantAssgnParams.activate_module,
+                self.params.PhenoQualAssgnParams.activate_module,
+                self.params.PhenoQuantPercentAssgnParams.activate_module,
             ]
         ):
             logger.info(

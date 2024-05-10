@@ -1,7 +1,7 @@
 import pytest
 
 from fermo_core.input_output.additional_module_parameter_managers import (
-    PhenoQuantAssgnParams,
+    PhenoQualAssgnParams,
 )
 
 
@@ -12,13 +12,13 @@ def test_json_export_valid():
         "algorithm": "minmax",
         "value": "area",
     }
-    obj = PhenoQuantAssgnParams(**dict_in)
+    obj = PhenoQualAssgnParams(**dict_in)
     dict_out = obj.to_json()
     assert dict_out == dict_in
 
 
 def test_json_export_invalid():
-    obj = PhenoQuantAssgnParams()
+    obj = PhenoQualAssgnParams()
     dict_out = obj.to_json()
     assert dict_out["activate_module"] is False
     assert dict_out.get("factor") is None
@@ -26,14 +26,14 @@ def test_json_export_invalid():
 
 def test_init_invalid_none():
     with pytest.raises(TypeError):
-        PhenoQuantAssgnParams(None)
+        PhenoQualAssgnParams(None)
 
 
 def test_init_invalid_alg():
-    obj = PhenoQuantAssgnParams(algorithm="asfasdfa")
+    obj = PhenoQualAssgnParams(algorithm="asfasdfa")
     assert obj.algorithm == "minmax"
 
 
 def test_init_invalid_value():
-    obj = PhenoQuantAssgnParams(value="asfasdfa")
+    obj = PhenoQualAssgnParams(value="asfasdfa")
     assert obj.value == "area"

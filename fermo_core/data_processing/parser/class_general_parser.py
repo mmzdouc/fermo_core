@@ -158,22 +158,29 @@ class GeneralParser(BaseModel):
             )
             return
 
+        phenotype_parser = PhenotypeParser(
+            stats=self.stats,
+            df=pd.read_csv(params.PhenotypeParameters.filepath),
+        )
+        phenotype_parser.message("started")
+        phenotype_parser.validate_sample_names()
+
         match params.PhenotypeParameters.format:
             case "qualitative":
-                phenotype_parser = PhenotypeParser(
-                    stats=self.stats,
-                    df=pd.read_csv(params.PhenotypeParameters.filepath),
-                )
-                phenotype_parser.message("started")
-                phenotype_parser.validate_sample_names()
                 phenotype_parser.parse_qualitative()
                 self.stats = phenotype_parser.return_stats()
-                phenotype_parser.message("completed")
+            case "quantitative-percentage":
+                phenotype_parser.parse_quantitative_percentage(
+                    params.PhenoQuantPercentAssgnParams.sample_avg
+                )
+                self.stats = phenotype_parser.return_stats()
             case _:
                 raise RuntimeError(
                     f"'GeneralParser': detected unsupported format "
                     f"'{params.PhenotypeParameters.format}' for 'phenotype'."
                 )
+
+        phenotype_parser.message("completed")
 
     def parse_spectral_library(self: Self, params: ParameterManager):
         """Parses user-provided spectral_library file.

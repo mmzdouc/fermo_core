@@ -143,14 +143,20 @@ class PhenotypeParameters(BaseModel):
     def validate_phenotype_format(self):
         path_phenotype = self.filepath
         format_phenotype = self.format
+        ValidationManager.validate_file_extension(path_phenotype, ".csv")
+        ValidationManager.validate_csv_file(path_phenotype)
+        ValidationManager.validate_csv_has_rows(path_phenotype)
+
         match format_phenotype:
             case "qualitative":
-                ValidationManager.validate_file_extension(path_phenotype, ".csv")
-                ValidationManager.validate_csv_file(path_phenotype)
-                ValidationManager.validate_csv_has_rows(path_phenotype)
-                ValidationManager.validate_pheno_qualitative_fermo(path_phenotype)
+                ValidationManager.validate_pheno_qualitative(path_phenotype)
                 ValidationManager.validate_no_duplicate_entries_csv_column(
                     path_phenotype, "sample_name"
+                )
+            case "quantitative-percentage":
+                ValidationManager.validate_pheno_quant_percentage(path_phenotype)
+                ValidationManager.validate_no_duplicate_entries_csv_column(
+                    path_phenotype, "well"
                 )
             case _:
                 raise ValueError(f"Unsupported phenotype format: '{format_phenotype}'.")
