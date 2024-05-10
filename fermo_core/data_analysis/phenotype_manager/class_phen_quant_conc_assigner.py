@@ -1,4 +1,4 @@
-"""Run the phenotype quantitative percentage data assignment.
+"""Run the phenotype quantitative concentration data assignment.
 
 Copyright (c) 2022 to present Mitja Maximilian Zdouc, PhD
 
@@ -34,8 +34,8 @@ from fermo_core.input_output.class_parameter_manager import ParameterManager
 logger = logging.getLogger("fermo_core")
 
 
-class PhenQuantPercAssigner(BaseModel):
-    """Pydantic-based class to run qualitative phenotype assignment on percentage data
+class PhenQuantConcAssigner(BaseModel):
+    """Pydantic-based class to run qualitative phenotype assignment on concentrat. data
 
     Attributes:
         params: ParameterManager object, holds user-provided parameters
@@ -67,7 +67,7 @@ class PhenQuantPercAssigner(BaseModel):
                 self.relevant_f_ids.add(f_id)
             else:
                 logger.debug(
-                    f"'PhenQuantPercAssigner': feature id '{f_id}' only detected in "
+                    f"'PhenQuantConcAssigner': feature id '{f_id}' only detected in "
                     f"'{len(feature.samples)}' samples: exclude from correlation "
                     f"analysis."
                 )
@@ -78,9 +78,11 @@ class PhenQuantPercAssigner(BaseModel):
         Raises:
             RuntimeError: No relevant features (present in >3 samples) detected.
         """
+        # TODO(MMZ 10.5.): rework this analysis
+
         if len(self.relevant_f_ids) == 0:
             raise RuntimeError(
-                "'PhenQuantPercAssigner': No relevant features (detected in >3 "
+                "'PhenQuantConcAssigner': No relevant features (detected in >3 "
                 "samples) detected - SKIP."
             )
 
@@ -91,15 +93,11 @@ class PhenQuantPercAssigner(BaseModel):
             for num, assay in enumerate(self.stats.phenotypes):
                 areas = []
                 activs = []
-
                 for s_id in feature.samples:
                     for measure in assay.s_phen_data:
                         if s_id == measure.s_id:
                             areas.append(f_areas[s_id])
                             activs.append(measure.value)
-
-                areas_scaled = zscore(areas)
-                activs_scaled = zscore(activs)
 
                 if len(areas) < 3:
                     logger.debug(
@@ -109,14 +107,18 @@ class PhenQuantPercAssigner(BaseModel):
                     )
                     continue
 
+                areas_scaled = zscore(areas)
+                activs_scaled = zscore(activs)
+
                 pearson_s, p_val = pearsonr(areas_scaled, activs_scaled)
 
                 p_val_cor = p_val * len(self.relevant_f_ids)
 
+                pearson_s_abs = abs(pearson_s)
+
                 if (
-                    pearson_s > self.params.PhenoQuantPercentAssgnParams.coeff_cutoff
-                    and p_val_cor
-                    < self.params.PhenoQuantPercentAssgnParams.p_val_cutoff
+                    pearson_s_abs > self.params.PhenoQuantConcAssgnParams.coeff_cutoff
+                    and p_val_cor < self.params.PhenoQuantConcAssgnParams.p_val_cutoff
                 ):
                     if feature.phenotypes is None:
                         feature.phenotypes = []
@@ -124,7 +126,7 @@ class PhenQuantPercAssigner(BaseModel):
                         Phenotype(
                             format=assay.datatype,
                             category=assay.category,
-                            score=pearson_s,
+                            score=pearson_s_abs,
                             p_value=p_val,
                             p_value_corr=p_val_cor,
                         )
@@ -141,7 +143,7 @@ class PhenQuantPercAssigner(BaseModel):
         """
         if self.stats.phenotypes is None:
             raise RuntimeError(
-                "'PhenQuantPercAssigner': self.stats.phenotypes not specified - SKIP"
+                "'PhenQuantConcAssigner': self.stats.phenotypes not specified - SKIP"
             )
 
         self.find_relevant_f_ids()

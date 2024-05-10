@@ -234,6 +234,28 @@ def test_validate_pheno_quant_percentage_invalid():
         )
 
 
+def test_validate_pheno_quant_concentration_valid():
+    assert (
+        ValidationManager.validate_pheno_quant_concentration(
+            Path(
+                "tests/test_input_output/test_validation_manager/"
+                "example_phenotype_quant_concentration.csv"
+            )
+        )
+        is None
+    )
+
+
+def test_validate_pheno_quant_concentration_invalid():
+    with pytest.raises(ValueError):
+        ValidationManager.validate_pheno_quant_concentration(
+            Path(
+                "tests/test_input_output/test_validation_manager/"
+                "example_phenotype_qualitative.csv"
+            )
+        )
+
+
 def test_validate_group_metadata_fermo_valid():
     assert (
         ValidationManager.validate_group_metadata_fermo(

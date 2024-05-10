@@ -50,6 +50,7 @@ from fermo_core.input_output.additional_module_parameter_managers import (
     GroupFactAssignmentParameters,
     PhenoQualAssgnParams,
     PhenoQuantPercentAssgnParams,
+    PhenoQuantConcAssgnParams,
     SpectralLibMatchingCosineParameters,
     SpectralLibMatchingDeepscoreParameters,
     Ms2QueryAnnotationParameters,
@@ -89,6 +90,7 @@ class ParameterManager(BaseModel):
         GroupFactAssignmentParameters: class handling group factor assignment mod params
         PhenoQualAssgnParams: class handling phenotype qual assignment parameter
         PhenoQuantPercentAssgnParams: phenotype quantitative percentage assignment param
+        PhenoQuantConcAssgnParams: phenotype quantitative concentration assignment param
         SpectralLibMatchingCosineParameters: class handling cosine-based spectral
             library matching module parameter
         SpectralLibMatchingDeepscoreParameters: class handling ms2deepscore-based
@@ -128,6 +130,7 @@ class ParameterManager(BaseModel):
     PhenoQuantPercentAssgnParams: PhenoQuantPercentAssgnParams = (
         PhenoQuantPercentAssgnParams()
     )
+    PhenoQuantConcAssgnParams: PhenoQuantConcAssgnParams = PhenoQuantConcAssgnParams()
     SpectralLibMatchingCosineParameters: SpectralLibMatchingCosineParameters = (
         SpectralLibMatchingCosineParameters()
     )
@@ -190,6 +193,9 @@ class ParameterManager(BaseModel):
         json_dict[
             "PhenoQuantPercentAssgnParams"
         ] = self.PhenoQuantPercentAssgnParams.to_json()
+        json_dict[
+            "PhenoQuantConcAssgnParams"
+        ] = self.PhenoQuantConcAssgnParams.to_json()
         json_dict[
             "SpectralLibMatchingCosineParameters"
         ] = self.SpectralLibMatchingCosineParameters.to_json()
@@ -359,6 +365,13 @@ class ParameterManager(BaseModel):
                 ),
                 self.assign_phenotype_quant_percent,
                 "phenotype_assignment/quantitative-percentage",
+            ),
+            (
+                user_params.get("phenotype_assignment", {}).get(
+                    "quantitative-concentration"
+                ),
+                self.assign_phenotype_quant_concentration,
+                "phenotype_assignment/quantitative-concentration",
             ),
             (
                 user_params.get("spectral_library_matching", {}).get("modified_cosine"),
@@ -761,6 +774,26 @@ class ParameterManager(BaseModel):
                 "phenotype_assignment/quantitative-percentage"
             )
             self.PhenoQuantPercentAssgnParams = PhenoQuantPercentAssgnParams()
+
+    def assign_phenotype_quant_concentration(self: Self, user_params: dict):
+        """Assign phenotype_assignment/quantitative-concentration parameters to
+            self.PhenoQuantConcAssgnParams.
+
+        Parameters:
+            user_params: user-provided params, read from json file
+        """
+        try:
+            self.PhenoQuantConcAssgnParams = PhenoQuantConcAssgnParams(**user_params)
+            logger.info(
+                "'ParameterManager': validated and assigned parameters "
+                "for 'phenotype_assignment/quantitative-concentration'."
+            )
+        except Exception as e:
+            logger.warning(str(e))
+            self.log_malformed_parameters_default(
+                "phenotype_assignment/quantitative-concentration"
+            )
+            self.PhenoQuantConcAssgnParams = PhenoQuantConcAssgnParams()
 
     def assign_spec_lib_matching_cosine(self: Self, user_params: dict):
         """Assign spectral_library_matching/modified_cosine parameters to

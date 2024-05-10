@@ -209,6 +209,7 @@ class AnalysisManager(BaseModel):
             [
                 self.params.PhenoQualAssgnParams.activate_module,
                 self.params.PhenoQuantPercentAssgnParams.activate_module,
+                self.params.PhenoQuantConcAssgnParams.activate_module,
             ]
         ):
             logger.info(

@@ -11,8 +11,8 @@
             "rel_int_from": 0.01
         },
         "phenotype": {
-            "filepath": "example_data/dummy_bioactivity_quant_percentage.csv",
-            "format": "quantitative-percentage"
+            "filepath": "example_data/dummy_bioactivity_quant_concentration.csv",
+            "format": "quantitative-concentration"
         },
         "group_metadata": {
             "filepath": "example_data/case_study_group_metadata.csv",
@@ -97,6 +97,14 @@
                 "value": "area"
             },
             "quantitative-percentage": {
+                "activate_module": false,
+                "sample_avg": "mean",
+                "value": "area",
+                "algorithm": "pearson",
+                "p_val_cutoff": 0.05,
+                "coeff_cutoff": 0.7
+            },
+            "quantitative-concentration": {
                 "activate_module": true,
                 "sample_avg": "mean",
                 "value": "area",

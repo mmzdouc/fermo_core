@@ -28,6 +28,30 @@ def quant_percent_p():
     return PhenotypeParser(stats=stats, df=df)
 
 
+@pytest.fixture
+def quant_conc_p():
+    stats = Stats(samples=("s1", "s2"))
+    df = pd.DataFrame(
+        {
+            "sample_name": ["s1", "s1", "s2", "s2", "s2"],
+            "well": [1, 2, 3, 4, 5],
+            "assay:assay1": [100, 80, 50, 75, 60],
+            "assay:assay2": [200, 200, 200, 200, 100],
+        }
+    )
+    return PhenotypeParser(stats=stats, df=df)
+
+
+def test_parse_quantitative_concentration_mean(quant_conc_p):
+    quant_conc_p.parse_quantitative_concentration("mean")
+    assert round(quant_conc_p.stats.phenotypes[0].s_phen_data[1].value, 1) == 61.7
+
+
+def test_parse_quantitative_concentration_median(quant_conc_p):
+    quant_conc_p.parse_quantitative_concentration("median")
+    assert round(quant_conc_p.stats.phenotypes[0].s_phen_data[1].value, 1) == 60
+
+
 def test_parse_quantitative_percentage_mean(quant_percent_p):
     quant_percent_p.parse_quantitative_percentage("mean")
     assert round(quant_percent_p.stats.phenotypes[0].s_phen_data[1].value, 0) == 84

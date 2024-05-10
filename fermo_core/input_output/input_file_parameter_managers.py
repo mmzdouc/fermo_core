@@ -158,6 +158,11 @@ class PhenotypeParameters(BaseModel):
                 ValidationManager.validate_no_duplicate_entries_csv_column(
                     path_phenotype, "well"
                 )
+            case "quantitative-concentration":
+                ValidationManager.validate_pheno_quant_concentration(path_phenotype)
+                ValidationManager.validate_no_duplicate_entries_csv_column(
+                    path_phenotype, "well"
+                )
             case _:
                 raise ValueError(f"Unsupported phenotype format: '{format_phenotype}'.")
         return self

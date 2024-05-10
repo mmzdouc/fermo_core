@@ -31,6 +31,9 @@ from fermo_core.data_analysis.phenotype_manager.class_phen_qual_assigner import 
 from fermo_core.data_analysis.phenotype_manager.class_phen_quant_perc_assigner import (
     PhenQuantPercAssigner,
 )
+from fermo_core.data_analysis.phenotype_manager.class_phen_quant_conc_assigner import (
+    PhenQuantConcAssigner,
+)
 from fermo_core.data_processing.class_repository import Repository
 from fermo_core.data_processing.class_stats import Stats
 from fermo_core.input_output.class_parameter_manager import ParameterManager
@@ -71,7 +74,8 @@ class PhenotypeManager(BaseModel):
                 self.run_assigner_qualitative()
             case "quantitative-percentage":
                 self.run_assigner_quant_percentage()
-            # TODO(8.5.): expand for other conditions
+            case "quantitative-concentration":
+                self.run_assigner_quant_concentration()
             case _:
                 logger.warning("'PhenotypeManager': unexpected phenotype format - SKIP")
                 return
@@ -112,7 +116,10 @@ class PhenotypeManager(BaseModel):
 
     def run_assigner_quant_percentage(self: Self):
         """Run the phenotype feature annotation based on quantitative percentage data"""
-        logger.info("'PhenotypeManager': started quantitative phenotype data analysis.")
+        logger.info(
+            "'PhenotypeManager': started quantitative phenotype data analysis for "
+            "percentage data."
+        )
 
         if self.params.PhenoQuantPercentAssgnParams.activate_module is False:
             logger.info(
@@ -139,5 +146,42 @@ class PhenotypeManager(BaseModel):
             return
 
         logger.info(
-            "'PhenotypeManager': completed quantitative phenotype data analysis."
+            "'PhenotypeManager': started quantitative phenotype data analysis for "
+            "percentage data."
+        )
+
+    def run_assigner_quant_concentration(self: Self):
+        """Run the phenotype feature annotation based on quantitative concentr. data"""
+        logger.info(
+            "'PhenotypeManager': started quantitative phenotype data analysis for "
+            "concentration data."
+        )
+
+        if self.params.PhenoQuantConcAssgnParams.activate_module is False:
+            logger.info(
+                "'PhenotypeManager': parameters for "
+                "'phenotype_assignment/quantitative-concentration' not specified or "
+                "module turned off - SKIP"
+            )
+            return
+
+        try:
+            quant_conc_assigner = PhenQuantConcAssigner(
+                params=self.params,
+                features=self.features,
+                stats=self.stats,
+                samples=self.samples,
+            )
+            quant_conc_assigner.run_analysis()
+            self.stats, self.features = quant_conc_assigner.return_values()
+        except Exception as e:
+            logger.error(str(e))
+            logger.error(
+                "'PhenotypeManager': Error during running of PhenQuantConcAssigner - SKIP"
+            )
+            return
+
+        logger.info(
+            "'PhenotypeManager': completed quantitative phenotype data analysis for "
+            "concentration data."
         )

@@ -27,6 +27,7 @@ from fermo_core.input_output.additional_module_parameter_managers import (
     BlankAssignmentParameters,
     PhenoQualAssgnParams,
     PhenoQuantPercentAssgnParams,
+    PhenoQuantConcAssgnParams,
     SpectralLibMatchingCosineParameters,
     SpectralLibMatchingDeepscoreParameters,
     Ms2QueryAnnotationParameters,
@@ -343,6 +344,18 @@ def test_assign_phenotype_quant_percent_invalid():
     params = ParameterManager()
     params.assign_phenotype_quant_percent({"asdfg": "asdfg"})
     assert params.PhenoQuantPercentAssgnParams.activate_module is False
+
+
+def test_assign_phenotype_quant_concentration_valid():
+    params = ParameterManager()
+    params.assign_phenotype_quant_concentration({"activate_module": True})
+    assert isinstance(params.PhenoQuantConcAssgnParams, PhenoQuantConcAssgnParams)
+
+
+def test_assign_phenotype_quant_concentration_invalid():
+    params = ParameterManager()
+    params.assign_phenotype_quant_concentration({"asdfg": "asdfg"})
+    assert params.PhenoQuantConcAssgnParams.activate_module is False
 
 
 def test_assign_spec_lib_matching_cosine_valid():

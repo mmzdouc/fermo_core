@@ -174,6 +174,11 @@ class GeneralParser(BaseModel):
                     params.PhenoQuantPercentAssgnParams.sample_avg
                 )
                 self.stats = phenotype_parser.return_stats()
+            case "quantitative-concentration":
+                phenotype_parser.parse_quantitative_concentration(
+                    params.PhenoQuantConcAssgnParams.sample_avg
+                )
+                self.stats = phenotype_parser.return_stats()
             case _:
                 raise RuntimeError(
                     f"'GeneralParser': detected unsupported format "
