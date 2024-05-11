@@ -12,6 +12,7 @@ from fermo_core.data_processing.builder_feature.dataclass_feature import (
     SampleInfo,
     GroupFactor,
     Phenotype,
+    Scores,
 )
 
 
@@ -157,3 +158,10 @@ def test_to_json_phenotypes_valid():
     feature.phenotypes = [Phenotype(score=0.1, format="qualitative", descr="asdf")]
     f_dict = feature.to_json()
     assert f_dict["phenotypes"][0]["score"] == 0.1
+
+
+def test_to_json_scores_valid():
+    feature = Feature()
+    feature.Scores = Scores(novelty=1.0, phenotype=0.88)
+    f_dict = feature.to_json()
+    assert f_dict["scores"]["novelty"] == 1.0

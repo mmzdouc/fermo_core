@@ -82,3 +82,8 @@ def test_run_group_factor_assignment_invalid(analysis_manager_instance):
 def test_run_phenotype_manager_valid(analysis_manager_instance):
     analysis_manager_instance.run_phenotype_manager()
     assert 82 in analysis_manager_instance.stats.phenotypes[0].f_ids_positive
+
+
+def test_run_score_assignment_valid(analysis_manager_instance):
+    analysis_manager_instance.run_score_assignment()
+    assert analysis_manager_instance.features.entries[13].Scores is None

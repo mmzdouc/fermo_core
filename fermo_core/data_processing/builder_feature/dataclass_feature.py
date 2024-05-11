@@ -21,7 +21,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 import logging
-from typing import Optional, Dict, Self, List, Any
+from typing import Optional, Self, Any
 
 from pydantic import BaseModel
 
@@ -171,10 +171,10 @@ class Annotations(BaseModel):
         fragments: list of CharFrag objects annotating characteristic ion fragments
     """
 
-    adducts: Optional[List[Adduct]] = None
-    matches: Optional[List[Match]] = None
-    losses: Optional[List[NeutralLoss]] = None
-    fragments: Optional[List[CharFrag]] = None
+    adducts: Optional[list] = None
+    matches: Optional[list] = None
+    losses: Optional[list] = None
+    fragments: Optional[list] = None
 
     def to_json(self: Self) -> dict:
         json_dict = {}
@@ -290,6 +290,26 @@ class Phenotype(BaseModel):
         return json_dict
 
 
+class Scores(BaseModel):
+    """A Pydantic-based class to represent feature score information
+
+    Attributes:
+        phenotype: the highest phenotype correlation score (if any) across all assays
+        novelty: putative novelty of the feature (compared against external data)
+    """
+
+    phenotype: Optional[float] = None
+    novelty: Optional[float] = None
+
+    def to_json(self) -> dict:
+        json_dict = {}
+        if self.phenotype is not None:
+            json_dict["phenotype"] = round(self.phenotype, 2)
+        if self.novelty is not None:
+            json_dict["novelty"] = round(self.novelty, 2)
+        return json_dict
+
+
 class Feature(BaseModel):
     """A Pydantic-based class to represent a molecular feature.
 
@@ -308,16 +328,16 @@ class Feature(BaseModel):
         area: the area of the peak
         rel_area: the area relative to the feature with the highest area in the sample.
         Spectrum: a matchms Spectrum object instance using data from msms
-        samples: a tuple of samples to which feature is associated.
-        area_per_sample: list of SampleInfo instances
-        height_per_sample: list of SampleInfo instances
+        samples: samples in which feature was detected.
+        area_per_sample: list of SampleInfo instances summarizing area per sample
+        height_per_sample: list of SampleInfo instances summarizing height per sample
         blank: bool to indicate if feature is blank-associated (if provided).
         groups: association to categories and groups is such data was provided.
         group_factors: indicates the group factors(fold differences) if provided.
         phenotypes: a list of Phenotype objects if phenotype was assigned
         Annotations: objects summarizing associated annotation data
         networks: dict of objects representing associated networking data
-        scores: dict of objects representing associated scores
+        Scores: Object representing feature-associated scores
     """
 
     f_id: Optional[int] = None
@@ -341,9 +361,9 @@ class Feature(BaseModel):
     groups: Optional[dict] = None
     group_factors: Optional[dict] = None
     phenotypes: Optional[list] = None
-    Annotations: Optional[Annotations] = None
-    networks: Optional[Dict] = None
-    scores: Optional[Dict] = None
+    Annotations: Optional[Any] = None
+    networks: Optional[dict] = None
+    Scores: Optional[Any] = None
 
     def to_json(self: Self) -> dict:
         """Convert class attributes to json-compatible dict.
@@ -393,6 +413,12 @@ class Feature(BaseModel):
                 for key, val in self.group_factors.items()
             }
 
+        if self.phenotypes is not None:
+            json_dict["phenotypes"] = [obj.to_json() for obj in self.phenotypes]
+
+        if self.Scores is not None:
+            json_dict["scores"] = self.Scores.to_json()
+
         if self.Spectrum is not None:
             json_dict["spectrum"] = dict()
             json_dict["spectrum"]["mz"] = list(self.Spectrum.mz)
@@ -408,13 +434,5 @@ class Feature(BaseModel):
 
         if self.Annotations is not None:
             json_dict["annotations"] = self.Annotations.to_json()
-
-        if self.phenotypes is not None:
-            json_dict["phenotypes"] = [obj.to_json() for obj in self.phenotypes]
-
-        logger.fatal("Export feature: dummy values for 'scores' written. Remove ASAP")
-        json_dict["scores"] = {"prioritization": 1.0, "novelty": 0.5, "phenotype": 0.3}
-        # TODO (MMZ 9.5.): implement proper score writing
-        # TODO(MMZ 20.1.24): - check if everything was covered by export
 
         return json_dict

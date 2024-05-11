@@ -32,6 +32,9 @@ from fermo_core.data_processing.class_stats import Stats
 from fermo_core.data_analysis.annotation_manager.class_annotation_manager import (
     AnnotationManager,
 )
+from fermo_core.data_analysis.score_assigner.class_score_assigner import (
+    ScoreAssigner,
+)
 from fermo_core.data_analysis.chrom_trace_calculator.class_chrom_trace_calculator import (
     ChromTraceCalculator,
 )
@@ -61,9 +64,6 @@ class AnalysisManager(BaseModel):
         stats: Stats object, holds stats on molecular features and samples
         features: Repository object, holds "General Feature" objects
         samples: Repository object, holds "Sample" objects
-
-    Notes:
-        Every method should append log of completion to `self.stats.analysis_log`
     """
 
     params: ParameterManager
@@ -90,6 +90,7 @@ class AnalysisManager(BaseModel):
         self.run_phenotype_manager()
         self.run_sim_networks_manager()
         self.run_annotation_manager()
+        self.run_score_assignment()
         self.run_chrom_trace_calculator()
 
         logger.info("'AnalysisManager': completed analysis steps.")
@@ -293,7 +294,29 @@ class AnalysisManager(BaseModel):
             logger.warning(str(e))
             return
 
+    def run_score_assignment(self: Self):
+        """Run mandatory score annotation analysis step"""
+        try:
+            score_assigner = ScoreAssigner(
+                params=self.params,
+                stats=self.stats,
+                features=self.features,
+                samples=self.samples,
+            )
+            score_assigner.run_analysis()
+            self.features, self.samples = score_assigner.return_attributes()
+            self.stats.analysis_log.append("Ran module 'ScoreAssignment'.")
+        except Exception as e:
+            logger.warning(str(e))
+            return
+
     def run_chrom_trace_calculator(self: Self):
         """Run mandatory ChromTraceCalculator analysis step."""
-        self.samples = ChromTraceCalculator().modify_samples(self.samples, self.stats)
-        self.stats.analysis_log.append("Ran module 'ChromTraceCalculator'.")
+        try:
+            self.samples = ChromTraceCalculator().modify_samples(
+                self.samples, self.stats
+            )
+            self.stats.analysis_log.append("Ran module 'ChromTraceCalculator'.")
+        except Exception as e:
+            logger.warning(str(e))
+            return

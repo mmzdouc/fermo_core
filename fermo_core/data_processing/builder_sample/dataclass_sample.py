@@ -28,19 +28,28 @@ from pydantic import BaseModel
 logger = logging.getLogger("fermo_core")
 
 
-class SampleScores(BaseModel):
+class Scores(BaseModel):
     """Organize sample-specific data, including sample-specific mol feature info.
 
     Attributes:
         diversity: indicates the est chemical diversity in this sample vs all samples
         specificity: indicates the unique chemistry compared to other samples
+        mean_novelty: indicates the mean novelty of all features in sample
     """
 
-    diversity: float
-    specificity: float
+    diversity: Optional[float] = None
+    specificity: Optional[float] = None
+    mean_novelty: Optional[float] = None
 
     def to_json(self: Self):
-        return {"diversity": self.diversity, "specificity": self.specificity}
+        json_dict = {}
+        if self.diversity is not None:
+            json_dict["diversity"] = round(self.diversity, 2)
+        if self.specificity is not None:
+            json_dict["specificity"] = round(self.specificity, 2)
+        if self.mean_novelty is not None:
+            json_dict["mean_novelty"] = round(self.mean_novelty, 2)
+        return json_dict
 
 
 class Sample(BaseModel):
@@ -53,7 +62,7 @@ class Sample(BaseModel):
         networks: for each network algorithm, a set of subnetwork ids found in sample
         max_intensity: the highest intensity of a feature in the sample (absolute)
         max_area: the highest area of a feature in the sample (absolute)
-        scores: a SampleScores object summarizing scores calculated for sample
+        Scores: a Scores object summarizing scores calculated for sample
     """
 
     s_id: Optional[str] = None
@@ -62,7 +71,7 @@ class Sample(BaseModel):
     networks: Optional[Dict[str, set]] = None
     max_intensity: Optional[int] = None
     max_area: Optional[int] = None
-    scores: Optional[SampleScores] = None
+    Scores: Optional[Scores] = None
 
     def to_json(self: Self) -> dict:
         """Convert class attributes to json-compatible dict.
@@ -82,9 +91,8 @@ class Sample(BaseModel):
             if attribute[1] is not None:
                 json_dict[attribute[0]] = attribute[2](attribute[1])
 
-        logger.fatal("Export sample: dummy values for 'scores' written. Remove ASAP")
-        json_dict["scores"] = {"diversity": 1.0, "specificity": 0.5}
-        # TODO (MMZ 9.5.): implement proper score writing
+        if self.Scores is not None:
+            json_dict["scores"] = self.Scores.to_json()
 
         if self.networks is not None:
             json_dict["networks"] = dict()
