@@ -389,10 +389,9 @@ class AnnotationManager(BaseModel):
         if self.params.AsKcbCosineMatchingParams.activate_module is False:
             logger.warning(
                 "'AnnotationManager': antiSMASH results file provided but "
-                "'as_kcb_matching/modified_cosine' is turned off. Continue with "
-                "default settings for 'as_kcb_matching/modified_cosine'."
+                "'as_kcb_matching/modified_cosine' is turned off - SKIP"
             )
-            self.params.AsKcbCosineMatchingParams.activate_module = True
+            return
 
         try:
             kcb_results = UtilityMethodManager().extract_as_kcb_results(
@@ -452,10 +451,9 @@ class AnnotationManager(BaseModel):
         if self.params.AsKcbDeepscoreMatchingParams.activate_module is False:
             logger.warning(
                 "'AnnotationManager': antiSMASH results file provided but "
-                "'as_kcb_matching/ms2deepscore' is turned off. Continue with default "
-                "settings for 'as_kcb_matching/ms2deepscore'."
+                "'as_kcb_matching/ms2deepscore' is turned off - SKIP"
             )
-            self.params.AsKcbDeepscoreMatchingParams.activate_module = True
+            return
 
         try:
             kcb_results = UtilityMethodManager().extract_as_kcb_results(

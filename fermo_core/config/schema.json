@@ -532,13 +532,13 @@
                                     ]
                                 },
                                 "p_val_cutoff": {
-                                    "title": "(Optional): Minimum Bonferroni-corrected p-value to consider. Default: 0.05",
+                                    "title": "(Optional): Minimum Bonferroni-corrected p-value to consider. A value of zero disables the cutoff filtering (automatically applies to both score and p-value). Default: 0.05",
                                     "type": "number",
                                     "minimum": 0.0,
                                     "maximum": 1.0
                                 },
                                 "coeff_cutoff": {
-                                    "title": "(Optional): Minimum correlation coefficient to consider. Default: 0.7",
+                                    "title": "(Optional): Minimum correlation coefficient to consider. A value of zero disables the cutoff filtering (automatically applies to both score and p-value). Default: 0.7",
                                     "type": "number",
                                     "minimum": 0.0,
                                     "maximum": 1.0
@@ -580,13 +580,13 @@
                                     ]
                                 },
                                 "p_val_cutoff": {
-                                    "title": "(Optional): Minimum Bonferroni-corrected p-value to consider. Default: 0.05",
+                                    "title": "(Optional): Minimum Bonferroni-corrected p-value to consider. A value of zero disables the cutoff filtering (automatically applies to both score and p-value). Default: 0.05",
                                     "type": "number",
                                     "minimum": 0.0,
                                     "maximum": 1.0
                                 },
                                 "coeff_cutoff": {
-                                    "title": "(Optional): Minimum correlation coefficient to consider. Default: 0.7",
+                                    "title": "(Optional): Minimum correlation coefficient to consider. A value of zero disables the cutoff filtering (automatically applies to both score and p-value). Default: 0.7",
                                     "type": "number",
                                     "minimum": 0.0,
                                     "maximum": 1.0

@@ -326,8 +326,6 @@ class ValidationManager:
             _raise_error("No columns starting with 'assay:'")
         elif _test_non_numeric_col([c for c in df.columns if c.startswith("assay:")]):
             _raise_error("Non-numeric values in assay column(s)")
-        elif any((df[c] == 0).any() for c in df.columns if c.startswith("assay:")):
-            _raise_error("0 (zero)-values in assay column(s)")
 
     @staticmethod
     def validate_group_metadata_fermo(group_file: Path):

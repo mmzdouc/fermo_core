@@ -73,7 +73,7 @@ class PhenQuantPercAssigner(BaseModel):
                 )
 
     def calculate_correlation(self: Self):
-        """Calculates the correlation
+        """Collect data , scale, calculate correlation, correct p-value, assign
 
         Raises:
             RuntimeError: No relevant features (present in >3 samples) detected.
@@ -91,29 +91,45 @@ class PhenQuantPercAssigner(BaseModel):
             for num, assay in enumerate(self.stats.phenotypes):
                 areas = []
                 activs = []
-
                 for s_id in feature.samples:
                     for measure in assay.s_phen_data:
                         if s_id == measure.s_id:
                             areas.append(f_areas[s_id])
                             activs.append(measure.value)
 
-                areas_scaled = zscore(areas)
-                activs_scaled = zscore(activs)
-
                 if len(areas) < 3:
                     logger.debug(
-                        f"'PhenQuantConcAssigner': feature id '{f_id}' only detected in "
-                        f"'{len(areas)}' active samples: exclude from correlation "
-                        f"analysis."
+                        f"'PhenQuantPercAssigner': feature id '{f_id}' only detected in"
+                        f"two samples - pass."
                     )
                     continue
+
+                areas_scaled = zscore(areas)
+                activs_scaled = zscore(activs)
 
                 pearson_s, p_val = pearsonr(areas_scaled, activs_scaled)
 
                 p_val_cor = p_val * len(self.relevant_f_ids)
+                if p_val_cor > 1.0:
+                    p_val_cor = 1.0
 
                 if (
+                    self.params.PhenoQuantPercentAssgnParams.coeff_cutoff == 0
+                    or self.params.PhenoQuantPercentAssgnParams.p_val_cutoff == 0
+                ):
+                    if feature.phenotypes is None:
+                        feature.phenotypes = []
+                    feature.phenotypes.append(
+                        Phenotype(
+                            format=assay.datatype,
+                            category=assay.category,
+                            score=pearson_s,
+                            p_value=p_val,
+                            p_value_corr=p_val_cor,
+                        )
+                    )
+                    self.stats.phenotypes[num].f_ids_positive.add(f_id)
+                elif (
                     pearson_s > self.params.PhenoQuantPercentAssgnParams.coeff_cutoff
                     and p_val_cor
                     < self.params.PhenoQuantPercentAssgnParams.p_val_cutoff
@@ -130,6 +146,8 @@ class PhenQuantPercAssigner(BaseModel):
                         )
                     )
                     self.stats.phenotypes[num].f_ids_positive.add(f_id)
+                else:
+                    continue
 
             self.features.modify(f_id, feature)
 
@@ -137,11 +155,11 @@ class PhenQuantPercAssigner(BaseModel):
         """Run the phenotype annotation analysis
 
         Raise:
-            RuntimeError: self.stats.phenotypes not specified
+            RuntimeError: self.stats.phenotypes not assigned
         """
         if self.stats.phenotypes is None:
             raise RuntimeError(
-                "'PhenQuantPercAssigner': self.stats.phenotypes not specified - SKIP"
+                "'PhenQuantPercAssigner': self.stats.phenotypes not assigned - SKIP"
             )
 
         self.find_relevant_f_ids()

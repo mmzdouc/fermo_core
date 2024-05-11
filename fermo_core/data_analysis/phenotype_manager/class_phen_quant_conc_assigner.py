@@ -73,13 +73,11 @@ class PhenQuantConcAssigner(BaseModel):
                 )
 
     def calculate_correlation(self: Self):
-        """Calculates the correlation
+        """Collect data, transform, scale, calculate correlation, correct p-val, assign
 
         Raises:
             RuntimeError: No relevant features (present in >3 samples) detected.
         """
-        # TODO(MMZ 10.5.): rework this analysis
-
         if len(self.relevant_f_ids) == 0:
             raise RuntimeError(
                 "'PhenQuantConcAssigner': No relevant features (detected in >3 "
@@ -101,23 +99,40 @@ class PhenQuantConcAssigner(BaseModel):
 
                 if len(areas) < 3:
                     logger.debug(
-                        f"'PhenQuantConcAssigner': feature id '{f_id}' only detected in "
-                        f"'{len(areas)}' active samples: exclude from correlation "
-                        f"analysis."
+                        f"'PhenQuantConcAssigner': feature id '{f_id}' only detected in"
+                        f"two samples - pass."
                     )
                     continue
 
+                activs_reciprocal = [(1 / val) if val != 0 else 0 for val in activs]
+
                 areas_scaled = zscore(areas)
-                activs_scaled = zscore(activs)
+                activs_scaled = zscore(activs_reciprocal)
 
                 pearson_s, p_val = pearsonr(areas_scaled, activs_scaled)
 
                 p_val_cor = p_val * len(self.relevant_f_ids)
-
-                pearson_s_abs = abs(pearson_s)
+                if p_val_cor > 1.0:
+                    p_val_cor = 1.0
 
                 if (
-                    pearson_s_abs > self.params.PhenoQuantConcAssgnParams.coeff_cutoff
+                    self.params.PhenoQuantConcAssgnParams.coeff_cutoff == 0
+                    or self.params.PhenoQuantConcAssgnParams.p_val_cutoff == 0
+                ):
+                    if feature.phenotypes is None:
+                        feature.phenotypes = []
+                    feature.phenotypes.append(
+                        Phenotype(
+                            format=assay.datatype,
+                            category=assay.category,
+                            score=pearson_s,
+                            p_value=p_val,
+                            p_value_corr=p_val_cor,
+                        )
+                    )
+                    self.stats.phenotypes[num].f_ids_positive.add(f_id)
+                elif (
+                    pearson_s > self.params.PhenoQuantConcAssgnParams.coeff_cutoff
                     and p_val_cor < self.params.PhenoQuantConcAssgnParams.p_val_cutoff
                 ):
                     if feature.phenotypes is None:
@@ -126,12 +141,14 @@ class PhenQuantConcAssigner(BaseModel):
                         Phenotype(
                             format=assay.datatype,
                             category=assay.category,
-                            score=pearson_s_abs,
+                            score=pearson_s,
                             p_value=p_val,
                             p_value_corr=p_val_cor,
                         )
                     )
                     self.stats.phenotypes[num].f_ids_positive.add(f_id)
+                else:
+                    continue
 
             self.features.modify(f_id, feature)
 
@@ -139,11 +156,11 @@ class PhenQuantConcAssigner(BaseModel):
         """Run the phenotype annotation analysis
 
         Raise:
-            RuntimeError: self.stats.phenotypes not specified
+            RuntimeError: self.stats.phenotypes not assigned
         """
         if self.stats.phenotypes is None:
             raise RuntimeError(
-                "'PhenQuantConcAssigner': self.stats.phenotypes not specified - SKIP"
+                "'PhenQuantConcAssigner': self.stats.phenotypes not assigne - SKIP"
             )
 
         self.find_relevant_f_ids()

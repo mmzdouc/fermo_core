@@ -40,7 +40,7 @@ def phen_quant_conc():
             SampleInfo(s_id="s2", value=20),
             SampleInfo(s_id="s3", value=40),
             SampleInfo(s_id="s4", value=80),
-            SampleInfo(s_id="s5", value=90),
+            SampleInfo(s_id="s5", value=160),
         ],
     )
     phen_quant_conc.features.add(1, f1)
@@ -57,7 +57,7 @@ def phen_quant_conc():
             datatype="quantitative-concentration",
             category="assay:assay1",
             s_phen_data=[
-                SamplePhenotype(s_id="s1", value=512),
+                SamplePhenotype(s_id="s1", value=0),
                 SamplePhenotype(s_id="s2", value=256),
                 SamplePhenotype(s_id="s3", value=128),
                 SamplePhenotype(s_id="s4", value=32),
@@ -77,6 +77,13 @@ def test_calculate_correlation_valid(phen_quant_conc):
     phen_quant_conc.find_relevant_f_ids()
     phen_quant_conc.calculate_correlation()
     assert phen_quant_conc.features.entries[2].phenotypes[0] is not None
+
+
+def test_calculate_correlation_0_cutoffs_valid(phen_quant_conc):
+    phen_quant_conc.params.PhenoQuantConcAssgnParams.p_val_cutoff = 0
+    phen_quant_conc.find_relevant_f_ids()
+    phen_quant_conc.calculate_correlation()
+    assert phen_quant_conc.features.entries[1].phenotypes[0] is not None
 
 
 def test_calculate_correlation_invalid(phen_quant_conc):

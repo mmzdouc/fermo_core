@@ -237,8 +237,8 @@ class PhenoQuantPercentAssgnParams(BaseModel):
     sample_avg: str = "mean"
     value: str = "area"
     algorithm: str = "pearson"
-    p_val_cutoff: PositiveFloat = 0.05
-    coeff_cutoff: PositiveFloat = 0.7
+    p_val_cutoff: float = 0.05
+    coeff_cutoff: float = 0.7
 
     @model_validator(mode="after")
     def validate_strs(self):
@@ -315,8 +315,8 @@ class PhenoQuantConcAssgnParams(BaseModel):
     sample_avg: str = "mean"
     value: str = "area"
     algorithm: str = "pearson"
-    p_val_cutoff: PositiveFloat = 0.05
-    coeff_cutoff: PositiveFloat = 0.7
+    p_val_cutoff: float = 0.05
+    coeff_cutoff: float = 0.7
 
     @model_validator(mode="after")
     def validate_strs(self):
