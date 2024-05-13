@@ -42,14 +42,15 @@ class Scores(BaseModel):
     mean_novelty: Optional[float] = None
 
     def to_json(self: Self):
-        json_dict = {}
-        if self.diversity is not None:
-            json_dict["diversity"] = round(self.diversity, 2)
-        if self.specificity is not None:
-            json_dict["specificity"] = round(self.specificity, 2)
-        if self.mean_novelty is not None:
-            json_dict["mean_novelty"] = round(self.mean_novelty, 2)
-        return json_dict
+        return {
+            "diversity": round(self.diversity, 2) if self.diversity is not None else 0,
+            "specificity": round(self.specificity, 2)
+            if self.specificity is not None
+            else 0,
+            "mean_novelty": round(self.mean_novelty, 2)
+            if self.mean_novelty is not None
+            else 0,
+        }
 
 
 class Sample(BaseModel):
@@ -91,13 +92,13 @@ class Sample(BaseModel):
             if attribute[1] is not None:
                 json_dict[attribute[0]] = attribute[2](attribute[1])
 
-        if self.Scores is not None:
-            json_dict["scores"] = self.Scores.to_json()
+        json_dict["scores"] = self.Scores.to_json() if self.Scores is not None else {}
 
-        if self.networks is not None:
-            json_dict["networks"] = dict()
-            for subnet in self.networks:
-                json_dict["networks"][subnet] = list(self.networks[subnet])
+        json_dict["networks"] = (
+            {key: list(val) for key, val in self.networks.items()}
+            if self.networks is not None
+            else {}
+        )
 
         if self.feature_ids is not None:
             json_dict["sample_spec_features"] = dict()
@@ -105,5 +106,7 @@ class Sample(BaseModel):
                 json_dict["sample_spec_features"][feature_id] = self.features[
                     feature_id
                 ].to_json()
+        else:
+            json_dict["sample_spec_features"] = dict()
 
         return json_dict

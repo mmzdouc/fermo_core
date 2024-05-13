@@ -56,7 +56,7 @@ class Adduct(BaseModel):
             "partner_id": self.partner_id,
             "partner_mz": self.partner_mz,
             "diff_ppm": round(self.diff_ppm, 2),
-            "samples": list(self.sample_set),
+            "samples": list(self.sample_set) if self.sample_set is not None else [],
         }
 
 
@@ -88,7 +88,7 @@ class Match(BaseModel):
     npc_class: Optional[str] = None
 
     def to_json(self: Self) -> dict:
-        temp_dict = {
+        return {
             "id": self.id,
             "library": self.library,
             "algorithm": self.algorithm,
@@ -96,18 +96,10 @@ class Match(BaseModel):
             "mz": self.mz,
             "diff_mz": self.diff_mz,
             "module": self.module,
+            "smiles": self.smiles if self.smiles is not None else "N/A",
+            "inchikey": self.inchikey if self.inchikey is not None else "N/A",
+            "npc_class": self.npc_class if self.npc_class is not None else "N/A",
         }
-
-        if self.smiles is not None:
-            temp_dict["smiles"] = self.smiles
-
-        if self.inchikey is not None:
-            temp_dict["inchikey"] = self.inchikey
-
-        if self.npc_class is not None:
-            temp_dict["npc_class"] = self.npc_class
-
-        return temp_dict
 
 
 class NeutralLoss(BaseModel):
@@ -177,20 +169,28 @@ class Annotations(BaseModel):
     fragments: Optional[list] = None
 
     def to_json(self: Self) -> dict:
-        json_dict = {}
-        if self.adducts is not None:
-            json_dict["adducts"] = [adduct.to_json() for adduct in self.adducts]
-
-        if self.matches is not None:
-            json_dict["matches"] = [match.to_json() for match in self.matches]
-
-        if self.losses is not None:
-            json_dict["losses"] = [loss.to_json() for loss in self.losses]
-
-        if self.fragments is not None:
-            json_dict["fragments"] = [frag.to_json() for frag in self.fragments]
-
-        return json_dict
+        return {
+            "adducts": (
+                [adduct.to_json() for adduct in self.adducts]
+                if self.adducts is not None
+                else []
+            ),
+            "matches": (
+                [adduct.to_json() for adduct in self.matches]
+                if self.matches is not None
+                else []
+            ),
+            "losses": (
+                [adduct.to_json() for adduct in self.losses]
+                if self.losses is not None
+                else []
+            ),
+            "fragments": (
+                [adduct.to_json() for adduct in self.fragments]
+                if self.fragments is not None
+                else []
+            ),
+        }
 
 
 class SimNetworks(BaseModel):
@@ -206,8 +206,8 @@ class SimNetworks(BaseModel):
 
     def to_json(self: Self) -> dict:
         return {
-            "algorithm": str(self.algorithm),
-            "network_id": int(self.network_id),
+            "algorithm": self.algorithm,
+            "network_id": self.network_id,
         }
 
 
@@ -271,23 +271,16 @@ class Phenotype(BaseModel):
     p_value_corr: Optional[float] = None
 
     def to_json(self: Self) -> dict:
-        json_dict = {"format": self.format}
-
-        if self.category is not None:
-            json_dict["category"] = self.category
-
-        if self.descr is not None:
-            json_dict["descr"] = self.descr
-
-        json_dict["score"] = round(self.score, 6)
-
-        if self.p_value is not None:
-            json_dict["p_value"] = round(self.p_value, 10)
-
-        if self.p_value_corr is not None:
-            json_dict["p_value_corr"] = round(self.p_value_corr, 10)
-
-        return json_dict
+        return {
+            "format": self.format,
+            "category": self.category if self.category is not None else "N/A",
+            "descr": self.descr if self.descr is not None else "N/A",
+            "score": round(self.score, 6),
+            "p_value": round(self.p_value, 10) if self.p_value is not None else 1.0,
+            "p_value_corr": round(self.p_value, 10)
+            if self.p_value_corr is not None
+            else 1.0,
+        }
 
 
 class Scores(BaseModel):
@@ -302,12 +295,12 @@ class Scores(BaseModel):
     novelty: Optional[float] = None
 
     def to_json(self) -> dict:
-        json_dict = {}
-        if self.phenotype is not None:
-            json_dict["phenotype"] = round(self.phenotype, 2)
-        if self.novelty is not None:
-            json_dict["novelty"] = round(self.novelty, 2)
-        return json_dict
+        return {
+            "phenotype": round(self.phenotype, 2)
+            if self.phenotype is not None
+            else 0.0,
+            "novelty": round(self.novelty, 2) if self.novelty is not None else 0.0,
+        }
 
 
 class Feature(BaseModel):
@@ -394,45 +387,57 @@ class Feature(BaseModel):
             if attribute[1] is not None:
                 json_dict[attribute[0]] = attribute[2](attribute[1])
 
-        if self.area_per_sample is not None:
-            json_dict["area_per_sample"] = [
-                val.to_json() for val in self.area_per_sample
-            ]
+        def _add_per_sample(attr: str):
+            if getattr(self, attr) is not None:
+                json_dict[attr] = [val.to_json() for val in getattr(self, attr)]
+            else:
+                json_dict[attr] = []
 
-        if self.height_per_sample is not None:
-            json_dict["height_per_sample"] = [
-                val.to_json() for val in self.height_per_sample
-            ]
+        _add_per_sample("area_per_sample")
+        _add_per_sample("height_per_sample")
 
         if self.groups is not None and len(self.groups) != 0:
             json_dict["groups"] = {key: list(val) for key, val in self.groups.items()}
+        else:
+            json_dict["groups"] = {}
 
         if self.group_factors is not None:
             json_dict["group_factors"] = {
                 key: [item.to_json() for item in val]
                 for key, val in self.group_factors.items()
             }
+        else:
+            json_dict["group_factors"] = {}
 
         if self.phenotypes is not None:
             json_dict["phenotypes"] = [obj.to_json() for obj in self.phenotypes]
+        else:
+            json_dict["phenotypes"] = []
 
         if self.Scores is not None:
             json_dict["scores"] = self.Scores.to_json()
+        else:
+            json_dict["scores"] = {}
 
         if self.Spectrum is not None:
-            json_dict["spectrum"] = dict()
-            json_dict["spectrum"]["mz"] = list(self.Spectrum.mz)
-            json_dict["spectrum"]["int"] = [
-                round(i, 3) for i in self.Spectrum.intensities
-            ]
-            json_dict["spectrum"]["metadata"] = self.Spectrum.metadata
+            json_dict["spectrum"] = {
+                "mz": list(self.Spectrum.mz),
+                "int": [round(i, 3) for i in self.Spectrum.intensities],
+                "metadata": self.Spectrum.metadata,
+            }
+        else:
+            json_dict["spectrum"] = {}
 
         if self.networks is not None:
-            json_dict["networks"] = dict()
-            for network in self.networks:
-                json_dict["networks"][network] = self.networks[network].to_json()
+            json_dict["networks"] = {
+                key: val.to_json() for key, val in self.networks.items()
+            }
+        else:
+            json_dict["networks"] = {}
 
         if self.Annotations is not None:
             json_dict["annotations"] = self.Annotations.to_json()
+        else:
+            json_dict["annotations"] = {}
 
         return json_dict

@@ -14,12 +14,6 @@ def test_multiple_instances_valid():
     assert sample1 is not sample2
 
 
-def test_to_json_empty_valid():
-    sample = Sample()
-    json_dict = sample.to_json()
-    assert json_dict == {}
-
-
 def test_to_json_s_id_valid():
     sample = Sample()
     sample.s_id = "sample1"
