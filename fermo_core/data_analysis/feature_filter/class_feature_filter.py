@@ -87,6 +87,10 @@ class FeatureFilter(BaseModel):
             return
 
         for f_id in self.stats.inactive_features:
+            logger.debug(
+                f"'FeatureFilter': feature with ID '{f_id}' filtered from"
+                f" analysis run: outside filter' settings."
+            )
             self.features.remove(f_id)
             for s_id in self.stats.samples:
                 sample = self.samples.get(s_id)
@@ -106,12 +110,6 @@ class FeatureFilter(BaseModel):
             "rel_intensity",
         )
 
-        for feature in inactive:
-            logger.debug(
-                f"'FeatureFilter': feature with ID '{feature}' filtered from"
-                f" analysis run: outside 'filter_rel_int_range' settings."
-            )
-
         self.stats.inactive_features.update(inactive)
 
         self.stats.active_features = self.stats.active_features.difference(
@@ -130,12 +128,6 @@ class FeatureFilter(BaseModel):
             self.params.FeatureFilteringParameters.filter_rel_area_range,
             "rel_area",
         )
-
-        for feature in inactive:
-            logger.debug(
-                f"'FeatureFilter': feature with ID '{feature}' filtered from"
-                f" analysis run: outside 'filter_rel_area_range' settings."
-            )
 
         self.stats.inactive_features.update(inactive)
 
@@ -158,7 +150,8 @@ class FeatureFilter(BaseModel):
             param: the parameter to check against range
 
         Returns:
-            A set of features that have no occurrences inside range.
+            A set of features that have no occurrences in "inside range" (not in any
+            sample).
         """
         inside_range = set()
         outside_range = set()
