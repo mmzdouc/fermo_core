@@ -100,18 +100,27 @@ class ScoreAssigner(BaseModel):
                 "'ScoreAssigner': no networks detected - cannot assign Sample "
                 "scores - SKIP"
             )
+
         for algorithm, network in self.stats.networks.items():
             if len(network.summary) == 0:
                 continue
-            self.networks[algorithm] = {}
 
+            self.networks[algorithm] = {}
             for s_id in self.stats.samples:
-                sample = self.samples.get(s_id)
                 self.networks[algorithm][s_id] = set()
 
+                sample = self.samples.get(s_id)
                 for cluster_id, f_id_set in network.summary.items():
                     if not f_id_set.isdisjoint(sample.feature_ids):
                         self.networks[algorithm][s_id].add(cluster_id)
+
+                        if sample.networks is None:
+                            sample.networks = {}
+                        if sample.networks.get(algorithm) is None:
+                            sample.networks[algorithm] = {cluster_id}
+                        else:
+                            sample.networks[algorithm].add(cluster_id)
+                        self.samples.modify(s_id, sample)
 
     def assign_sample_scores(self: Self):
         """Assign scores to sample objects"""
@@ -122,32 +131,30 @@ class ScoreAssigner(BaseModel):
             sample.Scores = SampleScores()
 
             nw_diversity = {}
-            for n_id, network in self.networks.items():
-                nw_diversity[n_id] = len(network[s_id]) / len(
-                    self.stats.networks[n_id].summary
+            for algorithm, network in self.networks.items():
+                nw_diversity[algorithm] = len(network[s_id]) / len(
+                    self.stats.networks[algorithm].summary
                 )
+            sample.Scores.diversity = max([val for key, val in nw_diversity.items()])
 
             nm_specificity = {}
-            for n_id, network in self.networks.items():
+            for algorithm, network in self.networks.items():
                 nws_other_samples = set()
                 for sample_id, nw_set in network.items():
                     if sample_id != s_id:
                         nws_other_samples.update(nw_set)
-
-                nm_specificity[n_id] = len(
+                nm_specificity[algorithm] = len(
                     network[s_id].difference(nws_other_samples)
-                ) / len(self.stats.networks[n_id].summary)
+                ) / len(self.stats.networks[algorithm].summary)
+            sample.Scores.specificity = max(
+                [val for key, val in nm_specificity.items()]
+            )
 
             novelty_scores = []
             for f_id in sample.feature_ids:
                 feature = self.features.get(f_id)
                 if feature.Scores is not None and feature.Scores.novelty is not None:
                     novelty_scores.append(feature.Scores.novelty)
-
-            sample.Scores.diversity = max([val for key, val in nw_diversity.items()])
-            sample.Scores.specificity = max(
-                [val for key, val in nm_specificity.items()]
-            )
             if len(novelty_scores) != 0:
                 sample.Scores.mean_novelty = mean(novelty_scores)
 

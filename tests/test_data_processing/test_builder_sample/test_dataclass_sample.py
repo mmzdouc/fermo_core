@@ -36,7 +36,7 @@ def test_to_json_networks_valid():
     sample = Sample()
     sample.networks = {"mod_cos": {0, 1, 2}, "ms2deep": {0, 1}}
     json_dict = sample.to_json()
-    assert isinstance(json_dict["networks"]["mod_cos"], list)
+    assert len(json_dict["networks"]["mod_cos"]) == 3
 
 
 def test_to_json_scores_valid():

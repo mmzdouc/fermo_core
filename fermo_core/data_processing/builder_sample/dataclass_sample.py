@@ -21,7 +21,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 import logging
-from typing import Optional, Dict, Self
+from typing import Optional, Self
 
 from pydantic import BaseModel
 
@@ -69,7 +69,7 @@ class Sample(BaseModel):
     s_id: Optional[str] = None
     features: Optional[dict] = None
     feature_ids: Optional[set] = None
-    networks: Optional[Dict[str, set]] = None
+    networks: Optional[dict] = None
     max_intensity: Optional[int] = None
     max_area: Optional[int] = None
     Scores: Optional[Scores] = None

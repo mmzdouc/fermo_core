@@ -19,13 +19,13 @@ from fermo_core.input_output.class_parameter_manager import ParameterManager
 def score_assigner():
     score_assigner = ScoreAssigner(
         stats=Stats(
-            samples=("s1",),
+            samples=("s1", "s2", "s3"),
             networks={
                 "modified_cosine": SpecSimNet(
                     algorithm="modified_cosine",
                     network={},
                     subnetworks={},
-                    summary={"0": {1}, "1": {2}},
+                    summary={"1": {1}, "2": {2}, "3": {3}, "4": {4}},
                 )
             },
         ),
@@ -71,12 +71,22 @@ def score_assigner():
         ),
     )
     score_assigner.features.add(1, f1)
-    s1 = Sample(
-        feature_ids={
-            1,
-        }
+    f2 = Feature(
+        f_id=2,
+        samples={"s2"},
     )
+    score_assigner.features.add(2, f2)
+    f3 = Feature(
+        f_id=3,
+        samples={"s3"},
+    )
+    score_assigner.features.add(3, f3)
+    s1 = Sample(feature_ids={1, 2})
     score_assigner.samples.add("s1", s1)
+    s2 = Sample(feature_ids={2, 3})
+    score_assigner.samples.add("s2", s2)
+    s3 = Sample(feature_ids={2, 3})
+    score_assigner.samples.add("s3", s3)
     score_assigner.stats.active_features = {1}
     return score_assigner
 
@@ -110,10 +120,14 @@ def test_assign_feature_scores_invalid(score_assigner):
 
 def test_collect_sample_spec_networks_valid(score_assigner):
     score_assigner.collect_sample_spec_networks()
-    assert score_assigner.networks["modified_cosine"]["s1"] == {0}
+    assert score_assigner.networks["modified_cosine"]["s1"] == {1, 2}
+    assert score_assigner.samples.entries["s1"].networks["modified_cosine"] == {1, 2}
 
 
 def test_collect_assign_sample_scores_valid(score_assigner):
+    score_assigner.assign_feature_scores()
     score_assigner.collect_sample_spec_networks()
     score_assigner.assign_sample_scores()
-    assert score_assigner.networks["modified_cosine"]["s1"] == {0}
+    assert score_assigner.samples.entries["s1"].Scores.diversity == 0.5
+    assert score_assigner.samples.entries["s1"].Scores.specificity == 0.25
+    assert round(score_assigner.samples.entries["s1"].Scores.mean_novelty, 1) == 0.1

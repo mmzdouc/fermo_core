@@ -89,7 +89,7 @@ class FeatureFilter(BaseModel):
         for f_id in self.stats.inactive_features:
             logger.debug(
                 f"'FeatureFilter': feature with ID '{f_id}' filtered from"
-                f" analysis run: outside filter' settings."
+                f" analysis run: outside filter settings."
             )
             self.features.remove(f_id)
             for s_id in self.stats.samples:

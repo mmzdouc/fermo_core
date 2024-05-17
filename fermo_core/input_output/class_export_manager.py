@@ -492,7 +492,7 @@ class ExportManager(BaseModel):
     def write_cytoscape_output(self: Self):
         """Write cytoscape output if networking was performed"""
 
-        self.log_start_module(".cytoscape.json")
+        self.log_start_module(".graphml")
 
         if self.stats.networks is None:
             logger.warning(
@@ -507,7 +507,7 @@ class ExportManager(BaseModel):
             nx.write_graphml(self.stats.networks[network].network, path_graphml)
             ValidationManager().validate_output_created(path_graphml)
 
-        self.log_complete_module(".cytoscape.json")
+        self.log_complete_module(".graphml.json")
 
     def run(self: Self, version: str, starttime: datetime):
         """Call export methods based on user-input
