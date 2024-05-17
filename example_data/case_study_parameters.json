@@ -131,9 +131,8 @@
         },
         "ms2query_annotation": {
             "activate_module": true,
-            "exclude_blank": false,
-            "maximum_runtime": 600,
-            "score_cutoff": 0.7
+            "score_cutoff": 0.7,
+            "maximum_runtime": 600
         },
         "as_kcb_matching": {
             "modified_cosine": {

@@ -8,7 +8,6 @@ from fermo_core.input_output.additional_module_parameter_managers import (
 def test_init_ms2query_annotation_parameters_valid():
     json_dict = {
         "activate_module": True,
-        "consider_blank": True,
         "score_cutoff": 0.7,
         "maximum_runtime": 600,
     }

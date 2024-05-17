@@ -86,16 +86,6 @@ class MS2QueryAnnotator(BaseModel):
                     f"'{feature.f_id}' has no associated MS2 spectrum - SKIP"
                 )
                 continue
-            elif (
-                feature.blank is True
-                and self.params.Ms2QueryAnnotationParameters.exclude_blank is True
-            ):
-                logger.debug(
-                    f"'AnnotationManager/MS2QueryAnnotator': feature with id "
-                    f"'{feature.f_id}' is blank-associated. "
-                    f"MS2Query is set to exclude blanks - SKIP"
-                )
-                continue
             else:
                 query_spectra.append(feature.Spectrum)
 

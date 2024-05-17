@@ -683,10 +683,6 @@
                             "title": "Specifies whether this module should be run. Default: False",
                             "type": "boolean"
                         },
-                        "exclude_blank": {
-                            "title": "(Optional): Specifies if blank-associated features should be excluded from MS2Query annotation. Default: False",
-                            "type": "boolean"
-                        },
                         "maximum_runtime": {
                             "title": "(Optional): maximum running time of module, in seconds. A value of 0 (zero) indicates unlimited running time. Default value: 600 seconds.",
                             "type": "integer",

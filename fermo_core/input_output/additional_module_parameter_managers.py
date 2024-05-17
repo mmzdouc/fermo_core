@@ -454,7 +454,6 @@ class Ms2QueryAnnotationParameters(BaseModel):
 
     Attributes:
         activate_module: bool to indicate if module should be executed.
-        exclude_blank: sets if blank-associated features should be excluded from annot
         score_cutoff: only matches with a score higher or equal to are retained
         maximum_runtime: maximum runtime in seconds
 
@@ -463,7 +462,6 @@ class Ms2QueryAnnotationParameters(BaseModel):
     """
 
     activate_module: bool = False
-    exclude_blank: bool = False
     score_cutoff: PositiveFloat = 0.7
     maximum_runtime: int = 600
 
@@ -472,7 +470,6 @@ class Ms2QueryAnnotationParameters(BaseModel):
         if self.activate_module:
             return {
                 "activate_module": self.activate_module,
-                "exclude_blank": self.exclude_blank,
                 "score_cutoff": self.score_cutoff,
                 "maximum_runtime": self.maximum_runtime,
             }
