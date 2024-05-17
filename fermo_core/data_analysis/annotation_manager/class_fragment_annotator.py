@@ -149,6 +149,7 @@ class FragmentAnnotator(BaseModel):
         else:
             logger.warning(
                 "'AnnotationManager/FragmentAnnotator': negative ion mode detected. "
-                "Currently, negative ion mode is not implemented - SKIP"
+                "Currently, negative ion mode fragment annotation is not implemented - "
+                "SKIP"
             )
             return
