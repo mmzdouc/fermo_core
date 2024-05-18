@@ -209,6 +209,9 @@ class GeneralParser(BaseModel):
 
         Arguments:
             params: ParameterManager holding validated user input
+
+        Raises:
+            RuntimeError: unsupported spectral library format
         """
         if params.SpecLibParameters is None:
             logger.info(
@@ -219,4 +222,11 @@ class GeneralParser(BaseModel):
 
         match params.SpecLibParameters.format:
             case "mgf":
-                self.stats = SpecLibMgfParser().parse(self.stats, params)
+                parser = SpecLibMgfParser(params=params, stats=self.stats)
+                parser.parse()
+                self.stats = parser.return_stats()
+            case _:
+                raise RuntimeError(
+                    f"'GeneralParser': detected unsupported format "
+                    f"'{params.SpecLibParameters.format}' for 'spectral_library'."
+                )

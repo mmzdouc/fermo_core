@@ -18,13 +18,13 @@ def params():
     params = ParameterManager()
     params.PeaktableParameters = PeaktableParameters(
         **{
-            "filepath": "example_data/case_study_peak_table_quant_full.csv",
+            "filepath": "tests/test_data/test.peak_table_quant_full.csv",
             "format": "mzmine3",
             "polarity": "positive",
         }
     )
     params.SpecLibParameters = SpecLibParameters(
-        **{"filepath": "example_data/case_study_spectral_library.mgf", "format": "mgf"}
+        **{"filepath": "tests/test_data/test.spectral_library.mgf", "format": "mgf"}
     )
     return params
 
@@ -34,15 +34,19 @@ def stats(params):
     return PeakMzmine3Parser().extract_stats(params)
 
 
-def test_instantiate_parser_valid():
-    assert isinstance(SpecLibMgfParser(), SpecLibMgfParser)
+def test_instantiate_parser_valid(params, stats):
+    assert isinstance(SpecLibMgfParser(stats=stats, params=params), SpecLibMgfParser)
 
 
 def test_parse_valid(stats, params):
-    stats = SpecLibMgfParser().parse(stats, params)
+    parser = SpecLibMgfParser(stats=stats, params=params)
+    parser.parse()
+    stats = parser.return_stats()
     assert stats.spectral_library is not None
 
 
 def test_modify_stats(stats, params):
-    stats = SpecLibMgfParser().parse(stats, params)
+    parser = SpecLibMgfParser(stats=stats, params=params)
+    parser.modify_stats()
+    stats = parser.return_stats()
     assert stats.spectral_library is not None
