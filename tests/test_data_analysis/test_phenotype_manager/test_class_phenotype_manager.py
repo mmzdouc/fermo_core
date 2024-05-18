@@ -13,23 +13,23 @@ from fermo_core.data_processing.builder_sample.dataclass_sample import Sample
 from fermo_core.input_output.class_parameter_manager import ParameterManager
 from fermo_core.input_output.input_file_parameter_managers import PhenotypeParameters
 from fermo_core.input_output.additional_module_parameter_managers import (
-    PhenoQuantAssgnParams,
+    PhenoQualAssgnParams,
 )
 
 
 @pytest.fixture
-def phen_manag_quant():
-    phen_manag_quant = PhenotypeManager(
+def phen_manag_qual():
+    phen_manag_qual = PhenotypeManager(
         params=ParameterManager(),
         stats=Stats(),
         features=Repository(),
         samples=Repository(),
     )
-    phen_manag_quant.params.PhenotypeParameters = PhenotypeParameters(
+    phen_manag_qual.params.PhenotypeParameters = PhenotypeParameters(
         filepath="tests/test_data_analysis/test_phenotype_manager/qualitative.csv",
         format="qualitative",
     )
-    phen_manag_quant.params.PhenoQuantAssgnParams = PhenoQuantAssgnParams(
+    phen_manag_qual.params.PhenoQualAssgnParams = PhenoQualAssgnParams(
         activate_module=True
     )
     f1 = Feature(
@@ -68,16 +68,16 @@ def phen_manag_quant():
             SampleInfo(s_id="s2", value=100),
         ],
     )
-    phen_manag_quant.features.add(1, f1)
-    phen_manag_quant.features.add(2, f2)
-    phen_manag_quant.features.add(3, f3)
+    phen_manag_qual.features.add(1, f1)
+    phen_manag_qual.features.add(2, f2)
+    phen_manag_qual.features.add(3, f3)
     s1 = Sample(s_id="s1", feature_ids={1, 2})
     s2 = Sample(s_id="s2", feature_ids={2, 3})
-    phen_manag_quant.samples.add("s1", s1)
-    phen_manag_quant.samples.add("s2", s2)
-    phen_manag_quant.stats.active_features = {1, 2, 3}
-    phen_manag_quant.stats.samples = ("s1", "s2")
-    phen_manag_quant.stats.phenotypes = [
+    phen_manag_qual.samples.add("s1", s1)
+    phen_manag_qual.samples.add("s2", s2)
+    phen_manag_qual.stats.active_features = {1, 2, 3}
+    phen_manag_qual.stats.samples = ("s1", "s2")
+    phen_manag_qual.stats.phenotypes = [
         PhenoData(
             datatype="qualitative",
             category="qualitative",
@@ -87,9 +87,9 @@ def phen_manag_quant():
             s_phen_data=[SamplePhenotype(s_id="s1")],
         )
     ]
-    return phen_manag_quant
+    return phen_manag_qual
 
 
-def test_run_assigner_qualitative(phen_manag_quant):
-    phen_manag_quant.run_assigner_qualitative()
-    assert len(phen_manag_quant.stats.phenotypes[0].f_ids_positive) == 2
+def test_run_assigner_qualitative(phen_manag_qual):
+    phen_manag_qual.run_assigner_qualitative()
+    assert len(phen_manag_qual.stats.phenotypes[0].f_ids_positive) == 2

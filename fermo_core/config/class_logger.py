@@ -25,7 +25,6 @@ import os
 from pathlib import Path
 import platform
 import sys
-from typing import Optional
 
 import coloredlogs
 
@@ -34,14 +33,11 @@ class LoggerSetup:
     """Organize settings for process logging"""
 
     @staticmethod
-    def setup_custom_logger(
-        name: str, location: Optional[str] = None
-    ) -> logging.Logger:
+    def setup_custom_logger(name: str) -> logging.Logger:
         """Set logging parameters.
 
         Arguments:
             name: the logger name
-            location: optional location to specify log dump location (needs full path)
 
         Returns:
             A Logger object
@@ -52,11 +48,7 @@ class LoggerSetup:
         console_handler = logging.StreamHandler(sys.stdout)
         console_handler.setLevel(logging.DEBUG)
 
-        log_file_path = ""
-        if location is not None:
-            log_file_path = Path(location)
-        else:
-            log_file_path = Path(__file__).parent.parent.joinpath("fermo_core.log")
+        log_file_path = Path(__file__).parent.parent.joinpath("fermo_core.log")
 
         file_handler = logging.FileHandler(log_file_path, mode="w")
         file_handler.setLevel(logging.DEBUG)

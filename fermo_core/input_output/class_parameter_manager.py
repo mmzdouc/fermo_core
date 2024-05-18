@@ -48,7 +48,9 @@ from fermo_core.input_output.additional_module_parameter_managers import (
     FeatureFilteringParameters,
     BlankAssignmentParameters,
     GroupFactAssignmentParameters,
-    PhenoQuantAssgnParams,
+    PhenoQualAssgnParams,
+    PhenoQuantPercentAssgnParams,
+    PhenoQuantConcAssgnParams,
     SpectralLibMatchingCosineParameters,
     SpectralLibMatchingDeepscoreParameters,
     Ms2QueryAnnotationParameters,
@@ -86,7 +88,9 @@ class ParameterManager(BaseModel):
         FeatureFilteringParameters: class handling feature filter module parameter
         BlankAssignmentParameters: class handling blank-assignment module parameter
         GroupFactAssignmentParameters: class handling group factor assignment mod params
-        PhenoQuantAssgnParams: class handling phenotype quant assignmentparameter
+        PhenoQualAssgnParams: class handling phenotype qual assignment parameter
+        PhenoQuantPercentAssgnParams: phenotype quantitative percentage assignment param
+        PhenoQuantConcAssgnParams: phenotype quantitative concentration assignment param
         SpectralLibMatchingCosineParameters: class handling cosine-based spectral
             library matching module parameter
         SpectralLibMatchingDeepscoreParameters: class handling ms2deepscore-based
@@ -122,7 +126,11 @@ class ParameterManager(BaseModel):
     GroupFactAssignmentParameters: GroupFactAssignmentParameters = (
         GroupFactAssignmentParameters()
     )
-    PhenoQuantAssgnParams: PhenoQuantAssgnParams = PhenoQuantAssgnParams()
+    PhenoQualAssgnParams: PhenoQualAssgnParams = PhenoQualAssgnParams()
+    PhenoQuantPercentAssgnParams: PhenoQuantPercentAssgnParams = (
+        PhenoQuantPercentAssgnParams()
+    )
+    PhenoQuantConcAssgnParams: PhenoQuantConcAssgnParams = PhenoQuantConcAssgnParams()
     SpectralLibMatchingCosineParameters: SpectralLibMatchingCosineParameters = (
         SpectralLibMatchingCosineParameters()
     )
@@ -181,7 +189,13 @@ class ParameterManager(BaseModel):
         json_dict[
             "GroupFactAssignmentParameters"
         ] = self.GroupFactAssignmentParameters.to_json()
-        json_dict["PhenoQuantAssgnParams"] = self.PhenoQuantAssgnParams.to_json()
+        json_dict["PhenoQualAssgnParams"] = self.PhenoQualAssgnParams.to_json()
+        json_dict[
+            "PhenoQuantPercentAssgnParams"
+        ] = self.PhenoQuantPercentAssgnParams.to_json()
+        json_dict[
+            "PhenoQuantConcAssgnParams"
+        ] = self.PhenoQuantConcAssgnParams.to_json()
         json_dict[
             "SpectralLibMatchingCosineParameters"
         ] = self.SpectralLibMatchingCosineParameters.to_json()
@@ -344,6 +358,20 @@ class ParameterManager(BaseModel):
                 user_params.get("phenotype_assignment", {}).get("qualitative"),
                 self.assign_phenotype_qualitative,
                 "phenotype_assignment/qualitative",
+            ),
+            (
+                user_params.get("phenotype_assignment", {}).get(
+                    "quantitative-percentage"
+                ),
+                self.assign_phenotype_quant_percent,
+                "phenotype_assignment/quantitative-percentage",
+            ),
+            (
+                user_params.get("phenotype_assignment", {}).get(
+                    "quantitative-concentration"
+                ),
+                self.assign_phenotype_quant_concentration,
+                "phenotype_assignment/quantitative-concentration",
             ),
             (
                 user_params.get("spectral_library_matching", {}).get("modified_cosine"),
@@ -709,13 +737,13 @@ class ParameterManager(BaseModel):
 
     def assign_phenotype_qualitative(self: Self, user_params: dict):
         """Assign phenotype_assignment/qualitative parameters to
-            self.PhenoQuantAssgnParams.
+            self.PhenoQualAssgnParams.
 
         Parameters:
             user_params: user-provided params, read from json file
         """
         try:
-            self.PhenoQuantAssgnParams = PhenoQuantAssgnParams(**user_params)
+            self.PhenoQualAssgnParams = PhenoQualAssgnParams(**user_params)
             logger.info(
                 "'ParameterManager': validated and assigned parameters "
                 "for 'phenotype_assignment/qualitative'."
@@ -723,7 +751,49 @@ class ParameterManager(BaseModel):
         except Exception as e:
             logger.warning(str(e))
             self.log_malformed_parameters_default("phenotype_assignment/qualitative")
-            self.PhenoQuantAssgnParams = PhenoQuantAssgnParams()
+            self.PhenoQualAssgnParams = PhenoQualAssgnParams()
+
+    def assign_phenotype_quant_percent(self: Self, user_params: dict):
+        """Assign phenotype_assignment/quantitative-percentage parameters to
+            self.PhenoQuantPercentAssgnParams.
+
+        Parameters:
+            user_params: user-provided params, read from json file
+        """
+        try:
+            self.PhenoQuantPercentAssgnParams = PhenoQuantPercentAssgnParams(
+                **user_params
+            )
+            logger.info(
+                "'ParameterManager': validated and assigned parameters "
+                "for 'phenotype_assignment/quantitative-percentage'."
+            )
+        except Exception as e:
+            logger.warning(str(e))
+            self.log_malformed_parameters_default(
+                "phenotype_assignment/quantitative-percentage"
+            )
+            self.PhenoQuantPercentAssgnParams = PhenoQuantPercentAssgnParams()
+
+    def assign_phenotype_quant_concentration(self: Self, user_params: dict):
+        """Assign phenotype_assignment/quantitative-concentration parameters to
+            self.PhenoQuantConcAssgnParams.
+
+        Parameters:
+            user_params: user-provided params, read from json file
+        """
+        try:
+            self.PhenoQuantConcAssgnParams = PhenoQuantConcAssgnParams(**user_params)
+            logger.info(
+                "'ParameterManager': validated and assigned parameters "
+                "for 'phenotype_assignment/quantitative-concentration'."
+            )
+        except Exception as e:
+            logger.warning(str(e))
+            self.log_malformed_parameters_default(
+                "phenotype_assignment/quantitative-concentration"
+            )
+            self.PhenoQuantConcAssgnParams = PhenoQuantConcAssgnParams()
 
     def assign_spec_lib_matching_cosine(self: Self, user_params: dict):
         """Assign spectral_library_matching/modified_cosine parameters to

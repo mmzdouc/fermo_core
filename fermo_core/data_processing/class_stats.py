@@ -67,21 +67,16 @@ class GroupMData(BaseModel):
 
     def to_json(self) -> dict:
         """Convert attributes to json-compatible ones."""
-        json_dict = {}
-
-        if len(self.default_s_ids) != 0:
-            json_dict["default_s_ids"] = list(self.default_s_ids)
-
-        if len(self.nonblank_s_ids) != 0:
-            json_dict["nonblank_s_ids"] = list(self.nonblank_s_ids)
-            json_dict["nonblank_f_ids"] = list(self.nonblank_f_ids)
-
-        if len(self.blank_s_ids) != 0:
-            json_dict["blank_s_ids"] = list(self.blank_s_ids)
-            json_dict["blank_f_ids"] = list(self.blank_f_ids)
+        json_dict = {
+            "default_s_ids": list(self.default_s_ids),
+            "nonblank_s_ids": list(self.nonblank_s_ids),
+            "nonblank_f_ids": list(self.nonblank_f_ids),
+            "blank_s_ids": list(self.blank_s_ids),
+            "blank_f_ids": list(self.blank_f_ids),
+            "categories": {},
+        }
 
         if len(self.ctgrs) != 0:
-            json_dict["categories"] = {}
             for key, val in self.ctgrs.items():
                 json_dict["categories"][key] = {}
                 for name, obj in val.items():
@@ -102,10 +97,10 @@ class SamplePhenotype(BaseModel):
     value: Optional[float] = None
 
     def to_json(self: Self):
-        json_dict = {"s_id": str(self.s_id)}
-        if self.value is not None:
-            json_dict["value"] = self.value
-        return json_dict
+        return {
+            "s_id": str(self.s_id),
+            "value": self.value if self.value is not None else "N/A",
+        }
 
 
 class PhenoData(BaseModel):
@@ -179,7 +174,6 @@ class Stats(BaseModel):
         networks: all similarity networks in analysis run
         phenotypes: list of PhenoData objects containing phenotype data
         spectral_library: a list of matchms.Spectrum instances
-        analysis_log: a list of performed steps by the AnalysisManager
     """
 
     rt_min: Optional[float] = None
@@ -195,7 +189,6 @@ class Stats(BaseModel):
     networks: Optional[Dict[str, SpecSimNet]] = None
     phenotypes: Optional[list] = None
     spectral_library: Optional[list] = None
-    analysis_log: list = []
 
     def parse_mzmine3(self: Self, params: ParameterManager):
         """Parse a mzmine3 peaktable for general stats on analysis run.
@@ -242,25 +235,25 @@ class Stats(BaseModel):
             ("nr_inactive_features", len(self.inactive_features), int),
             ("active_features", self.active_features, list),
             ("inactive_features", self.inactive_features, list),
-            ("analysis_log", self.analysis_log, list),
         )
 
         json_dict = {}
-        if self.samples is not None:
-            json_dict["nr_samples"] = len(self.samples)
 
         for attribute in attributes:
             if attribute[1] is not None:
                 json_dict[attribute[0]] = attribute[2](attribute[1])
 
+        json_dict["nr_samples"] = len(self.samples) if self.samples is not None else []
         json_dict["groups"] = self.GroupMData.to_json()
-
-        if self.networks is not None:
-            json_dict["networks"] = dict()
-            for network in self.networks:
-                json_dict["networks"][network] = self.networks[network].to_json()
-
-        if self.phenotypes is not None:
-            json_dict["phenotypes"] = [val.to_json() for val in self.phenotypes]
+        json_dict["networks"] = (
+            {key: val.to_json() for key, val in self.networks.items()}
+            if self.networks is not None
+            else {}
+        )
+        json_dict["phenotypes"] = (
+            [val.to_json() for val in self.phenotypes]
+            if self.phenotypes is not None
+            else []
+        )
 
         return json_dict

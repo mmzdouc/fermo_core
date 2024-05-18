@@ -1,6 +1,6 @@
 """Parses a spectral library file in mgf format.
 
-Copyright (c) 2022-2023 Mitja Maximilian Zdouc, PhD
+Copyright (c) 2022 to present Mitja Maximilian Zdouc, PhD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -24,61 +24,55 @@ import logging
 from typing import Self
 
 import matchms
+from pydantic import BaseModel
 
 from fermo_core.data_processing.class_stats import Stats
-from fermo_core.data_processing.parser.spec_library_parser.abc_spec_lib_parser import (
-    SpecLibParser,
-)
 from fermo_core.input_output.class_parameter_manager import ParameterManager
 
 logger = logging.getLogger("fermo_core")
 
 
-class SpecLibMgfParser(SpecLibParser):
-    """Interface to parse a spectral library file in mgf format."""
+class SpecLibMgfParser(BaseModel):
+    """Interface to parse a spectral library file in mgf format.
 
-    def parse(self: Self, stats: Stats, params: ParameterManager) -> Stats:
-        """Parses a spectral library file in mgf format.
+    Attributes:
+        params: a ParameterManager instance managing the input parameters
+        stats: a Stats object instance to store spectral library in
+    """
 
-        Arguments:
-            stats: Stats object which handles the entries in the spectral library file
-            params: Parameter Object holding user input information
+    params: ParameterManager
+    stats: Stats
 
-        Returns:
-            A (modified) Stats object
-
-        Notes:
-            mgf.read() returns a Numpy array - turned to list for easier handling
-        """
-        logger.info(
-            f"'SpecLibMgfParser': started parsing of spectral library file "
-            f"'{params.SpecLibParameters.filepath.name}'"
-        )
-
-        stats = self.modify_stats(stats, params)
-
-        logger.info(
-            f"'SpecLibMgfParser': completed parsing of spectral library file "
-            f"'{params.SpecLibParameters.filepath.name}'"
-        )
-
-        return stats
-
-    @staticmethod
-    def modify_stats(stats: Stats, params: ParameterManager) -> Stats:
-        """Adds spectral library entries to Stats object.
-
-        Arguments:
-            stats: Stats object which handles the entries in the spectral library file
-            params: Parameter Object holding user input information
+    def return_stats(self: Self) -> Stats:
+        """Returns modified stats objects
 
         Returns:
-            A (modified) Stats object
+            The modified stats objects
         """
+        return self.stats
+
+    def modify_stats(self: Self):
+        """Adds spectral library entries to Stats object."""
         spectra = list(
-            matchms.importing.load_from_mgf(params.SpecLibParameters.filepath)
+            matchms.importing.load_from_mgf(self.params.SpecLibParameters.filepath)
         )
         spectra = [matchms.filtering.add_precursor_mz(i) for i in spectra]
         spectra = [matchms.filtering.normalize_intensities(i) for i in spectra]
-        stats.spectral_library = spectra
-        return stats
+        self.stats.spectral_library = spectra
+
+    def parse(self: Self):
+        """Parses a spectral library file in mgf format.
+
+        Returns:
+            A (modified) Stats object
+        """
+        logger.info(
+            f"'SpecLibMgfParser': started parsing of spectral library file "
+            f"'{self.params.SpecLibParameters.filepath.name}'"
+        )
+        self.modify_stats()
+
+        logger.info(
+            f"'SpecLibMgfParser': completed parsing of spectral library file "
+            f"'{self.params.SpecLibParameters.filepath.name}'"
+        )

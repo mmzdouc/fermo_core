@@ -205,6 +205,14 @@ def test_write_cytoscape_output_valid(real_data_export):
 
 
 @pytest.mark.slow
+def test_write_log_output_valid(real_data_export):
+    path = Path("fermo_core/fermo_core.log")
+    path.touch(exist_ok=True)
+    assert real_data_export.write_log_output() is None
+    os.remove("tests/test_input_output/test_export_manager/dummy.log")
+
+
+@pytest.mark.slow
 def test_write_csv_output_valid(real_data_export):
     assert real_data_export.write_csv_output() is None
     for filename in glob.glob("tests/test_input_output/test_export_manager/dummy.*"):
@@ -215,6 +223,11 @@ def test_write_csv_output_valid(real_data_export):
 def test_write_fermo_json(real_data_export):
     assert real_data_export.write_fermo_json("0.1.0", datetime.now()) is None
     os.remove("tests/test_input_output/test_export_manager/dummy.fermo.session.json")
+
+
+def test_write_summary_output(real_data_export):
+    assert real_data_export.write_summary_output() is None
+    os.remove("tests/test_input_output/test_export_manager/dummy.summary.txt")
 
 
 def test_export_metadata_json(json_exporter):

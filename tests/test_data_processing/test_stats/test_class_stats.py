@@ -115,7 +115,7 @@ def test_sample_phenotype_json():
     obj = SamplePhenotype(s_id="s1")
     json_dict = obj.to_json()
     assert json_dict["s_id"] == "s1"
-    assert json_dict.get("value") is None
+    assert json_dict.get("value") == "N/A"
 
 
 def test_pheno_data_json():

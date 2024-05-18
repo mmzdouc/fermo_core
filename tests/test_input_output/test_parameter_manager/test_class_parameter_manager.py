@@ -25,7 +25,9 @@ from fermo_core.input_output.core_module_parameter_managers import (
 from fermo_core.input_output.additional_module_parameter_managers import (
     FeatureFilteringParameters,
     BlankAssignmentParameters,
-    PhenoQuantAssgnParams,
+    PhenoQualAssgnParams,
+    PhenoQuantPercentAssgnParams,
+    PhenoQuantConcAssgnParams,
     SpectralLibMatchingCosineParameters,
     SpectralLibMatchingDeepscoreParameters,
     Ms2QueryAnnotationParameters,
@@ -323,13 +325,37 @@ def test_assign_group_factor_assignment_invalid():
 def test_assign_phenotype_qualitative_valid():
     params = ParameterManager()
     params.assign_phenotype_qualitative({"activate_module": True})
-    assert isinstance(params.PhenoQuantAssgnParams, PhenoQuantAssgnParams)
+    assert isinstance(params.PhenoQualAssgnParams, PhenoQualAssgnParams)
 
 
 def test_assign_phenotype_qualitative_invalid():
     params = ParameterManager()
     params.assign_phenotype_qualitative({"asdfg": "asdfg"})
-    assert params.PhenoQuantAssgnParams.activate_module is False
+    assert params.PhenoQualAssgnParams.activate_module is False
+
+
+def test_assign_phenotype_quant_percent_valid():
+    params = ParameterManager()
+    params.assign_phenotype_quant_percent({"activate_module": True})
+    assert isinstance(params.PhenoQuantPercentAssgnParams, PhenoQuantPercentAssgnParams)
+
+
+def test_assign_phenotype_quant_percent_invalid():
+    params = ParameterManager()
+    params.assign_phenotype_quant_percent({"asdfg": "asdfg"})
+    assert params.PhenoQuantPercentAssgnParams.activate_module is False
+
+
+def test_assign_phenotype_quant_concentration_valid():
+    params = ParameterManager()
+    params.assign_phenotype_quant_concentration({"activate_module": True})
+    assert isinstance(params.PhenoQuantConcAssgnParams, PhenoQuantConcAssgnParams)
+
+
+def test_assign_phenotype_quant_concentration_invalid():
+    params = ParameterManager()
+    params.assign_phenotype_quant_concentration({"asdfg": "asdfg"})
+    assert params.PhenoQuantConcAssgnParams.activate_module is False
 
 
 def test_assign_spec_lib_matching_cosine_valid():

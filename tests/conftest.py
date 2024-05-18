@@ -30,13 +30,13 @@ def pytest_runtest_setup(item):
 @pytest.fixture
 def df_mzmine3():
     """Fixture to create Pandas DataFrame object from MZmine3-style table."""
-    return pd.read_csv("example_data/case_study_peak_table_quant_full.csv")
+    return pd.read_csv("tests/test_data/test.peak_table_quant_full.csv")
 
 
 @pytest.fixture
 def parameter_instance():
     """Fixture to generate ParameterManager instance from MZmine3 example data."""
-    params_json = FileManager.load_json_file("example_data/case_study_parameters.json")
+    params_json = FileManager.load_json_file("tests/test_data/test.parameters.json")
     params_manager = ParameterManager()
     params_manager.assign_parameters_cli(params_json)
     return params_manager

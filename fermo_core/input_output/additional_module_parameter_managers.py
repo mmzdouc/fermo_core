@@ -178,8 +178,8 @@ class GroupFactAssignmentParameters(BaseModel):
             return {"activate_module": self.activate_module}
 
 
-class PhenoQuantAssgnParams(BaseModel):
-    """A Pydantic-based class for phenotype quantitative assignment parameters
+class PhenoQualAssgnParams(BaseModel):
+    """A Pydantic-based class for phenotype qualitative assignment parameters
 
     Attributes:
         activate_module: bool to indicate if module should be executed.
@@ -216,6 +216,162 @@ class PhenoQuantAssgnParams(BaseModel):
                 "factor": int(self.factor),
                 "algorithm": str(self.algorithm),
                 "value": str(self.value),
+            }
+        else:
+            return {"activate_module": self.activate_module}
+
+
+class PhenoQuantPercentAssgnParams(BaseModel):
+    """A Pydantic-based class for phenotype quantitative percentage assignment params
+
+    Attributes:
+        activate_module: bool to indicate if module should be executed.
+        sample_avg: algorithm to summarize mult measurements per sample for single assay
+        value: the type of value to use for determination
+        algorithm: the statistical algorithm to calculate correlation
+        p_val_cutoff: minimum Bonferroni-corrected p-value to consider in assignment
+        coeff_cutoff: minimum correlation coefficient cutoff to consider in assignment
+    """
+
+    activate_module: bool = False
+    sample_avg: str = "mean"
+    value: str = "area"
+    algorithm: str = "pearson"
+    p_val_cutoff: float = 0.05
+    coeff_cutoff: float = 0.7
+
+    @model_validator(mode="after")
+    def validate_strs(self):
+        if self.sample_avg not in ["mean", "median"]:
+            logger.warning(
+                f"Unsupported 'sample_avg' format: '{self.sample_avg}'. "
+                "Set to default value 'mean'."
+            )
+            self.sample_avg = "mean"
+
+        if self.value not in [
+            "area",
+        ]:
+            logger.warning(
+                f"Unsupported 'value' format: '{self.value}'. "
+                "Set to default value 'area'."
+            )
+            self.value = "area"
+
+        if self.algorithm not in [
+            "pearson",
+        ]:
+            logger.warning(
+                f"Unsupported 'algorithm' format: '{self.algorithm}'. "
+                "Set to default value 'pearson'."
+            )
+            self.algorithm = "pearson"
+
+        return self
+
+    @model_validator(mode="after")
+    def validate_floats(self):
+        if self.p_val_cutoff > 1:
+            logger.warning(
+                f"Value for 'p_val_cutoff' greater than 1 (is '"
+                f"{self.p_val_cutoff}'). Set to default value 0.05."
+            )
+            self.p_val_cutoff = 0.05
+        if self.coeff_cutoff > 1:
+            logger.warning(
+                f"Value for 'coeff_cutoff' greater than 1 (is '"
+                f"{self.coeff_cutoff}'). Set to default value 0.7."
+            )
+            self.coeff_cutoff = 0.7
+        return self
+
+    def to_json(self: Self) -> dict:
+        if self.activate_module:
+            return {
+                "activate_module": self.activate_module,
+                "sample_avg": self.sample_avg,
+                "value": self.value,
+                "algorithm": self.algorithm,
+                "p_val_cutoff": self.p_val_cutoff,
+                "coeff_cutoff": self.coeff_cutoff,
+            }
+        else:
+            return {"activate_module": self.activate_module}
+
+
+class PhenoQuantConcAssgnParams(BaseModel):
+    """A Pydantic-based class for phenotype quantitative concentration assignment params
+
+    Attributes:
+        activate_module: bool to indicate if module should be executed.
+        sample_avg: algorithm to summarize mult measurements per sample for single assay
+        value: the type of value to use for determination
+        algorithm: the statistical algorithm to calculate correlation
+        p_val_cutoff: minimum Bonferroni-corrected p-value to consider in assignment
+        coeff_cutoff: minimum correlation coefficient cutoff to consider in assignment
+    """
+
+    activate_module: bool = False
+    sample_avg: str = "mean"
+    value: str = "area"
+    algorithm: str = "pearson"
+    p_val_cutoff: float = 0.05
+    coeff_cutoff: float = 0.7
+
+    @model_validator(mode="after")
+    def validate_strs(self):
+        if self.sample_avg not in ["mean", "median"]:
+            logger.warning(
+                f"Unsupported 'sample_avg' format: '{self.sample_avg}'. "
+                "Set to default value 'mean'."
+            )
+            self.sample_avg = "mean"
+
+        if self.value not in [
+            "area",
+        ]:
+            logger.warning(
+                f"Unsupported 'value' format: '{self.value}'. "
+                "Set to default value 'area'."
+            )
+            self.value = "area"
+
+        if self.algorithm not in [
+            "pearson",
+        ]:
+            logger.warning(
+                f"Unsupported 'algorithm' format: '{self.algorithm}'. "
+                "Set to default value 'pearson'."
+            )
+            self.algorithm = "pearson"
+
+        return self
+
+    @model_validator(mode="after")
+    def validate_floats(self):
+        if self.p_val_cutoff > 1:
+            logger.warning(
+                f"Value for 'p_val_cutoff' greater than 1 (is '"
+                f"{self.p_val_cutoff}'). Set to default value 0.05."
+            )
+            self.p_val_cutoff = 0.05
+        if self.coeff_cutoff > 1:
+            logger.warning(
+                f"Value for 'coeff_cutoff' greater than 1 (is '"
+                f"{self.coeff_cutoff}'). Set to default value 0.7."
+            )
+            self.coeff_cutoff = 0.7
+        return self
+
+    def to_json(self: Self) -> dict:
+        if self.activate_module:
+            return {
+                "activate_module": self.activate_module,
+                "sample_avg": self.sample_avg,
+                "value": self.value,
+                "algorithm": self.algorithm,
+                "p_val_cutoff": self.p_val_cutoff,
+                "coeff_cutoff": self.coeff_cutoff,
             }
         else:
             return {"activate_module": self.activate_module}
@@ -298,7 +454,6 @@ class Ms2QueryAnnotationParameters(BaseModel):
 
     Attributes:
         activate_module: bool to indicate if module should be executed.
-        exclude_blank: sets if blank-associated features should be excluded from annot
         score_cutoff: only matches with a score higher or equal to are retained
         maximum_runtime: maximum runtime in seconds
 
@@ -307,7 +462,6 @@ class Ms2QueryAnnotationParameters(BaseModel):
     """
 
     activate_module: bool = False
-    exclude_blank: bool = False
     score_cutoff: PositiveFloat = 0.7
     maximum_runtime: int = 600
 
@@ -316,7 +470,6 @@ class Ms2QueryAnnotationParameters(BaseModel):
         if self.activate_module:
             return {
                 "activate_module": self.activate_module,
-                "exclude_blank": self.exclude_blank,
                 "score_cutoff": self.score_cutoff,
                 "maximum_runtime": self.maximum_runtime,
             }

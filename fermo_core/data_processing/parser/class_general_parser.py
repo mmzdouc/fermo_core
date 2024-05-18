@@ -88,11 +88,19 @@ class GeneralParser(BaseModel):
 
         Arguments:
             params: ParameterManager holding validated user input
+
+        Raises:
+            RuntimeError: unsupported peaktable data format
         """
         match params.PeaktableParameters.format:
             case "mzmine3":
                 self.stats, self.features, self.samples = PeakMzmine3Parser().parse(
                     params
+                )
+            case _:
+                raise RuntimeError(
+                    f"'GeneralParser': detected unsupported format "
+                    f"'{params.PeaktableParameters.format}' for 'peaktable'."
                 )
 
     def parse_msms(self: Self, params: ParameterManager):
@@ -100,6 +108,9 @@ class GeneralParser(BaseModel):
 
         Arguments:
             params: ParameterManager holding validated user input
+
+        Raises:
+            RuntimeError: unsupported msms data format
         """
         if params.MsmsParameters is None:
             logger.info(
@@ -109,7 +120,14 @@ class GeneralParser(BaseModel):
 
         match params.MsmsParameters.format:
             case "mgf":
-                self.features = MgfParser().parse(self.features, params)
+                mgf_parser = MgfParser(params=params, features=self.features)
+                mgf_parser.parse()
+                self.features = mgf_parser.return_features()
+            case _:
+                raise RuntimeError(
+                    f"'GeneralParser': detected unsupported format "
+                    f"'{params.MsmsParameters.format}' for 'msms'."
+                )
 
     def parse_group_metadata(self: Self, params: ParameterManager):
         """Parses user-provided group metadata file.
@@ -139,7 +157,6 @@ class GeneralParser(BaseModel):
                 raise RuntimeError(
                     f"'GeneralParser': detected unsupported format "
                     f"'{params.GroupMetadataParameters.format}' for 'group_metadata'."
-                    f"- SKIP"
                 )
 
     def parse_phenotype(self: Self, params: ParameterManager):
@@ -158,28 +175,43 @@ class GeneralParser(BaseModel):
             )
             return
 
+        phenotype_parser = PhenotypeParser(
+            stats=self.stats,
+            df=pd.read_csv(params.PhenotypeParameters.filepath),
+        )
+        phenotype_parser.message("started")
+        phenotype_parser.validate_sample_names()
+
         match params.PhenotypeParameters.format:
             case "qualitative":
-                phenotype_parser = PhenotypeParser(
-                    stats=self.stats,
-                    df=pd.read_csv(params.PhenotypeParameters.filepath),
-                )
-                phenotype_parser.message("started")
-                phenotype_parser.validate_sample_names()
                 phenotype_parser.parse_qualitative()
                 self.stats = phenotype_parser.return_stats()
-                phenotype_parser.message("completed")
+            case "quantitative-percentage":
+                phenotype_parser.parse_quantitative_percentage(
+                    params.PhenoQuantPercentAssgnParams.sample_avg
+                )
+                self.stats = phenotype_parser.return_stats()
+            case "quantitative-concentration":
+                phenotype_parser.parse_quantitative_concentration(
+                    params.PhenoQuantConcAssgnParams.sample_avg
+                )
+                self.stats = phenotype_parser.return_stats()
             case _:
                 raise RuntimeError(
                     f"'GeneralParser': detected unsupported format "
                     f"'{params.PhenotypeParameters.format}' for 'phenotype'."
                 )
 
+        phenotype_parser.message("completed")
+
     def parse_spectral_library(self: Self, params: ParameterManager):
         """Parses user-provided spectral_library file.
 
         Arguments:
             params: ParameterManager holding validated user input
+
+        Raises:
+            RuntimeError: unsupported spectral library format
         """
         if params.SpecLibParameters is None:
             logger.info(
@@ -190,4 +222,11 @@ class GeneralParser(BaseModel):
 
         match params.SpecLibParameters.format:
             case "mgf":
-                self.stats = SpecLibMgfParser().parse(self.stats, params)
+                parser = SpecLibMgfParser(params=params, stats=self.stats)
+                parser.parse()
+                self.stats = parser.return_stats()
+            case _:
+                raise RuntimeError(
+                    f"'GeneralParser': detected unsupported format "
+                    f"'{params.SpecLibParameters.format}' for 'spectral_library'."
+                )

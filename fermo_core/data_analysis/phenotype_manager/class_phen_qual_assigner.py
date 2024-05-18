@@ -1,4 +1,4 @@
-"""Run the phenotype quantitative data assignment.
+"""Run the phenotype qualitative data assignment.
 
 Copyright (c) 2022 to present Mitja Maximilian Zdouc, PhD
 
@@ -34,8 +34,8 @@ from fermo_core.input_output.class_parameter_manager import ParameterManager
 logger = logging.getLogger("fermo_core")
 
 
-class PhenQuantAssigner(BaseModel):
-    """Pydantic-based class to run quantitative phenotype assignment
+class PhenQualAssigner(BaseModel):
+    """Pydantic-based class to run qualitative phenotype assignment
 
     Attributes:
         params: ParameterManager object, holds user-provided parameters
@@ -104,7 +104,7 @@ class PhenQuantAssigner(BaseModel):
         feature = self.features.get(f_id)
         values_s_ids = []
 
-        if self.params.PhenoQuantAssgnParams.value == "area":
+        if self.params.PhenoQualAssgnParams.value == "area":
             for entry in feature.area_per_sample:
                 if entry.s_id in sample_ids:
                     values_s_ids.append(entry.value)
@@ -115,7 +115,7 @@ class PhenQuantAssigner(BaseModel):
 
         if len(values_s_ids) == 0:
             raise RuntimeError(
-                "'PhenQuantAssigner': empty list detected, would lead "
+                "'PhenQualAssigner': empty list detected, would lead "
                 "to ZeroDivisionError."
             )
         else:
@@ -140,30 +140,30 @@ class PhenQuantAssigner(BaseModel):
             s_inactv = s_inactv.intersection(feature.samples)
             vals_inact = self.get_value(f_id, s_inactv)
 
-            match self.params.PhenoQuantAssgnParams.algorithm:
+            match self.params.PhenoQualAssgnParams.algorithm:
                 case "minmax":
                     factor = min(vals_act) / max(vals_inact)
-                    if factor >= self.params.PhenoQuantAssgnParams.factor:
+                    if factor >= self.params.PhenoQualAssgnParams.factor:
                         feature.phenotypes = [
                             Phenotype(score=factor, format="qualitative")
                         ]
                         self.stats.phenotypes[0].f_ids_positive.add(f_id)
                 case "mean":
                     factor = mean(vals_act) / mean(vals_inact)
-                    if factor >= self.params.PhenoQuantAssgnParams.factor:
+                    if factor >= self.params.PhenoQualAssgnParams.factor:
                         feature.phenotypes = [
                             Phenotype(score=factor, format="qualitative")
                         ]
                         self.stats.phenotypes[0].f_ids_positive.add(f_id)
                 case "median":
                     factor = median(vals_act) / median(vals_inact)
-                    if factor >= self.params.PhenoQuantAssgnParams.factor:
+                    if factor >= self.params.PhenoQualAssgnParams.factor:
                         feature.phenotypes = [
                             Phenotype(score=factor, format="qualitative")
                         ]
                         self.stats.phenotypes[0].f_ids_positive.add(f_id)
                 case _:
-                    raise RuntimeError("'PhenQuantAssigner': Unsupported algorithm.")
+                    raise RuntimeError("'PhenQualAssigner': Unsupported algorithm.")
 
             self.features.modify(f_id, feature)
 
@@ -171,11 +171,11 @@ class PhenQuantAssigner(BaseModel):
         """Run the phenotype annotation analysis
 
         Raise:
-            RuntimeError: self.phenotypes not specified
+            RuntimeError: self.stats.phenotypes not specified
         """
         if self.stats.phenotypes is None:
             raise RuntimeError(
-                "'PhenQuantAssigner': self.phenotypes not specified - SKIP"
+                "'PhenQualAssigner': self.stats.phenotypes not specified - SKIP"
             )
 
         self.collect_sets()

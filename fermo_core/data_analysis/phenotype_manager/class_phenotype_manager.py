@@ -25,8 +25,14 @@ from typing import Self, Tuple
 
 from pydantic import BaseModel
 
-from fermo_core.data_analysis.phenotype_manager.class_phen_quant_assigner import (
-    PhenQuantAssigner,
+from fermo_core.data_analysis.phenotype_manager.class_phen_qual_assigner import (
+    PhenQualAssigner,
+)
+from fermo_core.data_analysis.phenotype_manager.class_phen_quant_perc_assigner import (
+    PhenQuantPercAssigner,
+)
+from fermo_core.data_analysis.phenotype_manager.class_phen_quant_conc_assigner import (
+    PhenQuantConcAssigner,
 )
 from fermo_core.data_processing.class_repository import Repository
 from fermo_core.data_processing.class_stats import Stats
@@ -66,7 +72,10 @@ class PhenotypeManager(BaseModel):
         match self.params.PhenotypeParameters.format:
             case "qualitative":
                 self.run_assigner_qualitative()
-            # TODO(8.5.): expand for other conditions
+            case "quantitative-percentage":
+                self.run_assigner_quant_percentage()
+            case "quantitative-concentration":
+                self.run_assigner_quant_concentration()
             case _:
                 logger.warning("'PhenotypeManager': unexpected phenotype format - SKIP")
                 return
@@ -77,30 +86,102 @@ class PhenotypeManager(BaseModel):
         """Run the phenotype feature annotation based on qualitative data"""
         logger.info("'PhenotypeManager': started qualitative phenotype data analysis.")
 
-        if self.params.PhenoQuantAssgnParams.activate_module is False:
+        if self.params.PhenoQualAssgnParams.activate_module is False:
             logger.info(
                 "'PhenotypeManager': parameters for "
-                "'phenotype_assignment/qualitative' not specified or model turned off "
+                "'phenotype_assignment/qualitative' not specified or module turned off "
                 " - SKIP"
             )
             return
 
         try:
-            quant_assigner = PhenQuantAssigner(
+            qual_assigner = PhenQualAssigner(
                 params=self.params,
                 features=self.features,
                 stats=self.stats,
                 samples=self.samples,
             )
-            quant_assigner.run_analysis()
-            self.stats, self.features = quant_assigner.return_values()
+            qual_assigner.run_analysis()
+            self.stats, self.features = qual_assigner.return_values()
         except Exception as e:
             logger.error(str(e))
             logger.error(
-                "'PhenotypeManager': Error during running of PhenQuantAssigner - SKIP"
+                "'PhenotypeManager': Error during running of PhenQualAssigner - SKIP"
             )
             return
 
         logger.info(
             "'PhenotypeManager': completed qualitative phenotype data analysis."
+        )
+
+    def run_assigner_quant_percentage(self: Self):
+        """Run the phenotype feature annotation based on quantitative percentage data"""
+        logger.info(
+            "'PhenotypeManager': started quantitative phenotype data analysis for "
+            "percentage data."
+        )
+
+        if self.params.PhenoQuantPercentAssgnParams.activate_module is False:
+            logger.info(
+                "'PhenotypeManager': parameters for "
+                "'phenotype_assignment/quantitative-percentage' not specified or "
+                "module turned off - SKIP"
+            )
+            return
+
+        try:
+            quant_p_assigner = PhenQuantPercAssigner(
+                params=self.params,
+                features=self.features,
+                stats=self.stats,
+                samples=self.samples,
+            )
+            quant_p_assigner.run_analysis()
+            self.stats, self.features = quant_p_assigner.return_values()
+        except Exception as e:
+            logger.error(str(e))
+            logger.error(
+                "'PhenotypeManager': Error during running of PhenQuantPercAssigner - SKIP"
+            )
+            return
+
+        logger.info(
+            "'PhenotypeManager': started quantitative phenotype data analysis for "
+            "percentage data."
+        )
+
+    def run_assigner_quant_concentration(self: Self):
+        """Run the phenotype feature annotation based on quantitative concentr. data"""
+        logger.info(
+            "'PhenotypeManager': started quantitative phenotype data analysis for "
+            "concentration data."
+        )
+
+        if self.params.PhenoQuantConcAssgnParams.activate_module is False:
+            logger.info(
+                "'PhenotypeManager': parameters for "
+                "'phenotype_assignment/quantitative-concentration' not specified or "
+                "module turned off - SKIP"
+            )
+            return
+
+        try:
+            quant_conc_assigner = PhenQuantConcAssigner(
+                params=self.params,
+                features=self.features,
+                stats=self.stats,
+                samples=self.samples,
+            )
+            quant_conc_assigner.run_analysis()
+            self.stats, self.features = quant_conc_assigner.return_values()
+        except Exception as e:
+            logger.error(str(e))
+            logger.error(
+                "'PhenotypeManager': Error during running of PhenQuantConcAssigner - SKIP"
+            )
+            return
+
+        logger.info(
+            "'PhenotypeManager': completed quantitative phenotype data analysis for "
+            "concentration data."
         )

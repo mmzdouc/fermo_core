@@ -14,14 +14,14 @@ def params():
     params = ParameterManager()
     params.MsmsParameters = MsmsParameters(
         **{
-            "filepath": "example_data/case_study_MSMS.mgf",
+            "filepath": "tests/test_data/test.msms.mgf",
             "format": "mgf",
             "rel_int_from": 0.005,
         }
     )
     params.PeaktableParameters = PeaktableParameters(
         **{
-            "filepath": "example_data/case_study_peak_table_quant_full.csv",
+            "filepath": "tests/test_data/test.peak_table_quant_full.csv",
             "format": "mzmine3",
             "polarity": "positive",
         }
@@ -34,15 +34,19 @@ def feature_repo(params):
     return PeakMzmine3Parser().extract_features(params)
 
 
-def test_instantiate_parser_valid():
-    assert isinstance(MgfParser(), MgfParser)
+def test_instantiate_parser_valid(params, feature_repo):
+    assert isinstance(MgfParser(params=params, features=feature_repo), MgfParser)
 
 
 def test_parse_valid(feature_repo, params):
-    feature_repo = MgfParser().parse(feature_repo, params)
+    parser = MgfParser(params=params, features=feature_repo)
+    parser.parse()
+    feature_repo = parser.return_features()
     assert feature_repo.entries.get(126).Spectrum is not None
 
 
 def test_modify_features_valid(params, feature_repo):
-    feature_repo = MgfParser().modify_features(feature_repo, params)
+    parser = MgfParser(params=params, features=feature_repo)
+    parser.modify_features()
+    feature_repo = parser.return_features()
     assert feature_repo.entries.get(126).Spectrum is not None

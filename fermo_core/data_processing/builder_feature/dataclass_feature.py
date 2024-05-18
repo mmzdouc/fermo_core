@@ -21,7 +21,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 import logging
-from typing import Optional, Dict, Self, List, Any
+from typing import Optional, Self, Any
 
 from pydantic import BaseModel
 
@@ -56,7 +56,7 @@ class Adduct(BaseModel):
             "partner_id": self.partner_id,
             "partner_mz": self.partner_mz,
             "diff_ppm": round(self.diff_ppm, 2),
-            "samples": list(self.sample_set),
+            "samples": list(self.sample_set) if self.sample_set is not None else [],
         }
 
 
@@ -88,7 +88,7 @@ class Match(BaseModel):
     npc_class: Optional[str] = None
 
     def to_json(self: Self) -> dict:
-        temp_dict = {
+        return {
             "id": self.id,
             "library": self.library,
             "algorithm": self.algorithm,
@@ -96,18 +96,10 @@ class Match(BaseModel):
             "mz": self.mz,
             "diff_mz": self.diff_mz,
             "module": self.module,
+            "smiles": self.smiles if self.smiles is not None else "N/A",
+            "inchikey": self.inchikey if self.inchikey is not None else "N/A",
+            "npc_class": self.npc_class if self.npc_class is not None else "N/A",
         }
-
-        if self.smiles is not None:
-            temp_dict["smiles"] = self.smiles
-
-        if self.inchikey is not None:
-            temp_dict["inchikey"] = self.inchikey
-
-        if self.npc_class is not None:
-            temp_dict["npc_class"] = self.npc_class
-
-        return temp_dict
 
 
 class NeutralLoss(BaseModel):
@@ -171,26 +163,34 @@ class Annotations(BaseModel):
         fragments: list of CharFrag objects annotating characteristic ion fragments
     """
 
-    adducts: Optional[List[Adduct]] = None
-    matches: Optional[List[Match]] = None
-    losses: Optional[List[NeutralLoss]] = None
-    fragments: Optional[List[CharFrag]] = None
+    adducts: Optional[list] = None
+    matches: Optional[list] = None
+    losses: Optional[list] = None
+    fragments: Optional[list] = None
 
     def to_json(self: Self) -> dict:
-        json_dict = {}
-        if self.adducts is not None:
-            json_dict["adducts"] = [adduct.to_json() for adduct in self.adducts]
-
-        if self.matches is not None:
-            json_dict["matches"] = [match.to_json() for match in self.matches]
-
-        if self.losses is not None:
-            json_dict["losses"] = [loss.to_json() for loss in self.losses]
-
-        if self.fragments is not None:
-            json_dict["fragments"] = [frag.to_json() for frag in self.fragments]
-
-        return json_dict
+        return {
+            "adducts": (
+                [adduct.to_json() for adduct in self.adducts]
+                if self.adducts is not None
+                else []
+            ),
+            "matches": (
+                [adduct.to_json() for adduct in self.matches]
+                if self.matches is not None
+                else []
+            ),
+            "losses": (
+                [adduct.to_json() for adduct in self.losses]
+                if self.losses is not None
+                else []
+            ),
+            "fragments": (
+                [adduct.to_json() for adduct in self.fragments]
+                if self.fragments is not None
+                else []
+            ),
+        }
 
 
 class SimNetworks(BaseModel):
@@ -206,8 +206,8 @@ class SimNetworks(BaseModel):
 
     def to_json(self: Self) -> dict:
         return {
-            "algorithm": str(self.algorithm),
-            "network_id": int(self.network_id),
+            "algorithm": self.algorithm,
+            "network_id": self.network_id,
         }
 
 
@@ -254,27 +254,53 @@ class Phenotype(BaseModel):
     """A Pydantic-based class to represent phenotype information
 
     Attributes:
-        score: the score calculated
         format: the format of the phenotype file
         category: the assay category (column) if applicable
         descr: additional data if applicable
+        score: the score calculated
+        p_value: the calculated p-value if applicable
+        p_value_corr: the Bonferroni-corrected p-value if applicable
+
     """
 
-    score: float
     format: str
     category: Optional[str] = None
     descr: Optional[str] = None
+    score: float
+    p_value: Optional[float] = None
+    p_value_corr: Optional[float] = None
 
     def to_json(self: Self) -> dict:
-        json_dict = {"score": round(self.score, 2), "format": self.format}
+        return {
+            "format": self.format,
+            "category": self.category if self.category is not None else "N/A",
+            "descr": self.descr if self.descr is not None else "N/A",
+            "score": round(self.score, 6),
+            "p_value": round(self.p_value, 10) if self.p_value is not None else 1.0,
+            "p_value_corr": round(self.p_value, 10)
+            if self.p_value_corr is not None
+            else 1.0,
+        }
 
-        if self.category is not None:
-            json_dict["category"] = self.category
 
-        if self.descr is not None:
-            json_dict["descr"] = self.descr
+class Scores(BaseModel):
+    """A Pydantic-based class to represent feature score information
 
-        return json_dict
+    Attributes:
+        phenotype: the highest phenotype correlation score (if any) across all assays
+        novelty: putative novelty of the feature (compared against external data)
+    """
+
+    phenotype: Optional[float] = None
+    novelty: Optional[float] = None
+
+    def to_json(self) -> dict:
+        return {
+            "phenotype": round(self.phenotype, 2)
+            if self.phenotype is not None
+            else 0.0,
+            "novelty": round(self.novelty, 2) if self.novelty is not None else 0.0,
+        }
 
 
 class Feature(BaseModel):
@@ -295,16 +321,16 @@ class Feature(BaseModel):
         area: the area of the peak
         rel_area: the area relative to the feature with the highest area in the sample.
         Spectrum: a matchms Spectrum object instance using data from msms
-        samples: a tuple of samples to which feature is associated.
-        area_per_sample: list of SampleInfo instances
-        height_per_sample: list of SampleInfo instances
+        samples: samples in which feature was detected.
+        area_per_sample: list of SampleInfo instances summarizing area per sample
+        height_per_sample: list of SampleInfo instances summarizing height per sample
         blank: bool to indicate if feature is blank-associated (if provided).
         groups: association to categories and groups is such data was provided.
         group_factors: indicates the group factors(fold differences) if provided.
         phenotypes: a list of Phenotype objects if phenotype was assigned
         Annotations: objects summarizing associated annotation data
         networks: dict of objects representing associated networking data
-        scores: dict of objects representing associated scores
+        Scores: Object representing feature-associated scores
     """
 
     f_id: Optional[int] = None
@@ -328,9 +354,9 @@ class Feature(BaseModel):
     groups: Optional[dict] = None
     group_factors: Optional[dict] = None
     phenotypes: Optional[list] = None
-    Annotations: Optional[Annotations] = None
-    networks: Optional[Dict] = None
-    scores: Optional[Dict] = None
+    Annotations: Optional[Any] = None
+    networks: Optional[dict] = None
+    Scores: Optional[Any] = None
 
     def to_json(self: Self) -> dict:
         """Convert class attributes to json-compatible dict.
@@ -361,47 +387,57 @@ class Feature(BaseModel):
             if attribute[1] is not None:
                 json_dict[attribute[0]] = attribute[2](attribute[1])
 
-        if self.area_per_sample is not None:
-            json_dict["area_per_sample"] = [
-                val.to_json() for val in self.area_per_sample
-            ]
+        def _add_per_sample(attr: str):
+            if getattr(self, attr) is not None:
+                json_dict[attr] = [val.to_json() for val in getattr(self, attr)]
+            else:
+                json_dict[attr] = []
 
-        if self.height_per_sample is not None:
-            json_dict["height_per_sample"] = [
-                val.to_json() for val in self.height_per_sample
-            ]
+        _add_per_sample("area_per_sample")
+        _add_per_sample("height_per_sample")
 
         if self.groups is not None and len(self.groups) != 0:
             json_dict["groups"] = {key: list(val) for key, val in self.groups.items()}
+        else:
+            json_dict["groups"] = {}
 
         if self.group_factors is not None:
             json_dict["group_factors"] = {
                 key: [item.to_json() for item in val]
                 for key, val in self.group_factors.items()
             }
-
-        if self.Spectrum is not None:
-            json_dict["spectrum"] = dict()
-            json_dict["spectrum"]["mz"] = list(self.Spectrum.mz)
-            json_dict["spectrum"]["int"] = [
-                round(i, 3) for i in self.Spectrum.intensities
-            ]
-            json_dict["spectrum"]["metadata"] = self.Spectrum.metadata
-
-        if self.networks is not None:
-            json_dict["networks"] = dict()
-            for network in self.networks:
-                json_dict["networks"][network] = self.networks[network].to_json()
-
-        if self.Annotations is not None:
-            json_dict["annotations"] = self.Annotations.to_json()
+        else:
+            json_dict["group_factors"] = {}
 
         if self.phenotypes is not None:
             json_dict["phenotypes"] = [obj.to_json() for obj in self.phenotypes]
+        else:
+            json_dict["phenotypes"] = []
 
-        logger.fatal("Export feature: dummy values for 'scores' written. Remove ASAP")
-        json_dict["scores"] = {"prioritization": 1.0, "novelty": 0.5, "phenotype": 0.3}
-        # TODO (MMZ 9.5.): implement proper score writing
-        # TODO(MMZ 20.1.24): - check if everything was covered by export
+        if self.Scores is not None:
+            json_dict["scores"] = self.Scores.to_json()
+        else:
+            json_dict["scores"] = {}
+
+        if self.Spectrum is not None:
+            json_dict["spectrum"] = {
+                "mz": list(self.Spectrum.mz),
+                "int": [round(i, 3) for i in self.Spectrum.intensities],
+                "metadata": self.Spectrum.metadata,
+            }
+        else:
+            json_dict["spectrum"] = {}
+
+        if self.networks is not None:
+            json_dict["networks"] = {
+                key: val.to_json() for key, val in self.networks.items()
+            }
+        else:
+            json_dict["networks"] = {}
+
+        if self.Annotations is not None:
+            json_dict["annotations"] = self.Annotations.to_json()
+        else:
+            json_dict["annotations"] = {}
 
         return json_dict

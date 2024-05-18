@@ -40,9 +40,7 @@ def ms2query_annotator():
         format="mzmine3",
         filepath="example_data/case_study_peak_table_quant_full.csv",
     )
-    ms2query_p = Ms2QueryAnnotationParameters(
-        activate_module=True, exclude_blank=False, maximum_runtime=200
-    )
+    ms2query_p = Ms2QueryAnnotationParameters(activate_module=True, maximum_runtime=200)
     params = ParameterManager()
     params.PeaktableParameters = peaktable_p
     params.Ms2QueryAnnotationParameters = ms2query_p
@@ -54,13 +52,6 @@ def ms2query_annotator():
 def test_prepare_queries_valid(ms2query_annotator):
     ms2query_annotator.prepare_queries()
     assert ms2query_annotator.queries is not None
-
-
-def test_prepare_queries_invalid(ms2query_annotator):
-    ms2query_annotator.params.Ms2QueryAnnotationParameters.exclude_blank = True
-    ms2query_annotator.features.entries.get(20).blank = True
-    with pytest.raises(RuntimeError):
-        ms2query_annotator.prepare_queries()
 
 
 def test_estimate_calc_time_valid(ms2query_annotator):

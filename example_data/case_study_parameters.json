@@ -11,8 +11,8 @@
             "rel_int_from": 0.01
         },
         "phenotype": {
-            "filepath": "example_data/case_study_bioactivity_qualitative.csv",
-            "format": "qualitative"
+            "filepath": "example_data/dummy_bioactivity_quant_concentration.csv",
+            "format": "quantitative-concentration"
         },
         "group_metadata": {
             "filepath": "example_data/case_study_group_metadata.csv",
@@ -91,10 +91,26 @@
         },
         "phenotype_assignment": {
             "qualitative": {
-                "activate_module": true,
+                "activate_module": false,
                 "factor": 5,
                 "algorithm": "minmax",
                 "value": "area"
+            },
+            "quantitative-percentage": {
+                "activate_module": false,
+                "sample_avg": "mean",
+                "value": "area",
+                "algorithm": "pearson",
+                "p_val_cutoff": 0.05,
+                "coeff_cutoff": 0.7
+            },
+            "quantitative-concentration": {
+                "activate_module": true,
+                "sample_avg": "mean",
+                "value": "area",
+                "algorithm": "pearson",
+                "p_val_cutoff": 0.05,
+                "coeff_cutoff": 0.7
             }
         },
         "spectral_library_matching": {
@@ -115,9 +131,8 @@
         },
         "ms2query_annotation": {
             "activate_module": true,
-            "exclude_blank": false,
-            "maximum_runtime": 600,
-            "score_cutoff": 0.7
+            "score_cutoff": 0.7,
+            "maximum_runtime": 600
         },
         "as_kcb_matching": {
             "modified_cosine": {

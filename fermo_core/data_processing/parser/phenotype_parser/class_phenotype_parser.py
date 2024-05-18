@@ -92,3 +92,59 @@ class PhenotypeParser(BaseModel):
                 s_negative=s_negative,
             )
         ]
+
+    def parse_quantitative_percentage(self: Self, algorithm: str):
+        """Parse data from quantitative percentage phenotype file
+
+        Arguments:
+            algorithm: the algorithm to summarize duplicate measurements per sample
+                for each assay.
+
+        """
+        assay_cols = [assay for assay in self.df.columns if assay.startswith("assay:")]
+
+        for assay in assay_cols:
+            self.df.loc[self.df[assay] < 0, assay] = 0
+
+        self.stats.phenotypes = []
+
+        for num, assay in enumerate(assay_cols):
+            self.stats.phenotypes.append(
+                PhenoData(datatype="quantitative-percentage", category=assay)
+            )
+
+            if algorithm == "mean":
+                summarized_vals = self.df.groupby("sample_name")[assay].mean()
+            else:
+                summarized_vals = self.df.groupby("sample_name")[assay].median()
+
+            for idx, val in summarized_vals.items():
+                self.stats.phenotypes[num].s_phen_data.append(
+                    SamplePhenotype(s_id=idx, value=val)
+                )
+
+    def parse_quantitative_concentration(self: Self, algorithm: str):
+        """Parse data from quantitative concentration phenotype file
+
+        Arguments:
+            algorithm: the algorithm to summarize duplicate measurements per sample
+                for each assay.
+        """
+        assay_cols = [assay for assay in self.df.columns if assay.startswith("assay:")]
+
+        self.stats.phenotypes = []
+
+        for num, assay in enumerate(assay_cols):
+            self.stats.phenotypes.append(
+                PhenoData(datatype="quantitative-concentration", category=assay)
+            )
+
+            if algorithm == "mean":
+                summarized_vals = self.df.groupby("sample_name")[assay].mean()
+            else:
+                summarized_vals = self.df.groupby("sample_name")[assay].median()
+
+            for idx, val in summarized_vals.items():
+                self.stats.phenotypes[num].s_phen_data.append(
+                    SamplePhenotype(s_id=idx, value=val)
+                )

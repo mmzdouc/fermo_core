@@ -32,6 +32,9 @@ from fermo_core.data_processing.class_stats import Stats
 from fermo_core.data_analysis.annotation_manager.class_annotation_manager import (
     AnnotationManager,
 )
+from fermo_core.data_analysis.score_assigner.class_score_assigner import (
+    ScoreAssigner,
+)
 from fermo_core.data_analysis.chrom_trace_calculator.class_chrom_trace_calculator import (
     ChromTraceCalculator,
 )
@@ -61,9 +64,6 @@ class AnalysisManager(BaseModel):
         stats: Stats object, holds stats on molecular features and samples
         features: Repository object, holds "General Feature" objects
         samples: Repository object, holds "Sample" objects
-
-    Notes:
-        Every method should append log of completion to `self.stats.analysis_log`
     """
 
     params: ParameterManager
@@ -90,6 +90,7 @@ class AnalysisManager(BaseModel):
         self.run_phenotype_manager()
         self.run_sim_networks_manager()
         self.run_annotation_manager()
+        self.run_score_assignment()
         self.run_chrom_trace_calculator()
 
         logger.info("'AnalysisManager': completed analysis steps.")
@@ -111,9 +112,6 @@ class AnalysisManager(BaseModel):
             )
             feature_filter.filter()
             self.stats, self.features, self.samples = feature_filter.return_values()
-            self.stats.analysis_log.append(
-                "Ran module 'FeatureFilter'. For parameters, see 'feature_filtering'."
-            )
         except Exception as e:
             logger.warning(str(e))
             return
@@ -144,10 +142,6 @@ class AnalysisManager(BaseModel):
             )
             blank_assigner.run_analysis()
             self.stats, self.features = blank_assigner.return_attrs()
-            self.stats.analysis_log.append(
-                "Ran module 'BlankAssigner'. For parameters, "
-                "see 'additional_modules/blank_assignment'."
-            )
         except Exception as e:
             logger.warning(str(e))
             return
@@ -165,7 +159,6 @@ class AnalysisManager(BaseModel):
             group_assigner = GroupAssigner(features=self.features, stats=self.stats)
             group_assigner.run_analysis()
             self.stats, self.features = group_assigner.return_attrs()
-            self.stats.analysis_log.append("Ran module 'GroupAssigner'.")
         except Exception as e:
             logger.warning(str(e))
             return
@@ -192,10 +185,6 @@ class AnalysisManager(BaseModel):
             )
             group_fact_ass.run_analysis()
             self.features = group_fact_ass.return_features()
-            self.stats.analysis_log.append(
-                "Ran module 'GroupFactorAssigner'. For parameters, "
-                "see 'additional_modules/group_factor_assignment'."
-            )
         except Exception as e:
             logger.warning(str(e))
             return
@@ -207,7 +196,9 @@ class AnalysisManager(BaseModel):
             return
         elif not any(
             [
-                self.params.PhenoQuantAssgnParams.activate_module,
+                self.params.PhenoQualAssgnParams.activate_module,
+                self.params.PhenoQuantPercentAssgnParams.activate_module,
+                self.params.PhenoQuantConcAssgnParams.activate_module,
             ]
         ):
             logger.info(
@@ -225,10 +216,6 @@ class AnalysisManager(BaseModel):
             )
             phenotype_manager.run_analysis()
             self.stats, self.features = phenotype_manager.return_attrs()
-            self.stats.analysis_log.append(
-                "Ran module 'PhenotypeManager'. For parameters, "
-                "see 'additional_modules/phenotype_assignment'."
-            )
         except Exception as e:
             logger.warning(str(e))
             return
@@ -263,10 +250,6 @@ class AnalysisManager(BaseModel):
                 self.features,
                 self.samples,
             ) = sim_networks_manager.return_attrs()
-            self.stats.analysis_log.append(
-                "Ran module 'SimNetworksManager'. For parameters, "
-                "see 'core_modules/spec_sim_networking'."
-            )
         except Exception as e:
             logger.warning(str(e))
             return
@@ -283,15 +266,31 @@ class AnalysisManager(BaseModel):
             )
             annotation_manager.run_analysis()
             self.stats, self.features, self.samples = annotation_manager.return_attrs()
-            self.stats.analysis_log.append(
-                "Ran module 'AnnotationManager'. For parameters, "
-                "see 'core_modules' and 'additional_modules'."
+        except Exception as e:
+            logger.warning(str(e))
+            return
+
+    def run_score_assignment(self: Self):
+        """Run mandatory score annotation analysis step"""
+        try:
+            score_assigner = ScoreAssigner(
+                params=self.params,
+                stats=self.stats,
+                features=self.features,
+                samples=self.samples,
             )
+            score_assigner.run_analysis()
+            self.features, self.samples = score_assigner.return_attributes()
         except Exception as e:
             logger.warning(str(e))
             return
 
     def run_chrom_trace_calculator(self: Self):
         """Run mandatory ChromTraceCalculator analysis step."""
-        self.samples = ChromTraceCalculator().modify_samples(self.samples, self.stats)
-        self.stats.analysis_log.append("Ran module 'ChromTraceCalculator'.")
+        try:
+            self.samples = ChromTraceCalculator().modify_samples(
+                self.samples, self.stats
+            )
+        except Exception as e:
+            logger.warning(str(e))
+            return
