@@ -88,11 +88,19 @@ class GeneralParser(BaseModel):
 
         Arguments:
             params: ParameterManager holding validated user input
+
+        Raises:
+            RuntimeError: unsupported peaktable data format
         """
         match params.PeaktableParameters.format:
             case "mzmine3":
                 self.stats, self.features, self.samples = PeakMzmine3Parser().parse(
                     params
+                )
+            case _:
+                raise RuntimeError(
+                    f"'GeneralParser': detected unsupported format "
+                    f"'{params.PeaktableParameters.format}' for 'peaktable'."
                 )
 
     def parse_msms(self: Self, params: ParameterManager):
@@ -100,6 +108,9 @@ class GeneralParser(BaseModel):
 
         Arguments:
             params: ParameterManager holding validated user input
+
+        Raises:
+            RuntimeError: unsupported msms data format
         """
         if params.MsmsParameters is None:
             logger.info(
@@ -109,7 +120,14 @@ class GeneralParser(BaseModel):
 
         match params.MsmsParameters.format:
             case "mgf":
-                self.features = MgfParser().parse(self.features, params)
+                mgf_parser = MgfParser(params=params, features=self.features)
+                mgf_parser.parse()
+                self.features = mgf_parser.return_features()
+            case _:
+                raise RuntimeError(
+                    f"'GeneralParser': detected unsupported format "
+                    f"'{params.MsmsParameters.format}' for 'msms'."
+                )
 
     def parse_group_metadata(self: Self, params: ParameterManager):
         """Parses user-provided group metadata file.
@@ -139,7 +157,6 @@ class GeneralParser(BaseModel):
                 raise RuntimeError(
                     f"'GeneralParser': detected unsupported format "
                     f"'{params.GroupMetadataParameters.format}' for 'group_metadata'."
-                    f"- SKIP"
                 )
 
     def parse_phenotype(self: Self, params: ParameterManager):

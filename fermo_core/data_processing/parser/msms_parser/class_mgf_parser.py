@@ -23,61 +23,42 @@ SOFTWARE.
 import logging
 from typing import Self
 
+from pydantic import BaseModel
 from pyteomics import mgf
 
 from fermo_core.data_processing.class_repository import Repository
-from fermo_core.data_processing.parser.msms_parser.abc_msms_parser import MsmsParser
 from fermo_core.input_output.class_parameter_manager import ParameterManager
 from fermo_core.utils.utility_method_manager import UtilityMethodManager as Utils
 
 logger = logging.getLogger("fermo_core")
 
 
-class MgfParser(MsmsParser):
-    """Interface to parse MS/MS files in mgf format based on abstract baseclass."""
+class MgfParser(BaseModel):
+    """Pydantic-based class to parse MS/MS files in mgf format.
 
-    def parse(
-        self: Self, feature_repo: Repository, params: ParameterManager
-    ) -> Repository:
-        """Parse a mgf style MS/MS file.
+    Attributes:
+        params: a ParameterManager object containing analysis parameters
+        features: a Repository object containing feature objects
+    """
 
-        Arguments:
-            feature_repo: Repository holding individual features
-            params: instance of ParameterManager holding user input
+    params: ParameterManager
+    features: Repository
+
+    def return_features(self: Self) -> Repository:
+        """Returns modified feature objects
 
         Returns:
-            A Repository object with modified features
+            The modified feature objects
         """
-        logger.info(
-            f"'MgfParser': started parsing of MS/MS data-containing file "
-            f"'{params.MsmsParameters.filepath.name}'"
-        )
+        return self.features
 
-        feature_repo = self.modify_features(feature_repo, params)
-
-        logger.info(
-            f"'MgfParser': completed parsing of MS/MS data-containing file "
-            f"'{params.MsmsParameters.filepath.name}'"
-        )
-
-        return feature_repo
-
-    def modify_features(
-        self: Self, feature_repo: Repository, params: ParameterManager
-    ) -> Repository:
+    def modify_features(self: Self):
         """Modifies Feature objects by adding MS/MS information.
 
         Data is read using pyteomics.mgf() and only then converted to
         matchms.Spectrum object to have better control over data import and filtering.
-
-        Arguments:
-            feature_repo: Repository holding individual features
-            params: instance of ParameterManager holding user input
-
-        Returns:
-            A Repository object with modified features
         """
-        with open(params.MsmsParameters.filepath) as infile:
+        with open(self.params.MsmsParameters.filepath) as infile:
             for spectrum in mgf.read(infile, use_index=False):
                 try:
                     data = {
@@ -86,12 +67,11 @@ class MgfParser(MsmsParser):
                         "intens": spectrum.get("intensity array"),
                         "precursor_mz": spectrum.get("params").get("pepmass")[0],
                     }
-                    feature = feature_repo.get(data["f_id"])
+                    feature = self.features.get(data["f_id"])
                     feature.Spectrum = Utils.create_spectrum_object(
-                        data, params.MsmsParameters.rel_int_from
+                        data, self.params.MsmsParameters.rel_int_from
                     )
-                    feature_repo.modify(data["f_id"], feature)
-
+                    self.features.modify(data["f_id"], feature)
                 except KeyError:
                     logger.warning(
                         f"Could not add MS/MS spectrum with the feature ID "
@@ -100,4 +80,14 @@ class MgfParser(MsmsParser):
                         " - SKIP"
                     )
 
-        return feature_repo
+    def parse(self: Self):
+        """Parse a mgf style MS/MS file."""
+        logger.info(
+            f"'MgfParser': started parsing of MS/MS data-containing file "
+            f"'{self.params.MsmsParameters.filepath.name}'"
+        )
+        self.modify_features()
+        logger.info(
+            f"'MgfParser': completed parsing of MS/MS data-containing file "
+            f"'{self.params.MsmsParameters.filepath.name}'"
+        )
