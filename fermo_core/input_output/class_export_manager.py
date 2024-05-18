@@ -24,6 +24,7 @@ SOFTWARE.
 from datetime import datetime
 import json
 import logging
+from pathlib import Path
 import platform
 import shutil
 from typing import Self, Optional, Any
@@ -509,6 +510,19 @@ class ExportManager(BaseModel):
 
         self.log_complete_module(".graphml.json")
 
+    def write_log_output(self: Self):
+        """Copy the log into the user-specified results directory"""
+        src = Path(__file__).parent.parent.joinpath("fermo_core.log")
+        dst = self.params.OutputParameters.directory_path.joinpath(
+            self.filename_base
+        ).with_suffix(".log")
+
+        if src.exists():
+            self.log_start_module(".log")
+            shutil.copy(src=src, dst=dst)
+            ValidationManager().validate_output_created(dst)
+            self.log_complete_module(".log")
+
     def run(self: Self, version: str, starttime: datetime):
         """Call export methods based on user-input
 
@@ -520,3 +534,4 @@ class ExportManager(BaseModel):
         self.write_csv_output()
         self.write_raw_ms2query_results()
         self.write_cytoscape_output()
+        self.write_log_output()
