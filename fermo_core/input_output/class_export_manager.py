@@ -37,6 +37,7 @@ from fermo_core.config.class_default_settings import DefaultPaths
 from fermo_core.data_processing.class_repository import Repository
 from fermo_core.data_processing.class_stats import Stats
 from fermo_core.input_output.class_parameter_manager import ParameterManager
+from fermo_core.input_output.class_summary_writer import SummaryWriter
 from fermo_core.input_output.class_validation_manager import ValidationManager
 
 logger = logging.getLogger("fermo_core")
@@ -510,6 +511,19 @@ class ExportManager(BaseModel):
 
         self.log_complete_module(".graphml.json")
 
+    def write_summary_output(self: Self):
+        """Write a human-readable summary of steps performed."""
+        dst = self.params.OutputParameters.directory_path.joinpath(
+            self.filename_base
+        ).with_suffix(".summary.txt")
+
+        self.log_start_module("summary.txt")
+        summary_writer = SummaryWriter(params=self.params, destination=dst)
+        summary_writer.assemble_summary()
+        summary_writer.write_summary()
+        ValidationManager().validate_output_created(dst)
+        self.log_complete_module("summary.txt")
+
     def write_log_output(self: Self):
         """Copy the log into the user-specified results directory"""
         src = Path(__file__).parent.parent.joinpath("fermo_core.log")
@@ -534,4 +548,5 @@ class ExportManager(BaseModel):
         self.write_csv_output()
         self.write_raw_ms2query_results()
         self.write_cytoscape_output()
+        self.write_summary_output()
         self.write_log_output()

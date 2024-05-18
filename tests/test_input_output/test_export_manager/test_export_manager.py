@@ -225,6 +225,11 @@ def test_write_fermo_json(real_data_export):
     os.remove("tests/test_input_output/test_export_manager/dummy.fermo.session.json")
 
 
+def test_write_summary_output(real_data_export):
+    assert real_data_export.write_summary_output() is None
+    os.remove("tests/test_input_output/test_export_manager/dummy.summary.txt")
+
+
 def test_export_metadata_json(json_exporter):
     json_exporter.export_metadata_json()
     assert json_exporter.session.get("metadata") is not None
