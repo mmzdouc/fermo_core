@@ -3,7 +3,7 @@ results/
 data_working/
 !fermo_core/data_analysis/annotation_manager/class_ms2query_annotator.py
 
-#ms2query files
+# ms2query files
 fermo_core/libraries/ms2query/results
 fermo_core/libraries/ms2query/queries/
 fermo_core/libraries/ms2query/neg/*
@@ -11,13 +11,14 @@ fermo_core/libraries/ms2query/neg/*
 fermo_core/libraries/ms2query/pos/*
 !fermo_core/libraries/ms2query/pos/.placeholder
 
-#ms2deepscore files
+# ms2deepscore files
 fermo_core/libraries/ms2deepscore/neg/*
 !fermo_core/libraries/ms2deepscore/neg/.placeholder
 fermo_core/libraries/ms2deepscore/pos/*
 !fermo_core/libraries/ms2deepscore/pos/.placeholder
 
-
+# other local
+.ruff_cache
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
