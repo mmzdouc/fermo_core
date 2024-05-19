@@ -30,9 +30,6 @@ from fermo_core.config.class_default_settings import DefaultPaths
 from fermo_core.data_analysis.annotation_manager.class_adduct_annotator import (
     AdductAnnotator,
 )
-from fermo_core.data_analysis.annotation_manager.class_neutral_loss_annotator import (
-    NeutralLossAnnotator,
-)
 from fermo_core.data_analysis.annotation_manager.class_fragment_annotator import (
     FragmentAnnotator,
 )
@@ -44,6 +41,9 @@ from fermo_core.data_analysis.annotation_manager.class_ms2deepscore_annotator im
 )
 from fermo_core.data_analysis.annotation_manager.class_ms2query_annotator import (
     MS2QueryAnnotator,
+)
+from fermo_core.data_analysis.annotation_manager.class_neutral_loss_annotator import (
+    NeutralLossAnnotator,
 )
 from fermo_core.data_processing.class_repository import Repository
 from fermo_core.data_processing.class_stats import Stats

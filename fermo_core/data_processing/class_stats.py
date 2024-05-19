@@ -21,11 +21,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from pydantic import BaseModel
-from typing import Self, Optional, Any
+from typing import Any, Optional, Self
 
 import networkx as nx
 import pandas as pd
+from pydantic import BaseModel
 
 from fermo_core.input_output.class_parameter_manager import ParameterManager
 

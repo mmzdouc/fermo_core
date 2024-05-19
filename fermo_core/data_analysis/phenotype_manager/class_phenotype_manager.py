@@ -29,16 +29,15 @@ from pydantic import BaseModel
 from fermo_core.data_analysis.phenotype_manager.class_phen_qual_assigner import (
     PhenQualAssigner,
 )
-from fermo_core.data_analysis.phenotype_manager.class_phen_quant_perc_assigner import (
-    PhenQuantPercAssigner,
-)
 from fermo_core.data_analysis.phenotype_manager.class_phen_quant_conc_assigner import (
     PhenQuantConcAssigner,
+)
+from fermo_core.data_analysis.phenotype_manager.class_phen_quant_perc_assigner import (
+    PhenQuantPercAssigner,
 )
 from fermo_core.data_processing.class_repository import Repository
 from fermo_core.data_processing.class_stats import Stats
 from fermo_core.input_output.class_parameter_manager import ParameterManager
-
 
 logger = logging.getLogger("fermo_core")
 

@@ -22,10 +22,10 @@ SOFTWARE.
 """
 
 import logging
-from scipy.stats import pearsonr, zscore
 from typing import Self
 
 from pydantic import BaseModel
+from scipy.stats import pearsonr, zscore
 
 from fermo_core.data_processing.builder_feature.dataclass_feature import Phenotype
 from fermo_core.data_processing.class_repository import Repository

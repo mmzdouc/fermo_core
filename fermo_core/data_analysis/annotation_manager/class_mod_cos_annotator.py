@@ -22,7 +22,7 @@ SOFTWARE.
 """
 
 import logging
-from typing import Self, Optional, Any
+from typing import Any, Optional, Self
 
 import func_timeout
 import matchms

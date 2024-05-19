@@ -24,39 +24,40 @@ SOFTWARE.
 """
 
 import logging
-from pydantic import BaseModel
-from typing import Self, Optional
+from typing import Optional, Self
 
-from fermo_core.input_output.input_file_parameter_managers import (
-    PeaktableParameters,
-    MsmsParameters,
-    PhenotypeParameters,
-    GroupMetadataParameters,
-    SpecLibParameters,
-    AsResultsParameters,
-    MS2QueryResultsParameters,
+from pydantic import BaseModel
+
+from fermo_core.input_output.additional_module_parameter_managers import (
+    AsKcbCosineMatchingParams,
+    AsKcbDeepscoreMatchingParams,
+    BlankAssignmentParameters,
+    FeatureFilteringParameters,
+    GroupFactAssignmentParameters,
+    Ms2QueryAnnotationParameters,
+    PhenoQualAssgnParams,
+    PhenoQuantConcAssgnParams,
+    PhenoQuantPercentAssgnParams,
+    SpectralLibMatchingCosineParameters,
+    SpectralLibMatchingDeepscoreParameters,
 )
-from fermo_core.input_output.output_file_parameter_managers import OutputParameters
 from fermo_core.input_output.core_module_parameter_managers import (
     AdductAnnotationParameters,
-    NeutralLossParameters,
     FragmentAnnParameters,
+    NeutralLossParameters,
     SpecSimNetworkCosineParameters,
     SpecSimNetworkDeepscoreParameters,
 )
-from fermo_core.input_output.additional_module_parameter_managers import (
-    FeatureFilteringParameters,
-    BlankAssignmentParameters,
-    GroupFactAssignmentParameters,
-    PhenoQualAssgnParams,
-    PhenoQuantPercentAssgnParams,
-    PhenoQuantConcAssgnParams,
-    SpectralLibMatchingCosineParameters,
-    SpectralLibMatchingDeepscoreParameters,
-    Ms2QueryAnnotationParameters,
-    AsKcbCosineMatchingParams,
-    AsKcbDeepscoreMatchingParams,
+from fermo_core.input_output.input_file_parameter_managers import (
+    AsResultsParameters,
+    GroupMetadataParameters,
+    MS2QueryResultsParameters,
+    MsmsParameters,
+    PeaktableParameters,
+    PhenotypeParameters,
+    SpecLibParameters,
 )
+from fermo_core.input_output.output_file_parameter_managers import OutputParameters
 
 logger = logging.getLogger("fermo_core")
 

@@ -23,25 +23,25 @@ SOFTWARE.
 
 import logging
 import os
-import pandas as pd
 from pathlib import Path
-from typing import Self, Optional
+from typing import Optional, Self
 
 import func_timeout
+import pandas as pd
 from matchms.exporting import save_as_mgf
+from ms2query.ms2library import MS2Library, create_library_object_from_one_dir
 from ms2query.run_ms2query import run_complete_folder
-from ms2query.ms2library import create_library_object_from_one_dir, MS2Library
 from ms2query.utils import SettingsRunMS2Query
 from pydantic import BaseModel
 
 from fermo_core.config.class_default_settings import DefaultPaths
-from fermo_core.utils.utility_method_manager import UtilityMethodManager
 from fermo_core.data_processing.builder_feature.dataclass_feature import (
     Annotations,
     Match,
 )
 from fermo_core.data_processing.class_repository import Repository
 from fermo_core.input_output.class_parameter_manager import ParameterManager
+from fermo_core.utils.utility_method_manager import UtilityMethodManager
 
 logger = logging.getLogger("fermo_core")
 

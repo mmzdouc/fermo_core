@@ -22,7 +22,7 @@ SOFTWARE.
 """
 
 import logging
-from typing import Self, Optional, Any
+from typing import Any, Optional, Self
 from urllib.parse import urlparse
 
 import func_timeout
@@ -32,12 +32,12 @@ from ms2deepscore.models import load_model
 from pydantic import BaseModel
 
 from fermo_core.config.class_default_settings import DefaultPaths
-from fermo_core.utils.utility_method_manager import UtilityMethodManager
 from fermo_core.data_processing.builder_feature.dataclass_feature import (
-    Match,
     Annotations,
+    Match,
 )
 from fermo_core.data_processing.class_repository import Repository
+from fermo_core.utils.utility_method_manager import UtilityMethodManager
 
 logger = logging.getLogger("fermo_core")
 

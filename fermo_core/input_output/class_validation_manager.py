@@ -32,7 +32,6 @@ import jsonschema
 import pandas as pd
 from pyteomics import mgf
 
-
 logger = logging.getLogger("fermo_core")
 
 

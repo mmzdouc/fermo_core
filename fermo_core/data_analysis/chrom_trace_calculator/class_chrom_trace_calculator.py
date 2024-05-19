@@ -22,10 +22,10 @@ SOFTWARE.
 """
 
 import logging
-from typing import Self, Optional
+from typing import Optional, Self
 
-from fermo_core.data_processing.class_repository import Repository
 from fermo_core.data_processing.builder_sample.dataclass_sample import Sample
+from fermo_core.data_processing.class_repository import Repository
 from fermo_core.data_processing.class_stats import Stats
 
 logger = logging.getLogger("fermo_core")

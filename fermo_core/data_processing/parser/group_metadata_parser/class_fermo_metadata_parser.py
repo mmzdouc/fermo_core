@@ -22,11 +22,11 @@ SOFTWARE.
 """
 
 import logging
-from typing import Self, Any
+from typing import Any, Self
 
 from pydantic import BaseModel
 
-from fermo_core.data_processing.class_stats import Stats, Group
+from fermo_core.data_processing.class_stats import Group, Stats
 
 logger = logging.getLogger("fermo_core")
 

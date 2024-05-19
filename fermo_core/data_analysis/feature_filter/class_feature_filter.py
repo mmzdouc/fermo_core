@@ -26,9 +26,9 @@ from typing import Self
 
 from pydantic import BaseModel
 
-from fermo_core.input_output.class_parameter_manager import ParameterManager
 from fermo_core.data_processing.class_repository import Repository
 from fermo_core.data_processing.class_stats import Stats
+from fermo_core.input_output.class_parameter_manager import ParameterManager
 
 logger = logging.getLogger("fermo_core")
 

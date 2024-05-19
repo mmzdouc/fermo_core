@@ -23,7 +23,7 @@ SOFTWARE.
 
 import logging
 from statistics import mean, median
-from typing import Self, Optional
+from typing import Optional, Self
 
 from pydantic import BaseModel
 

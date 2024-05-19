@@ -21,13 +21,13 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from datetime import datetime
 import json
 import logging
-from pathlib import Path
 import platform
 import shutil
-from typing import Self, Optional, Any
+from datetime import datetime
+from pathlib import Path
+from typing import Any, Optional, Self
 
 import networkx as nx
 import pandas as pd

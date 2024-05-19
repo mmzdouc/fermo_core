@@ -22,10 +22,10 @@ SOFTWARE.
 """
 
 import logging
-import networkx
 
-import matchms
 import func_timeout
+import matchms
+import networkx
 
 from fermo_core.data_processing.class_repository import Repository
 from fermo_core.input_output.core_module_parameter_managers import (

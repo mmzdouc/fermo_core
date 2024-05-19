@@ -22,13 +22,13 @@ SOFTWARE.
 """
 
 import logging
-import networkx
 from urllib.parse import urlparse
 
+import func_timeout
 import matchms
+import networkx
 from ms2deepscore import MS2DeepScore
 from ms2deepscore.models import load_model
-import func_timeout
 
 from fermo_core.config.class_default_settings import DefaultPaths
 from fermo_core.data_processing.class_repository import Repository

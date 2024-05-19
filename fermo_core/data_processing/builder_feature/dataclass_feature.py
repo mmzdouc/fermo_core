@@ -22,7 +22,7 @@ SOFTWARE.
 """
 
 import logging
-from typing import Optional, Self, Any
+from typing import Any, Optional, Self
 
 from pydantic import BaseModel
 

@@ -22,12 +22,12 @@ SOFTWARE.
 """
 
 import logging
-from pathlib import Path
 import re
+import urllib.error
+import urllib.request
+from pathlib import Path
 from typing import Self
 from urllib.parse import urlparse
-import urllib.request
-import urllib.error
 
 import matchms
 import pandas as pd

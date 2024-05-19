@@ -29,9 +29,9 @@ from pydantic import BaseModel
 
 from fermo_core.config.class_default_settings import DefaultMasses as Mass
 from fermo_core.data_processing.builder_feature.dataclass_feature import (
-    Feature,
     Adduct,
     Annotations,
+    Feature,
 )
 from fermo_core.data_processing.class_repository import Repository
 from fermo_core.data_processing.class_stats import Stats

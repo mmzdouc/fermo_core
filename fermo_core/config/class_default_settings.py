@@ -24,7 +24,7 @@ SOFTWARE.
 from pathlib import Path
 
 import pandas as pd
-from pydantic import BaseModel, DirectoryPath, model_validator, FilePath
+from pydantic import BaseModel, DirectoryPath, FilePath, model_validator
 
 
 class DefaultPaths(BaseModel):

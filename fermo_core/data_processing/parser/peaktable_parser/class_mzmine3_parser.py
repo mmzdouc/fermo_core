@@ -29,14 +29,14 @@ import pandas as pd
 from fermo_core.data_processing.builder_feature.class_general_feature_director import (
     GeneralFeatureDirector,
 )
-from fermo_core.data_processing.parser.peaktable_parser.abc_peaktable_parser import (
-    PeaktableParser,
-)
 from fermo_core.data_processing.builder_sample.class_samples_director import (
     SamplesDirector,
 )
 from fermo_core.data_processing.class_repository import Repository
 from fermo_core.data_processing.class_stats import Stats
+from fermo_core.data_processing.parser.peaktable_parser.abc_peaktable_parser import (
+    PeaktableParser,
+)
 from fermo_core.input_output.class_parameter_manager import ParameterManager
 
 logger = logging.getLogger("fermo_core")

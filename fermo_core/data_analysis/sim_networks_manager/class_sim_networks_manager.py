@@ -22,10 +22,10 @@ SOFTWARE.
 """
 
 import logging
-import func_timeout
-from typing import Self
 import urllib.error
+from typing import Self
 
+import func_timeout
 import networkx
 from pydantic import BaseModel
 
@@ -35,9 +35,9 @@ from fermo_core.data_analysis.sim_networks_manager.class_mod_cosine_networker im
 from fermo_core.data_analysis.sim_networks_manager.class_ms2deepscore_networker import (
     Ms2deepscoreNetworker,
 )
-from fermo_core.data_processing.class_repository import Repository
-from fermo_core.data_processing.class_stats import Stats, SpecSimNet
 from fermo_core.data_processing.builder_feature.dataclass_feature import SimNetworks
+from fermo_core.data_processing.class_repository import Repository
+from fermo_core.data_processing.class_stats import SpecSimNet, Stats
 from fermo_core.input_output.class_parameter_manager import ParameterManager
 from fermo_core.utils.utility_method_manager import UtilityMethodManager
 
