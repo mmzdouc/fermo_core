@@ -74,6 +74,20 @@ filterwarnings = [
 ]
 
 
+[tool.coverage.run]
+omit = [
+    "tests/*"
+]
+
+[tool.coverage.report]
+show_missing = true
+ignore_errors = true
+
+
+[tool.coverage.html]
+directory = "coverage_html_report"
+
+
 [tool.black]
 line-length = 88
 target-version = ["py311"]
