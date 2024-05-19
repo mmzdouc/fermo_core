@@ -62,7 +62,7 @@ class JsonExporter(BaseModel):
     samples: Repository
     version: str
     starttime: datetime
-    session: dict = dict()
+    session: dict = {}
 
     def export_metadata_json(self: Self):
         """Export metadata on analysis run."""
@@ -90,7 +90,7 @@ class JsonExporter(BaseModel):
     def export_features_json(self: Self):
         """Export data from features repository"""
         if self.stats.active_features is not None:
-            self.session["general_features"] = dict()
+            self.session["general_features"] = {}
             for feature_id in self.stats.active_features:
                 feature = self.features.get(feature_id)
                 self.session["general_features"][feature_id] = feature.to_json()
@@ -98,7 +98,7 @@ class JsonExporter(BaseModel):
     def export_samples_json(self: Self):
         """Export data from samples repository"""
         if self.stats.samples is not None:
-            self.session["samples"] = dict()
+            self.session["samples"] = {}
             for sample_id in self.stats.samples:
                 sample = self.samples.get(sample_id)
                 self.session["samples"][sample_id] = sample.to_json()

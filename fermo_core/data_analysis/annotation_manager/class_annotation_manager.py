@@ -399,7 +399,7 @@ class AnnotationManager(BaseModel):
                 as_results=self.params.AsResultsParameters.directory_path,
                 cutoff=self.params.AsResultsParameters.similarity_cutoff,
             )
-            mibig_bgcs = set([key for key, value in kcb_results.items()])
+            mibig_bgcs = {key for key, value in kcb_results.items()}
             spec_library = UtilityMethodManager().create_mibig_spec_lib(mibig_bgcs)
 
             kcb_annotator = ModCosAnnotator(
@@ -461,7 +461,7 @@ class AnnotationManager(BaseModel):
                 as_results=self.params.AsResultsParameters.directory_path,
                 cutoff=self.params.AsResultsParameters.similarity_cutoff,
             )
-            mibig_bgcs = set([key for key, value in kcb_results.items()])
+            mibig_bgcs = {key for key, value in kcb_results.items()}
             spec_library = UtilityMethodManager().create_mibig_spec_lib(mibig_bgcs)
 
             kcb_annotator = Ms2deepscoreAnnotator(

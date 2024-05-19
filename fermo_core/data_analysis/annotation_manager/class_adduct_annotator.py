@@ -112,7 +112,7 @@ class AdductAnnotator(BaseModel):
                 and feature.Annotations.adducts is not None
                 and len(feature.Annotations.adducts) > 0
             ):
-                nonred_adducts = dict()
+                nonred_adducts = {}
                 for adduct in feature.Annotations.adducts:
                     if adduct.partner_id not in nonred_adducts:
                         nonred_adducts[adduct.partner_id] = Adduct(

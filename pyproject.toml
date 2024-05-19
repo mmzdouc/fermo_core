@@ -127,6 +127,12 @@ ignore = [
     "UP007",
     # unnecessary-placeholder
     "PIE790",
+    # unnecessary-comprehension
+    "C416",
+    # unnecessary-comprehension-in-call
+    "C419",
+    # function-uses-loop-variable
+    "B023"
 ]
 select = [
     # flake8-bugbear

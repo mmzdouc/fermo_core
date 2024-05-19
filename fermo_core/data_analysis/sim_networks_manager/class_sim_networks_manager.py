@@ -300,14 +300,14 @@ class SimNetworksManager(BaseModel):
         mapping = {node: int(node) for node in graph.nodes}
         graph = networkx.relabel_nodes(graph, mapping)
 
-        subnetworks = dict()
+        subnetworks = {}
         for i, component in enumerate(networkx.connected_components(graph)):
             subnetworks[i] = graph.subgraph(component).copy()
             subnetworks[i].graph["name"] = i
 
-        clusters = dict()
+        clusters = {}
         for sub in subnetworks:
-            ids = set([int(node) for node in subnetworks[sub].nodes])
+            ids = {int(node) for node in subnetworks[sub].nodes}
             for cluster in clusters.values():
                 if len(output := ids.intersection(cluster)) != 0:
                     raise RuntimeError(

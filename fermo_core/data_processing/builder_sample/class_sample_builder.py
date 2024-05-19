@@ -98,7 +98,7 @@ class SampleBuilder(BaseModel):
             logger.error(str(e))
             raise e
 
-        self.sample.features = dict()
+        self.sample.features = {}
         for _, row in df.iterrows():
             if row[f"datafile:{s_id}:feature_state"] == "DETECTED":
                 self.sample.features[row["id"]] = (

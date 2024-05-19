@@ -61,7 +61,7 @@ class ModCosineNetworker:
         Notes:
             Timeout can be disabled by user by setting settings.maximum_runtime to 0.
         """
-        spectra = list()
+        spectra = []
 
         for f_id in features:
             feature = feature_repo.get(f_id)

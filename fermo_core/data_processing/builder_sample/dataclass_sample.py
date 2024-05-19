@@ -102,12 +102,12 @@ class Sample(BaseModel):
         )
 
         if self.feature_ids is not None:
-            json_dict["sample_spec_features"] = dict()
+            json_dict["sample_spec_features"] = {}
             for feature_id in self.feature_ids:
                 json_dict["sample_spec_features"][feature_id] = self.features[
                     feature_id
                 ].to_json()
         else:
-            json_dict["sample_spec_features"] = dict()
+            json_dict["sample_spec_features"] = {}
 
         return json_dict
