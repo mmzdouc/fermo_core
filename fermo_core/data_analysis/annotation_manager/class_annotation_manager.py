@@ -22,7 +22,7 @@ SOFTWARE.
 """
 
 import logging
-from typing import Self, Tuple
+from typing import Self
 
 from pydantic import BaseModel
 
@@ -68,7 +68,7 @@ class AnnotationManager(BaseModel):
     features: Repository
     samples: Repository
 
-    def return_attrs(self: Self) -> Tuple[Stats, Repository, Repository]:
+    def return_attrs(self: Self) -> tuple[Stats, Repository, Repository]:
         """Returns modified attributes from AnnotationManager to the calling function
 
         Returns:

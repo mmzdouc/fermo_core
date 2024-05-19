@@ -23,7 +23,7 @@ SOFTWARE.
 
 import logging
 from scipy.stats import pearsonr, zscore
-from typing import Self, Tuple
+from typing import Self
 
 from pydantic import BaseModel
 
@@ -52,7 +52,7 @@ class PhenQuantPercAssigner(BaseModel):
     samples: Repository
     relevant_f_ids: set = set()
 
-    def return_values(self: Self) -> Tuple[Stats, Repository]:
+    def return_values(self: Self) -> tuple[Stats, Repository]:
         """Return the modified objects to the calling function
 
         Returns:

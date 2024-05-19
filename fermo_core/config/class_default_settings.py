@@ -21,7 +21,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from typing import List
 from pathlib import Path
 
 import pandas as pd
@@ -191,27 +190,27 @@ class NeutralLosses(BaseModel):
     ribosomal_src: FilePath = DefaultPaths().dirpath_losses.joinpath(
         "kersten_ribosomal.csv"
     )
-    ribosomal: List[Loss] = []
+    ribosomal: list[Loss] = []
     nonribo_src: FilePath = DefaultPaths().dirpath_losses.joinpath(
         "kersten_nonribosomal.csv"
     )
-    nonribo: List[Loss] = []
+    nonribo: list[Loss] = []
     glycoside_src: FilePath = DefaultPaths().dirpath_losses.joinpath(
         "kersten_glycosides.csv"
     )
-    glycoside: List[Loss] = []
+    glycoside: list[Loss] = []
     gen_bio_pos_src: FilePath = DefaultPaths().dirpath_losses.joinpath(
         "generic_bio_pos.csv"
     )
-    gen_bio_pos: List[Loss] = []
+    gen_bio_pos: list[Loss] = []
     gen_other_pos_src: FilePath = DefaultPaths().dirpath_losses.joinpath(
         "generic_other_pos.csv"
     )
-    gen_other_pos: List[Loss] = []
+    gen_other_pos: list[Loss] = []
     gen_other_neg_src: FilePath = DefaultPaths().dirpath_losses.joinpath(
         "generic_other_neg.csv"
     )
-    gen_other_neg: List[Loss] = []
+    gen_other_neg: list[Loss] = []
 
     @model_validator(mode="after")
     def read_files(self):
@@ -277,7 +276,7 @@ class CharFragments(BaseModel):
     aa_frags_src: FilePath = DefaultPaths().dirpath_frags.joinpath(
         "aa_m+h_fragment_series.csv"
     )
-    aa_frags: List[Fragment] = []
+    aa_frags: list[Fragment] = []
 
     @model_validator(mode="after")
     def read_files(self):

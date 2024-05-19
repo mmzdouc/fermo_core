@@ -22,7 +22,7 @@ SOFTWARE.
 """
 
 import logging
-from typing import Self, Optional, Tuple
+from typing import Self, Optional
 
 from fermo_core.data_processing.class_repository import Repository
 from fermo_core.data_processing.builder_sample.dataclass_sample import Sample
@@ -230,7 +230,7 @@ class ChromTraceCalculator:
         self.chrom_trace.int_right_kink = relative_int * 0.15
         self.chrom_trace.int_end = relative_int * 0.0
 
-    def create_trace_rt(self: Self) -> Tuple[float, ...]:
+    def create_trace_rt(self: Self) -> tuple[float, ...]:
         """Create a trace of retention time points to assign to Feature object.
 
         Returns:
@@ -247,7 +247,7 @@ class ChromTraceCalculator:
             round(self.chrom_trace.rt_end, 3),
         )
 
-    def create_trace_int(self: Self) -> Tuple[float, ...]:
+    def create_trace_int(self: Self) -> tuple[float, ...]:
         """Create a trace of relative intensity points to assign to Feature object.
 
         Returns:

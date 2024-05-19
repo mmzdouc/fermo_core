@@ -27,7 +27,6 @@ SOFTWARE.
 import json
 import logging
 from pathlib import Path
-from typing import List
 
 import jsonschema
 import pandas as pd
@@ -360,7 +359,7 @@ class ValidationManager:
             _raise_error("Whitespace in column(s)")
 
     @staticmethod
-    def validate_range_zero_one(user_range: List[float]):
+    def validate_range_zero_one(user_range: list[float]):
         """Validate that user-provided range is inside range 0.0 - 1.0.
 
         Arguments:

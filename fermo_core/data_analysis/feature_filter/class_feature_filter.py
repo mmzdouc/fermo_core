@@ -22,7 +22,7 @@ SOFTWARE.
 """
 
 import logging
-from typing import Self, Tuple
+from typing import Self
 
 from pydantic import BaseModel
 
@@ -51,7 +51,7 @@ class FeatureFilter(BaseModel):
     features: Repository
     samples: Repository
 
-    def return_values(self: Self) -> Tuple[Stats, Repository, Repository]:
+    def return_values(self: Self) -> tuple[Stats, Repository, Repository]:
         """Returns modified attributes for further processing.
 
         Returns:

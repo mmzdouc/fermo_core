@@ -22,7 +22,7 @@ SOFTWARE.
 """
 
 import logging
-from typing import Self, Tuple
+from typing import Self
 
 import pandas as pd
 
@@ -47,7 +47,7 @@ class PeakMzmine3Parser(PeaktableParser):
 
     def parse(
         self: Self, params: ParameterManager
-    ) -> Tuple[Stats, Repository, Repository]:
+    ) -> tuple[Stats, Repository, Repository]:
         """Parse a mzmine3 style peaktable.
 
         Arguments:

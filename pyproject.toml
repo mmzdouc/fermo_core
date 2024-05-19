@@ -112,7 +112,22 @@ line-length = 88
 
 
 [tool.ruff.lint]
-ignore = ["E203", "E501"]
+ignore = [
+    # whitespace-before-punctuation
+    "E203",
+    # percent-format-invalid-format
+    "E501",
+    # needless-bool
+    "SIM103",
+    # if-with-same-arms
+    "SIM114",
+    # if-expr-with-true-false
+    "SIM210",
+    # non-pep604-annotation
+    "UP007",
+    # unnecessary-placeholder
+    "PIE790",
+]
 select = [
     # flake8-bugbear
     "B",

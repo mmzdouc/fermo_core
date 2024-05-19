@@ -23,7 +23,7 @@ SOFTWARE.
 
 import logging
 import func_timeout
-from typing import Tuple, Self, Dict
+from typing import Self
 import urllib.error
 
 import networkx
@@ -121,7 +121,7 @@ class SimNetworksManager(BaseModel):
             f"filter out low-intensity/area peaks with 'feature_filtering' - SKIP"
         )
 
-    def return_attrs(self: Self) -> Tuple[Stats, Repository, Repository]:
+    def return_attrs(self: Self) -> tuple[Stats, Repository, Repository]:
         """Returns modified attributes from SimNetworksManager to the calling function
 
         Returns:
@@ -249,7 +249,7 @@ class SimNetworksManager(BaseModel):
         features: tuple,
         feature_repo: Repository,
         msms_min_frag_nr: int,
-    ) -> Dict[str, set]:
+    ) -> dict[str, set]:
         """Filter features for spectral similarity analysis based on given restrictions.
 
         Arguments:
@@ -281,7 +281,7 @@ class SimNetworksManager(BaseModel):
     @staticmethod
     def format_network_for_storage(
         graph: networkx.Graph,
-    ) -> Dict:
+    ) -> dict:
         """Process networkx Graph object, remove redundant clusters, extract info
 
         Arguments:

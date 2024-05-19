@@ -23,7 +23,7 @@ SOFTWARE.
 
 import logging
 from statistics import mean
-from typing import Tuple, Self
+from typing import Self
 
 from pydantic import BaseModel
 
@@ -58,7 +58,7 @@ class ScoreAssigner(BaseModel):
     samples: Repository
     networks: dict = {}
 
-    def return_attributes(self: Self) -> Tuple[Repository, Repository]:
+    def return_attributes(self: Self) -> tuple[Repository, Repository]:
         """Returns modified attributes to the calling function
 
         Returns:

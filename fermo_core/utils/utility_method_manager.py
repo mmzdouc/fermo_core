@@ -24,7 +24,7 @@ SOFTWARE.
 import logging
 from pathlib import Path
 import re
-from typing import Self, List
+from typing import Self
 from urllib.parse import urlparse
 import urllib.request
 import urllib.error
@@ -281,7 +281,7 @@ class UtilityMethodManager(BaseModel):
             )
 
     @staticmethod
-    def create_mibig_spec_lib(mibig_ids: set) -> List[matchms.Spectrum]:
+    def create_mibig_spec_lib(mibig_ids: set) -> list[matchms.Spectrum]:
         """Load MIBiG-derived in silico spectral library.
 
         Attributes:

@@ -22,7 +22,7 @@ SOFTWARE.
 """
 
 import logging
-from typing import Tuple, Self, Optional
+from typing import Self, Optional
 
 import pandas as pd
 from pydantic import BaseModel
@@ -60,7 +60,7 @@ class GeneralParser(BaseModel):
     features: Optional[Repository] = None
     samples: Optional[Repository] = None
 
-    def return_attributes(self: Self) -> Tuple[Stats, Repository, Repository]:
+    def return_attributes(self: Self) -> tuple[Stats, Repository, Repository]:
         """Returns created attributes to the calling function
 
         Returns:

@@ -22,7 +22,7 @@ SOFTWARE.
 """
 
 import logging
-from typing import Self, Tuple
+from typing import Self
 
 from pydantic import BaseModel
 
@@ -58,7 +58,7 @@ class PhenotypeManager(BaseModel):
     features: Repository
     samples: Repository
 
-    def return_attrs(self: Self) -> Tuple[Stats, Repository]:
+    def return_attrs(self: Self) -> tuple[Stats, Repository]:
         """Returns modified attributes from PhenotypeManager to the calling function
 
         Returns:

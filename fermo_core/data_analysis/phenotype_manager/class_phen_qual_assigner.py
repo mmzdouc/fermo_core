@@ -23,7 +23,7 @@ SOFTWARE.
 
 import logging
 from statistics import mean, median
-from typing import Self, Tuple, Optional
+from typing import Self, Optional
 
 from pydantic import BaseModel
 
@@ -52,7 +52,7 @@ class PhenQualAssigner(BaseModel):
     samples: Repository
     f_ids_intersect: Optional[set] = None
 
-    def return_values(self: Self) -> Tuple[Stats, Repository]:
+    def return_values(self: Self) -> tuple[Stats, Repository]:
         """Return the modified objects to the calling function
 
         Returns:

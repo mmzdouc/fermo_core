@@ -22,7 +22,7 @@ SOFTWARE.
 """
 
 import logging
-from typing import List, Optional, Self
+from typing import Optional, Self
 
 from pydantic import (
     BaseModel,
@@ -50,8 +50,8 @@ class FeatureFilteringParameters(BaseModel):
     """
 
     activate_module: bool = False
-    filter_rel_int_range: Optional[List[float]] = None
-    filter_rel_area_range: Optional[List[float]] = None
+    filter_rel_int_range: Optional[list[float]] = None
+    filter_rel_area_range: Optional[list[float]] = None
 
     @model_validator(mode="after")
     def validate_attrs(self):
@@ -68,7 +68,7 @@ class FeatureFilteringParameters(BaseModel):
         return self
 
     @staticmethod
-    def order_and_validate_range(r_list: List[float]) -> List[float]:
+    def order_and_validate_range(r_list: list[float]) -> list[float]:
         """Order the list and validate format.
 
         Attributes:

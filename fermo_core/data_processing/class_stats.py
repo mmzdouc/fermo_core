@@ -22,7 +22,7 @@ SOFTWARE.
 """
 
 from pydantic import BaseModel
-from typing import Self, Optional, Dict, Any
+from typing import Self, Optional, Any
 
 import networkx as nx
 import pandas as pd
@@ -144,7 +144,7 @@ class SpecSimNet(BaseModel):
     algorithm: str
     network: Any
     subnetworks: dict
-    summary: Dict[int, set]
+    summary: dict[int, set]
 
     def to_json(self: Self) -> dict:
         """Convert attributes to json-compatible ones."""
@@ -187,7 +187,7 @@ class Stats(BaseModel):
     active_features: set = set()
     inactive_features: set = set()
     GroupMData: GroupMData = GroupMData()
-    networks: Optional[Dict[str, SpecSimNet]] = None
+    networks: Optional[dict[str, SpecSimNet]] = None
     phenotypes: Optional[list] = None
     spectral_library: Optional[list] = None
 
