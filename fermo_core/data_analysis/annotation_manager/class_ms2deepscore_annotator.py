@@ -151,15 +151,14 @@ class Ms2deepscoreAnnotator(BaseModel):
                         "similarity_function": sim_algorithm,
                     },
                 )
-            except func_timeout.FunctionTimedOut:
-                raise func_timeout.FunctionTimedOut(
-                    msg=(
-                        f"'AnnotationManager/Ms2deepscoreAnnotator': timeout of "
-                        f"MS2dDeepScore-based "
-                        f"calculation: more than specified '{self.max_time}' seconds."
-                        f"For unlimited runtime, set 'maximum_runtime' to 0 - SKIP"
-                    )
+            except func_timeout.FunctionTimedOut as e:
+                logger.warning(
+                    f"'AnnotationManager/Ms2deepscoreAnnotator': timeout of "
+                    f"MS2dDeepScore-based "
+                    f"calculation: more than specified '{self.max_time}' seconds."
+                    f"For unlimited runtime, set 'maximum_runtime' to 0 - SKIP"
                 )
+                raise e
 
     def filter_match(self: Self, match: tuple, f_mz: float) -> bool:
         """Filter ms2deepscore-derived matches for user-specified params

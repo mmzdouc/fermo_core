@@ -111,20 +111,20 @@ class MS2QueryAnnotator(BaseModel):
                 "Did you run 'self.prepare_queries()'?"
             )
 
-        if self.params.Ms2QueryAnnotationParameters.maximum_runtime != 0:
-            if (
-                len(self.queries) * 2.5
-            ) > self.params.Ms2QueryAnnotationParameters.maximum_runtime:
-                raise RuntimeError(
-                    f"'AnnotationManager/MS2QueryAnnotator': Estimated runtime of "
-                    f"MS2Query for the "
-                    f"annotation of "
-                    f"'{len(self.queries)}' features is '{len(self.queries) * 2.5}' "
-                    f"seconds. This exceeds the maximum allowed runtime of "
-                    f"'{self.params.Ms2QueryAnnotationParameters.maximum_runtime}' "
-                    f"seconds. Please increase the 'max_runtime' parameter or set to "
-                    f"'0' for unlimited runtime - SKIP"
-                )
+        if self.params.Ms2QueryAnnotationParameters.maximum_runtime != 0 and (
+            (len(self.queries) * 2.5)
+            > self.params.Ms2QueryAnnotationParameters.maximum_runtime
+        ):
+            raise RuntimeError(
+                f"'AnnotationManager/MS2QueryAnnotator': Estimated runtime of "
+                f"MS2Query for the "
+                f"annotation of "
+                f"'{len(self.queries)}' features is '{len(self.queries) * 2.5}' "
+                f"seconds. This exceeds the maximum allowed runtime of "
+                f"'{self.params.Ms2QueryAnnotationParameters.maximum_runtime}' "
+                f"seconds. Please increase the 'max_runtime' parameter or set to "
+                f"'0' for unlimited runtime - SKIP"
+            )
 
     @staticmethod
     def create_ms2query_dirs():
@@ -247,17 +247,16 @@ class MS2QueryAnnotator(BaseModel):
                         "settings": settings,
                     },
                 )
-            except func_timeout.FunctionTimedOut:
-                raise func_timeout.FunctionTimedOut(
-                    msg=(
-                        f"'AnnotationManager/MS2QueryAnnotator': timeout of "
-                        f"MS2Query-based calculation:"
-                        f"took longer than maximum set time of '"
-                        f"{self.params.Ms2QueryAnnotationParameters.maximum_runtime}'. "
-                        f"seconds. For unlimited runtime, "
-                        f"set 'maximum_runtime' parameter to 0 (zero) - SKIP"
-                    )
+            except func_timeout.FunctionTimedOut as e:
+                logger.warning(
+                    f"'AnnotationManager/MS2QueryAnnotator': timeout of "
+                    f"MS2Query-based calculation:"
+                    f"took longer than maximum set time of '"
+                    f"{self.params.Ms2QueryAnnotationParameters.maximum_runtime}'. "
+                    f"seconds. For unlimited runtime, "
+                    f"set 'maximum_runtime' parameter to 0 (zero) - SKIP"
                 )
+                raise e
 
     def run_ms2query(self: Self):
         """Prepare dump/load locations and annotate features with ms2query"""
