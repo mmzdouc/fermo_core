@@ -100,11 +100,12 @@ class ValidationManager:
         """
         try:
             pd.read_csv(csv_file, sep=",")
-        except pd.errors.ParserError:
-            raise ValueError(
+        except pd.errors.ParserError as e:
+            logger.error(
                 f"File '{csv_file.name}' does not seem to be a valid file in '.csv' "
                 f"format."
             )
+            raise e
 
     @staticmethod
     def validate_peaktable_mzmine3(mzmine_file: Path):
@@ -207,13 +208,14 @@ class ValidationManager:
            mgf_file: A pathlib Path object to a Mascot Generic Format (mgf) file
 
         Raises:
-            ValueError: Not a mgf file or empty
+            StopIteration: Not a mgf file or empty
         """
         try:
             with open(mgf_file) as infile:
                 next(mgf.read(infile))
-        except StopIteration:
-            raise ValueError(f"File '{mgf_file.name}' is not a .mgf-file or is empty.")
+        except StopIteration as e:
+            logger.error(f"File '{mgf_file.name}' is not a .mgf-file or is empty.")
+            raise e
 
     @staticmethod
     def validate_pheno_qualitative(pheno_file: Path):
@@ -397,11 +399,11 @@ class ValidationManager:
 
         try:
             jsonschema.validate(instance=user_input, schema=schema)
-        except jsonschema.exceptions.ValidationError as err:
-            lines = str(err).splitlines()
+        except jsonschema.exceptions.ValidationError as e:
+            lines = str(e).splitlines()
             msg = f"{filename}: {lines[0]}"
             logger.critical(msg)
-            raise jsonschema.exceptions.ValidationError(msg)
+            raise e
 
     @staticmethod
     def validate_output_created(filepath: Path):

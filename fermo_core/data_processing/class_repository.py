@@ -39,7 +39,7 @@ class Repository(BaseModel):
         entries: a dict to store instances of the class in repository
     """
 
-    entries: dict = dict()
+    entries: dict = {}
 
     def add(self: Self, identifier: Union[int, str], entry: Union[Feature, Sample]):
         """Add a new entry to repository dict.

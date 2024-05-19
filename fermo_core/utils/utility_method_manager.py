@@ -119,10 +119,11 @@ class UtilityMethodManager(BaseModel):
                 f"'UtilityMethodManager': successfully downloaded file from "
                 f"'{url}' to location '{location}'."
             )
-        except urllib.error.URLError:
-            raise urllib.error.URLError(
+        except urllib.error.URLError as e:
+            logger.error(
                 f"'UtilityMethodManager': could not download from url '{url}' - SKIP"
             )
+            raise e
 
     @staticmethod
     def create_spectrum_object(data: dict, intensity_from: float) -> matchms.Spectrum:
@@ -191,11 +192,12 @@ class UtilityMethodManager(BaseModel):
         """
         try:
             return abs(((m1 - m2) / m2) * 10**6)
-        except ZeroDivisionError:
-            raise ZeroDivisionError(
+        except ZeroDivisionError as e:
+            logger.error(
                 f"'UtilityMethodManager': Division through zero in mass deviation "
                 f"calculation. Feature with id '{f_id_m2}' has a mass of '{m2}' - SKIP"
             )
+            raise e
 
     @staticmethod
     def extract_as_kcb_results(as_results: Path, cutoff: float) -> dict:
