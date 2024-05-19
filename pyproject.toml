@@ -32,20 +32,32 @@ dependencies = [
     "pyteomics==4.6.3"
 ]
 
-[project.optional-dependencies]
-dev = [
-    "pre-commit==3.4.0",
-    "pytest==7.4.2",
-    "pytest-cov==4.1.0",
-]
 
 [project.urls]
 "Repository" = "https://github.com/mmzdouc/fermo_core"
 
 
+[project.optional-dependencies]
+dev = [
+    "black~=24.4.2",
+    "isort~=5.13.2",
+    "pre-commit~=3.4.0",
+    "pytest~=7.4.2",
+    "pytest-cov~=4.1.0",
+    "ruff~=0.4.4"
+]
+
+
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
+
+
+[tool.hatch.envs.dev]
+features = [
+    "dev"
+]
+
 
 
 [tool.pytest.ini_options]
@@ -59,4 +71,57 @@ pythonpath = [
 ]
 filterwarnings = [
     'ignore:Please use \`get_index_dtype\` from the \`scipy.sparse\` namespace:DeprecationWarning'
+]
+
+
+[tool.black]
+line-length = 88
+target-version = ["py311"]
+exclude = '''
+/(
+    \.git
+  | \.lib
+)/
+'''
+
+
+[tool.isort]
+profile = "black"
+multi_line_output = 3
+line_length = 88
+include_trailing_comma = true
+reverse_relative = true
+
+
+[tool.ruff]
+line-length = 88
+
+
+[tool.ruff.lint]
+ignore = ["E203", "E501"]
+select = [
+    # flake8-bugbear
+    "B",
+    # flake8-comprehensions
+    "C4",
+    # flake8-eradicate/eradicate
+    "ERA",
+    # isort
+    "I",
+    # pep8-naming
+    "N",
+    # flake8-pie
+    "PIE",
+    # pygrep
+    "PGH",
+    # ruff checks
+    "RUF",
+    # flake8-simplify
+    "SIM",
+    # flake8-type-checking
+    "TCH",
+    # flake8-tidy-imports
+    "TID",
+    # pyupgrade
+    "UP",
 ]
