@@ -20,11 +20,12 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-from pydantic import BaseModel
-from typing import Self, Optional, Dict, Any
+
+from typing import Any, Optional, Self
 
 import networkx as nx
 import pandas as pd
+from pydantic import BaseModel
 
 from fermo_core.input_output.class_parameter_manager import ParameterManager
 
@@ -143,7 +144,7 @@ class SpecSimNet(BaseModel):
     algorithm: str
     network: Any
     subnetworks: dict
-    summary: Dict[int, set]
+    summary: dict[int, set]
 
     def to_json(self: Self) -> dict:
         """Convert attributes to json-compatible ones."""
@@ -186,7 +187,7 @@ class Stats(BaseModel):
     active_features: set = set()
     inactive_features: set = set()
     GroupMData: GroupMData = GroupMData()
-    networks: Optional[Dict[str, SpecSimNet]] = None
+    networks: Optional[dict[str, SpecSimNet]] = None
     phenotypes: Optional[list] = None
     spectral_library: Optional[list] = None
 

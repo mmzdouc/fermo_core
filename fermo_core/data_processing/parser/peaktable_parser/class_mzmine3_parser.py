@@ -20,22 +20,23 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
+
 import logging
-from typing import Self, Tuple
+from typing import Self
 
 import pandas as pd
 
 from fermo_core.data_processing.builder_feature.class_general_feature_director import (
     GeneralFeatureDirector,
 )
-from fermo_core.data_processing.parser.peaktable_parser.abc_peaktable_parser import (
-    PeaktableParser,
-)
 from fermo_core.data_processing.builder_sample.class_samples_director import (
     SamplesDirector,
 )
 from fermo_core.data_processing.class_repository import Repository
 from fermo_core.data_processing.class_stats import Stats
+from fermo_core.data_processing.parser.peaktable_parser.abc_peaktable_parser import (
+    PeaktableParser,
+)
 from fermo_core.input_output.class_parameter_manager import ParameterManager
 
 logger = logging.getLogger("fermo_core")
@@ -46,7 +47,7 @@ class PeakMzmine3Parser(PeaktableParser):
 
     def parse(
         self: Self, params: ParameterManager
-    ) -> Tuple[Stats, Repository, Repository]:
+    ) -> tuple[Stats, Repository, Repository]:
         """Parse a mzmine3 style peaktable.
 
         Arguments:

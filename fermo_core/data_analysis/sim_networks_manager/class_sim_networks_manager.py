@@ -20,11 +20,12 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-import logging
-import func_timeout
-from typing import Tuple, Self, Dict
-import urllib.error
 
+import logging
+import urllib.error
+from typing import Self
+
+import func_timeout
 import networkx
 from pydantic import BaseModel
 
@@ -34,9 +35,9 @@ from fermo_core.data_analysis.sim_networks_manager.class_mod_cosine_networker im
 from fermo_core.data_analysis.sim_networks_manager.class_ms2deepscore_networker import (
     Ms2deepscoreNetworker,
 )
-from fermo_core.data_processing.class_repository import Repository
-from fermo_core.data_processing.class_stats import Stats, SpecSimNet
 from fermo_core.data_processing.builder_feature.dataclass_feature import SimNetworks
+from fermo_core.data_processing.class_repository import Repository
+from fermo_core.data_processing.class_stats import SpecSimNet, Stats
 from fermo_core.input_output.class_parameter_manager import ParameterManager
 from fermo_core.utils.utility_method_manager import UtilityMethodManager
 
@@ -120,7 +121,7 @@ class SimNetworksManager(BaseModel):
             f"filter out low-intensity/area peaks with 'feature_filtering' - SKIP"
         )
 
-    def return_attrs(self: Self) -> Tuple[Stats, Repository, Repository]:
+    def return_attrs(self: Self) -> tuple[Stats, Repository, Repository]:
         """Returns modified attributes from SimNetworksManager to the calling function
 
         Returns:
@@ -248,7 +249,7 @@ class SimNetworksManager(BaseModel):
         features: tuple,
         feature_repo: Repository,
         msms_min_frag_nr: int,
-    ) -> Dict[str, set]:
+    ) -> dict[str, set]:
         """Filter features for spectral similarity analysis based on given restrictions.
 
         Arguments:
@@ -280,7 +281,7 @@ class SimNetworksManager(BaseModel):
     @staticmethod
     def format_network_for_storage(
         graph: networkx.Graph,
-    ) -> Dict:
+    ) -> dict:
         """Process networkx Graph object, remove redundant clusters, extract info
 
         Arguments:
@@ -299,14 +300,14 @@ class SimNetworksManager(BaseModel):
         mapping = {node: int(node) for node in graph.nodes}
         graph = networkx.relabel_nodes(graph, mapping)
 
-        subnetworks = dict()
+        subnetworks = {}
         for i, component in enumerate(networkx.connected_components(graph)):
             subnetworks[i] = graph.subgraph(component).copy()
             subnetworks[i].graph["name"] = i
 
-        clusters = dict()
+        clusters = {}
         for sub in subnetworks:
-            ids = set([int(node) for node in subnetworks[sub].nodes])
+            ids = {int(node) for node in subnetworks[sub].nodes}
             for cluster in clusters.values():
                 if len(output := ids.intersection(cluster)) != 0:
                     raise RuntimeError(

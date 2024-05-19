@@ -2,6 +2,7 @@ import json
 import jsonschema
 from pathlib import Path
 
+import pandas as pd
 import pytest
 
 from fermo_core.input_output.class_validation_manager import ValidationManager
@@ -72,7 +73,7 @@ def test_validate_csv_file_valid():
 
 
 def test_validate_csv_file_invalid():
-    with pytest.raises(ValueError):
+    with pytest.raises(pd.errors.ParserError):
         ValidationManager.validate_csv_file(
             Path(
                 "tests/test_input_output/test_validation_manager/"
@@ -181,7 +182,7 @@ def test_validate_mgf_file_valid():
 
 
 def test_validate_mgf_file_invalid():
-    with pytest.raises(ValueError):
+    with pytest.raises(StopIteration):
         ValidationManager.validate_mgf_file(
             Path(
                 "tests/test_input_output/test_validation_manager/"

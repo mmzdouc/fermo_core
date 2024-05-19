@@ -20,11 +20,12 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-import logging
-import networkx
 
-import matchms
+import logging
+
 import func_timeout
+import matchms
+import networkx
 
 from fermo_core.data_processing.class_repository import Repository
 from fermo_core.input_output.core_module_parameter_managers import (
@@ -60,7 +61,7 @@ class ModCosineNetworker:
         Notes:
             Timeout can be disabled by user by setting settings.maximum_runtime to 0.
         """
-        spectra = list()
+        spectra = []
 
         for f_id in features:
             feature = feature_repo.get(f_id)

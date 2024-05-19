@@ -20,17 +20,18 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-from itertools import combinations
+
 import logging
 import statistics
+from itertools import combinations
 from typing import Self
 
 from pydantic import BaseModel
 
-from fermo_core.input_output.class_parameter_manager import ParameterManager
+from fermo_core.data_processing.builder_feature.dataclass_feature import GroupFactor
 from fermo_core.data_processing.class_repository import Repository
 from fermo_core.data_processing.class_stats import Stats
-from fermo_core.data_processing.builder_feature.dataclass_feature import GroupFactor
+from fermo_core.input_output.class_parameter_manager import ParameterManager
 
 logger = logging.getLogger("fermo_core")
 

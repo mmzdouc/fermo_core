@@ -20,38 +20,34 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
+
 import logging
-from typing import Tuple, Self
+from typing import Self
 
 from pydantic import BaseModel
-
-from fermo_core.input_output.class_parameter_manager import ParameterManager
-from fermo_core.data_processing.class_repository import Repository
-from fermo_core.data_processing.class_stats import Stats
 
 from fermo_core.data_analysis.annotation_manager.class_annotation_manager import (
     AnnotationManager,
 )
-from fermo_core.data_analysis.score_assigner.class_score_assigner import (
-    ScoreAssigner,
-)
+from fermo_core.data_analysis.blank_assigner.class_blank_assigner import BlankAssigner
 from fermo_core.data_analysis.chrom_trace_calculator.class_chrom_trace_calculator import (
     ChromTraceCalculator,
 )
+from fermo_core.data_analysis.feature_filter.class_feature_filter import FeatureFilter
 from fermo_core.data_analysis.group_assigner.class_group_assigner import GroupAssigner
-from fermo_core.data_analysis.blank_assigner.class_blank_assigner import (
-    BlankAssigner,
-)
 from fermo_core.data_analysis.group_factor_assigner.class_group_factor_assigner import (
     GroupFactorAssigner,
-)
-from fermo_core.data_analysis.feature_filter.class_feature_filter import FeatureFilter
-from fermo_core.data_analysis.sim_networks_manager.class_sim_networks_manager import (
-    SimNetworksManager,
 )
 from fermo_core.data_analysis.phenotype_manager.class_phenotype_manager import (
     PhenotypeManager,
 )
+from fermo_core.data_analysis.score_assigner.class_score_assigner import ScoreAssigner
+from fermo_core.data_analysis.sim_networks_manager.class_sim_networks_manager import (
+    SimNetworksManager,
+)
+from fermo_core.data_processing.class_repository import Repository
+from fermo_core.data_processing.class_stats import Stats
+from fermo_core.input_output.class_parameter_manager import ParameterManager
 
 logger = logging.getLogger("fermo_core")
 
@@ -71,7 +67,7 @@ class AnalysisManager(BaseModel):
     features: Repository
     samples: Repository
 
-    def return_attributes(self: Self) -> Tuple[Stats, Repository, Repository]:
+    def return_attributes(self: Self) -> tuple[Stats, Repository, Repository]:
         """Returns modified attributes to the calling function
 
         Returns:

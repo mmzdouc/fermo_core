@@ -20,24 +20,24 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
+
 import logging
-from typing import Self, Tuple
+from typing import Self
 
 from pydantic import BaseModel
 
 from fermo_core.data_analysis.phenotype_manager.class_phen_qual_assigner import (
     PhenQualAssigner,
 )
-from fermo_core.data_analysis.phenotype_manager.class_phen_quant_perc_assigner import (
-    PhenQuantPercAssigner,
-)
 from fermo_core.data_analysis.phenotype_manager.class_phen_quant_conc_assigner import (
     PhenQuantConcAssigner,
+)
+from fermo_core.data_analysis.phenotype_manager.class_phen_quant_perc_assigner import (
+    PhenQuantPercAssigner,
 )
 from fermo_core.data_processing.class_repository import Repository
 from fermo_core.data_processing.class_stats import Stats
 from fermo_core.input_output.class_parameter_manager import ParameterManager
-
 
 logger = logging.getLogger("fermo_core")
 
@@ -57,7 +57,7 @@ class PhenotypeManager(BaseModel):
     features: Repository
     samples: Repository
 
-    def return_attrs(self: Self) -> Tuple[Stats, Repository]:
+    def return_attrs(self: Self) -> tuple[Stats, Repository]:
         """Returns modified attributes from PhenotypeManager to the calling function
 
         Returns:

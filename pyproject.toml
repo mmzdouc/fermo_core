@@ -1,38 +1,71 @@
+[project]
+name = "fermo_core"
+version = "0.1.0"
+description = "Data processing/analysis functionality of metabolomics dashboard FERMO"
+readme = "README.md"
+requires-python = ">=3.11,<3.12"
+license-files = { paths = ["LICENSE"] }
+authors = [
+    { name = "Mitja M. Zdouc", email = "zdoucmm@gmail.com" }
+]
+keywords = [
+    "cheminformatics",
+    "metabolomics",
+    "genomics"
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Topic :: Scientific/Engineering :: Bio-Informatics",
+    "Topic :: Scientific/Engineering :: Chemistry"
+]
+dependencies = [
+    "argparse==1.4.0",
+    "coloredlogs==15.0.1",
+    "func-timeout==4.3.5",
+    "jsonschema==4.19.0",
+    "keras==2.15.0",
+    "matchms==0.24.0",
+    "ms2deepscore==0.5.0",
+    "ms2query==1.4.0",
+    "pandas==2.0.3",
+    "pydantic==2.5.2",
+    "pyteomics==4.6.3"
+]
+
+
+[project.urls]
+"Repository" = "https://github.com/mmzdouc/fermo_core"
+
+
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
-[project]
-name = "fermo_core"
-description = "Processing part of program FERMO"
-version = "0.1.0"
-readme = "README.md"
-license = "MIT"
-authors = [
-    { name = "Mitja M. Zdouc", email = "zdoucmm@gmail.com" }
-]
-
-dependencies = [
-    "argparse==1.4.0",
-    "jsonschema==4.19.0",
-    "matchms==0.24.0",
-    "ms2query==1.4.0",
-    "pandas==2.0.3",
-    "pydantic==2.5.2",
-    "pyteomics==4.6.3",
-    "coloredlogs==15.0.1",
-    "func-timeout==4.3.5",
-    "ms2deepscore==0.5.0",
-    "keras==2.15.0"
-]
 
 [project.optional-dependencies]
 dev = [
-    "pre-commit==3.4.0",
-    "pytest==7.4.2",
-    "pytest-cov==4.1.0",
-    "sphinx==7.1.0"
+    "black~=24.4.2",
+    "isort~=5.13.2",
+    "pre-commit~=3.4.0",
+    "pytest~=7.4.2",
+    "pytest-cov~=4.1.0",
+    "ruff~=0.4.4",
 ]
+
+
+[tool.hatch.envs.dev]
+features = [
+    "dev"
+]
+
+[tool.hatch.envs.test]
+dependencies = [
+  "pytest~=7.4.2",
+]
+
+[[tool.hatch.envs.test.matrix]]
+python = ["3.11"]
+
 
 [tool.pytest.ini_options]
 minversion = "6.0"
@@ -45,4 +78,92 @@ pythonpath = [
 ]
 filterwarnings = [
     'ignore:Please use \`get_index_dtype\` from the \`scipy.sparse\` namespace:DeprecationWarning'
+]
+
+
+[tool.coverage.run]
+omit = [
+    "tests/*"
+]
+
+[tool.coverage.report]
+show_missing = true
+ignore_errors = true
+
+
+[tool.coverage.html]
+directory = "coverage_html_report"
+
+
+[tool.black]
+line-length = 88
+target-version = ["py311"]
+exclude = '''
+/(
+    \.git
+  | \.lib
+)/
+'''
+
+
+[tool.isort]
+profile = "black"
+multi_line_output = 3
+line_length = 88
+include_trailing_comma = true
+reverse_relative = true
+
+
+[tool.ruff]
+line-length = 88
+
+
+[tool.ruff.lint]
+select = [
+    # flake8-bugbear
+    "B",
+    # flake8-comprehensions
+    "C4",
+    # flake8-eradicate/eradicate
+    "ERA",
+    # isort
+    "I",
+    # pep8-naming
+    "N",
+    # flake8-pie
+    "PIE",
+    # pygrep
+    "PGH",
+    # ruff checks
+    "RUF",
+    # flake8-simplify
+    "SIM",
+    # flake8-type-checking
+    "TCH",
+    # flake8-tidy-imports
+    "TID",
+    # pyupgrade
+    "UP",
+]
+ignore = [
+    # whitespace-before-punctuation
+    "E203",
+    # percent-format-invalid-format
+    "E501",
+    # needless-bool
+    "SIM103",
+    # if-with-same-arms
+    "SIM114",
+    # if-expr-with-true-false
+    "SIM210",
+    # non-pep604-annotation
+    "UP007",
+    # unnecessary-placeholder
+    "PIE790",
+    # unnecessary-comprehension
+    "C416",
+    # unnecessary-comprehension-in-call
+    "C419",
+    # function-uses-loop-variable
+    "B023"
 ]

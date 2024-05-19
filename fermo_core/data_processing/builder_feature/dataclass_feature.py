@@ -20,8 +20,9 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
+
 import logging
-from typing import Optional, Self, Any
+from typing import Any, Optional, Self
 
 from pydantic import BaseModel
 
@@ -277,9 +278,9 @@ class Phenotype(BaseModel):
             "descr": self.descr if self.descr is not None else "N/A",
             "score": round(self.score, 6),
             "p_value": round(self.p_value, 10) if self.p_value is not None else 1.0,
-            "p_value_corr": round(self.p_value, 10)
-            if self.p_value_corr is not None
-            else 1.0,
+            "p_value_corr": (
+                round(self.p_value, 10) if self.p_value_corr is not None else 1.0
+            ),
         }
 
 
@@ -296,9 +297,9 @@ class Scores(BaseModel):
 
     def to_json(self) -> dict:
         return {
-            "phenotype": round(self.phenotype, 2)
-            if self.phenotype is not None
-            else 0.0,
+            "phenotype": (
+                round(self.phenotype, 2) if self.phenotype is not None else 0.0
+            ),
             "novelty": round(self.novelty, 2) if self.novelty is not None else 0.0,
         }
 

@@ -20,22 +20,22 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
+
 import logging
 from statistics import mean
-from typing import Tuple, Self
+from typing import Self
 
 from pydantic import BaseModel
 
-from fermo_core.input_output.class_parameter_manager import ParameterManager
-from fermo_core.data_processing.class_repository import Repository
-from fermo_core.data_processing.class_stats import Stats
 from fermo_core.data_processing.builder_feature.dataclass_feature import (
     Scores as FeatureScores,
 )
 from fermo_core.data_processing.builder_sample.dataclass_sample import (
     Scores as SampleScores,
 )
-
+from fermo_core.data_processing.class_repository import Repository
+from fermo_core.data_processing.class_stats import Stats
+from fermo_core.input_output.class_parameter_manager import ParameterManager
 
 logger = logging.getLogger("fermo_core")
 
@@ -57,7 +57,7 @@ class ScoreAssigner(BaseModel):
     samples: Repository
     networks: dict = {}
 
-    def return_attributes(self: Self) -> Tuple[Repository, Repository]:
+    def return_attributes(self: Self) -> tuple[Repository, Repository]:
         """Returns modified attributes to the calling function
 
         Returns:

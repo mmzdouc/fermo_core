@@ -20,13 +20,14 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
+
 import logging
-from pathlib import Path
 import re
-from typing import Self, List
-from urllib.parse import urlparse
-import urllib.request
 import urllib.error
+import urllib.request
+from pathlib import Path
+from typing import Self
+from urllib.parse import urlparse
 
 import matchms
 import pandas as pd
@@ -108,19 +109,21 @@ class UtilityMethodManager(BaseModel):
             f"'{url}' to location '{location}' with a timeout of '{timeout}' seconds."
         )
         try:
-            with urllib.request.urlopen(url=url, timeout=timeout) as response, open(
-                location, "wb"
-            ) as out:
+            with (
+                urllib.request.urlopen(url=url, timeout=timeout) as response,
+                open(location, "wb") as out,
+            ):
                 data = response.read()
                 out.write(data)
             logger.info(
                 f"'UtilityMethodManager': successfully downloaded file from "
                 f"'{url}' to location '{location}'."
             )
-        except urllib.error.URLError:
-            raise urllib.error.URLError(
+        except urllib.error.URLError as e:
+            logger.error(
                 f"'UtilityMethodManager': could not download from url '{url}' - SKIP"
             )
+            raise e
 
     @staticmethod
     def create_spectrum_object(data: dict, intensity_from: float) -> matchms.Spectrum:
@@ -189,11 +192,12 @@ class UtilityMethodManager(BaseModel):
         """
         try:
             return abs(((m1 - m2) / m2) * 10**6)
-        except ZeroDivisionError:
-            raise ZeroDivisionError(
+        except ZeroDivisionError as e:
+            logger.error(
                 f"'UtilityMethodManager': Division through zero in mass deviation "
                 f"calculation. Feature with id '{f_id_m2}' has a mass of '{m2}' - SKIP"
             )
+            raise e
 
     @staticmethod
     def extract_as_kcb_results(as_results: Path, cutoff: float) -> dict:
@@ -229,7 +233,7 @@ class UtilityMethodManager(BaseModel):
         bgcs = {}
         for f_path in as_results.joinpath("knownclusterblast").iterdir():
             if f_path.is_file() and f_path.suffix == ".txt":
-                with open(f_path, "r") as f_handle:
+                with open(f_path) as f_handle:
                     data = f_handle.read()
 
                     if len(_extract_bgcs(data)) == 0:
@@ -279,7 +283,7 @@ class UtilityMethodManager(BaseModel):
             )
 
     @staticmethod
-    def create_mibig_spec_lib(mibig_ids: set) -> List[matchms.Spectrum]:
+    def create_mibig_spec_lib(mibig_ids: set) -> list[matchms.Spectrum]:
         """Load MIBiG-derived in silico spectral library.
 
         Attributes:

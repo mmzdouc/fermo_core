@@ -29,8 +29,8 @@ from pathlib import Path
 from sys import argv
 
 from fermo_core.config.class_logger import LoggerSetup
-from fermo_core.data_processing.parser.class_general_parser import GeneralParser
 from fermo_core.data_analysis.class_analysis_manager import AnalysisManager
+from fermo_core.data_processing.parser.class_general_parser import GeneralParser
 from fermo_core.input_output.class_argparse_manager import ArgparseManager
 from fermo_core.input_output.class_export_manager import ExportManager
 from fermo_core.input_output.class_file_manager import FileManager

@@ -22,7 +22,7 @@ SOFTWARE.
 """
 
 from abc import ABC, abstractmethod
-from typing import Tuple, Self
+from typing import Self
 
 from fermo_core.data_processing.class_repository import Repository
 from fermo_core.data_processing.class_stats import Stats
@@ -35,7 +35,7 @@ class PeaktableParser(ABC):
     @abstractmethod
     def parse(
         self: Self, params: ParameterManager
-    ) -> Tuple[Stats, Repository, Repository]:
+    ) -> tuple[Stats, Repository, Repository]:
         """Interface for class calling and point of entry. Calls static methods.
 
         Arguments:

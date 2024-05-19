@@ -20,15 +20,16 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
+
 import logging
 import statistics
-from typing import Tuple, Self
+from typing import Self
 
 from pydantic import BaseModel
 
-from fermo_core.input_output.class_parameter_manager import ParameterManager
 from fermo_core.data_processing.class_repository import Repository
 from fermo_core.data_processing.class_stats import Stats
+from fermo_core.input_output.class_parameter_manager import ParameterManager
 
 logger = logging.getLogger("fermo_core")
 
@@ -46,7 +47,7 @@ class BlankAssigner(BaseModel):
     stats: Stats
     features: Repository
 
-    def return_attrs(self: Self) -> Tuple[Stats, Repository]:
+    def return_attrs(self: Self) -> tuple[Stats, Repository]:
         """Returns modified attributes to the calling function
 
         Returns:
@@ -75,7 +76,7 @@ class BlankAssigner(BaseModel):
         else:
             raise RuntimeError("'BlankAssigner': unexpected algorithm found - SKIP.")
 
-    def collect_area(self: Self, f_id: int) -> Tuple[list, list]:
+    def collect_area(self: Self, f_id: int) -> tuple[list, list]:
         """Collect area for nonblanks vs blanks
 
         Returns:
@@ -98,7 +99,7 @@ class BlankAssigner(BaseModel):
 
         return non_blks, blks
 
-    def collect_height(self: Self, f_id: int) -> Tuple[list, list]:
+    def collect_height(self: Self, f_id: int) -> tuple[list, list]:
         """Collect height for nonblanks vs blanks
 
         Returns:

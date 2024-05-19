@@ -20,17 +20,15 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
+
 import logging
-from typing import Self, Tuple
+from typing import Self
 
 from pydantic import BaseModel
 
 from fermo_core.config.class_default_settings import DefaultPaths
 from fermo_core.data_analysis.annotation_manager.class_adduct_annotator import (
     AdductAnnotator,
-)
-from fermo_core.data_analysis.annotation_manager.class_neutral_loss_annotator import (
-    NeutralLossAnnotator,
 )
 from fermo_core.data_analysis.annotation_manager.class_fragment_annotator import (
     FragmentAnnotator,
@@ -43,6 +41,9 @@ from fermo_core.data_analysis.annotation_manager.class_ms2deepscore_annotator im
 )
 from fermo_core.data_analysis.annotation_manager.class_ms2query_annotator import (
     MS2QueryAnnotator,
+)
+from fermo_core.data_analysis.annotation_manager.class_neutral_loss_annotator import (
+    NeutralLossAnnotator,
 )
 from fermo_core.data_processing.class_repository import Repository
 from fermo_core.data_processing.class_stats import Stats
@@ -67,7 +68,7 @@ class AnnotationManager(BaseModel):
     features: Repository
     samples: Repository
 
-    def return_attrs(self: Self) -> Tuple[Stats, Repository, Repository]:
+    def return_attrs(self: Self) -> tuple[Stats, Repository, Repository]:
         """Returns modified attributes from AnnotationManager to the calling function
 
         Returns:
@@ -398,7 +399,7 @@ class AnnotationManager(BaseModel):
                 as_results=self.params.AsResultsParameters.directory_path,
                 cutoff=self.params.AsResultsParameters.similarity_cutoff,
             )
-            mibig_bgcs = set([key for key, value in kcb_results.items()])
+            mibig_bgcs = {key for key, value in kcb_results.items()}
             spec_library = UtilityMethodManager().create_mibig_spec_lib(mibig_bgcs)
 
             kcb_annotator = ModCosAnnotator(
@@ -460,7 +461,7 @@ class AnnotationManager(BaseModel):
                 as_results=self.params.AsResultsParameters.directory_path,
                 cutoff=self.params.AsResultsParameters.similarity_cutoff,
             )
-            mibig_bgcs = set([key for key, value in kcb_results.items()])
+            mibig_bgcs = {key for key, value in kcb_results.items()}
             spec_library = UtilityMethodManager().create_mibig_spec_lib(mibig_bgcs)
 
             kcb_annotator = Ms2deepscoreAnnotator(

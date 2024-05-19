@@ -20,9 +20,10 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
+
 import logging
 from statistics import mean, median
-from typing import Self, Tuple, Optional
+from typing import Optional, Self
 
 from pydantic import BaseModel
 
@@ -51,7 +52,7 @@ class PhenQualAssigner(BaseModel):
     samples: Repository
     f_ids_intersect: Optional[set] = None
 
-    def return_values(self: Self) -> Tuple[Stats, Repository]:
+    def return_values(self: Self) -> tuple[Stats, Repository]:
         """Return the modified objects to the calling function
 
         Returns:

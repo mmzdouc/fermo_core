@@ -20,8 +20,9 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
+
 import logging
-from typing import Self, Optional, Any
+from typing import Any, Optional, Self
 
 import func_timeout
 import matchms
@@ -141,15 +142,14 @@ class ModCosAnnotator(BaseModel):
                         "similarity_function": sim_algorithm,
                     },
                 )
-            except func_timeout.FunctionTimedOut:
-                raise func_timeout.FunctionTimedOut(
-                    msg=(
-                        f"'AnnotationManager/ModCosAnnotator': timeout of modified "
-                        f"cosine-based "
-                        f"calculation: more than specified '{self.max_time}' seconds."
-                        f"For unlimited runtime, set 'maximum_runtime' to 0 - SKIP"
-                    )
+            except func_timeout.FunctionTimedOut as e:
+                logger.error(
+                    f"'AnnotationManager/ModCosAnnotator': timeout of modified "
+                    f"cosine-based "
+                    f"calculation: more than specified '{self.max_time}' seconds."
+                    f"For unlimited runtime, set 'maximum_runtime' to 0 - SKIP"
                 )
+                raise e
 
     def filter_match(self: Self, match: tuple, f_mz: float) -> bool:
         """Filter modified cosine-derived matches for user-specified params

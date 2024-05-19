@@ -20,14 +20,15 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
+
 import logging
-import networkx
 from urllib.parse import urlparse
 
+import func_timeout
 import matchms
+import networkx
 from ms2deepscore import MS2DeepScore
 from ms2deepscore.models import load_model
-import func_timeout
 
 from fermo_core.config.class_default_settings import DefaultPaths
 from fermo_core.data_processing.class_repository import Repository
@@ -65,7 +66,7 @@ class Ms2deepscoreNetworker:
         Notes:
             Timeout can be disabled by user by setting settings.maximum_runtime to 0.
         """
-        spectra = list()
+        spectra = []
 
         for f_id in features:
             feature = feature_repo.get(f_id)

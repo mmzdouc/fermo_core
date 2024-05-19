@@ -20,11 +20,12 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
+
 import logging
-from scipy.stats import pearsonr, zscore
-from typing import Self, Tuple
+from typing import Self
 
 from pydantic import BaseModel
+from scipy.stats import pearsonr, zscore
 
 from fermo_core.data_processing.builder_feature.dataclass_feature import Phenotype
 from fermo_core.data_processing.class_repository import Repository
@@ -51,7 +52,7 @@ class PhenQuantConcAssigner(BaseModel):
     samples: Repository
     relevant_f_ids: set = set()
 
-    def return_values(self: Self) -> Tuple[Stats, Repository]:
+    def return_values(self: Self) -> tuple[Stats, Repository]:
         """Return the modified objects to the calling function
 
         Returns:

@@ -20,27 +20,28 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
+
 import logging
 import os
-import pandas as pd
 from pathlib import Path
-from typing import Self, Optional
+from typing import Optional, Self
 
 import func_timeout
+import pandas as pd
 from matchms.exporting import save_as_mgf
+from ms2query.ms2library import MS2Library, create_library_object_from_one_dir
 from ms2query.run_ms2query import run_complete_folder
-from ms2query.ms2library import create_library_object_from_one_dir, MS2Library
 from ms2query.utils import SettingsRunMS2Query
 from pydantic import BaseModel
 
 from fermo_core.config.class_default_settings import DefaultPaths
-from fermo_core.utils.utility_method_manager import UtilityMethodManager
 from fermo_core.data_processing.builder_feature.dataclass_feature import (
     Annotations,
     Match,
 )
 from fermo_core.data_processing.class_repository import Repository
 from fermo_core.input_output.class_parameter_manager import ParameterManager
+from fermo_core.utils.utility_method_manager import UtilityMethodManager
 
 logger = logging.getLogger("fermo_core")
 
@@ -110,20 +111,20 @@ class MS2QueryAnnotator(BaseModel):
                 "Did you run 'self.prepare_queries()'?"
             )
 
-        if self.params.Ms2QueryAnnotationParameters.maximum_runtime != 0:
-            if (
-                len(self.queries) * 2.5
-            ) > self.params.Ms2QueryAnnotationParameters.maximum_runtime:
-                raise RuntimeError(
-                    f"'AnnotationManager/MS2QueryAnnotator': Estimated runtime of "
-                    f"MS2Query for the "
-                    f"annotation of "
-                    f"'{len(self.queries)}' features is '{len(self.queries) * 2.5}' "
-                    f"seconds. This exceeds the maximum allowed runtime of "
-                    f"'{self.params.Ms2QueryAnnotationParameters.maximum_runtime}' "
-                    f"seconds. Please increase the 'max_runtime' parameter or set to "
-                    f"'0' for unlimited runtime - SKIP"
-                )
+        if self.params.Ms2QueryAnnotationParameters.maximum_runtime != 0 and (
+            (len(self.queries) * 2.5)
+            > self.params.Ms2QueryAnnotationParameters.maximum_runtime
+        ):
+            raise RuntimeError(
+                f"'AnnotationManager/MS2QueryAnnotator': Estimated runtime of "
+                f"MS2Query for the "
+                f"annotation of "
+                f"'{len(self.queries)}' features is '{len(self.queries) * 2.5}' "
+                f"seconds. This exceeds the maximum allowed runtime of "
+                f"'{self.params.Ms2QueryAnnotationParameters.maximum_runtime}' "
+                f"seconds. Please increase the 'max_runtime' parameter or set to "
+                f"'0' for unlimited runtime - SKIP"
+            )
 
     @staticmethod
     def create_ms2query_dirs():
@@ -246,17 +247,16 @@ class MS2QueryAnnotator(BaseModel):
                         "settings": settings,
                     },
                 )
-            except func_timeout.FunctionTimedOut:
-                raise func_timeout.FunctionTimedOut(
-                    msg=(
-                        f"'AnnotationManager/MS2QueryAnnotator': timeout of "
-                        f"MS2Query-based calculation:"
-                        f"took longer than maximum set time of '"
-                        f"{self.params.Ms2QueryAnnotationParameters.maximum_runtime}'. "
-                        f"seconds. For unlimited runtime, "
-                        f"set 'maximum_runtime' parameter to 0 (zero) - SKIP"
-                    )
+            except func_timeout.FunctionTimedOut as e:
+                logger.warning(
+                    f"'AnnotationManager/MS2QueryAnnotator': timeout of "
+                    f"MS2Query-based calculation:"
+                    f"took longer than maximum set time of '"
+                    f"{self.params.Ms2QueryAnnotationParameters.maximum_runtime}'. "
+                    f"seconds. For unlimited runtime, "
+                    f"set 'maximum_runtime' parameter to 0 (zero) - SKIP"
                 )
+                raise e
 
     def run_ms2query(self: Self):
         """Prepare dump/load locations and annotate features with ms2query"""

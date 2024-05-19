@@ -21,13 +21,13 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from datetime import datetime
 import json
 import logging
-from pathlib import Path
 import platform
 import shutil
-from typing import Self, Optional, Any
+from datetime import datetime
+from pathlib import Path
+from typing import Any, Optional, Self
 
 import networkx as nx
 import pandas as pd
@@ -62,7 +62,7 @@ class JsonExporter(BaseModel):
     samples: Repository
     version: str
     starttime: datetime
-    session: dict = dict()
+    session: dict = {}
 
     def export_metadata_json(self: Self):
         """Export metadata on analysis run."""
@@ -90,7 +90,7 @@ class JsonExporter(BaseModel):
     def export_features_json(self: Self):
         """Export data from features repository"""
         if self.stats.active_features is not None:
-            self.session["general_features"] = dict()
+            self.session["general_features"] = {}
             for feature_id in self.stats.active_features:
                 feature = self.features.get(feature_id)
                 self.session["general_features"][feature_id] = feature.to_json()
@@ -98,7 +98,7 @@ class JsonExporter(BaseModel):
     def export_samples_json(self: Self):
         """Export data from samples repository"""
         if self.stats.samples is not None:
-            self.session["samples"] = dict()
+            self.session["samples"] = {}
             for sample_id in self.stats.samples:
                 sample = self.samples.get(sample_id)
                 self.session["samples"][sample_id] = sample.to_json()
@@ -230,12 +230,10 @@ class CsvExporter(BaseModel):
                 try:
                     for adct in feature.Annotations.adducts:
                         annot.append(
-                            (
-                                f"{adct.adduct_type}"
-                                f"(partner_ID={adct.partner_id};"
-                                f"adduct={adct.partner_adduct};"
-                                f"m/z={adct.partner_mz})"
-                            )
+                            f"{adct.adduct_type}"
+                            f"(partner_ID={adct.partner_id};"
+                            f"adduct={adct.partner_adduct};"
+                            f"m/z={adct.partner_mz})"
                         )
                     return "|".join(annot)
                 except (TypeError, AttributeError, KeyError):
@@ -259,11 +257,9 @@ class CsvExporter(BaseModel):
                 try:
                     for loss in feature.Annotations.losses:
                         losses.append(
-                            (
-                                f"'{loss.id}'"
-                                f"(detected_loss={round(loss.loss_det, 4)};"
-                                f"diff_ppm={round(loss.diff, 1)})"
-                            )
+                            f"'{loss.id}'"
+                            f"(detected_loss={round(loss.loss_det, 4)};"
+                            f"diff_ppm={round(loss.diff, 1)})"
                         )
                     return "|".join(losses)
                 except (TypeError, AttributeError, KeyError):
@@ -288,12 +284,10 @@ class CsvExporter(BaseModel):
                     for match in feature.Annotations.matches:
                         if match.module == var:
                             matches.append(
-                                (
-                                    f"'{match.id}'"
-                                    f"(score={match.score};"
-                                    f"algorithm={match.algorithm};"
-                                    f"diff_mz={match.diff_mz})"
-                                )
+                                f"'{match.id}'"
+                                f"(score={match.score};"
+                                f"algorithm={match.algorithm};"
+                                f"diff_mz={match.diff_mz})"
                             )
                     return "|".join(matches)
                 except (TypeError, AttributeError, KeyError):
@@ -329,11 +323,9 @@ class CsvExporter(BaseModel):
                 try:
                     for frag in feature.Annotations.fragments:
                         fragments.append(
-                            (
-                                f"'{frag.id}'"
-                                f"(detected_fragment={round(frag.frag_det, 4)};"
-                                f"diff_ppm={round(frag.diff, 1)})"
-                            )
+                            f"'{frag.id}'"
+                            f"(detected_fragment={round(frag.frag_det, 4)};"
+                            f"diff_ppm={round(frag.diff, 1)})"
                         )
                     return "|".join(fragments)
                 except (TypeError, AttributeError, KeyError):

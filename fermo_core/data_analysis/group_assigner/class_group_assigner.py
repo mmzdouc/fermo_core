@@ -20,8 +20,9 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
+
 import logging
-from typing import Tuple, Self
+from typing import Self
 
 from pydantic import BaseModel
 
@@ -42,7 +43,7 @@ class GroupAssigner(BaseModel):
     stats: Stats
     features: Repository
 
-    def return_attrs(self: Self) -> Tuple[Stats, Repository]:
+    def return_attrs(self: Self) -> tuple[Stats, Repository]:
         """Returns modified attributes to the calling function
 
         Returns:

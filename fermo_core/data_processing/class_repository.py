@@ -23,7 +23,8 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-from typing import Union, Self
+
+from typing import Self, Union
 
 from pydantic import BaseModel
 
@@ -38,7 +39,7 @@ class Repository(BaseModel):
         entries: a dict to store instances of the class in repository
     """
 
-    entries: dict = dict()
+    entries: dict = {}
 
     def add(self: Self, identifier: Union[int, str], entry: Union[Feature, Sample]):
         """Add a new entry to repository dict.

@@ -22,6 +22,7 @@ SOFTWARE.
 """
 
 import pandas as pd
+
 from fermo_core.data_processing.builder_feature.class_feature_builder import (
     FeatureBuilder,
 )

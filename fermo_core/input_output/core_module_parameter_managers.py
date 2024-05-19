@@ -20,14 +20,10 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
+
 from typing import Self
 
-from pydantic import (
-    BaseModel,
-    model_validator,
-    PositiveFloat,
-    PositiveInt,
-)
+from pydantic import BaseModel, PositiveFloat, PositiveInt, model_validator
 
 from fermo_core.input_output.class_validation_manager import ValidationManager
 

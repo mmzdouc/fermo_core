@@ -23,7 +23,7 @@ SOFTWARE.
 
 from typing import Self
 
-from pydantic import BaseModel, model_validator, FilePath, PositiveFloat, DirectoryPath
+from pydantic import BaseModel, DirectoryPath, FilePath, PositiveFloat, model_validator
 
 from fermo_core.input_output.class_validation_manager import ValidationManager
 

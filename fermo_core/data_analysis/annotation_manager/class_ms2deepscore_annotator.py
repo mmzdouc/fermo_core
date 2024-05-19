@@ -20,8 +20,9 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
+
 import logging
-from typing import Self, Optional, Any
+from typing import Any, Optional, Self
 from urllib.parse import urlparse
 
 import func_timeout
@@ -31,12 +32,12 @@ from ms2deepscore.models import load_model
 from pydantic import BaseModel
 
 from fermo_core.config.class_default_settings import DefaultPaths
-from fermo_core.utils.utility_method_manager import UtilityMethodManager
 from fermo_core.data_processing.builder_feature.dataclass_feature import (
-    Match,
     Annotations,
+    Match,
 )
 from fermo_core.data_processing.class_repository import Repository
+from fermo_core.utils.utility_method_manager import UtilityMethodManager
 
 logger = logging.getLogger("fermo_core")
 
@@ -150,15 +151,14 @@ class Ms2deepscoreAnnotator(BaseModel):
                         "similarity_function": sim_algorithm,
                     },
                 )
-            except func_timeout.FunctionTimedOut:
-                raise func_timeout.FunctionTimedOut(
-                    msg=(
-                        f"'AnnotationManager/Ms2deepscoreAnnotator': timeout of "
-                        f"MS2dDeepScore-based "
-                        f"calculation: more than specified '{self.max_time}' seconds."
-                        f"For unlimited runtime, set 'maximum_runtime' to 0 - SKIP"
-                    )
+            except func_timeout.FunctionTimedOut as e:
+                logger.warning(
+                    f"'AnnotationManager/Ms2deepscoreAnnotator': timeout of "
+                    f"MS2dDeepScore-based "
+                    f"calculation: more than specified '{self.max_time}' seconds."
+                    f"For unlimited runtime, set 'maximum_runtime' to 0 - SKIP"
                 )
+                raise e
 
     def filter_match(self: Self, match: tuple, f_mz: float) -> bool:
         """Filter ms2deepscore-derived matches for user-specified params

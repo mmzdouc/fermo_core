@@ -20,28 +20,29 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
+
 import logging
-from typing import Tuple, Self, Optional
+from typing import Optional, Self
 
 import pandas as pd
 from pydantic import BaseModel
 
-from fermo_core.input_output.class_parameter_manager import ParameterManager
-from fermo_core.data_processing.parser.peaktable_parser.class_mzmine3_parser import (
-    PeakMzmine3Parser,
-)
-from fermo_core.data_processing.parser.msms_parser.class_mgf_parser import MgfParser
+from fermo_core.data_processing.class_repository import Repository
+from fermo_core.data_processing.class_stats import Stats
 from fermo_core.data_processing.parser.group_metadata_parser.class_fermo_metadata_parser import (
     MetadataFermoParser,
 )
-from fermo_core.data_processing.parser.spec_library_parser.class_spec_lib_mgf_parser import (
-    SpecLibMgfParser,
+from fermo_core.data_processing.parser.msms_parser.class_mgf_parser import MgfParser
+from fermo_core.data_processing.parser.peaktable_parser.class_mzmine3_parser import (
+    PeakMzmine3Parser,
 )
 from fermo_core.data_processing.parser.phenotype_parser.class_phenotype_parser import (
     PhenotypeParser,
 )
-from fermo_core.data_processing.class_repository import Repository
-from fermo_core.data_processing.class_stats import Stats
+from fermo_core.data_processing.parser.spec_library_parser.class_spec_lib_mgf_parser import (
+    SpecLibMgfParser,
+)
+from fermo_core.input_output.class_parameter_manager import ParameterManager
 
 logger = logging.getLogger("fermo_core")
 
@@ -59,7 +60,7 @@ class GeneralParser(BaseModel):
     features: Optional[Repository] = None
     samples: Optional[Repository] = None
 
-    def return_attributes(self: Self) -> Tuple[Stats, Repository, Repository]:
+    def return_attributes(self: Self) -> tuple[Stats, Repository, Repository]:
         """Returns created attributes to the calling function
 
         Returns:
