@@ -231,7 +231,7 @@ class UtilityMethodManager(BaseModel):
         bgcs = {}
         for f_path in as_results.joinpath("knownclusterblast").iterdir():
             if f_path.is_file() and f_path.suffix == ".txt":
-                with open(f_path, "r") as f_handle:
+                with open(f_path) as f_handle:
                     data = f_handle.read()
 
                     if len(_extract_bgcs(data)) == 0:
