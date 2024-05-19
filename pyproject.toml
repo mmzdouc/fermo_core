@@ -1,29 +1,35 @@
-[build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
-
 [project]
 name = "fermo_core"
-description = "Processing part of program FERMO"
 version = "0.1.0"
+description = "Data processing/analysis functionality of metabolomics dashboard FERMO"
 readme = "README.md"
-license = "MIT"
+requires-python = ">=3.11,<3.12"
+license-files = { paths = ["LICENSE"] }
 authors = [
     { name = "Mitja M. Zdouc", email = "zdoucmm@gmail.com" }
 ]
-
+keywords = [
+    "cheminformatics",
+    "metabolomics",
+    "genomics"
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Topic :: Scientific/Engineering :: Bio-Informatics",
+    "Topic :: Scientific/Engineering :: Chemistry"
+]
 dependencies = [
     "argparse==1.4.0",
+    "coloredlogs==15.0.1",
+    "func-timeout==4.3.5",
     "jsonschema==4.19.0",
+    "keras==2.15.0",
     "matchms==0.24.0",
+    "ms2deepscore==0.5.0",
     "ms2query==1.4.0",
     "pandas==2.0.3",
     "pydantic==2.5.2",
-    "pyteomics==4.6.3",
-    "coloredlogs==15.0.1",
-    "func-timeout==4.3.5",
-    "ms2deepscore==0.5.0",
-    "keras==2.15.0"
+    "pyteomics==4.6.3"
 ]
 
 [project.optional-dependencies]
@@ -31,8 +37,16 @@ dev = [
     "pre-commit==3.4.0",
     "pytest==7.4.2",
     "pytest-cov==4.1.0",
-    "sphinx==7.1.0"
 ]
+
+[project.urls]
+"Repository" = "https://github.com/mmzdouc/fermo_core"
+
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
 
 [tool.pytest.ini_options]
 minversion = "6.0"
