@@ -22,6 +22,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
+
 import logging
 from typing import Self
 
@@ -100,10 +101,10 @@ class SampleBuilder(BaseModel):
         self.sample.features = dict()
         for _, row in df.iterrows():
             if row[f"datafile:{s_id}:feature_state"] == "DETECTED":
-                self.sample.features[
-                    row["id"]
-                ] = SpecificFeatureDirector.construct_mzmine3(
-                    row, s_id, self.sample.max_intensity, self.sample.max_area
+                self.sample.features[row["id"]] = (
+                    SpecificFeatureDirector.construct_mzmine3(
+                        row, s_id, self.sample.max_intensity, self.sample.max_area
+                    )
                 )
         return self
 

@@ -169,48 +169,48 @@ class ParameterManager(BaseModel):
                 json_dict[file[1]] = {"filepath": "No file provided."}
 
         json_dict["OutputParameters"] = self.OutputParameters.to_json()
-        json_dict[
-            "AdductAnnotationParameters"
-        ] = self.AdductAnnotationParameters.to_json()
+        json_dict["AdductAnnotationParameters"] = (
+            self.AdductAnnotationParameters.to_json()
+        )
         json_dict["NeutralLossParameters"] = self.NeutralLossParameters.to_json()
         json_dict["FragmentAnnParameters"] = self.FragmentAnnParameters.to_json()
-        json_dict[
-            "SpecSimNetworkCosineParameters"
-        ] = self.SpecSimNetworkCosineParameters.to_json()
-        json_dict[
-            "SpecSimNetworkDeepscoreParameters"
-        ] = self.SpecSimNetworkDeepscoreParameters.to_json()
-        json_dict[
-            "FeatureFilteringParameters"
-        ] = self.FeatureFilteringParameters.to_json()
-        json_dict[
-            "BlankAssignmentParameters"
-        ] = self.BlankAssignmentParameters.to_json()
-        json_dict[
-            "GroupFactAssignmentParameters"
-        ] = self.GroupFactAssignmentParameters.to_json()
+        json_dict["SpecSimNetworkCosineParameters"] = (
+            self.SpecSimNetworkCosineParameters.to_json()
+        )
+        json_dict["SpecSimNetworkDeepscoreParameters"] = (
+            self.SpecSimNetworkDeepscoreParameters.to_json()
+        )
+        json_dict["FeatureFilteringParameters"] = (
+            self.FeatureFilteringParameters.to_json()
+        )
+        json_dict["BlankAssignmentParameters"] = (
+            self.BlankAssignmentParameters.to_json()
+        )
+        json_dict["GroupFactAssignmentParameters"] = (
+            self.GroupFactAssignmentParameters.to_json()
+        )
         json_dict["PhenoQualAssgnParams"] = self.PhenoQualAssgnParams.to_json()
-        json_dict[
-            "PhenoQuantPercentAssgnParams"
-        ] = self.PhenoQuantPercentAssgnParams.to_json()
-        json_dict[
-            "PhenoQuantConcAssgnParams"
-        ] = self.PhenoQuantConcAssgnParams.to_json()
-        json_dict[
-            "SpectralLibMatchingCosineParameters"
-        ] = self.SpectralLibMatchingCosineParameters.to_json()
-        json_dict[
-            "SpectralLibMatchingDeepscoreParameters"
-        ] = self.SpectralLibMatchingDeepscoreParameters.to_json()
-        json_dict[
-            "Ms2QueryAnnotationParameters"
-        ] = self.Ms2QueryAnnotationParameters.to_json()
-        json_dict[
-            "AsKcbCosineMatchingParams"
-        ] = self.AsKcbCosineMatchingParams.to_json()
-        json_dict[
-            "AsKcbDeepscoreMatchingParams"
-        ] = self.AsKcbDeepscoreMatchingParams.to_json()
+        json_dict["PhenoQuantPercentAssgnParams"] = (
+            self.PhenoQuantPercentAssgnParams.to_json()
+        )
+        json_dict["PhenoQuantConcAssgnParams"] = (
+            self.PhenoQuantConcAssgnParams.to_json()
+        )
+        json_dict["SpectralLibMatchingCosineParameters"] = (
+            self.SpectralLibMatchingCosineParameters.to_json()
+        )
+        json_dict["SpectralLibMatchingDeepscoreParameters"] = (
+            self.SpectralLibMatchingDeepscoreParameters.to_json()
+        )
+        json_dict["Ms2QueryAnnotationParameters"] = (
+            self.Ms2QueryAnnotationParameters.to_json()
+        )
+        json_dict["AsKcbCosineMatchingParams"] = (
+            self.AsKcbCosineMatchingParams.to_json()
+        )
+        json_dict["AsKcbDeepscoreMatchingParams"] = (
+            self.AsKcbDeepscoreMatchingParams.to_json()
+        )
 
         return json_dict
 

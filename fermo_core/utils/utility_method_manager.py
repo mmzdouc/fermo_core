@@ -20,6 +20,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
+
 import logging
 from pathlib import Path
 import re
@@ -108,9 +109,10 @@ class UtilityMethodManager(BaseModel):
             f"'{url}' to location '{location}' with a timeout of '{timeout}' seconds."
         )
         try:
-            with urllib.request.urlopen(url=url, timeout=timeout) as response, open(
-                location, "wb"
-            ) as out:
+            with (
+                urllib.request.urlopen(url=url, timeout=timeout) as response,
+                open(location, "wb") as out,
+            ):
                 data = response.read()
                 out.write(data)
             logger.info(

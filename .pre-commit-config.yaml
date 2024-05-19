@@ -21,4 +21,3 @@ repos:
   rev: v4.4.0
   hooks:
       - id: check-yaml
-      - id: trailing-whitespace

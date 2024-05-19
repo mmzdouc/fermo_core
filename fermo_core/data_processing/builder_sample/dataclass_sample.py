@@ -20,6 +20,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
+
 import logging
 from typing import Optional, Self
 
@@ -44,12 +45,12 @@ class Scores(BaseModel):
     def to_json(self: Self):
         return {
             "diversity": round(self.diversity, 2) if self.diversity is not None else 0,
-            "specificity": round(self.specificity, 2)
-            if self.specificity is not None
-            else 0,
-            "mean_novelty": round(self.mean_novelty, 2)
-            if self.mean_novelty is not None
-            else 0,
+            "specificity": (
+                round(self.specificity, 2) if self.specificity is not None else 0
+            ),
+            "mean_novelty": (
+                round(self.mean_novelty, 2) if self.mean_novelty is not None else 0
+            ),
         }
 
 
