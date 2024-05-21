@@ -1,6 +1,8 @@
 fermo_core
 =========
-`fermo_core` is a Python-based command line tool to process, analyze, and prioritize compounds from metabolomics data. While primarily intended to be the backend processing module of `fermo_gui` of the application FERMO, `fermo_core` can be used independently for large-scale data processing and analysis. This README specifies the use of `fermo_core` as command line interface. For a more user-friendly version, see the [FERMO online](fermo.bioinformatics.nl).
+`fermo_core` is a Python-based command line tool to process, analyze, and prioritize compounds from metabolomics data. While primarily intended to be the backend processing module of `fermo_gui` of the application FERMO, `fermo_core` can be used independently for large-scale data processing and analysis. This README specifies the use of `fermo_core` as command line interface. 
+
+For a more user-friendly version, see the [FERMO online](fermo.bioinformatics.nl). Please also consult the [Documentation](https://mmzdouc.github.io/fermo_docs/).
 
 Table of Contents
 -----------------
@@ -40,7 +42,7 @@ Table of Contents
 
 ## Usage
 
-All parameters and input data are specified in a `parameters.json` file be formatted following the schema specified in `fermo_core/config/schema.json`. See the example in `example_data/case_study_parameters.json` and/or consult the Documentation.
+All parameters and input data are specified in a `parameters.json` file be formatted following the schema specified in `fermo_core/config/schema.json`. See the example in `example_data/case_study_parameters.json` and/or consult the [Documentation](https://mmzdouc.github.io/fermo_docs/home/core.parameters/).
 
 As **minimum** data input, fermo_core` requires a pre-processed **peaktable** summarizing the detected molecular features (**no raw data**). This peaktable must:
 - Derive from liquid chromatography electrospray ionization (tandem) mass spectrometry **(LC-ESI-(MS/)MS)**
@@ -57,13 +59,13 @@ Optionally (but recommended), `fermo_core` also accepts the following file types
 - An [**MS2Query**](https://github.com/iomega/ms2query) results file
 - An [**antiSMASH**](https://antismash.secondarymetabolites.org) results folder
 
-For more information on input and output files, their format, and their purpose, consult the Documentation.
+For more information on input and output files, their format, and their purpose, consult the [Documentation](https://mmzdouc.github.io/fermo_docs/home/input_output/).
 
 ## Attribution
 
 ### License
 
-`fermo_core` is an open source tool licensed under the MIT license (see  [LICENSE](LICENSE.md))
+`fermo_core` is an open source tool licensed under the MIT license (see [LICENSE](LICENSE.md)).
 
 ### Publications
 
@@ -76,4 +78,4 @@ Mitja M. Zdouc <zdoucmm@gmail.com>
 
 Contributions, whether filing an issue, making a pull request, or forking, are appreciated. Please see [Contributing](CONTRIBUTING.md) for more information on getting involved.
 Contributors agree to adhere to the specified [Code of Conduct](CODE_OF_CONDUCT.md).
-For technical details, see the For Developers pages in the documentation.
+For technical details, see the For Developers pages in the [Documentation](https://mmzdouc.github.io/fermo_docs/for_devs/overview/).

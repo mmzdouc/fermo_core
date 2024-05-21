@@ -279,7 +279,7 @@ class Phenotype(BaseModel):
             "score": round(self.score, 6),
             "p_value": round(self.p_value, 10) if self.p_value is not None else 1.0,
             "p_value_corr": (
-                round(self.p_value, 10) if self.p_value_corr is not None else 1.0
+                round(self.p_value_corr, 10) if self.p_value_corr is not None else 1.0
             ),
         }
 
