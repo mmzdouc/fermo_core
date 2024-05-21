@@ -584,6 +584,7 @@ class ParameterManager(BaseModel):
         """
         try:
             self.OutputParameters = OutputParameters(**user_params)
+            self.OutputParameters.validate_output_dir()
             logger.info(
                 "'ParameterManager': validated and assigned parameters " "for 'output'."
             )
