@@ -37,6 +37,10 @@ dependencies = [
 "Repository" = "https://github.com/mmzdouc/fermo_core"
 
 
+[project.scripts]
+fermo_core = "fermo_core.main:main_cli"
+
+
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"

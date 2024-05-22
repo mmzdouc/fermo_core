@@ -34,7 +34,7 @@ Table of Contents
 ## Quick Start
 
 ### With `hatch`:
-- `hatch run python fermo_core/main.py --parameters <your_parameter_file.json>`
+- `hatch run fermo_core --parameters <your_parameter_file.json>`
 
 ### With `conda`:
 - `python fermo_core/main.py --parameters <your_parameter_file.json>`

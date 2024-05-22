@@ -41,6 +41,8 @@ logger = LoggerSetup.setup_custom_logger("fermo_core")
 def main(params: ParameterManager, starttime: datetime):
     """Run fermo_core processing part on input data contained in params.
 
+    Can be used as a module too.
+
     Args:
         params: Handling input file names and params
         starttime: start time
@@ -64,7 +66,8 @@ def main(params: ParameterManager, starttime: datetime):
     sys.exit(0)
 
 
-if __name__ == "__main__":
+def main_cli():
+    """Interface for installer."""
     start_time = datetime.now()
     logger.debug(
         f"Python version: {platform.python_version()}; "
@@ -82,3 +85,7 @@ if __name__ == "__main__":
     param_manager.assign_parameters_cli(user_input)
 
     main(param_manager, start_time)
+
+
+if __name__ == "__main__":
+    main_cli()
