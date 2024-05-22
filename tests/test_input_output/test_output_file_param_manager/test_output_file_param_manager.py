@@ -10,4 +10,5 @@ def test_init_valid():
 
 def test_format_invalid():
     output = OutputParameters(directory_path=Path("dgsdgfsdfgs/"))
+    output.validate_output_dir()
     assert output.directory_path.name == "results"

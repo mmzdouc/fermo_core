@@ -95,14 +95,6 @@
                 "factor": 5,
                 "algorithm": "minmax",
                 "value": "area"
-            },
-            "quantitative-percentage": {
-                "activate_module": false,
-                "sample_avg": "mean",
-                "value": "area",
-                "algorithm": "pearson",
-                "p_val_cutoff": 0.05,
-                "coeff_cutoff": 0.7
             }
         },
         "spectral_library_matching": {
@@ -113,19 +105,7 @@
                 "score_cutoff": 0.7,
                 "max_precursor_mass_diff": 600,
                 "maximum_runtime": 200
-            },
-            "ms2deepscore": {
-                "activate_module": true,
-                "score_cutoff": 0.8,
-                "max_precursor_mass_diff": 600,
-                "maximum_runtime": 200
             }
-        },
-        "ms2query_annotation": {
-            "activate_module": true,
-            "exclude_blank": false,
-            "maximum_runtime": 600,
-            "score_cutoff": 0.7
         },
         "as_kcb_matching": {
             "modified_cosine": {
@@ -133,12 +113,6 @@
                 "fragment_tol": 0.1,
                 "min_nr_matched_peaks": 5,
                 "score_cutoff": 0.5,
-                "max_precursor_mass_diff": 600,
-                "maximum_runtime": 200
-            },
-            "ms2deepscore": {
-                "activate_module": true,
-                "score_cutoff": 0.7,
                 "max_precursor_mass_diff": 600,
                 "maximum_runtime": 200
             }

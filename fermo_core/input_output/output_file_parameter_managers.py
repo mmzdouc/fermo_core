@@ -1,6 +1,6 @@
 """Organizes classes to handle and validate output file parameters.
 
-Copyright (c) 2022-2023 Mitja Maximilian Zdouc, PhD
+Copyright (c) 2022 to present Mitja Maximilian Zdouc, PhD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -44,16 +44,22 @@ class OutputParameters(BaseModel):
 
     directory_path: Path = DefaultPaths().dirpath_output
 
-    @model_validator(mode="after")
-    def validate_output_dir(self):
+    def validate_output_dir(self: Self):
+        """Validates the existence of the output dir and creates fallback if necess."""
         if not self.directory_path.exists():
             logger.warning(
-                f"'ParameterManager/OutputParameters': specified output directory '"
-                f"{self.directory_path}' cannot be found. Fall back to default output "
+                f"'ParameterManager/OutputParameters': specified directory "
+                f"'{self.directory_path}' does not exist. "
+                f"Fall back to default output "
                 f"directory '{DefaultPaths().dirpath_output}'."
             )
             self.directory_path = DefaultPaths().dirpath_output
-        return self
+            if not DefaultPaths().dirpath_output.exists():
+                DefaultPaths().dirpath_output.mkdir(exist_ok=True)
+                logger.warning(
+                    f"'ParameterManager/OutputParameters': create the default output "
+                    f"directory '{DefaultPaths().dirpath_output}'."
+                )
 
     def to_json(self: Self) -> dict:
         """Convert attributes to json-compatible ones."""

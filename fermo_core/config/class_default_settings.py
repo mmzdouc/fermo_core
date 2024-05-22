@@ -97,9 +97,7 @@ class DefaultPaths(BaseModel):
         "https://zenodo.org/records/10528030/files/negative_mode_15_12_2021.sqlite"
         "?download=1",
     )
-    dirpath_output: DirectoryPath = Path(__file__).parent.parent.parent.joinpath(
-        "results/"
-    )
+    dirpath_output: Path = Path(__file__).parent.parent.parent.joinpath("results/")
     dirpath_losses: DirectoryPath = Path(__file__).parent.parent.joinpath(
         "libraries/loss_libs/"
     )
