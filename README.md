@@ -2,7 +2,7 @@ fermo_core
 =========
 `fermo_core` is a Python-based command line tool to process, analyze, and prioritize compounds from metabolomics data. While primarily intended to be the backend processing module of `fermo_gui` of the application FERMO, `fermo_core` can be used independently for large-scale data processing and analysis. This README specifies the use of `fermo_core` as command line interface. 
 
-For a more user-friendly version, see the [FERMO online](fermo.bioinformatics.nl). Please also consult the [Documentation](https://mmzdouc.github.io/fermo_docs/).
+For a more user-friendly version, see the [FERMO online](https://fermo.bioinformatics.nl). Please also consult the [Documentation](https://mmzdouc.github.io/fermo_docs/).
 
 Table of Contents
 -----------------
@@ -17,17 +17,17 @@ Table of Contents
 ### With `hatch`
 - Install `python 3.11.x`
 - Install hatch (e.g. with `pipx install hatch`)
-- Download or clone this repository
+- Download or clone the [repository](https://github.com/mmzdouc/fermo_core)
 - (Change into the fermo_core base directory if not already present)
 - Run `hatch -v env create`
 - Once installed, run as specified in [Quick Start](#quick-start)
 
 ### With `conda`
 - Download or clone this repository
-- Install conda
+- Install conda (e.g. miniconda)
 - Create a conda environment with `conda create --name fermo_core python=3.11`
 - Activate the conda environment with `conda activate fermo_core`
-- Download or clone this repository
+- Download or clone the [repository](https://github.com/mmzdouc/fermo_core)
 - (Change into the fermo_core base directory if not already present)
 - Run `pip install -e .`
 - Once installed, run as specified in [Quick Start](#quick-start)
@@ -41,6 +41,8 @@ Table of Contents
 - `python fermo_core/main.py --parameters <your_parameter_file.json>`
 
 ## Usage
+
+`fermo_core` can be used both as a command line interface as well as a library.
 
 All parameters and input data are specified in a `parameters.json` file be formatted following the schema specified in `fermo_core/config/schema.json`. See the example in `example_data/case_study_parameters.json` and/or consult the [Documentation](https://mmzdouc.github.io/fermo_docs/home/core.parameters/).
 
@@ -69,7 +71,7 @@ For more information on input and output files, their format, and their purpose,
 
 ### Publications
 
-See [FERMO online](fermo.bioinformatics.nl) for information on citing `fermo_core`.
+See [FERMO online](https://fermo.bioinformatics.nl/) for information on citing `fermo_core`.
 
 ### Authors
 Mitja M. Zdouc <zdoucmm@gmail.com>
