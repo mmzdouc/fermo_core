@@ -21,6 +21,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
+import contextlib
 import logging
 import os
 from pathlib import Path
@@ -138,20 +139,13 @@ class MS2QueryAnnotator(BaseModel):
     @staticmethod
     def remove_ms2query_temp_files():
         """Remove queries and results files to clean up before run"""
-        if (
-            DefaultPaths()
-            .dirpath_ms2query_base.joinpath("queries/f_queries.mgf")
-            .exists()
-        ):
+
+        with contextlib.suppress(FileNotFoundError):
             os.remove(
                 DefaultPaths().dirpath_ms2query_base.joinpath("queries/f_queries.mgf")
             )
 
-        if (
-            DefaultPaths()
-            .dirpath_ms2query_base.joinpath("results/f_queries.csv")
-            .exists()
-        ):
+        with contextlib.suppress(FileNotFoundError):
             os.remove(
                 DefaultPaths().dirpath_ms2query_base.joinpath("results/f_queries.csv")
             )
