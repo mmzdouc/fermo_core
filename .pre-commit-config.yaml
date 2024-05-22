@@ -17,8 +17,8 @@ repos:
       entry: hatch run dev:ruff check
       language: system
       types: [ file, python ]
-    - id: pytest
-      name: pytest
+    - id: pytest-matrix
+      name: pytest-matrix
       entry: hatch run test:pytest --run_slow
       language: system
       types: [ file, python ]
