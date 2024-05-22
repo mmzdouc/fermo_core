@@ -23,10 +23,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
+import sys
 from datetime import datetime
 from importlib import metadata
 from pathlib import Path
-from sys import argv
 
 from fermo_core.config.class_logger import LoggerSetup
 from fermo_core.data_analysis.class_analysis_manager import AnalysisManager
@@ -66,13 +66,14 @@ def main(params: ParameterManager):
     )
     export_manager.run(VERSION, START_TIME)
 
-    logger.info("'main': completed all steps successfully - DONE")
+    logger.info("'main': completed all steps - DONE")
+    sys.exit(0)
 
 
 if __name__ == "__main__":
     logger.info(f"Started 'fermo_core' version '{VERSION}' as CLI.")
 
-    args = ArgparseManager().run_argparse(VERSION, argv[1:])
+    args = ArgparseManager().run_argparse(VERSION, sys.argv[1:])
 
     user_input = FileManager.load_json_file(args.parameters)
     ValidationManager().validate_file_vs_jsonschema(user_input, args.parameters)
