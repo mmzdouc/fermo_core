@@ -38,7 +38,6 @@ class DefaultPaths(BaseModel):
         dirpath_ms2query_neg: points towards default ms2query dir negative mode
         url_ms2query_pos: urls to default ms2query files for positive ion mode
         url_ms2query_neg: urls to default ms2query files for negative ion mode
-        dirpath_output: points towards default results output dir
         dirpath_losses: point towards neutral loss dir
         dirpath_frags: point towards fragment dir
         library_mibig_pos: points towards mibig spectral library for positive ion mode
@@ -97,7 +96,6 @@ class DefaultPaths(BaseModel):
         "https://zenodo.org/records/10528030/files/negative_mode_15_12_2021.sqlite"
         "?download=1",
     )
-    dirpath_output: Path = Path(__file__).parent.parent.parent.joinpath("results/")
     dirpath_losses: DirectoryPath = Path(__file__).parent.parent.joinpath(
         "libraries/loss_libs/"
     )

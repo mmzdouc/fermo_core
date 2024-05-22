@@ -23,11 +23,9 @@ SOFTWARE.
 
 import logging
 from pathlib import Path
-from typing import Self
+from typing import Optional, Self
 
-from pydantic import BaseModel, model_validator
-
-from fermo_core.config.class_default_settings import DefaultPaths
+from pydantic import BaseModel
 
 logger = logging.getLogger("fermo_core")
 
@@ -37,32 +35,45 @@ class OutputParameters(BaseModel):
 
     Attributes:
         directory_path: the output directory path
-
-    Raise:
-        pydantic.ValidationError: Pydantic validation failed during instantiation.
     """
 
-    directory_path: Path = DefaultPaths().dirpath_output
+    directory_path: Optional[Path] = None
 
-    def validate_output_dir(self: Self):
-        """Validates the existence of the output dir and creates fallback if necess."""
-        if not self.directory_path.exists():
-            logger.warning(
-                f"'ParameterManager/OutputParameters': specified directory "
-                f"'{self.directory_path}' does not exist. "
-                f"Fall back to default output "
-                f"directory '{DefaultPaths().dirpath_output}'."
-            )
-            self.directory_path = DefaultPaths().dirpath_output
-            if not DefaultPaths().dirpath_output.exists():
-                DefaultPaths().dirpath_output.mkdir(exist_ok=True)
+    def validate_output_dir(self: Self, peaktable_dir: Path):
+        """Check output dir and set to default if None or non-existing
+
+        Arguments:
+            peaktable_dir: the path to the directory where the peaktable resides
+        """
+
+        def _create_output_dir():
+            self.directory_path = peaktable_dir.joinpath("results")
+            if not self.directory_path.exists():
+                self.directory_path.mkdir(exist_ok=True)
                 logger.warning(
                     f"'ParameterManager/OutputParameters': create the default output "
-                    f"directory '{DefaultPaths().dirpath_output}'."
+                    f"directory '{self.directory_path}'."
                 )
+
+        if self.directory_path is None:
+            logger.warning(
+                f"'ParameterManager/OutputParameters': output directory not "
+                f"specified. Results will be written to "
+                f"'{peaktable_dir.joinpath('results')}'."
+            )
+            _create_output_dir()
+        elif not self.directory_path.exists():
+            logger.warning(
+                f"'ParameterManager/OutputParameters': output directory "
+                f"'{self.directory_path}' "
+                f"not found. Results will be written to fallback directory "
+                f"'{peaktable_dir.joinpath('results')}'."
+            )
+            _create_output_dir()
 
     def to_json(self: Self) -> dict:
         """Convert attributes to json-compatible ones."""
-        return {
-            "directory_path": str(self.directory_path.resolve()),
-        }
+        try:
+            return {"directory_path": str(self.directory_path.resolve())}
+        except AttributeError:
+            return {"directory_path": "not specified"}
