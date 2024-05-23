@@ -51,11 +51,12 @@ class ArgparseManager:
         parser = argparse.ArgumentParser(
             description=(
                 "#####################################################\n"
+                "\n"
                 f"fermo_core v{version}: command line interface of FERMO.\n"
+                "\n"
                 "#####################################################\n"
-                "Focused on large-scale data processing by advanced users.\n"
-                "For a more user-friendly experience, see fermo.bioinformatics.nl.\n"
-                "More info on usage can be found in the README, docs, or publication.\n"
+                "For detailed information on usage, see the README and Documentation.\n"
+                "See fermo.bioinformatics.nl for a GUI version.\n"
                 "#####################################################\n"
             ),
             formatter_class=argparse.RawTextHelpFormatter,

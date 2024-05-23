@@ -69,6 +69,8 @@ def main(params: ParameterManager, starttime: datetime):
 def main_cli():
     """Interface for installer."""
     start_time = datetime.now()
+    args = ArgparseManager().run_argparse(metadata.version("fermo_core"), sys.argv[1:])
+
     logger.debug(
         f"Python version: {platform.python_version()}; "
         f"System: {platform.system()}; "
@@ -76,7 +78,6 @@ def main_cli():
         f"System architecture: {platform.python_version()}"
     )
     logger.info(f"Started 'fermo_core' v'{metadata.version('fermo_core')}' as CLI.")
-    args = ArgparseManager().run_argparse(metadata.version("fermo_core"), sys.argv[1:])
 
     user_input = FileManager.load_json_file(args.parameters)
     ValidationManager().validate_file_vs_jsonschema(user_input, args.parameters)
