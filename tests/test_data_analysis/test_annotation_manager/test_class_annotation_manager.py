@@ -1,18 +1,19 @@
 from pathlib import Path
+
 import pytest
 
 from fermo_core.data_analysis.annotation_manager.class_annotation_manager import (
     AnnotationManager,
 )
-from fermo_core.input_output.input_file_parameter_managers import (
-    MS2QueryResultsParameters,
-    AsResultsParameters,
-)
 from fermo_core.data_processing.builder_feature.dataclass_feature import (
-    Match,
     Adduct,
-    NeutralLoss,
     CharFrag,
+    Match,
+    NeutralLoss,
+)
+from fermo_core.input_output.input_file_parameter_managers import (
+    AsResultsParameters,
+    MS2QueryResultsParameters,
 )
 
 
@@ -110,6 +111,9 @@ def test_run_as_kcb_cosine_annotation_valid(annotation_manager_instance):
 def test_run_as_kcb_deepscore_annotation_valid(annotation_manager_instance):
     annotation_manager_instance.params.AsResultsParameters = AsResultsParameters(
         directory_path=Path("example_data/JABTEZ000000000.1/"), similarity_cutoff=0.8
+    )
+    annotation_manager_instance.params.AsKcbDeepscoreMatchingParams.activate_module = (
+        True
     )
     annotation_manager_instance.run_as_kcb_deepscore_annotation()
     assert isinstance(

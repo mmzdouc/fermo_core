@@ -22,8 +22,6 @@ SOFTWARE.
 """
 
 import logging
-import os
-import platform
 import sys
 from pathlib import Path
 
@@ -68,20 +66,3 @@ class LoggerSetup:
         logger.addHandler(file_handler)
 
         return logger
-
-    @staticmethod
-    def suppress_tensorflow_logs():
-        """Suppress the tensorflow legs from overflowing into the fermo_core logger."""
-        os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
-
-    @staticmethod
-    def log_metadata(logger_obj: logging.Logger):
-        """Log run metadata for analytical purposes
-
-        Arguments:
-            logger_obj: a logger object to log logs into
-        """
-        logger_obj.debug(f"Python version: {platform.python_version()}")
-        logger_obj.debug(f"System: {platform.system()}")
-        logger_obj.debug(f"System version: {platform.version()}")
-        logger_obj.debug(f"System architecture: {platform.python_version()}")

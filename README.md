@@ -23,7 +23,6 @@ Table of Contents
 - Once installed, run as specified in [Quick Start](#quick-start)
 
 ### With `conda`
-- Download or clone this repository
 - Install conda (e.g. miniconda)
 - Create a conda environment with `conda create --name fermo_core python=3.11`
 - Activate the conda environment with `conda activate fermo_core`
@@ -35,7 +34,7 @@ Table of Contents
 ## Quick Start
 
 ### With `hatch`:
-- `hatch run python fermo_core/main.py --parameters <your_parameter_file.json>`
+- `hatch run fermo_core --parameters <your_parameter_file.json>`
 
 ### With `conda`:
 - `python fermo_core/main.py --parameters <your_parameter_file.json>`

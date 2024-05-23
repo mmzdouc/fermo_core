@@ -16,8 +16,8 @@ def pytest_addoption(parser):
 
 
 def pytest_configure(config):
-    config.addinivalue_line("markers", "slow: mark test as slow to run")
-    config.addinivalue_line("markers", "high_cpu: mark test as cpu-demanding to run")
+    config.addinivalue_line("markers", "slow: mark test as slow-running")
+    config.addinivalue_line("markers", "high_cpu: mark test as cpu-demanding")
 
 
 def pytest_runtest_setup(item):

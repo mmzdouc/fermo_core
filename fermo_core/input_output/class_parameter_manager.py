@@ -278,6 +278,9 @@ class ParameterManager(BaseModel):
                 match module[2]:
                     case "output":
                         self.log_default_values(module[2])
+                        self.OutputParameters.validate_output_dir(
+                            peaktable_dir=self.PeaktableParameters.filepath.parent
+                        )
                     case _:
                         self.log_skipped_modules(module[2])
 
@@ -584,14 +587,19 @@ class ParameterManager(BaseModel):
         """
         try:
             self.OutputParameters = OutputParameters(**user_params)
-            self.OutputParameters.validate_output_dir()
+            self.OutputParameters.validate_output_dir(
+                self.PeaktableParameters.filepath.parent
+            )
             logger.info(
-                "'ParameterManager': validated and assigned parameters " "for 'output'."
+                "'ParameterManager': validated and assigned parameters for 'output'."
             )
         except Exception as e:
             logger.warning(str(e))
             self.log_malformed_parameters_skip("output")
             self.OutputParameters = OutputParameters()
+            self.OutputParameters.validate_output_dir(
+                self.PeaktableParameters.filepath.parent
+            )
 
     def assign_adduct_annotation(self: Self, user_params: dict):
         """Assign adduct_annotation parameters to self.AdductAnnotationParameters.

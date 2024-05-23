@@ -65,7 +65,7 @@
                             ]
                         },
                         "rel_int_from": {
-                            "title": "(Optional): Specifies minimal relative intensity of fragments to be retained. Must be a value between (and including) 0 and 1.0. Default: 0.01.",
+                            "title": "(Optional): Specifies minimal relative intensity of fragments to be retained. Must be a value between (and including) 0 and 1.0.",
                             "type": "number",
                             "minimum": 0.0,
                             "maximum": 1.0
@@ -153,7 +153,7 @@
                             "type": "string"
                         },
                         "score_cutoff": {
-                            "title": "(Optional): minimum score to consider feature annotation. Default value: 0.7",
+                            "title": "(Optional): minimum score to consider feature annotation.",
                             "type": "number",
                             "minimum": 0.1,
                             "maximum": 1.0
@@ -173,7 +173,7 @@
                             "type": "string"
                         },
                         "similarity_cutoff": {
-                            "title": "(Optional): minimum gene cluster similarity to MIBiG matches to consider in analysis, as fraction. A value of 0.7 indicates that 70% or more genes of a MIBiG entry must be shared by the query to consider a KnownClusterBlast match. Default value: 0.7.",
+                            "title": "(Optional): minimum gene cluster similarity to MIBiG matches to consider in analysis, as fraction. A value of 0.7 indicates that 70% or more genes of a MIBiG entry must be shared by the query to consider a KnownClusterBlast match.",
                             "type": "number",
                             "minimum": 0.1,
                             "maximum": 1.0
@@ -189,7 +189,7 @@
                     ],
                     "properties": {
                         "directory_path": {
-                            "title": "Specifies the directory path. Absolute paths are preferred. Default location: 'results/'",
+                            "title": "Specifies the directory path. Absolute paths are preferred.",
                             "type": "string"
                         }
                     }
@@ -210,11 +210,11 @@
                     ],
                     "properties": {
                         "activate_module": {
-                            "title": "Specifies whether this module should be run. Default: True",
+                            "title": "Specifies whether this module should be run.",
                             "type": "boolean"
                         },
                         "mass_dev_ppm": {
-                            "title": "(Optional): expected mass deviation tolerance in parts per million. Default value: 10 ppm.",
+                            "title": "(Optional): expected mass deviation tolerance in parts per million.",
                             "type": "number",
                             "minimum": 0.0,
                             "maximum": 100.0
@@ -230,17 +230,17 @@
                     ],
                     "properties": {
                         "activate_module": {
-                            "title": "Specifies whether this module should be run. Default: True",
+                            "title": "Specifies whether this module should be run.",
                             "type": "boolean"
                         },
                         "mass_dev_ppm": {
-                            "title": "(Optional): expected mass deviation tolerance in parts per million. Default value: 10 ppm.",
+                            "title": "(Optional): expected mass deviation tolerance in parts per million.",
                             "type": "number",
                             "minimum": 0.0,
                             "maximum": 100.0
                         },
                         "nonbiological": {
-                            "title": "(Optional): Specifies whether neutral losses should be compared to losses originating from synthetic molecules. Default: False",
+                            "title": "(Optional): Specifies whether neutral losses should be compared to losses originating from synthetic molecules.",
                             "type": "boolean"
                         }
                     }
@@ -254,11 +254,11 @@
                     ],
                     "properties": {
                         "activate_module": {
-                            "title": "Specifies whether this module should be run. Default: True",
+                            "title": "Specifies whether this module should be run.",
                             "type": "boolean"
                         },
                         "mass_dev_ppm": {
-                            "title": "(Optional): expected mass deviation tolerance in parts per million. Default value: 10 ppm.",
+                            "title": "(Optional): expected mass deviation tolerance in parts per million.",
                             "type": "number",
                             "minimum": 0.0,
                             "maximum": 100.0
@@ -279,31 +279,31 @@
                             ],
                             "properties": {
                                 "activate_module": {
-                                    "title": "Specifies whether this module should be run. Default: True",
+                                    "title": "Specifies whether this module should be run.",
                                     "type": "boolean"
                                 },
                                 "msms_min_frag_nr": {
-                                    "title": "(Optional): minimum number of fragments a MS/MS fragmentation spectrum must have to be considered in spectral similarity networking. Spectra with a low number of fragments may lead to unspecific matching and so-called 'hairball clusters'. Default value: 5.",
+                                    "title": "(Optional): minimum number of fragments a MS/MS fragmentation spectrum must have to be considered in spectral similarity networking. Spectra with a low number of fragments may lead to unspecific matching and so-called 'hairball clusters'.",
                                     "type": "integer",
                                     "minimum": 1
                                 },
                                 "fragment_tol": {
-                                    "title": "(Optional): tolerance for matching two MS/MS fragments, in m/z units. Default value: 0.1",
+                                    "title": "(Optional): tolerance for matching two MS/MS fragments, in m/z units.",
                                     "type": "number"
                                 },
                                 "score_cutoff": {
-                                    "title": "(Optional): minimum modified cosine score that must be reached to consider two MS/MS fragmentation spectra to be related. Default value: 0.7",
+                                    "title": "(Optional): minimum modified cosine score that must be reached to consider two MS/MS fragmentation spectra to be related.",
                                     "type": "number",
                                     "minimum": 0.1,
                                     "maximum": 1.0
                                 },
                                 "max_nr_links": {
-                                    "title": "(Optional): max. number of links to other molecular features any molecular feature is allowed to have. Default value: 10",
+                                    "title": "(Optional): max. number of links to other molecular features any molecular feature is allowed to have.",
                                     "type": "integer",
                                     "minimum": 1
                                 },
                                 "maximum_runtime": {
-                                    "title": "(Optional): maximum running time of module, in seconds. A value of 0 (zero) indicates unlimited running time. Default value: 1200 seconds.",
+                                    "title": "(Optional): maximum running time of module, in seconds. A value of 0 (zero) indicates unlimited running time.",
                                     "type": "integer",
                                     "minimum": 0
                                 }
@@ -318,27 +318,27 @@
                             ],
                             "properties": {
                                 "activate_module": {
-                                    "title": "Specifies whether this module should be run. Default: True",
+                                    "title": "Specifies whether this module should be run.",
                                     "type": "boolean"
                                 },
                                 "score_cutoff": {
-                                    "title": "(Optional): minimum score that must be reached to consider two MS/MS fragmentation spectra to be related. Default value: 0.8",
+                                    "title": "(Optional): minimum score that must be reached to consider two MS/MS fragmentation spectra to be related.",
                                     "type": "number",
                                     "minimum": 0.1,
                                     "maximum": 1.0
                                 },
                                 "max_nr_links": {
-                                    "title": "(Optional): max. number of links to other molecular features any molecular feature is allowed to have. Default value: 10",
+                                    "title": "(Optional): max. number of links to other molecular features any molecular feature is allowed to have.",
                                     "type": "integer",
                                     "minimum": 1
                                 },
                                 "msms_min_frag_nr": {
-                                    "title": "(Optional): minimum number of fragments a MS/MS fragmentation spectrum must have to be considered in spectral similarity networking. Spectra with a low number of fragments may lead to unspecific matching and so-called 'hairball clusters'. Default value: 5.",
+                                    "title": "(Optional): minimum number of fragments a MS/MS fragmentation spectrum must have to be considered in spectral similarity networking. Spectra with a low number of fragments may lead to unspecific matching and so-called 'hairball clusters'.",
                                     "type": "integer",
                                     "minimum": 1
                                 },
                                 "maximum_runtime": {
-                                    "title": "(Optional): maximum running time of module, in seconds. A value of 0 (zero) indicates unlimited running time. Default value: 1200 seconds.",
+                                    "title": "(Optional): maximum running time of module, in seconds. A value of 0 (zero) indicates unlimited running time.",
                                     "type": "integer",
                                     "minimum": 0
                                 }
@@ -362,7 +362,7 @@
                     ],
                     "properties": {
                         "activate_module": {
-                            "title": "Specifies whether this module should be run. Default: False",
+                            "title": "Specifies whether this module should be run.",
                             "type": "boolean"
                         },
                         "filter_rel_int_range": {
@@ -398,16 +398,16 @@
                     ],
                     "properties": {
                         "activate_module": {
-                            "title": "Specifies whether this module should be run. Default: False",
+                            "title": "Specifies whether this module should be run.",
                             "type": "boolean"
                         },
                         "factor": {
-                            "title": "(Optional): factor to determine subtraction of features detected in both blank and non-blank samples. Feature value (height or area) be n-times higher across samples than across blanks (determined by 'algorithm') to not be considered blank. Default value: 10.",
+                            "title": "(Optional): factor to determine subtraction of features detected in both blank and non-blank samples. Feature value (height or area) be n-times higher across samples than across blanks (determined by 'algorithm') to not be considered blank.",
                             "type": "integer",
                             "minimum": 1
                         },
                         "algorithm": {
-                            "title": "(Optional): Algorithm to summarize value over samples/blanks. Default value: 'mean'.",
+                            "title": "(Optional): Algorithm to summarize value over samples/blanks.",
                             "type": "string",
                             "enum": [
                                 "mean",
@@ -416,7 +416,7 @@
                             ]
                         },
                         "value": {
-                            "title": "(Optional): Specifies which value type should be considered. Default: 'area'.",
+                            "title": "(Optional): Specifies which value type should be considered.",
                             "type": "string",
                             "enum": [
                                 "height",
@@ -434,11 +434,11 @@
                     ],
                     "properties": {
                         "activate_module": {
-                            "title": "Specifies whether this module should be run. Default: False",
+                            "title": "Specifies whether this module should be run.",
                             "type": "boolean"
                         },
                         "algorithm": {
-                            "title": "(Optional): Algorithm to summarize value over samples/blanks. Default value: 'mean'.",
+                            "title": "(Optional): Algorithm to summarize value over samples/blanks.",
                             "type": "string",
                             "enum": [
                                 "mean",
@@ -447,7 +447,7 @@
                             ]
                         },
                         "value": {
-                            "title": "(Optional): Specifies which value type should be considered. Default: 'area'.",
+                            "title": "(Optional): Specifies which value type should be considered.",
                             "type": "string",
                             "enum": [
                                 "height",
@@ -470,16 +470,16 @@
                             ],
                             "properties": {
                                 "activate_module": {
-                                    "title": "Specifies whether this module should be run. Default: False",
+                                    "title": "Specifies whether this module should be run.",
                                     "type": "boolean"
                                 },
                                 "factor": {
-                                    "title": "(Optional): factor difference to be used for molecular feature differentiation. Default value: 5",
+                                    "title": "(Optional): factor difference to be used for molecular feature differentiation.",
                                     "type": "integer",
                                     "minimum": 1
                                 },
                                 "algorithm": {
-                                    "title": "(Optional): Algorithm to summarize value over active/inactive samples. Default value: 'minmax'.",
+                                    "title": "(Optional): Algorithm to summarize value over active/inactive samples.",
                                     "type": "string",
                                     "enum": [
                                         "minmax",
@@ -488,7 +488,7 @@
                                     ]
                                 },
                                 "value": {
-                                    "title": "(Optional): Specifies which value type should be considered. Default: 'area'.",
+                                    "title": "(Optional): Specifies which value type should be considered.",
                                     "type": "string",
                                     "enum": [
                                         "height",
@@ -506,11 +506,11 @@
                             ],
                             "properties": {
                                 "activate_module": {
-                                    "title": "Specifies whether this module should be run. Default: False",
+                                    "title": "Specifies whether this module should be run.",
                                     "type": "boolean"
                                 },
                                 "sample_avg": {
-                                    "title": "(Optional): Specifies algorithm to summarize multiple measurements per sample for same assay. Default value: 'mean'.",
+                                    "title": "(Optional): Specifies algorithm to summarize multiple measurements per sample for same assay.",
                                     "type": "string",
                                     "enum": [
                                         "mean",
@@ -518,27 +518,27 @@
                                     ]
                                 },
                                 "value": {
-                                    "title": "(Optional): Specifies which value type should be considered. Default: 'area'.",
+                                    "title": "(Optional): Specifies which value type should be considered.",
                                     "type": "string",
                                     "enum": [
                                         "area"
                                     ]
                                 },
                                 "algorithm": {
-                                    "title": "(Optional): Specifies the statistical algorithm to use. Default: 'pearson'.",
+                                    "title": "(Optional): Specifies the statistical algorithm to use.",
                                     "type": "string",
                                     "enum": [
                                         "pearson"
                                     ]
                                 },
                                 "p_val_cutoff": {
-                                    "title": "(Optional): Minimum Bonferroni-corrected p-value to consider. A value of zero disables the cutoff filtering (automatically applies to both score and p-value). Default: 0.05",
+                                    "title": "(Optional): Minimum Bonferroni-corrected p-value to consider. A value of zero disables the cutoff filtering (automatically applies to both score and p-value).",
                                     "type": "number",
                                     "minimum": 0.0,
                                     "maximum": 1.0
                                 },
                                 "coeff_cutoff": {
-                                    "title": "(Optional): Minimum correlation coefficient to consider. A value of zero disables the cutoff filtering (automatically applies to both score and p-value). Default: 0.7",
+                                    "title": "(Optional): Minimum correlation coefficient to consider. A value of zero disables the cutoff filtering (automatically applies to both score and p-value).",
                                     "type": "number",
                                     "minimum": 0.0,
                                     "maximum": 1.0
@@ -554,11 +554,11 @@
                             ],
                             "properties": {
                                 "activate_module": {
-                                    "title": "Specifies whether this module should be run. Default: False",
+                                    "title": "Specifies whether this module should be run.",
                                     "type": "boolean"
                                 },
                                 "sample_avg": {
-                                    "title": "(Optional): Specifies algorithm to summarize multiple measurrments per sample for same assay. Default value: 'mean'.",
+                                    "title": "(Optional): Specifies algorithm to summarize multiple measurrments per sample for same assay.",
                                     "type": "string",
                                     "enum": [
                                         "mean",
@@ -566,27 +566,27 @@
                                     ]
                                 },
                                 "value": {
-                                    "title": "(Optional): Specifies which value type should be considered. Default: 'area'.",
+                                    "title": "(Optional): Specifies which value type should be considered.",
                                     "type": "string",
                                     "enum": [
                                         "area"
                                     ]
                                 },
                                 "algorithm": {
-                                    "title": "(Optional): Specifies the statistical algorithm to use. Default: 'pearson'.",
+                                    "title": "(Optional): Specifies the statistical algorithm to use.",
                                     "type": "string",
                                     "enum": [
                                         "pearson"
                                     ]
                                 },
                                 "p_val_cutoff": {
-                                    "title": "(Optional): Minimum Bonferroni-corrected p-value to consider. A value of zero disables the cutoff filtering (automatically applies to both score and p-value). Default: 0.05",
+                                    "title": "(Optional): Minimum Bonferroni-corrected p-value to consider. A value of zero disables the cutoff filtering (automatically applies to both score and p-value).",
                                     "type": "number",
                                     "minimum": 0.0,
                                     "maximum": 1.0
                                 },
                                 "coeff_cutoff": {
-                                    "title": "(Optional): Minimum correlation coefficient to consider. A value of zero disables the cutoff filtering (automatically applies to both score and p-value). Default: 0.7",
+                                    "title": "(Optional): Minimum correlation coefficient to consider. A value of zero disables the cutoff filtering (automatically applies to both score and p-value).",
                                     "type": "number",
                                     "minimum": 0.0,
                                     "maximum": 1.0
@@ -609,31 +609,31 @@
                             ],
                             "properties": {
                                 "activate_module": {
-                                    "title": "Specifies whether this module should be run. Default: False",
+                                    "title": "Specifies whether this module should be run.",
                                     "type": "boolean"
                                 },
                                 "fragment_tol": {
-                                    "title": "(Optional): tolerance for matching two MS/MS fragments, in m/z units. Default value: 0.1",
+                                    "title": "(Optional): tolerance for matching two MS/MS fragments, in m/z units.",
                                     "type": "number"
                                 },
                                 "min_nr_matched_peaks": {
-                                    "title": "(Optional): minimum number of fragments that must be matched between two MS/MS fragmentation spectra to consider two spectra related. Default value: 5",
+                                    "title": "(Optional): minimum number of fragments that must be matched between two MS/MS fragmentation spectra to consider two spectra related.",
                                     "type": "integer",
                                     "minimum": 1
                                 },
                                 "score_cutoff": {
-                                    "title": "(Optional): minimum modified cosine score that must be reached to consider two MS/MS fragmentation spectra to be related. Default value: 0.7",
+                                    "title": "(Optional): minimum modified cosine score that must be reached to consider two MS/MS fragmentation spectra to be related.",
                                     "type": "number",
                                     "minimum": 0.1,
                                     "maximum": 1.0
                                 },
                                 "max_precursor_mass_diff": {
-                                    "title": "(Optional): maximum difference between the precursor masses of two MS/MS spectra, in m/z units. A high number may lead to serendipitous matching between unrelated spectra, while a low number may exclude possible analogues. Default value: 600 m/z.",
+                                    "title": "(Optional): maximum difference between the precursor masses of two MS/MS spectra, in m/z units. A high number may lead to serendipitous matching between unrelated spectra, while a low number may exclude possible analogues.",
                                     "type": "integer",
                                     "minimum": 1
                                 },
                                 "maximum_runtime": {
-                                    "title": "(Optional): maximum running time of module, in seconds. A value of 0 (zero) indicates unlimited running time. Default value: 600 seconds.",
+                                    "title": "(Optional): maximum running time of module, in seconds. A value of 0 (zero) indicates unlimited running time.",
                                     "type": "integer",
                                     "minimum": 0
                                 }
@@ -648,22 +648,22 @@
                             ],
                             "properties": {
                                 "activate_module": {
-                                    "title": "Specifies whether this module should be run. Default: False",
+                                    "title": "Specifies whether this module should be run.",
                                     "type": "boolean"
                                 },
                                 "score_cutoff": {
-                                    "title": "(Optional): minimum score that must be reached to consider two MS/MS fragmentation spectra to be related. Default value: 0.8",
+                                    "title": "(Optional): minimum score that must be reached to consider two MS/MS fragmentation spectra to be related.",
                                     "type": "number",
                                     "minimum": 0.1,
                                     "maximum": 1.0
                                 },
                                 "max_precursor_mass_diff": {
-                                    "title": "(Optional): maximum difference between the precursor masses of two MS/MS spectra, in m/z units. A high number may lead to serendipitous matching between unrelated spectra, while a low number may exclude possible analogues. Default value: 600 m/z.",
+                                    "title": "(Optional): maximum difference between the precursor masses of two MS/MS spectra, in m/z units. A high number may lead to serendipitous matching between unrelated spectra, while a low number may exclude possible analogues.",
                                     "type": "integer",
                                     "minimum": 1
                                 },
                                 "maximum_runtime": {
-                                    "title": "(Optional): maximum running time of module, in seconds. A value of 0 (zero) indicates unlimited running time. Default value: 600 seconds.",
+                                    "title": "(Optional): maximum running time of module, in seconds. A value of 0 (zero) indicates unlimited running time.",
                                     "type": "integer",
                                     "minimum": 0
                                 }
@@ -680,16 +680,16 @@
                     ],
                     "properties": {
                         "activate_module": {
-                            "title": "Specifies whether this module should be run. Default: False",
+                            "title": "Specifies whether this module should be run.",
                             "type": "boolean"
                         },
                         "maximum_runtime": {
-                            "title": "(Optional): maximum running time of module, in seconds. A value of 0 (zero) indicates unlimited running time. Default value: 600 seconds.",
+                            "title": "(Optional): maximum running time of module, in seconds. A value of 0 (zero) indicates unlimited running time.",
                             "type": "integer",
                             "minimum": 0
                         },
                         "score_cutoff": {
-                            "title": "(Optional): minimum score that must be reached to consider two MS/MS fragmentation spectra to be related. Default value: 0.7",
+                            "title": "(Optional): minimum score that must be reached to consider two MS/MS fragmentation spectra to be related.",
                             "type": "number",
                             "minimum": 0.1,
                             "maximum": 1.0
@@ -710,31 +710,31 @@
                             ],
                             "properties": {
                                 "activate_module": {
-                                    "title": "Specifies whether this module should be run. Default: False",
+                                    "title": "Specifies whether this module should be run.",
                                     "type": "boolean"
                                 },
                                 "fragment_tol": {
-                                    "title": "(Optional): tolerance for matching two MS/MS fragments, in m/z units. Default value: 0.1",
+                                    "title": "(Optional): tolerance for matching two MS/MS fragments, in m/z units.",
                                     "type": "number"
                                 },
                                 "min_nr_matched_peaks": {
-                                    "title": "(Optional): minimum number of fragments that must be matched between two MS/MS fragmentation spectra to consider two spectra related. Default value: 5",
+                                    "title": "(Optional): minimum number of fragments that must be matched between two MS/MS fragmentation spectra to consider two spectra related.",
                                     "type": "integer",
                                     "minimum": 1
                                 },
                                 "score_cutoff": {
-                                    "title": "(Optional): minimum modified cosine score that must be reached to consider two MS/MS fragmentation spectra to be related. Default value: 0.5",
+                                    "title": "(Optional): minimum modified cosine score that must be reached to consider two MS/MS fragmentation spectra to be related.",
                                     "type": "number",
                                     "minimum": 0.1,
                                     "maximum": 1.0
                                 },
                                 "max_precursor_mass_diff": {
-                                    "title": "(Optional): maximum difference between the precursor masses of two MS/MS spectra, in m/z units. A high number may lead to serendipitous matching between unrelated spectra, while a low number may exclude possible analogues. Default value: 600 m/z.",
+                                    "title": "(Optional): maximum difference between the precursor masses of two MS/MS spectra, in m/z units. A high number may lead to serendipitous matching between unrelated spectra, while a low number may exclude possible analogues.",
                                     "type": "integer",
                                     "minimum": 1
                                 },
                                 "maximum_runtime": {
-                                    "title": "(Optional): maximum running time of module, in seconds. A value of 0 (zero) indicates unlimited running time. Default value: 600 seconds.",
+                                    "title": "(Optional): maximum running time of module, in seconds. A value of 0 (zero) indicates unlimited running time.",
                                     "type": "integer",
                                     "minimum": 0
                                 }
@@ -749,22 +749,22 @@
                             ],
                             "properties": {
                                 "activate_module": {
-                                    "title": "Specifies whether this module should be run. Default: False",
+                                    "title": "Specifies whether this module should be run.",
                                     "type": "boolean"
                                 },
                                 "score_cutoff": {
-                                    "title": "(Optional): minimum score that must be reached to consider two MS/MS fragmentation spectra to be related. Default value: 0.7",
+                                    "title": "(Optional): minimum score that must be reached to consider two MS/MS fragmentation spectra to be related.",
                                     "type": "number",
                                     "minimum": 0.1,
                                     "maximum": 1.0
                                 },
                                 "max_precursor_mass_diff": {
-                                    "title": "(Optional): maximum difference between the precursor masses of two MS/MS spectra, in m/z units. A high number may lead to serendipitous matching between unrelated spectra, while a low number may exclude possible analogues. Default value: 600 m/z.",
+                                    "title": "(Optional): maximum difference between the precursor masses of two MS/MS spectra, in m/z units. A high number may lead to serendipitous matching between unrelated spectra, while a low number may exclude possible analogues.",
                                     "type": "integer",
                                     "minimum": 1
                                 },
                                 "maximum_runtime": {
-                                    "title": "(Optional): maximum running time of module, in seconds. A value of 0 (zero) indicates unlimited running time. Default value: 600 seconds.",
+                                    "title": "(Optional): maximum running time of module, in seconds. A value of 0 (zero) indicates unlimited running time.",
                                     "type": "integer",
                                     "minimum": 0
                                 }

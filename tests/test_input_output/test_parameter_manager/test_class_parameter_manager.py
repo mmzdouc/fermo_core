@@ -1,39 +1,39 @@
 from pathlib import Path
 
-from pydantic import ValidationError
 import pytest
+from pydantic import ValidationError
 
+from fermo_core.input_output.additional_module_parameter_managers import (
+    AsKcbCosineMatchingParams,
+    AsKcbDeepscoreMatchingParams,
+    BlankAssignmentParameters,
+    FeatureFilteringParameters,
+    Ms2QueryAnnotationParameters,
+    PhenoQualAssgnParams,
+    PhenoQuantConcAssgnParams,
+    PhenoQuantPercentAssgnParams,
+    SpectralLibMatchingCosineParameters,
+    SpectralLibMatchingDeepscoreParameters,
+)
 from fermo_core.input_output.class_file_manager import FileManager
 from fermo_core.input_output.class_parameter_manager import ParameterManager
-from fermo_core.input_output.input_file_parameter_managers import (
-    PeaktableParameters,
-    MsmsParameters,
-    PhenotypeParameters,
-    GroupMetadataParameters,
-    MS2QueryResultsParameters,
-    SpecLibParameters,
-    AsResultsParameters,
-)
-from fermo_core.input_output.output_file_parameter_managers import OutputParameters
 from fermo_core.input_output.core_module_parameter_managers import (
     AdductAnnotationParameters,
-    NeutralLossParameters,
     FragmentAnnParameters,
+    NeutralLossParameters,
     SpecSimNetworkCosineParameters,
     SpecSimNetworkDeepscoreParameters,
 )
-from fermo_core.input_output.additional_module_parameter_managers import (
-    FeatureFilteringParameters,
-    BlankAssignmentParameters,
-    PhenoQualAssgnParams,
-    PhenoQuantPercentAssgnParams,
-    PhenoQuantConcAssgnParams,
-    SpectralLibMatchingCosineParameters,
-    SpectralLibMatchingDeepscoreParameters,
-    Ms2QueryAnnotationParameters,
-    AsKcbDeepscoreMatchingParams,
-    AsKcbCosineMatchingParams,
+from fermo_core.input_output.input_file_parameter_managers import (
+    AsResultsParameters,
+    GroupMetadataParameters,
+    MS2QueryResultsParameters,
+    MsmsParameters,
+    PeaktableParameters,
+    PhenotypeParameters,
+    SpecLibParameters,
 )
+from fermo_core.input_output.output_file_parameter_managers import OutputParameters
 
 
 def test_init_parameter_manager_valid():
@@ -183,17 +183,23 @@ def test_assign_as_results_invalid():
 
 def test_assign_output_valid():
     params = ParameterManager()
-    params.assign_output({"directory_path": "example_data"})
+    params.PeaktableParameters = PeaktableParameters(
+        format="mzmine3",
+        filepath="tests/test_data/test.peak_table_quant_full.csv",
+        polarity="positive",
+    )
+    params.assign_output({"directory_path": "tests/test_data/results/"})
     assert isinstance(params.OutputParameters, OutputParameters)
 
 
 def test_assign_output_invalid():
     params = ParameterManager()
-    params.assign_output(
-        {
-            "sasd": "dasdas",
-        }
+    params.PeaktableParameters = PeaktableParameters(
+        format="mzmine3",
+        filepath="tests/test_data/test.peak_table_quant_full.csv",
+        polarity="positive",
     )
+    params.assign_output({"sasd": "dasdas"})
     assert params.OutputParameters.directory_path.stem == "results"
 
 
@@ -515,7 +521,7 @@ def test_to_json_files_valid():
     params = ParameterManager()
     params.PeaktableParameters = PeaktableParameters(
         format="mzmine3",
-        filepath="example_data/case_study_peak_table_quant_full.csv",
+        filepath="tests/test_data/test.peak_table_quant_full.csv",
         polarity="positive",
     )
     json_dict = params.to_json()
@@ -525,4 +531,4 @@ def test_to_json_files_valid():
 def test_to_json_output():
     params = ParameterManager()
     json_dict = params.to_json()
-    assert json_dict["OutputParameters"]["directory_path"] is not None
+    assert json_dict["OutputParameters"]["directory_path"] == "not specified"
