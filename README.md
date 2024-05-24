@@ -1,8 +1,12 @@
 fermo_core
 =========
-`fermo_core` is a Python-based command line tool to process, analyze, and prioritize compounds from metabolomics data. While primarily intended to be the backend processing module of `fermo_gui` of the application FERMO, `fermo_core` can be used independently for large-scale data processing and analysis. This README specifies the use of `fermo_core` as command line interface. 
 
-For a more user-friendly version, see the [FERMO online](https://fermo.bioinformatics.nl). Please also consult the [Documentation](https://mmzdouc.github.io/fermo_docs/).
+[![DOI](https://zenodo.org/badge/671395100.svg)](https://zenodo.org/doi/10.5281/zenodo.11259126) [![PyPI version](https://badge.fury.io/py/fermo_core.svg)](https://badge.fury.io/py/fermo_core)
+
+`fermo_core` is a Python-based command line tool to process, analyze, and prioritize compounds from metabolomics data. While primarily intended to be the backend processing module of `fermo_gui` of the application FERMO, `fermo_core` can be used independently for large-scale data processing and analysis. 
+
+This README specifies the use of `fermo_core` as command line interface. For a more user-friendly version, see the [FERMO online](https://fermo.bioinformatics.nl). Please also consult the [Documentation](https://mmzdouc.github.io/fermo_docs/).
+
 
 Table of Contents
 -----------------
@@ -14,29 +18,38 @@ Table of Contents
 
 ## Installation
 
-### With `hatch`
+### With `pip` from PyPI
+- Install `python 3.11.x`
+- Create a virtual environment (e.g. venv, conda) and activate it
+- Run `pip install fermo_core`
+- Once installed, run as specified in [Run with `pip`](#run-with-pip)
+
+### With `hatch` from GitHub
 - Install `python 3.11.x`
 - Install hatch (e.g. with `pipx install hatch`)
 - Download or clone the [repository](https://github.com/mmzdouc/fermo_core)
 - (Change into the fermo_core base directory if not already present)
 - Run `hatch -v env create`
-- Once installed, run as specified in [Quick Start](#quick-start)
+- Once installed, run as specified in [Run with `hatch`](#run-with-hatch)
 
-### With `conda`
+### With `conda` from GitHub
 - Install conda (e.g. miniconda)
 - Create a conda environment with `conda create --name fermo_core python=3.11`
 - Activate the conda environment with `conda activate fermo_core`
 - Download or clone the [repository](https://github.com/mmzdouc/fermo_core)
 - (Change into the fermo_core base directory if not already present)
 - Run `pip install -e .`
-- Once installed, run as specified in [Quick Start](#quick-start)
+- Once installed, run as specified in [Run with `conda`](#run-with-conda)
 
 ## Quick Start
 
-### With `hatch`:
+### Run with `pip`
+- `fermo_core --parameters <your_parameter_file.json>`
+
+### Run with `hatch`:
 - `hatch run fermo_core --parameters <your_parameter_file.json>`
 
-### With `conda`:
+### Run with `conda`:
 - `python fermo_core/main.py --parameters <your_parameter_file.json>`
 
 ## Usage

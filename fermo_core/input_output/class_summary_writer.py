@@ -64,12 +64,14 @@ class SummaryWriter(BaseModel):
             self.summary.append(
                 f"MS/MS fragmentation information was parsed from the file "
                 f"'{self.params.MsmsParameters.filepath.name}' in the format "
-                f"'{self.params.MsmsParameters.format}'."
+                f"'{self.params.MsmsParameters.format}'. "
+                f"MS/MS fragments +- 10 mass units around precursor m/z were removed."
             )
             if self.params.MsmsParameters.rel_int_from > 0:
                 self.summary.append(
                     f"MS/MS fragments with an intensity less than "
-                    f"'{self.params.MsmsParameters.rel_int_from}' were removed."
+                    f"'{self.params.MsmsParameters.rel_int_from}' relative to the "
+                    f"base peak were removed."
                 )
 
     def summarize_phenotypeparameters(self: Self):

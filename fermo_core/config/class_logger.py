@@ -22,6 +22,7 @@ SOFTWARE.
 """
 
 import logging
+import platform
 import sys
 from pathlib import Path
 
@@ -66,3 +67,17 @@ class LoggerSetup:
         logger.addHandler(file_handler)
 
         return logger
+
+    @staticmethod
+    def log_system_settings(logger: logging.Logger):
+        """Log the system settings
+
+        Attributes:
+            logger: the previously initialized logger
+        """
+        logger.debug(
+            f"Python version: {platform.python_version()}; "
+            f"System: {platform.system()}; "
+            f"System version: {platform.version()};"
+            f"System architecture: {platform.python_version()}"
+        )
