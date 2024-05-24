@@ -68,9 +68,19 @@ class ArgparseManager:
             type=str,
             required=True,
             help=(
-                "Provide a FERMO parameter .json file.\n"
-                "See 'example_data/case_study_parameters.json' for an example or "
-                "consult the documentation.\n"
+                "(Mandatory) Provide a FERMO parameter .json file.\n"
+                "For more information, consult the documentation.\n"
             ),
         )
+
+        parser.add_argument(
+            "-v",
+            "--verboseness",
+            type=str,
+            default="INFO",
+            choices=["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"],
+            required=False,
+            help=("(Optional) Specify the verboseness of logging. Default: 'INFO'."),
+        )
+
         return parser

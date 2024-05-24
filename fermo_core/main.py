@@ -21,7 +21,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-import platform
+import logging
 import sys
 from datetime import datetime
 from importlib import metadata
@@ -66,18 +66,36 @@ def main(params: ParameterManager, starttime: datetime):
     sys.exit(0)
 
 
+def set_log_verboseness_console(logger: logging.Logger, level: str):
+    """Adjust logging settings based on user input
+
+    Attributes:
+        logger: the previously initialized logger
+        level: the logging level
+    """
+    for handler in logger.handlers:
+        if isinstance(handler, logging.StreamHandler) and not isinstance(
+            handler, logging.FileHandler
+        ):
+            if level in ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]:
+                logger.info(f"'LoggerSetup': set verboseness level to '{level}'.")
+                handler.setLevel(getattr(logging, level))
+            else:
+                logger.warning(
+                    "'LoggerSetup': verboseness level invalid. Fall back to level "
+                    "'INFO'."
+                )
+                handler.setLevel(logging.INFO)
+
+
 def main_cli():
     """Interface for installer."""
     start_time = datetime.now()
     args = ArgparseManager().run_argparse(metadata.version("fermo_core"), sys.argv[1:])
 
-    logger.debug(
-        f"Python version: {platform.python_version()}; "
-        f"System: {platform.system()}; "
-        f"System version: {platform.version()};"
-        f"System architecture: {platform.python_version()}"
-    )
+    set_log_verboseness_console(logger, args.verboseness)
     logger.info(f"Started 'fermo_core' v'{metadata.version('fermo_core')}' as CLI.")
+    LoggerSetup.log_system_settings(logger)
 
     user_input = FileManager.load_json_file(args.parameters)
     ValidationManager().validate_file_vs_jsonschema(user_input, args.parameters)
