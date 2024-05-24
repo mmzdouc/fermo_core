@@ -8,7 +8,7 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [0.1.1] 24-05.2024
 
-## Changes
+### Changes
 
 - Implemented logging verboseness parameter for CLI interface
 
