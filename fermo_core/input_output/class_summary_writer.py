@@ -349,8 +349,7 @@ class SummaryWriter(BaseModel):
 
     def assemble_summary(self: Self):
         """Call methods to assemble the summary file"""
-        logger.info("'SummaryWriter': Started writing analysis summary")
-        logger.debug("'SummaryWriter': Started summary files")
+        logger.debug("'SummaryWriter': Started summary: files")
         self.summarize_peaktableparameters()
         self.summarize_msmsparameters()
         self.summarize_phenotypeparameters()
@@ -358,8 +357,8 @@ class SummaryWriter(BaseModel):
         self.summarize_speclibparameters()
         self.summarize_ms2queryresultsparameters()
         self.summarize_asresultsparameters()
-        logger.debug("'SummaryWriter': Completed summary files")
-        logger.debug("'SummaryWriter': Started summary analysis modules")
+        logger.debug("'SummaryWriter': Completed summary: files")
+        logger.debug("'SummaryWriter': Started summary: analysis modules")
         self.summarize_featurefilteringparameters()
         self.summarize_adductannotationparameters()
         self.summarize_neutrallossparameters()
@@ -376,5 +375,4 @@ class SummaryWriter(BaseModel):
         self.summarize_ms2queryannotationparameters()
         self.summarize_askcbcosinematchingparams()
         self.summarize_askcbdeepscorematchingparams()
-        logger.debug("'SummaryWriter': Completed summary analysis modules")
-        logger.info("'SummaryWriter': Completed writing analysis summary")
+        logger.debug("'SummaryWriter': Completed summary: analysis modules")

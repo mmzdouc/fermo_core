@@ -29,9 +29,6 @@
         "as_results": {
             "directory_path": "example_data/JABTEZ000000000.1/",
             "similarity_cutoff": 0.7
-        },
-        "output": {
-            "directory_path": "results/"
         }
     },
     "core_modules": {

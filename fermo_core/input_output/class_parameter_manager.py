@@ -268,21 +268,17 @@ class ParameterManager(BaseModel):
                 "ms2query_results",
             ),
             (user_params.get("as_results"), self.assign_as_results, "as_results"),
-            (user_params.get("output"), self.assign_output, "output"),
         )
 
         for module in modules:
             if (data := module[0]) is not None:
                 module[1](data)
             else:
-                match module[2]:
-                    case "output":
-                        self.log_default_values(module[2])
-                        self.OutputParameters.validate_output_dir(
-                            peaktable_dir=self.PeaktableParameters.filepath.parent
-                        )
-                    case _:
-                        self.log_skipped_modules(module[2])
+                self.log_skipped_modules(module[2])
+
+        self.OutputParameters.validate_output_dir(
+            peaktable_dir=self.PeaktableParameters.filepath.parent
+        )
 
     def assign_core_modules_parameters(self: Self, user_params: dict):
         """Assigns user-input on core modules to ParameterManager.
@@ -578,28 +574,6 @@ class ParameterManager(BaseModel):
             logger.warning(str(e))
             self.log_malformed_parameters_skip("as_results")
             self.AsResultsParameters = None
-
-    def assign_output(self: Self, user_params: dict):
-        """Assign output parameters to self.OutputParameters.
-
-        Parameters:
-            user_params: user-provided params, read from json file
-        """
-        try:
-            self.OutputParameters = OutputParameters(**user_params)
-            self.OutputParameters.validate_output_dir(
-                self.PeaktableParameters.filepath.parent
-            )
-            logger.info(
-                "'ParameterManager': validated and assigned parameters for 'output'."
-            )
-        except Exception as e:
-            logger.warning(str(e))
-            self.log_malformed_parameters_skip("output")
-            self.OutputParameters = OutputParameters()
-            self.OutputParameters.validate_output_dir(
-                self.PeaktableParameters.filepath.parent
-            )
 
     def assign_adduct_annotation(self: Self, user_params: dict):
         """Assign adduct_annotation parameters to self.AdductAnnotationParameters.

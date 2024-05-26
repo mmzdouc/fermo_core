@@ -179,20 +179,6 @@
                             "maximum": 1.0
                         }
                     }
-                },
-                "output": {
-                    "title": "(Optional): fermo_core output location.",
-                    "additionalProperties": false,
-                    "type": "object",
-                    "required": [
-                        "directory_path"
-                    ],
-                    "properties": {
-                        "directory_path": {
-                            "title": "Specifies the directory path. Absolute paths are preferred.",
-                            "type": "string"
-                        }
-                    }
                 }
             }
         },

@@ -26,12 +26,11 @@ import logging
 import platform
 import shutil
 from datetime import datetime
-from pathlib import Path
-from typing import Any, Optional, Self
+from typing import Any, Self
 
 import networkx as nx
 import pandas as pd
-from pydantic import BaseModel, model_validator
+from pydantic import BaseModel
 
 from fermo_core.config.class_default_settings import DefaultPaths
 from fermo_core.data_processing.class_repository import Repository
@@ -386,19 +385,12 @@ class ExportManager(BaseModel):
         stats: a Stats object containing general information
         features: a Repository object containing feature and general information
         samples: a Repository object containing sample information
-        filename_base: the export filename derived from peaktable
     """
 
     params: ParameterManager
     stats: Stats
     features: Repository
     samples: Repository
-    filename_base: Optional[str] = None
-
-    @model_validator(mode="after")
-    def define_filename_base(self):
-        self.filename_base = f"out_{self.params.PeaktableParameters.filepath.stem}"
-        return self
 
     @staticmethod
     def log_start_module(file: str):
@@ -431,8 +423,8 @@ class ExportManager(BaseModel):
         session = json_exporter.return_session()
 
         session_path = self.params.OutputParameters.directory_path.joinpath(
-            self.filename_base
-        ).with_suffix(".fermo.session.json")
+            "out.fermo.session.json"
+        )
 
         with open(session_path, "w", encoding="utf-8") as outfile:
             outfile.write(json.dumps(session, indent=2, ensure_ascii=False))
@@ -456,11 +448,11 @@ class ExportManager(BaseModel):
         df_full, df_abbr = csv_exporter.return_dfs()
 
         path_df_full = self.params.OutputParameters.directory_path.joinpath(
-            self.filename_base
-        ).with_suffix(".fermo.full.csv")
+            "out.fermo.full.csv"
+        )
         path_df_abbr = self.params.OutputParameters.directory_path.joinpath(
-            self.filename_base
-        ).with_suffix(".fermo.abbrev.csv")
+            "out.fermo.abbrev.csv"
+        )
 
         df_full.to_csv(path_df_full, encoding="utf-8", index=False, sep=",")
         df_abbr.to_csv(path_df_abbr, encoding="utf-8", index=False, sep=",")
@@ -470,21 +462,8 @@ class ExportManager(BaseModel):
 
         self.log_complete_module("fermo.full.csv/fermo.abbrev.csv")
 
-    def write_raw_ms2query_results(self: Self):
-        """If raw MS2Query results exist, write to output directory"""
-        src = DefaultPaths().dirpath_ms2query_base.joinpath("results/f_queries.csv")
-        dst = self.params.OutputParameters.directory_path.joinpath(
-            self.filename_base
-        ).with_suffix(".ms2query_results.csv")
-
-        if src.exists():
-            self.log_start_module(".ms2query_results.csv")
-            shutil.move(src=src, dst=dst)
-            ValidationManager().validate_output_created(dst)
-            self.log_complete_module(".ms2query_results.csv")
-
     def write_cytoscape_output(self: Self):
-        """Write cytoscape output if networking was performed"""
+        """Write Cytoscape-compatible graphml output if networking was performed"""
 
         self.log_start_module(".graphml")
 
@@ -496,38 +475,24 @@ class ExportManager(BaseModel):
 
         for network in self.stats.networks:
             path_graphml = self.params.OutputParameters.directory_path.joinpath(
-                self.filename_base
-            ).with_suffix(f".fermo.{network}.graphml")
+                f"out.fermo.{network}.graphml"
+            )
             nx.write_graphml(self.stats.networks[network].network, path_graphml)
             ValidationManager().validate_output_created(path_graphml)
 
-        self.log_complete_module(".graphml.json")
+        self.log_complete_module(".graphml")
 
     def write_summary_output(self: Self):
         """Write a human-readable summary of steps performed."""
         dst = self.params.OutputParameters.directory_path.joinpath(
-            self.filename_base
-        ).with_suffix(".summary.txt")
-
+            "out.fermo.summary.txt"
+        )
         self.log_start_module("summary.txt")
         summary_writer = SummaryWriter(params=self.params, destination=dst)
         summary_writer.assemble_summary()
         summary_writer.write_summary()
         ValidationManager().validate_output_created(dst)
         self.log_complete_module("summary.txt")
-
-    def write_log_output(self: Self):
-        """Copy the log into the user-specified results directory"""
-        src = Path(__file__).parent.parent.joinpath("fermo_core.log")
-        dst = self.params.OutputParameters.directory_path.joinpath(
-            self.filename_base
-        ).with_suffix(".log")
-
-        if src.exists():
-            self.log_start_module(".log")
-            shutil.copy(src=src, dst=dst)
-            ValidationManager().validate_output_created(dst)
-            self.log_complete_module(".log")
 
     def run(self: Self, version: str, starttime: datetime):
         """Call export methods based on user-input
@@ -538,7 +503,5 @@ class ExportManager(BaseModel):
         """
         self.write_fermo_json(version, starttime)
         self.write_csv_output()
-        self.write_raw_ms2query_results()
         self.write_cytoscape_output()
         self.write_summary_output()
-        self.write_log_output()

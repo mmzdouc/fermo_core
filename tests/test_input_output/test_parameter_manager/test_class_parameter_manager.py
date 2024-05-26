@@ -181,28 +181,6 @@ def test_assign_as_results_invalid():
     assert params.AsResultsParameters is None
 
 
-def test_assign_output_valid():
-    params = ParameterManager()
-    params.PeaktableParameters = PeaktableParameters(
-        format="mzmine3",
-        filepath="tests/test_data/test.peak_table_quant_full.csv",
-        polarity="positive",
-    )
-    params.assign_output({"directory_path": "tests/test_data/results/"})
-    assert isinstance(params.OutputParameters, OutputParameters)
-
-
-def test_assign_output_invalid():
-    params = ParameterManager()
-    params.PeaktableParameters = PeaktableParameters(
-        format="mzmine3",
-        filepath="tests/test_data/test.peak_table_quant_full.csv",
-        polarity="positive",
-    )
-    params.assign_output({"sasd": "dasdas"})
-    assert params.OutputParameters.directory_path.stem == "results"
-
-
 def test_assign_adduct_annotation_valid():
     params = ParameterManager()
     params.assign_adduct_annotation({"activate_module": True, "mass_dev_ppm": 20.0})
