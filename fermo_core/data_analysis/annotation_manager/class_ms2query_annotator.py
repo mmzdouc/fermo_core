@@ -1,6 +1,6 @@
 """Runs the ms2query library annotation module.
 
-Copyright (c) 2024 Mitja Maximilian Zdouc, PhD
+Copyright (c) 2022 to present Mitja Maximilian Zdouc, PhD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -24,6 +24,7 @@ SOFTWARE.
 import contextlib
 import logging
 import os
+import shutil
 from pathlib import Path
 from typing import Optional, Self
 
@@ -127,28 +128,47 @@ class MS2QueryAnnotator(BaseModel):
                 f"'0' for unlimited runtime - SKIP"
             )
 
-    @staticmethod
-    def create_ms2query_dirs():
-        """Create ms2query helper directories"""
-        if not DefaultPaths().dirpath_ms2query_base.joinpath("queries").exists():
-            os.mkdir(DefaultPaths().dirpath_ms2query_base.joinpath("queries"))
+    def create_ms2query_dirs(self: Self):
+        """Create ms2query helper directories in results dir"""
+        self.params.OutputParameters.directory_path.joinpath(
+            "temp_ms2query_queries"
+        ).mkdir(exist_ok=True)
 
-        if not DefaultPaths().dirpath_ms2query_base.joinpath("results").exists():
-            os.mkdir(DefaultPaths().dirpath_ms2query_base.joinpath("results"))
-
-    @staticmethod
-    def remove_ms2query_temp_files():
-        """Remove queries and results files to clean up before run"""
-
+    def remove_ms2query_temp_files(self: Self):
+        """Remove queries files to clean up before run"""
         with contextlib.suppress(FileNotFoundError):
             os.remove(
-                DefaultPaths().dirpath_ms2query_base.joinpath("queries/f_queries.mgf")
+                self.params.OutputParameters.directory_path.joinpath(
+                    "temp_ms2query_queries/f_queries.mgf"
+                )
             )
 
         with contextlib.suppress(FileNotFoundError):
             os.remove(
-                DefaultPaths().dirpath_ms2query_base.joinpath("results/f_queries.csv")
+                self.params.OutputParameters.directory_path.joinpath(
+                    "temp_ms2query_queries/f_queries.csv"
+                )
             )
+
+    def remove_temp_ms2query_dirs(self: Self):
+        """Remove temporary ms2query files after run"""
+        self.remove_ms2query_temp_files()
+        tempdir = self.params.OutputParameters.directory_path.joinpath(
+            "temp_ms2query_queries"
+        )
+        if tempdir.exists():
+            tempdir.rmdir()
+
+    def move_ms2query_results(self: Self):
+        """Copies the written ms2query.csv results from the temp folder"""
+        src = self.params.OutputParameters.directory_path.joinpath(
+            "temp_ms2query_queries/f_queries.csv"
+        )
+        dst = self.params.OutputParameters.directory_path.joinpath(
+            "out.fermo.ms2query_results.csv"
+        )
+        if src.exists:
+            shutil.move(src=src, dst=dst)
 
     def assign_feature_info(self: Self, results_path: str | Path):
         """Load ms2query results and add annotation to Feature objects
@@ -213,10 +233,16 @@ class MS2QueryAnnotator(BaseModel):
             )
             run_complete_folder(
                 ms2library=library,
-                folder_with_spectra=DefaultPaths().dirpath_ms2query_base.joinpath(
-                    "queries"
+                folder_with_spectra=str(
+                    self.params.OutputParameters.directory_path.joinpath(
+                        "temp_ms2query_queries"
+                    ).resolve()
                 ),
-                results_folder=DefaultPaths().dirpath_ms2query_base.joinpath("results"),
+                results_folder=str(
+                    self.params.OutputParameters.directory_path.joinpath(
+                        "temp_ms2query_queries"
+                    ).resolve()
+                ),
                 settings=settings,
             )
         else:
@@ -232,11 +258,15 @@ class MS2QueryAnnotator(BaseModel):
                     func=run_complete_folder,
                     kwargs={
                         "ms2library": library,
-                        "folder_with_spectra": DefaultPaths().dirpath_ms2query_base.joinpath(
-                            "queries"
+                        "folder_with_spectra": str(
+                            self.params.OutputParameters.directory_path.joinpath(
+                                "temp_ms2query_queries"
+                            ).resolve()
                         ),
-                        "results_folder": DefaultPaths().dirpath_ms2query_base.joinpath(
-                            "results"
+                        "results_folder": str(
+                            self.params.OutputParameters.directory_path.joinpath(
+                                "temp_ms2query_queries"
+                            ).resolve()
                         ),
                         "settings": settings,
                     },
@@ -264,8 +294,10 @@ class MS2QueryAnnotator(BaseModel):
         self.remove_ms2query_temp_files()
         save_as_mgf(
             spectrums=self.queries,
-            filename=DefaultPaths().dirpath_ms2query_base.joinpath(
-                "queries/f_queries.mgf"
+            filename=str(
+                self.params.OutputParameters.directory_path.joinpath(
+                    "temp_ms2query_queries/f_queries.mgf"
+                ).resolve()
             ),
         )
 
@@ -280,6 +312,10 @@ class MS2QueryAnnotator(BaseModel):
             )
             self.start_ms2query_algorithm(ms2library)
 
+        self.move_ms2query_results()
         self.assign_feature_info(
-            DefaultPaths().dirpath_ms2query_base.joinpath("results/f_queries.csv")
+            self.params.OutputParameters.directory_path.joinpath(
+                "out.fermo.ms2query_results.csv"
+            )
         )
+        self.remove_temp_ms2query_dirs()

@@ -56,9 +56,9 @@ class OutputParameters(BaseModel):
                 )
 
         if self.directory_path is None:
-            logger.warning(
-                f"'ParameterManager/OutputParameters': output directory not "
-                f"specified. Results will be written to "
+            logger.info(
+                f"'ParameterManager/OutputParameters': "
+                f"all results will be written to "
                 f"'{peaktable_dir.joinpath('results')}'."
             )
             _create_output_dir()

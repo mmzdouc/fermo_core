@@ -1,6 +1,6 @@
-from datetime import datetime
 import glob
 import os
+from datetime import datetime
 from pathlib import Path
 
 import networkx as nx
@@ -11,24 +11,24 @@ from fermo_core.config.class_default_settings import DefaultPaths
 from fermo_core.data_analysis.annotation_manager.class_ms2query_annotator import (
     MS2QueryAnnotator,
 )
-from fermo_core.input_output.class_export_manager import (
-    ExportManager,
-    JsonExporter,
-    CsvExporter,
-)
-from fermo_core.input_output.class_parameter_manager import ParameterManager
 from fermo_core.data_processing.builder_feature.dataclass_feature import (
-    Feature,
-    SimNetworks,
-    Annotations,
     Adduct,
-    NeutralLoss,
-    Match,
+    Annotations,
     CharFrag,
+    Feature,
+    Match,
+    NeutralLoss,
+    SimNetworks,
 )
-from fermo_core.data_processing.class_stats import Stats, SpecSimNet, PhenoData
 from fermo_core.data_processing.builder_sample.dataclass_sample import Sample
 from fermo_core.data_processing.class_repository import Repository
+from fermo_core.data_processing.class_stats import PhenoData, SpecSimNet, Stats
+from fermo_core.input_output.class_export_manager import (
+    CsvExporter,
+    ExportManager,
+    JsonExporter,
+)
+from fermo_core.input_output.class_parameter_manager import ParameterManager
 
 
 @pytest.fixture
@@ -44,7 +44,6 @@ def real_data_export(
     real_data_export.params.OutputParameters.directory_path = Path(
         "tests/test_input_output/test_export_manager/"
     )
-    real_data_export.filename_base = "dummy"
     return real_data_export
 
 
@@ -172,22 +171,8 @@ def csv_exporter():
 @pytest.mark.slow
 def test_run_valid(real_data_export):
     assert real_data_export.run("0.1.0", datetime.now()) is None
-    for filename in glob.glob("tests/test_input_output/test_export_manager/dummy.*"):
+    for filename in glob.glob("tests/test_input_output/test_export_manager/out.fermo*"):
         os.remove(filename)
-
-
-@pytest.mark.slow
-def test_write_raw_ms2query_results_valid(real_data_export):
-    path = DefaultPaths().dirpath_ms2query_base.joinpath("results/f_queries.csv")
-    path.touch(exist_ok=True)
-    assert real_data_export.write_raw_ms2query_results() is None
-    os.remove("tests/test_input_output/test_export_manager/dummy.ms2query_results.csv")
-
-
-@pytest.mark.slow
-def test_write_raw_ms2query_results_pass(real_data_export):
-    MS2QueryAnnotator.remove_ms2query_temp_files()
-    assert real_data_export.write_raw_ms2query_results() is None
 
 
 @pytest.mark.slow
@@ -201,33 +186,25 @@ def test_write_cytoscape_output_valid(real_data_export):
         )
     }
     assert real_data_export.write_cytoscape_output() is None
-    os.remove("tests/test_input_output/test_export_manager/dummy.fermo.xyz.graphml")
-
-
-@pytest.mark.slow
-def test_write_log_output_valid(real_data_export):
-    path = Path("fermo_core/fermo_core.log")
-    path.touch(exist_ok=True)
-    assert real_data_export.write_log_output() is None
-    os.remove("tests/test_input_output/test_export_manager/dummy.log")
+    os.remove("tests/test_input_output/test_export_manager/out.fermo.xyz.graphml")
 
 
 @pytest.mark.slow
 def test_write_csv_output_valid(real_data_export):
     assert real_data_export.write_csv_output() is None
-    for filename in glob.glob("tests/test_input_output/test_export_manager/dummy.*"):
+    for filename in glob.glob("tests/test_input_output/test_export_manager/out.*"):
         os.remove(filename)
 
 
 @pytest.mark.slow
 def test_write_fermo_json(real_data_export):
     assert real_data_export.write_fermo_json("0.1.0", datetime.now()) is None
-    os.remove("tests/test_input_output/test_export_manager/dummy.fermo.session.json")
+    os.remove("tests/test_input_output/test_export_manager/out.fermo.session.json")
 
 
 def test_write_summary_output(real_data_export):
     assert real_data_export.write_summary_output() is None
-    os.remove("tests/test_input_output/test_export_manager/dummy.summary.txt")
+    os.remove("tests/test_input_output/test_export_manager/out.fermo.summary.txt")
 
 
 def test_export_metadata_json(json_exporter):

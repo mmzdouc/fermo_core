@@ -1,17 +1,15 @@
 import pytest
 
-from fermo_core.data_analysis.score_assigner.class_score_assigner import (
-    ScoreAssigner,
-)
+from fermo_core.data_analysis.score_assigner.class_score_assigner import ScoreAssigner
 from fermo_core.data_processing.builder_feature.dataclass_feature import (
-    Feature,
-    Phenotype,
     Annotations,
+    Feature,
     Match,
+    Phenotype,
 )
 from fermo_core.data_processing.builder_sample.dataclass_sample import Sample
 from fermo_core.data_processing.class_repository import Repository
-from fermo_core.data_processing.class_stats import Stats, SpecSimNet
+from fermo_core.data_processing.class_stats import SpecSimNet, Stats
 from fermo_core.input_output.class_parameter_manager import ParameterManager
 
 
@@ -115,7 +113,7 @@ def test_assign_feature_scores_invalid(score_assigner):
     score_assigner.features.entries[1].Annotations = None
     score_assigner.features.entries[1].phenotypes = None
     score_assigner.assign_feature_scores()
-    assert score_assigner.features.entries[1].Scores is None
+    assert score_assigner.features.entries[1].Scores.phenotype is None
 
 
 def test_collect_sample_spec_networks_valid(score_assigner):

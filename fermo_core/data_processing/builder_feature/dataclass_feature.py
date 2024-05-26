@@ -300,7 +300,7 @@ class Scores(BaseModel):
             "phenotype": (
                 round(self.phenotype, 2) if self.phenotype is not None else 0.0
             ),
-            "novelty": round(self.novelty, 2) if self.novelty is not None else 0.0,
+            "novelty": round(self.novelty, 2) if self.novelty is not None else 1.0,
         }
 
 
