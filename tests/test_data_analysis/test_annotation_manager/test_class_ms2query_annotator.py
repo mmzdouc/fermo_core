@@ -131,6 +131,7 @@ def test_assign_feature_info_invalid(ms2query_annotator):
     assert ms2query_annotator.features.entries[20].Annotations is None
 
 
+@pytest.mark.slow
 def test_run_ms2query_over_timeout(ms2query_annotator):
     ms2query_annotator.prepare_queries()
     ms2query_annotator.params.Ms2QueryAnnotationParameters.maximum_runtime = 0.01

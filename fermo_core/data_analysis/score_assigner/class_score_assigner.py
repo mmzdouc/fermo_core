@@ -83,11 +83,7 @@ class ScoreAssigner(BaseModel):
                 annot_scores = [match.score for match in feature.Annotations.matches]
                 feature.Scores.novelty = 1 - max(annot_scores)
 
-            if feature.Scores.phenotype is None and feature.Scores.novelty is None:
-                feature.Scores = None
-                continue
-            else:
-                self.features.modify(f_id, feature)
+            self.features.modify(f_id, feature)
 
     def collect_sample_spec_networks(self: Self):
         """Collect sample:set of network ids for each used algorithm

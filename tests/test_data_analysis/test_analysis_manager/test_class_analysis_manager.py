@@ -86,4 +86,4 @@ def test_run_phenotype_manager_valid(analysis_manager_instance):
 
 def test_run_score_assignment_valid(analysis_manager_instance):
     analysis_manager_instance.run_score_assignment()
-    assert analysis_manager_instance.features.entries[13].Scores is None
+    assert analysis_manager_instance.features.entries[13].Scores is not None
