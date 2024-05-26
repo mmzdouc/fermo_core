@@ -10,6 +10,12 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 N/A
 
+## [0.2.1] 26-05-2024
+
+### Fixed
+
+- Fixed bug in "SummaryWriter": implemented error catching.
+
 ## [0.2.0] 26-05-2024
 
 ### Changed

@@ -133,9 +133,9 @@ class SummaryWriter(BaseModel):
                 self.summary.append(
                     f"Molecular features were filtered and only retained if they were "
                     f"inside the relative area range of "
-                    f"'{self.params.FeatureFilteringParameters.filter_rel_int_range[0]}"
+                    f"'{self.params.FeatureFilteringParameters.filter_rel_area_range[0]}"
                     f"-"
-                    f"{self.params.FeatureFilteringParameters.filter_rel_int_range[1]}'"
+                    f"{self.params.FeatureFilteringParameters.filter_rel_area_range[1]}'"
                     f" in at least one sample (relative to the feature with the "
                     f"highest area in the sample)."
                 )
@@ -349,30 +349,37 @@ class SummaryWriter(BaseModel):
 
     def assemble_summary(self: Self):
         """Call methods to assemble the summary file"""
-        logger.debug("'SummaryWriter': Started summary: files")
-        self.summarize_peaktableparameters()
-        self.summarize_msmsparameters()
-        self.summarize_phenotypeparameters()
-        self.summarize_groupmetadataparameters()
-        self.summarize_speclibparameters()
-        self.summarize_ms2queryresultsparameters()
-        self.summarize_asresultsparameters()
-        logger.debug("'SummaryWriter': Completed summary: files")
-        logger.debug("'SummaryWriter': Started summary: analysis modules")
-        self.summarize_featurefilteringparameters()
-        self.summarize_adductannotationparameters()
-        self.summarize_neutrallossparameters()
-        self.summarize_fragmentannparameters()
-        self.summarize_specsimnetworkcosineparameters()
-        self.summarize_specsimnetworkdeepscoreparameters()
-        self.summarize_blankassignmentparameters()
-        self.summarize_groupfactassignmentparameters()
-        self.summarize_phenoqualassgnparams()
-        self.summarize_phenoquantpercentassgnparams()
-        self.summarize_phenoquantconcassgnparams()
-        self.summarize_spectrallibmatchingcosineparameters()
-        self.summarize_spectrallibmatchingdeepscoreparameters()
-        self.summarize_ms2queryannotationparameters()
-        self.summarize_askcbcosinematchingparams()
-        self.summarize_askcbdeepscorematchingparams()
-        logger.debug("'SummaryWriter': Completed summary: analysis modules")
+        try:
+            logger.debug("'SummaryWriter': Started summary: files")
+            self.summarize_peaktableparameters()
+            self.summarize_msmsparameters()
+            self.summarize_phenotypeparameters()
+            self.summarize_groupmetadataparameters()
+            self.summarize_speclibparameters()
+            self.summarize_ms2queryresultsparameters()
+            self.summarize_asresultsparameters()
+            logger.debug("'SummaryWriter': Completed summary: files")
+            logger.debug("'SummaryWriter': Started summary: analysis modules")
+            self.summarize_featurefilteringparameters()
+            self.summarize_adductannotationparameters()
+            self.summarize_neutrallossparameters()
+            self.summarize_fragmentannparameters()
+            self.summarize_specsimnetworkcosineparameters()
+            self.summarize_specsimnetworkdeepscoreparameters()
+            self.summarize_blankassignmentparameters()
+            self.summarize_groupfactassignmentparameters()
+            self.summarize_phenoqualassgnparams()
+            self.summarize_phenoquantpercentassgnparams()
+            self.summarize_phenoquantconcassgnparams()
+            self.summarize_spectrallibmatchingcosineparameters()
+            self.summarize_spectrallibmatchingdeepscoreparameters()
+            self.summarize_ms2queryannotationparameters()
+            self.summarize_askcbcosinematchingparams()
+            self.summarize_askcbdeepscorematchingparams()
+            logger.debug("'SummaryWriter': Completed summary: analysis modules")
+        except Exception as e:
+            logger.error(str(e))
+            logger.error(
+                "SummaryWriter: error occurred during writing of summary. "
+                "Write steps until error occurred."
+            )
