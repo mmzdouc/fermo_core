@@ -15,6 +15,7 @@ N/A
 ### Changed
 
 - Removed 'phenotypes' as separate Feature attribute: write to Annotation object instead.
+- Implemented sorting of annotation entries in descending order
 
 ## [0.2.1] 26-05-2024
 

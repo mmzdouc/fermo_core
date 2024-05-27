@@ -168,3 +168,117 @@ def test_to_json_scores_valid():
     feature.Scores = Scores(novelty=1.0, phenotype=0.88)
     f_dict = feature.to_json()
     assert f_dict["scores"]["novelty"] == 1.0
+
+
+def test_sort_entries_adducts_invalid():
+    annotation = Annotations()
+    annotation.sort_entries(attr="adducts", score="diff_ppm", direction=True)
+    assert annotation.adducts is None
+
+
+def test_sort_entries_adducts_valid():
+    annotation = Annotations(
+        adducts=[
+            Adduct(
+                partner_adduct="A",
+                partner_mz=12,
+                diff_ppm=11.0,
+                partner_id=12,
+                adduct_type="B",
+            ),
+            Adduct(
+                partner_adduct="A",
+                partner_mz=12,
+                diff_ppm=1.0,
+                partner_id=12,
+                adduct_type="B",
+            ),
+        ]
+    )
+    annotation.sort_entries(attr="adducts", score="diff_ppm", direction=False)
+    assert annotation.adducts[0].diff_ppm == 1.0
+
+
+def test_sort_entries_matches_invalid():
+    annotation = Annotations()
+    annotation.sort_entries(attr="matches", score="score", direction=True)
+    assert annotation.matches is None
+
+
+def test_sort_entries_matches_valid():
+    annotation = Annotations()
+    annotation.matches = [
+        Match(
+            id="fakeomycin",
+            library="default_library",
+            algorithm="modified cosine",
+            score=0.1,
+            mz=1234.5,
+            diff_mz=300.2,
+            module="user-library-matching",
+        ),
+        Match(
+            id="fakeomycin",
+            library="default_library",
+            algorithm="modified cosine",
+            score=0.99,
+            mz=1234.5,
+            diff_mz=300.2,
+            module="user-library-matching",
+        ),
+    ]
+    annotation.sort_entries(attr="matches", score="score", direction=True)
+    assert annotation.matches[0].score == 0.99
+
+
+def test_sort_entries_losses_invalid():
+    annotation = Annotations()
+    annotation.sort_entries(attr="losses", score="diff", direction=False)
+    assert annotation.losses is None
+
+
+def test_sort_entries_losses_valid():
+    annotation = Annotations(
+        losses=[
+            NeutralLoss(
+                id="alanine", loss_det=100.0, loss_ex=100.01, mz_frag=80.0, diff=12.0
+            ),
+            NeutralLoss(
+                id="non-ala", loss_det=100.0, loss_ex=100.01, mz_frag=80.0, diff=1.0
+            ),
+        ]
+    )
+    annotation.sort_entries(attr="losses", score="diff", direction=False)
+    assert annotation.losses[0].diff == 1.0
+
+
+def test_sort_entries_fragments_invalid():
+    annotation = Annotations()
+    annotation.sort_entries(attr="fragments", score="diff", direction=False)
+    assert annotation.fragments is None
+
+
+def test_sort_entries_fragments_valid():
+    annotation = Annotations()
+    annotation.fragments = [
+        CharFrag(id="Ala-Ala", frag_det=100.0, frag_ex=100.01, diff=12.0),
+        CharFrag(id="yalla-yalla", frag_det=100.0, frag_ex=100.01, diff=1.0),
+    ]
+    annotation.sort_entries(attr="fragments", score="diff", direction=False)
+    assert annotation.fragments[0].diff == 1.0
+
+
+def test_sort_entries_phenotypes_invalid():
+    annotation = Annotations()
+    annotation.sort_entries(attr="phenotypes", score="score", direction=True)
+    assert annotation.phenotypes is None
+
+
+def test_sort_entries_phenotypes_valid():
+    annotation = Annotations()
+    annotation.phenotypes = [
+        Phenotype(score=0.1, format="qualitative", descr="asdf"),
+        Phenotype(score=1.0, format="qualitative", descr="qwertz"),
+    ]
+    annotation.sort_entries(attr="phenotypes", score="score", direction=True)
+    assert annotation.phenotypes[0].score == 1.0

@@ -204,9 +204,32 @@ class Annotations(BaseModel):
     fragments: Optional[list] = None
     phenotypes: Optional[list] = None
 
-    # TODO(MMZ 27.05.): implement a sort function
+    def sort_entries(self: Self, attr: str, score: str, direction: bool):
+        """Sort the entries in 'attr' based on 'score' in descending order
+
+        Arguments:
+            attr: the attribute to target
+            score: the score to sort for
+            direction: False to sort low to high, True for reverse
+
+        """
+        if getattr(self, attr) is not None:
+            setattr(
+                self,
+                attr,
+                sorted(
+                    getattr(self, attr),
+                    key=lambda x: getattr(x, score),
+                    reverse=direction,
+                ),
+            )
 
     def to_json(self: Self) -> dict:
+        self.sort_entries(attr="adducts", score="diff_ppm", direction=False)
+        self.sort_entries(attr="matches", score="score", direction=True)
+        self.sort_entries(attr="losses", score="diff", direction=False)
+        self.sort_entries(attr="fragments", score="diff", direction=False)
+        self.sort_entries(attr="phenotypes", score="score", direction=True)
         return {
             "adducts": (
                 [adduct.to_json() for adduct in self.adducts]
