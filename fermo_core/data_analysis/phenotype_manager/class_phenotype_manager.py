@@ -146,7 +146,7 @@ class PhenotypeManager(BaseModel):
             return
 
         logger.info(
-            "'PhenotypeManager': started quantitative phenotype data analysis for "
+            "'PhenotypeManager': completed quantitative phenotype data analysis for "
             "percentage data."
         )
 

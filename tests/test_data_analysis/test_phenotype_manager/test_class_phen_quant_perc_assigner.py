@@ -3,13 +3,13 @@ import pytest
 from fermo_core.data_analysis.phenotype_manager.class_phen_quant_perc_assigner import (
     PhenQuantPercAssigner,
 )
-from fermo_core.data_processing.class_stats import Stats, PhenoData, SamplePhenotype
-from fermo_core.data_processing.class_repository import Repository
 from fermo_core.data_processing.builder_feature.dataclass_feature import (
     Feature,
     SampleInfo,
 )
 from fermo_core.data_processing.builder_sample.dataclass_sample import Sample
+from fermo_core.data_processing.class_repository import Repository
+from fermo_core.data_processing.class_stats import PhenoData, SamplePhenotype, Stats
 from fermo_core.input_output.class_parameter_manager import ParameterManager
 
 
@@ -76,7 +76,7 @@ def test_find_relevant_f_ids(phen_quant_perc):
 def test_calculate_correlation_valid(phen_quant_perc):
     phen_quant_perc.find_relevant_f_ids()
     phen_quant_perc.calculate_correlation()
-    assert phen_quant_perc.features.entries[2].phenotypes[0] is not None
+    assert phen_quant_perc.features.entries[2].Annotations.phenotypes[0] is not None
 
 
 def test_calculate_correlation_invalid(phen_quant_perc):
@@ -86,7 +86,7 @@ def test_calculate_correlation_invalid(phen_quant_perc):
 
 def test_run_analysis_valid(phen_quant_perc):
     phen_quant_perc.run_analysis()
-    assert phen_quant_perc.features.entries[2].phenotypes[0] is not None
+    assert phen_quant_perc.features.entries[2].Annotations.phenotypes[0] is not None
 
 
 def test_run_analysis_invalid(phen_quant_perc):

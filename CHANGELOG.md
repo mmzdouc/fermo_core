@@ -10,6 +10,13 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 N/A
 
+## [0.2.1] 27-05-2024
+
+### Changed
+
+- Removed 'phenotypes' as separate Feature attribute: write to Annotation object instead.
+- Implemented sorting of annotation entries in descending order
+
 ## [0.2.1] 26-05-2024
 
 ### Fixed

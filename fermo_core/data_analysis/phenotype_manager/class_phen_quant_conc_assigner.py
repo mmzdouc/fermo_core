@@ -27,7 +27,11 @@ from typing import Self
 from pydantic import BaseModel
 from scipy.stats import pearsonr, zscore
 
-from fermo_core.data_processing.builder_feature.dataclass_feature import Phenotype
+from fermo_core.data_processing.builder_feature.dataclass_feature import (
+    Annotations,
+    Feature,
+    Phenotype,
+)
 from fermo_core.data_processing.class_repository import Repository
 from fermo_core.data_processing.class_stats import Stats
 from fermo_core.input_output.class_parameter_manager import ParameterManager
@@ -59,6 +63,22 @@ class PhenQuantConcAssigner(BaseModel):
             The modified Stats and Repository objects
         """
         return self.stats, self.features
+
+    @staticmethod
+    def add_annotation_attribute(feature: Feature) -> Feature:
+        """Add annotation attribute to feature if not existing
+
+        Arguments:
+            feature: the Feature object to modify
+
+        Returns:
+            The modified feature object
+        """
+        if feature.Annotations is None:
+            feature.Annotations = Annotations()
+        if feature.Annotations.phenotypes is None:
+            feature.Annotations.phenotypes = []
+        return feature
 
     def find_relevant_f_ids(self: Self):
         """Determines features detected in > 3 samples"""
@@ -120,9 +140,8 @@ class PhenQuantConcAssigner(BaseModel):
                     self.params.PhenoQuantConcAssgnParams.coeff_cutoff == 0
                     or self.params.PhenoQuantConcAssgnParams.p_val_cutoff == 0
                 ):
-                    if feature.phenotypes is None:
-                        feature.phenotypes = []
-                    feature.phenotypes.append(
+                    feature = self.add_annotation_attribute(feature=feature)
+                    feature.Annotations.phenotypes.append(
                         Phenotype(
                             format=assay.datatype,
                             category=assay.category,
@@ -136,9 +155,8 @@ class PhenQuantConcAssigner(BaseModel):
                     pearson_s > self.params.PhenoQuantConcAssgnParams.coeff_cutoff
                     and p_val_cor < self.params.PhenoQuantConcAssgnParams.p_val_cutoff
                 ):
-                    if feature.phenotypes is None:
-                        feature.phenotypes = []
-                    feature.phenotypes.append(
+                    feature = self.add_annotation_attribute(feature=feature)
+                    feature.Annotations.phenotypes.append(
                         Phenotype(
                             format=assay.datatype,
                             category=assay.category,

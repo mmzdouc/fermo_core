@@ -71,8 +71,12 @@ class ScoreAssigner(BaseModel):
             feature = self.features.get(f_id)
             feature.Scores = FeatureScores()
 
-            if feature.phenotypes is not None and len(feature.phenotypes) != 0:
-                phen_scores = [assay.score for assay in feature.phenotypes]
+            if (
+                feature.Annotations is not None
+                and feature.Annotations.phenotypes is not None
+                and len(feature.Annotations.phenotypes) != 0
+            ):
+                phen_scores = [assay.score for assay in feature.Annotations.phenotypes]
                 feature.Scores.phenotype = max(phen_scores)
 
             if (

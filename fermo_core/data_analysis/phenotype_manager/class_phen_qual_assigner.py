@@ -27,7 +27,11 @@ from typing import Optional, Self
 
 from pydantic import BaseModel
 
-from fermo_core.data_processing.builder_feature.dataclass_feature import Phenotype
+from fermo_core.data_processing.builder_feature.dataclass_feature import (
+    Annotations,
+    Feature,
+    Phenotype,
+)
 from fermo_core.data_processing.class_repository import Repository
 from fermo_core.data_processing.class_stats import Stats
 from fermo_core.input_output.class_parameter_manager import ParameterManager
@@ -60,6 +64,22 @@ class PhenQualAssigner(BaseModel):
         """
         return self.stats, self.features
 
+    @staticmethod
+    def add_annotation_attribute(feature: Feature) -> Feature:
+        """Add annotation attribute to feature if not existing
+
+        Arguments:
+            feature: the Feature object to modify
+
+        Returns:
+            The modified feature object
+        """
+        if feature.Annotations is None:
+            feature.Annotations = Annotations()
+        if feature.Annotations.phenotypes is None:
+            feature.Annotations.phenotypes = []
+        return feature
+
     def collect_sets(self: Self):
         """Collect sets of active and inactive features and assign actives"""
         f_ids_all_actives = set()
@@ -80,11 +100,12 @@ class PhenQualAssigner(BaseModel):
         self.stats.phenotypes[0].f_ids_positive.update(f_ids_only_actives)
         for f_id in f_ids_only_actives:
             feature = self.features.get(f_id)
-            feature.phenotypes = [
+            feature = self.add_annotation_attribute(feature=feature)
+            feature.Annotations.phenotypes.append(
                 Phenotype(
                     score=0, format="qualitative", descr="only in positive samples"
                 )
-            ]
+            )
             self.features.modify(f_id, feature)
 
         self.f_ids_intersect = f_ids_all_actives.intersection(f_ids_all_inactives)
@@ -145,23 +166,26 @@ class PhenQualAssigner(BaseModel):
                 case "minmax":
                     factor = min(vals_act) / max(vals_inact)
                     if factor >= self.params.PhenoQualAssgnParams.factor:
-                        feature.phenotypes = [
+                        feature = self.add_annotation_attribute(feature=feature)
+                        feature.Annotations.phenotypes.append(
                             Phenotype(score=factor, format="qualitative")
-                        ]
+                        )
                         self.stats.phenotypes[0].f_ids_positive.add(f_id)
                 case "mean":
                     factor = mean(vals_act) / mean(vals_inact)
                     if factor >= self.params.PhenoQualAssgnParams.factor:
-                        feature.phenotypes = [
+                        feature = self.add_annotation_attribute(feature=feature)
+                        feature.Annotations.phenotypes.append(
                             Phenotype(score=factor, format="qualitative")
-                        ]
+                        )
                         self.stats.phenotypes[0].f_ids_positive.add(f_id)
                 case "median":
                     factor = median(vals_act) / median(vals_inact)
                     if factor >= self.params.PhenoQualAssgnParams.factor:
-                        feature.phenotypes = [
+                        feature = self.add_annotation_attribute(feature=feature)
+                        feature.Annotations.phenotypes.append(
                             Phenotype(score=factor, format="qualitative")
-                        ]
+                        )
                         self.stats.phenotypes[0].f_ids_positive.add(f_id)
                 case _:
                     raise RuntimeError("'PhenQualAssigner': Unsupported algorithm.")
