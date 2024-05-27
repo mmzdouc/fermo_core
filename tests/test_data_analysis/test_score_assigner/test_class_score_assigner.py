@@ -36,15 +36,6 @@ def score_assigner():
         samples={
             "s1",
         },
-        phenotypes=[
-            Phenotype(
-                format="quantitative-concentration",
-                category="assay:assay1",
-                score=0.9,
-                p_value=0.000005,
-                p_value_corr=0.0005,
-            )
-        ],
         Annotations=Annotations(
             matches=[
                 Match(
@@ -65,7 +56,16 @@ def score_assigner():
                     diff_mz=0.011,
                     module="library-annotation",
                 ),
-            ]
+            ],
+            phenotypes=[
+                Phenotype(
+                    format="quantitative-concentration",
+                    category="assay:assay1",
+                    score=0.9,
+                    p_value=0.000005,
+                    p_value_corr=0.0005,
+                )
+            ],
         ),
     )
     score_assigner.features.add(1, f1)
@@ -96,14 +96,14 @@ def test_assign_feature_scores_valid(score_assigner):
 
 
 def test_assign_feature_scores_phenotype_invalid(score_assigner):
-    score_assigner.features.entries[1].phenotypes = None
+    score_assigner.features.entries[1].Annotations.phenotypes = None
     score_assigner.assign_feature_scores()
     assert score_assigner.features.entries[1].Scores.phenotype is None
     assert round(score_assigner.features.entries[1].Scores.novelty, 1) == 0.1
 
 
 def test_assign_feature_scores_novelty_invalid(score_assigner):
-    score_assigner.features.entries[1].Annotations = None
+    score_assigner.features.entries[1].Annotations.matches = None
     score_assigner.assign_feature_scores()
     assert score_assigner.features.entries[1].Scores.phenotype == 0.9
     assert score_assigner.features.entries[1].Scores.novelty is None
@@ -111,7 +111,6 @@ def test_assign_feature_scores_novelty_invalid(score_assigner):
 
 def test_assign_feature_scores_invalid(score_assigner):
     score_assigner.features.entries[1].Annotations = None
-    score_assigner.features.entries[1].phenotypes = None
     score_assigner.assign_feature_scores()
     assert score_assigner.features.entries[1].Scores.phenotype is None
 

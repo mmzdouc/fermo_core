@@ -24,7 +24,6 @@ SOFTWARE.
 import json
 import logging
 import platform
-import shutil
 from datetime import datetime
 from typing import Any, Self
 
@@ -32,7 +31,6 @@ import networkx as nx
 import pandas as pd
 from pydantic import BaseModel
 
-from fermo_core.config.class_default_settings import DefaultPaths
 from fermo_core.data_processing.class_repository import Repository
 from fermo_core.data_processing.class_stats import Stats
 from fermo_core.input_output.class_parameter_manager import ParameterManager

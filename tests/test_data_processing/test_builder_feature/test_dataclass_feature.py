@@ -4,15 +4,15 @@ import numpy as np
 from fermo_core.data_processing.builder_feature.dataclass_feature import (
     Adduct,
     Annotations,
+    CharFrag,
     Feature,
+    GroupFactor,
     Match,
     NeutralLoss,
-    SimNetworks,
-    CharFrag,
-    SampleInfo,
-    GroupFactor,
     Phenotype,
+    SampleInfo,
     Scores,
+    SimNetworks,
 )
 
 
@@ -114,6 +114,16 @@ def test_to_json_fragments_valid():
     assert f_dict["annotations"]["fragments"][0]["id"] == "Ala-Ala"
 
 
+def test_to_json_phenotype_valid():
+    feature = Feature()
+    feature.Annotations = Annotations()
+    feature.Annotations.phenotypes = [
+        Phenotype(score=0.1, format="qualitative", descr="asdf")
+    ]
+    f_dict = feature.to_json()
+    assert f_dict["annotations"]["phenotypes"][0]["score"] == 0.1
+
+
 def test_to_json_area_per_sample_valid():
     feature = Feature()
     feature.area_per_sample = [
@@ -151,13 +161,6 @@ def test_to_json_groups_valid():
     feature.groups = {"cat1": {"gr1", "gr2", "gr3"}, "cat2": {"m1", "m2"}}
     f_dict = feature.to_json()
     assert len(f_dict["groups"]["cat1"]) == 3
-
-
-def test_to_json_phenotypes_valid():
-    feature = Feature()
-    feature.phenotypes = [Phenotype(score=0.1, format="qualitative", descr="asdf")]
-    f_dict = feature.to_json()
-    assert f_dict["phenotypes"][0]["score"] == 0.1
 
 
 def test_to_json_scores_valid():

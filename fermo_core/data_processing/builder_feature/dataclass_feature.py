@@ -154,6 +154,39 @@ class CharFrag(BaseModel):
         }
 
 
+class Phenotype(BaseModel):
+    """A Pydantic-based class to represent phenotype information
+
+    Attributes:
+        format: the format of the phenotype file
+        category: the assay category (column) if applicable
+        descr: additional data if applicable
+        score: the score calculated
+        p_value: the calculated p-value if applicable
+        p_value_corr: the corrected p-value if applicable
+
+    """
+
+    format: str
+    category: Optional[str] = None
+    descr: Optional[str] = None
+    score: float
+    p_value: Optional[float] = None
+    p_value_corr: Optional[float] = None
+
+    def to_json(self: Self) -> dict:
+        return {
+            "format": self.format,
+            "category": self.category if self.category is not None else "N/A",
+            "descr": self.descr if self.descr is not None else "N/A",
+            "score": round(self.score, 6),
+            "p_value": round(self.p_value, 10) if self.p_value is not None else 1.0,
+            "p_value_corr": (
+                round(self.p_value_corr, 10) if self.p_value_corr is not None else 1.0
+            ),
+        }
+
+
 class Annotations(BaseModel):
     """A Pydantic-based class to represent annotation information
 
@@ -162,12 +195,16 @@ class Annotations(BaseModel):
         matches: list of Match objects repr. putative library matching hits
         losses: list of NeutralLoss objects annotating functional groups of feature
         fragments: list of CharFrag objects annotating characteristic ion fragments
+        phenotypes: list of Phenotype objects if feature phenotype-associated
     """
 
     adducts: Optional[list] = None
     matches: Optional[list] = None
     losses: Optional[list] = None
     fragments: Optional[list] = None
+    phenotypes: Optional[list] = None
+
+    # TODO(MMZ 27.05.): implement a sort function
 
     def to_json(self: Self) -> dict:
         return {
@@ -189,6 +226,11 @@ class Annotations(BaseModel):
             "fragments": (
                 [adduct.to_json() for adduct in self.fragments]
                 if self.fragments is not None
+                else []
+            ),
+            "phenotypes": (
+                [phenotype.to_json() for phenotype in self.phenotypes]
+                if self.phenotypes is not None
                 else []
             ),
         }
@@ -251,39 +293,6 @@ class GroupFactor(BaseModel):
         }
 
 
-class Phenotype(BaseModel):
-    """A Pydantic-based class to represent phenotype information
-
-    Attributes:
-        format: the format of the phenotype file
-        category: the assay category (column) if applicable
-        descr: additional data if applicable
-        score: the score calculated
-        p_value: the calculated p-value if applicable
-        p_value_corr: the Bonferroni-corrected p-value if applicable
-
-    """
-
-    format: str
-    category: Optional[str] = None
-    descr: Optional[str] = None
-    score: float
-    p_value: Optional[float] = None
-    p_value_corr: Optional[float] = None
-
-    def to_json(self: Self) -> dict:
-        return {
-            "format": self.format,
-            "category": self.category if self.category is not None else "N/A",
-            "descr": self.descr if self.descr is not None else "N/A",
-            "score": round(self.score, 6),
-            "p_value": round(self.p_value, 10) if self.p_value is not None else 1.0,
-            "p_value_corr": (
-                round(self.p_value_corr, 10) if self.p_value_corr is not None else 1.0
-            ),
-        }
-
-
 class Scores(BaseModel):
     """A Pydantic-based class to represent feature score information
 
@@ -328,7 +337,6 @@ class Feature(BaseModel):
         blank: bool to indicate if feature is blank-associated (if provided).
         groups: association to categories and groups is such data was provided.
         group_factors: indicates the group factors(fold differences) if provided.
-        phenotypes: a list of Phenotype objects if phenotype was assigned
         Annotations: objects summarizing associated annotation data
         networks: dict of objects representing associated networking data
         Scores: Object representing feature-associated scores
@@ -354,7 +362,6 @@ class Feature(BaseModel):
     blank: Optional[bool] = None
     groups: Optional[dict] = None
     group_factors: Optional[dict] = None
-    phenotypes: Optional[list] = None
     Annotations: Optional[Any] = None
     networks: Optional[dict] = None
     Scores: Optional[Any] = None
@@ -410,15 +417,22 @@ class Feature(BaseModel):
         else:
             json_dict["group_factors"] = {}
 
-        if self.phenotypes is not None:
-            json_dict["phenotypes"] = [obj.to_json() for obj in self.phenotypes]
-        else:
-            json_dict["phenotypes"] = []
-
         if self.Scores is not None:
             json_dict["scores"] = self.Scores.to_json()
         else:
             json_dict["scores"] = {}
+
+        if self.Annotations is not None:
+            json_dict["annotations"] = self.Annotations.to_json()
+        else:
+            json_dict["annotations"] = {}
+
+        if self.networks is not None:
+            json_dict["networks"] = {
+                key: val.to_json() for key, val in self.networks.items()
+            }
+        else:
+            json_dict["networks"] = {}
 
         if self.Spectrum is not None:
             json_dict["spectrum"] = {
@@ -428,17 +442,5 @@ class Feature(BaseModel):
             }
         else:
             json_dict["spectrum"] = {}
-
-        if self.networks is not None:
-            json_dict["networks"] = {
-                key: val.to_json() for key, val in self.networks.items()
-            }
-        else:
-            json_dict["networks"] = {}
-
-        if self.Annotations is not None:
-            json_dict["annotations"] = self.Annotations.to_json()
-        else:
-            json_dict["annotations"] = {}
 
         return json_dict
