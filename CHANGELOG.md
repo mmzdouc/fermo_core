@@ -16,6 +16,8 @@ N/A
 
 - [Breaking change] Parameter settings for `additional_modules/feature_filtering` were changed from a list of ranges to a dictionary with explicit values.
 - Reworked score assignment for qualitative phenotype data: phenotype-associated features now always receive a score of 1.0, and non-associated ones a score of 0.0.
+- For all modules with runtime restriction, the 'maximum_runtime' parameter was set to a default of '0' (unlimited runtime). Therefore, runtime restriction must now be specified explicitly.
+- Added a 'module_passed' parameter to all modules. This allows a more accurate description via the SummaryWriter (e.g. module was activated but timed out, and lack of e.g. annotation is due to premature ending and not because there were no hits).
 
 ## [0.2.2] 27-05-2024
 

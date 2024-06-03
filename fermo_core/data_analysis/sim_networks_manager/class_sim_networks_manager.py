@@ -121,13 +121,15 @@ class SimNetworksManager(BaseModel):
             f"filter out low-intensity/area peaks with 'feature_filtering' - SKIP"
         )
 
-    def return_attrs(self: Self) -> tuple[Stats, Repository, Repository]:
+    def return_attrs(
+        self: Self,
+    ) -> tuple[Stats, Repository, Repository, ParameterManager]:
         """Returns modified attributes from SimNetworksManager to the calling function
 
         Returns:
             Tuple containing Stats, Feature Repository and Sample Repository objects.
         """
-        return self.stats, self.features, self.samples
+        return self.stats, self.features, self.samples, self.params
 
     def run_analysis(self: Self):
         """Organizes calling of data analysis steps."""
@@ -186,7 +188,7 @@ class SimNetworksManager(BaseModel):
         self.store_network_data(
             "modified_cosine", network_data, tuple(filtered_features.get("included"))
         )
-
+        self.params.SpecSimNetworkCosineParameters.module_passed = True
         logger.info("'SimNetworksManager/ModCosineNetworker': completed calculation")
 
     def run_ms2deepscore_alg(self: Self):
@@ -241,7 +243,7 @@ class SimNetworksManager(BaseModel):
         self.store_network_data(
             "ms2deepscore", network_data, tuple(filtered_features.get("included"))
         )
-
+        self.params.SpecSimNetworkDeepscoreParameters.module_passed = True
         logger.info("'SimNetworksManager/Ms2deepscoreNetworker': completed calculation")
 
     def filter_input_spectra(

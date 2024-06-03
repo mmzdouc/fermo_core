@@ -40,6 +40,7 @@ class FeatureFilteringParameters(BaseModel):
         filter_rel_int_range_max: max value to filter feature for rel int
         filter_rel_area_range_min: min value to filter feature for rel area
         filter_rel_area_range_max: max value to filter feature for rel area
+        module_passed: indicates that the module ran without errors
     """
 
     activate_module: bool = False
@@ -47,6 +48,7 @@ class FeatureFilteringParameters(BaseModel):
     filter_rel_int_range_max: float = 1.0
     filter_rel_area_range_min: float = 0.0
     filter_rel_area_range_max: float = 1.0
+    module_passed: bool = False
 
     @model_validator(mode="after")
     def validate_attrs(self):
@@ -67,6 +69,7 @@ class FeatureFilteringParameters(BaseModel):
                 "filter_rel_int_range_max": self.filter_rel_int_range_max,
                 "filter_rel_area_range_min": self.filter_rel_area_range_min,
                 "filter_rel_area_range_max": self.filter_rel_area_range_max,
+                "module_passed": self.module_passed,
             }
         else:
             return {"activate_module": self.activate_module}
@@ -80,15 +83,14 @@ class BlankAssignmentParameters(BaseModel):
         factor: An integer fold-change to differentiate blank features.
         algorithm: the algorithm to summarize values of different samples.
         value: the type of value to use for determination
-
-    Raise:
-        pydantic.ValidationError: Pydantic validation failed during instantiation.
+        module_passed: indicates that the module ran without errors
     """
 
     activate_module: bool = False
     factor: PositiveInt = 10
     algorithm: str = "mean"
     value: str = "area"
+    module_passed: bool = False
 
     @model_validator(mode="after")
     def validate_strs(self):
@@ -113,6 +115,7 @@ class BlankAssignmentParameters(BaseModel):
                 "factor": int(self.factor),
                 "algorithm": str(self.algorithm),
                 "value": str(self.value),
+                "module_passed": self.module_passed,
             }
         else:
             return {"activate_module": self.activate_module}
@@ -125,11 +128,13 @@ class GroupFactAssignmentParameters(BaseModel):
         activate_module: bool to indicate if module should be executed.
         algorithm: the algorithm to summarize values of different samples.
         value: the type of value to use for comparison
+        module_passed: indicates that the module ran without errors
     """
 
     activate_module: bool = False
     algorithm: str = "mean"
     value: str = "area"
+    module_passed: bool = False
 
     @model_validator(mode="after")
     def validate_strs(self):
@@ -153,6 +158,7 @@ class GroupFactAssignmentParameters(BaseModel):
                 "activate_module": self.activate_module,
                 "algorithm": str(self.algorithm),
                 "value": str(self.value),
+                "module_passed": self.module_passed,
             }
         else:
             return {"activate_module": self.activate_module}
@@ -166,12 +172,14 @@ class PhenoQualAssgnParams(BaseModel):
         factor: An integer fold-change to differentiate phenotype-assoc. features.
         algorithm: the algorithm to summarize values of active vs inactive samples.
         value: the type of value to use for determination
+        module_passed: indicates that the module ran without errors
     """
 
     activate_module: bool = False
     factor: PositiveInt = 10
     algorithm: str = "minmax"
     value: str = "area"
+    module_passed: bool = False
 
     @model_validator(mode="after")
     def validate_strs(self):
@@ -196,6 +204,7 @@ class PhenoQualAssgnParams(BaseModel):
                 "factor": int(self.factor),
                 "algorithm": str(self.algorithm),
                 "value": str(self.value),
+                "module_passed": self.module_passed,
             }
         else:
             return {"activate_module": self.activate_module}
@@ -211,6 +220,7 @@ class PhenoQuantPercentAssgnParams(BaseModel):
         algorithm: the statistical algorithm to calculate correlation
         p_val_cutoff: minimum Bonferroni-corrected p-value to consider in assignment
         coeff_cutoff: minimum correlation coefficient cutoff to consider in assignment
+        module_passed: indicates that the module ran without errors
     """
 
     activate_module: bool = False
@@ -219,6 +229,7 @@ class PhenoQuantPercentAssgnParams(BaseModel):
     algorithm: str = "pearson"
     p_val_cutoff: float = 0.05
     coeff_cutoff: float = 0.7
+    module_passed: bool = False
 
     @model_validator(mode="after")
     def validate_strs(self):
@@ -274,6 +285,7 @@ class PhenoQuantPercentAssgnParams(BaseModel):
                 "algorithm": self.algorithm,
                 "p_val_cutoff": self.p_val_cutoff,
                 "coeff_cutoff": self.coeff_cutoff,
+                "module_passed": self.module_passed,
             }
         else:
             return {"activate_module": self.activate_module}
@@ -289,6 +301,7 @@ class PhenoQuantConcAssgnParams(BaseModel):
         algorithm: the statistical algorithm to calculate correlation
         p_val_cutoff: minimum Bonferroni-corrected p-value to consider in assignment
         coeff_cutoff: minimum correlation coefficient cutoff to consider in assignment
+        module_passed: indicates that the module ran without errors
     """
 
     activate_module: bool = False
@@ -297,6 +310,7 @@ class PhenoQuantConcAssgnParams(BaseModel):
     algorithm: str = "pearson"
     p_val_cutoff: float = 0.05
     coeff_cutoff: float = 0.7
+    module_passed: bool = False
 
     @model_validator(mode="after")
     def validate_strs(self):
@@ -352,6 +366,7 @@ class PhenoQuantConcAssgnParams(BaseModel):
                 "algorithm": self.algorithm,
                 "p_val_cutoff": self.p_val_cutoff,
                 "coeff_cutoff": self.coeff_cutoff,
+                "module_passed": self.module_passed,
             }
         else:
             return {"activate_module": self.activate_module}
@@ -368,10 +383,8 @@ class SpectralLibMatchingCosineParameters(BaseModel):
         min_nr_matched_peaks: peak cutoff to consider a match of two MS/MS spectra
         score_cutoff: score cutoff to consider a match of two MS/MS spectra
         max_precursor_mass_diff: maximum precursor mass difference
-        maximum_runtime: maximum runtime in seconds
-
-    Raise:
-        pydantic.ValidationError: Pydantic validation failed during instantiation.
+        maximum_runtime: maximum runtime in seconds ('0' indicates unlimited runtime)
+        module_passed: indicates that the module ran without errors
     """
 
     activate_module: bool = False
@@ -379,7 +392,8 @@ class SpectralLibMatchingCosineParameters(BaseModel):
     min_nr_matched_peaks: PositiveInt = 5
     score_cutoff: PositiveFloat = 0.7
     max_precursor_mass_diff: PositiveInt = 600
-    maximum_runtime: int = 600
+    maximum_runtime: int = 0
+    module_passed: bool = False
 
     def to_json(self: Self) -> dict:
         """Convert attributes to json-compatible ones."""
@@ -391,6 +405,7 @@ class SpectralLibMatchingCosineParameters(BaseModel):
                 "score_cutoff": float(self.score_cutoff),
                 "max_precursor_mass_diff": int(self.max_precursor_mass_diff),
                 "maximum_runtime": int(self.maximum_runtime),
+                "module_passed": self.module_passed,
             }
         else:
             return {"activate_module": self.activate_module}
@@ -405,16 +420,15 @@ class SpectralLibMatchingDeepscoreParameters(BaseModel):
         activate_module: bool to indicate if module should be executed.
         score_cutoff: score cutoff to consider a match of two MS/MS spectra.
         max_precursor_mass_diff: max allowed precursor mz difference to accept a match
-        maximum_runtime: maximum runtime in seconds
-
-    Raise:
-        pydantic.ValidationError: Pydantic validation failed during instantiation.
+        maximum_runtime: maximum runtime in seconds ('0' indicates unlimited runtime)
+        module_passed: indicates that the module ran without errors
     """
 
     activate_module: bool = False
     score_cutoff: PositiveFloat = 0.8
     max_precursor_mass_diff: PositiveInt = 600
-    maximum_runtime: int = 600
+    maximum_runtime: int = 0
+    module_passed: bool = False
 
     def to_json(self: Self) -> dict:
         """Convert attributes to json-compatible ones."""
@@ -424,6 +438,7 @@ class SpectralLibMatchingDeepscoreParameters(BaseModel):
                 "score_cutoff": float(self.score_cutoff),
                 "max_precursor_mass_diff": int(self.max_precursor_mass_diff),
                 "maximum_runtime": int(self.maximum_runtime),
+                "module_passed": self.module_passed,
             }
         else:
             return {"activate_module": self.activate_module}
@@ -435,15 +450,14 @@ class Ms2QueryAnnotationParameters(BaseModel):
     Attributes:
         activate_module: bool to indicate if module should be executed.
         score_cutoff: only matches with a score higher or equal to are retained
-        maximum_runtime: maximum runtime in seconds
-
-    Raise:
-        pydantic.ValidationError: Pydantic validation failed during instantiation.
+        maximum_runtime: maximum runtime in seconds ('0' indicates unlimited runtime)
+        module_passed: indicates that the module ran without errors
     """
 
     activate_module: bool = False
     score_cutoff: PositiveFloat = 0.7
-    maximum_runtime: int = 600
+    maximum_runtime: int = 0
+    module_passed: bool = False
 
     def to_json(self: Self) -> dict:
         """Convert attributes to json-compatible ones."""
@@ -452,6 +466,7 @@ class Ms2QueryAnnotationParameters(BaseModel):
                 "activate_module": self.activate_module,
                 "score_cutoff": self.score_cutoff,
                 "maximum_runtime": self.maximum_runtime,
+                "module_passed": self.module_passed,
             }
         else:
             return {"activate_module": self.activate_module}
@@ -471,10 +486,8 @@ class AsKcbCosineMatchingParams(BaseModel):
         min_nr_matched_peaks: peak cutoff to consider a match of two MS/MS spectra
         score_cutoff: score cutoff to consider a match of two MS/MS spectra
         max_precursor_mass_diff: maximum precursor mass difference
-        maximum_runtime: maximum runtime in seconds
-
-    Raise:
-        pydantic.ValidationError: Pydantic validation failed during instantiation.
+        maximum_runtime: maximum runtime in seconds ('0' indicates unlimited runtime)
+        module_passed: indicates that the module ran without errors
     """
 
     activate_module: bool = False
@@ -482,7 +495,8 @@ class AsKcbCosineMatchingParams(BaseModel):
     min_nr_matched_peaks: PositiveInt = 5
     score_cutoff: PositiveFloat = 0.5
     max_precursor_mass_diff: PositiveInt = 600
-    maximum_runtime: int = 600
+    maximum_runtime: int = 0
+    module_passed: bool = False
 
     def to_json(self: Self) -> dict:
         """Convert attributes to json-compatible ones."""
@@ -494,6 +508,7 @@ class AsKcbCosineMatchingParams(BaseModel):
                 "score_cutoff": float(self.score_cutoff),
                 "max_precursor_mass_diff": int(self.max_precursor_mass_diff),
                 "maximum_runtime": int(self.maximum_runtime),
+                "module_passed": self.module_passed,
             }
         else:
             return {"activate_module": self.activate_module}
@@ -511,7 +526,8 @@ class AsKcbDeepscoreMatchingParams(BaseModel):
         activate_module: bool to indicate if module should be executed.
         score_cutoff: score cutoff to consider a match of two MS/MS spectra.
         max_precursor_mass_diff: max allowed precursor mz difference to accept a match
-        maximum_runtime: maximum runtime in seconds
+        maximum_runtime: maximum runtime in seconds ('0' indicates unlimited runtime)
+        module_passed: indicates that the module ran without errors
 
     Raise:
         pydantic.ValidationError: Pydantic validation failed during instantiation.
@@ -520,7 +536,8 @@ class AsKcbDeepscoreMatchingParams(BaseModel):
     activate_module: bool = False
     score_cutoff: PositiveFloat = 0.7
     max_precursor_mass_diff: PositiveInt = 600
-    maximum_runtime: int = 600
+    maximum_runtime: int = 0
+    module_passed: bool = False
 
     def to_json(self: Self) -> dict:
         """Convert attributes to json-compatible ones."""
@@ -530,6 +547,7 @@ class AsKcbDeepscoreMatchingParams(BaseModel):
                 "score_cutoff": float(self.score_cutoff),
                 "max_precursor_mass_diff": int(self.max_precursor_mass_diff),
                 "maximum_runtime": int(self.maximum_runtime),
+                "module_passed": self.module_passed,
             }
         else:
             return {"activate_module": self.activate_module}

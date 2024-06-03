@@ -68,13 +68,15 @@ class AnnotationManager(BaseModel):
     features: Repository
     samples: Repository
 
-    def return_attrs(self: Self) -> tuple[Stats, Repository, Repository]:
+    def return_attrs(
+        self: Self,
+    ) -> tuple[Stats, Repository, Repository, ParameterManager]:
         """Returns modified attributes from AnnotationManager to the calling function
 
         Returns:
             Tuple containing Stats, Feature Repository and Sample Repository objects.
         """
-        return self.stats, self.features, self.samples
+        return self.stats, self.features, self.samples, self.params
 
     def run_analysis(self: Self):
         """Organizes calling of data analysis steps."""
@@ -179,6 +181,7 @@ class AnnotationManager(BaseModel):
             mod_cosine_annotator.calculate_scores_mod_cosine()
             mod_cosine_annotator.extract_userlib_scores()
             self.features = mod_cosine_annotator.return_features()
+            self.params.SpectralLibMatchingCosineParameters.module_passed = True
         except Exception as e:
             logger.error(str(e))
             logger.error(
@@ -216,6 +219,7 @@ class AnnotationManager(BaseModel):
             ms2deepscore_annotator.calculate_scores_ms2deepscore()
             ms2deepscore_annotator.extract_userlib_scores()
             self.features = ms2deepscore_annotator.return_features()
+            self.params.SpectralLibMatchingDeepscoreParameters.module_passed = True
         except Exception as e:
             logger.error(str(e))
             logger.error(
@@ -242,6 +246,7 @@ class AnnotationManager(BaseModel):
             )
             adduct_annotator.run_analysis()
             self.features = adduct_annotator.return_features()
+            self.params.AdductAnnotationParameters.module_passed = True
         except Exception as e:
             logger.error(str(e))
             logger.error(
@@ -264,6 +269,7 @@ class AnnotationManager(BaseModel):
             )
             neutralloss_annotator.run_analysis()
             self.features = neutralloss_annotator.return_features()
+            self.params.NeutralLossParameters.module_passed = True
         except Exception as e:
             logger.error(str(e))
             logger.error(
@@ -287,6 +293,7 @@ class AnnotationManager(BaseModel):
             )
             fragment_annotator.run_analysis()
             self.features = fragment_annotator.return_features()
+            self.params.FragmentAnnParameters.module_passed = True
         except Exception as e:
             logger.error(str(e))
             logger.error(
@@ -323,6 +330,7 @@ class AnnotationManager(BaseModel):
                 self.params.MS2QueryResultsParameters.filepath,
             )
             self.features = ms2query_annotator.return_features()
+
         except Exception as e:
             logger.error(str(e))
             logger.error(
@@ -331,8 +339,7 @@ class AnnotationManager(BaseModel):
             return
 
         logger.info(
-            "'AnnotationManager': completed annotation from existing MS2Query "
-            "results"
+            "'AnnotationManager': completed annotation from existing MS2Query results."
         )
 
     def run_ms2query_annotation(self: Self):
@@ -359,6 +366,7 @@ class AnnotationManager(BaseModel):
             )
             ms2query_annotator.run_ms2query()
             self.features = ms2query_annotator.return_features()
+            self.params.Ms2QueryAnnotationParameters.module_passed = True
         except Exception as e:
             logger.error(str(e))
             logger.error(
@@ -401,7 +409,6 @@ class AnnotationManager(BaseModel):
             )
             mibig_bgcs = {key for key, value in kcb_results.items()}
             spec_library = UtilityMethodManager().create_mibig_spec_lib(mibig_bgcs)
-
             kcb_annotator = ModCosAnnotator(
                 features=self.features,
                 active_features=self.stats.active_features,
@@ -417,6 +424,7 @@ class AnnotationManager(BaseModel):
             kcb_annotator.calculate_scores_mod_cosine()
             kcb_annotator.extract_mibig_scores(kcb_results)
             self.features = kcb_annotator.return_features()
+            self.params.AsKcbCosineMatchingParams.module_passed = True
         except Exception as e:
             logger.error(str(e))
             logger.error(
@@ -478,6 +486,7 @@ class AnnotationManager(BaseModel):
             kcb_annotator.calculate_scores_ms2deepscore()
             kcb_annotator.extract_mibig_scores(kcb_results)
             self.features = kcb_annotator.return_features()
+            self.params.AsKcbDeepscoreMatchingParams.module_passed = True
         except Exception as e:
             logger.error(str(e))
             logger.error(

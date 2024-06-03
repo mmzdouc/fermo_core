@@ -118,7 +118,10 @@ class SummaryWriter(BaseModel):
             )
 
     def summarize_featurefilteringparameters(self: Self):
-        if self.params.FeatureFilteringParameters.activate_module:
+        if (
+            self.params.FeatureFilteringParameters.activate_module
+            and self.params.FeatureFilteringParameters.module_passed
+        ):
             self.summary.append(
                 f"Molecular features were filtered and only retained if they were "
                 f"inside the relative intensity(height) range of "
@@ -137,17 +140,39 @@ class SummaryWriter(BaseModel):
                 f" in at least one sample (relative to the feature with the "
                 f"highest area in the sample)."
             )
+        elif (
+            self.params.FeatureFilteringParameters.activate_module
+            and not self.params.FeatureFilteringParameters.module_passed
+        ):
+            self.summary.append(
+                f"During filtering of molecular features, an error occurred, and the "
+                f"module terminated prematurely. For more information, see the logs."
+            )
 
     def summarize_adductannotationparameters(self: Self):
-        if self.params.AdductAnnotationParameters.activate_module:
+        if (
+            self.params.AdductAnnotationParameters.activate_module
+            and self.params.AdductAnnotationParameters.module_passed
+        ):
             self.summary.append(
                 f"For each sample, overlapping molecular features were annotated for "
                 f"ion adducts using a cutoff mass deviation value of "
                 f"'{self.params.AdductAnnotationParameters.mass_dev_ppm}' ppm."
             )
+        elif (
+            self.params.AdductAnnotationParameters.activate_module
+            and not self.params.AdductAnnotationParameters.module_passed
+        ):
+            self.summary.append(
+                f"During adduct annotation, an error occurred, and the "
+                f"module terminated prematurely. For more information, see the logs."
+            )
 
     def summarize_neutrallossparameters(self: Self):
-        if self.params.NeutralLossParameters.activate_module:
+        if (
+            self.params.NeutralLossParameters.activate_module
+            and self.params.NeutralLossParameters.module_passed
+        ):
             self.summary.append(
                 f"For each molecular feature, neutral losses were calculated between "
                 f"the precursor m/z and each MS/MS fragment peak m/z and matched "
@@ -155,17 +180,39 @@ class SummaryWriter(BaseModel):
                 f"library of annotated neutral losses, using a cutoff mass deviation "
                 f"value of '{self.params.NeutralLossParameters.mass_dev_ppm}' ppm."
             )
+        elif (
+            self.params.NeutralLossParameters.activate_module
+            and not self.params.NeutralLossParameters.module_passed
+        ):
+            self.summary.append(
+                f"During neutral loss annotation, an error occurred, and the "
+                f"module terminated prematurely. For more information, see the logs."
+            )
 
     def summarize_fragmentannparameters(self: Self):
-        if self.params.FragmentAnnParameters.activate_module:
+        if (
+            self.params.FragmentAnnParameters.activate_module
+            and self.params.FragmentAnnParameters.module_passed
+        ):
             self.summary.append(
                 f"For each molecular feature, MS/MS fragments were matched against a "
                 f"library of annotated MS/MS fragments, using a cutoff mass deviation "
                 f"value of '{self.params.FragmentAnnParameters.mass_dev_ppm}' ppm."
             )
+        elif (
+            self.params.FragmentAnnParameters.activate_module
+            and not self.params.FragmentAnnParameters.module_passed
+        ):
+            self.summary.append(
+                f"During fragment annotation, an error occurred, and the "
+                f"module terminated prematurely. For more information, see the logs."
+            )
 
     def summarize_specsimnetworkcosineparameters(self: Self):
-        if self.params.SpecSimNetworkCosineParameters.activate_module:
+        if (
+            self.params.SpecSimNetworkCosineParameters.activate_module
+            and self.params.SpecSimNetworkCosineParameters.module_passed
+        ):
             self.summary.append(
                 f"MS/MS spectra of all molecular features with more than '"
                 f"{self.params.SpecSimNetworkCosineParameters.msms_min_frag_nr}' "
@@ -182,9 +229,21 @@ class SummaryWriter(BaseModel):
                 f"{self.params.SpecSimNetworkCosineParameters.max_nr_links}' highest "
                 f"scoring edges remained."
             )
+        elif (
+            self.params.SpecSimNetworkCosineParameters.activate_module
+            and not self.params.SpecSimNetworkCosineParameters.module_passed
+        ):
+            self.summary.append(
+                f"During spectral similarity networking calculation using the "
+                f"modified cosine algorithm, an error occurred, and the "
+                f"module terminated prematurely. For more information, see the logs."
+            )
 
     def summarize_specsimnetworkdeepscoreparameters(self: Self):
-        if self.params.SpecSimNetworkDeepscoreParameters.activate_module:
+        if (
+            self.params.SpecSimNetworkDeepscoreParameters.activate_module
+            and self.params.SpecSimNetworkDeepscoreParameters.module_passed
+        ):
             self.summary.append(
                 f"MS/MS spectra of all molecular features with more than '"
                 f"{self.params.SpecSimNetworkDeepscoreParameters.msms_min_frag_nr}' "
@@ -199,9 +258,21 @@ class SummaryWriter(BaseModel):
                 f"{self.params.SpecSimNetworkDeepscoreParameters.max_nr_links}' highest"
                 f" scoring edges remained."
             )
+        elif (
+            self.params.SpecSimNetworkDeepscoreParameters.activate_module
+            and not self.params.SpecSimNetworkDeepscoreParameters.module_passed
+        ):
+            self.summary.append(
+                f"During spectral similarity networking calculation using the "
+                f"MS2DeepScore algorithm, an error occurred, and the "
+                f"module terminated prematurely. For more information, see the logs."
+            )
 
     def summarize_blankassignmentparameters(self: Self):
-        if self.params.BlankAssignmentParameters.activate_module:
+        if (
+            self.params.BlankAssignmentParameters.activate_module
+            and self.params.BlankAssignmentParameters.module_passed
+        ):
             self.summary.append(
                 f"Molecular features only detected in sample-blanks were considered "
                 f"blank-associated, as were features that had a quotient of less than "
@@ -210,9 +281,20 @@ class SummaryWriter(BaseModel):
                 f"'{self.params.BlankAssignmentParameters.value}' between samples and "
                 f"sample blanks was compared."
             )
+        elif (
+            self.params.BlankAssignmentParameters.activate_module
+            and not self.params.BlankAssignmentParameters.module_passed
+        ):
+            self.summary.append(
+                f"During blank assignment, an error occurred, and the "
+                f"module terminated prematurely. For more information, see the logs."
+            )
 
     def summarize_groupfactassignmentparameters(self: Self):
-        if self.params.GroupFactAssignmentParameters.activate_module:
+        if (
+            self.params.GroupFactAssignmentParameters.activate_module
+            and self.params.GroupFactAssignmentParameters.module_passed
+        ):
             self.summary.append(
                 f"Samples were grouped according to the provided group metadata "
                 f"information. For each molecular feature observed in more than one "
@@ -221,9 +303,20 @@ class SummaryWriter(BaseModel):
                 f"'{self.params.GroupFactAssignmentParameters.value}' "
                 f"of groups was calculated pairwise."
             )
+        elif (
+            self.params.GroupFactAssignmentParameters.activate_module
+            and not self.params.GroupFactAssignmentParameters.module_passed
+        ):
+            self.summary.append(
+                f"During group metadata assignment, an error occurred, and the "
+                f"module terminated prematurely. For more information, see the logs."
+            )
 
     def summarize_phenoqualassgnparams(self: Self):
-        if self.params.PhenoQualAssgnParams.activate_module:
+        if (
+            self.params.PhenoQualAssgnParams.activate_module
+            and self.params.PhenoQualAssgnParams.module_passed
+        ):
             self.summary.append(
                 f"Molecular feature only detected in phenotype-associated samples "
                 f"were considered phenotype-associated, as were feature that had a "
@@ -234,9 +327,20 @@ class SummaryWriter(BaseModel):
                 f"phenotype-associated and not phenotype-associated "
                 f"samples was compared."
             )
+        elif (
+            self.params.PhenoQualAssgnParams.activate_module
+            and not self.params.PhenoQualAssgnParams.module_passed
+        ):
+            self.summary.append(
+                f"During assignment of phenotype data, an error occurred, and the "
+                f"module terminated prematurely. For more information, see the logs."
+            )
 
     def summarize_phenoquantpercentassgnparams(self: Self):
-        if self.params.PhenoQuantPercentAssgnParams.activate_module:
+        if (
+            self.params.PhenoQuantPercentAssgnParams.activate_module
+            and self.params.PhenoQuantPercentAssgnParams.module_passed
+        ):
             self.summary.append(
                 f"For each molecular feature detected in more than two "
                 f"phenotype-associated samples, the "
@@ -251,9 +355,20 @@ class SummaryWriter(BaseModel):
                 f"'{self.params.PhenoQuantPercentAssgnParams.p_val_cutoff}'"
                 f"."
             )
+        elif (
+            self.params.PhenoQuantPercentAssgnParams.activate_module
+            and not self.params.PhenoQuantPercentAssgnParams.module_passed
+        ):
+            self.summary.append(
+                f"During assignment of phenotype data, an error occurred, and the "
+                f"module terminated prematurely. For more information, see the logs."
+            )
 
     def summarize_phenoquantconcassgnparams(self: Self):
-        if self.params.PhenoQuantConcAssgnParams.activate_module:
+        if (
+            self.params.PhenoQuantConcAssgnParams.activate_module
+            and self.params.PhenoQuantConcAssgnParams.module_passed
+        ):
             self.summary.append(
                 f"For each molecular feature detected in more than two "
                 f"phenotype-associated samples, the "
@@ -268,9 +383,20 @@ class SummaryWriter(BaseModel):
                 f"'{self.params.PhenoQuantConcAssgnParams.p_val_cutoff}'"
                 f"."
             )
+        elif (
+            self.params.PhenoQuantConcAssgnParams.activate_module
+            and not self.params.PhenoQuantConcAssgnParams.module_passed
+        ):
+            self.summary.append(
+                f"During assignment of phenotype data, an error occurred, and the "
+                f"module terminated prematurely. For more information, see the logs."
+            )
 
     def summarize_spectrallibmatchingcosineparameters(self: Self):
-        if self.params.SpectralLibMatchingCosineParameters.activate_module:
+        if (
+            self.params.SpectralLibMatchingCosineParameters.activate_module
+            and self.params.SpectralLibMatchingCosineParameters.module_passed
+        ):
             self.summary.append(
                 f"The MS/MS spectrum of each molecular feature was matched pairwise "
                 f"against the user-provided spectral library using the 'modified "
@@ -285,9 +411,21 @@ class SummaryWriter(BaseModel):
                 f"'{self.params.SpectralLibMatchingCosineParameters.max_precursor_mass_diff}"
                 f"' was not exceeded."
             )
+        elif (
+            self.params.SpectralLibMatchingCosineParameters.activate_module
+            and not self.params.SpectralLibMatchingCosineParameters.module_passed
+        ):
+            self.summary.append(
+                f"During spectral library matching using the modified cosine "
+                f"algorithm, an error occurred, and the "
+                f"module terminated prematurely. For more information, see the logs."
+            )
 
     def summarize_spectrallibmatchingdeepscoreparameters(self: Self):
-        if self.params.SpectralLibMatchingDeepscoreParameters.activate_module:
+        if (
+            self.params.SpectralLibMatchingDeepscoreParameters.activate_module
+            and self.params.SpectralLibMatchingDeepscoreParameters.module_passed
+        ):
             self.summary.append(
                 f"The MS/MS spectrum of each molecular feature was matched pairwise "
                 f"against the user-provided spectral library using the 'MS2DeepScore"
@@ -298,11 +436,21 @@ class SummaryWriter(BaseModel):
                 f"'{self.params.SpectralLibMatchingDeepscoreParameters.max_precursor_mass_diff}"
                 f"' was not exceeded."
             )
+        elif (
+            self.params.SpectralLibMatchingDeepscoreParameters.activate_module
+            and not self.params.SpectralLibMatchingDeepscoreParameters.module_passed
+        ):
+            self.summary.append(
+                f"During spectral library matching using the MS2DeepScore "
+                f"algorithm, an error occurred, and the "
+                f"module terminated prematurely. For more information, see the logs."
+            )
 
     def summarize_ms2queryannotationparameters(self: Self):
         if (
             self.params.MS2QueryResultsParameters is None
             and self.params.Ms2QueryAnnotationParameters.activate_module
+            and self.params.Ms2QueryAnnotationParameters.module_passed
         ):
             self.summary.append(
                 f"For each molecular feature, annotation using the algorithm "
@@ -310,9 +458,21 @@ class SummaryWriter(BaseModel):
                 f"exceeded the cutoff score of "
                 f"'{self.params.Ms2QueryAnnotationParameters.score_cutoff}'."
             )
+        elif (
+            self.params.MS2QueryResultsParameters is None
+            and self.params.Ms2QueryAnnotationParameters.activate_module
+            and not self.params.Ms2QueryAnnotationParameters.module_passed
+        ):
+            self.summary.append(
+                f"During MS2Query annotation, an error occurred, and the "
+                f"module terminated prematurely. For more information, see the logs."
+            )
 
     def summarize_askcbcosinematchingparams(self: Self):
-        if self.params.AsKcbCosineMatchingParams.activate_module:
+        if (
+            self.params.AsKcbCosineMatchingParams.activate_module
+            and self.params.AsKcbCosineMatchingParams.module_passed
+        ):
             self.summary.append(
                 f"The MS/MS spectrum of each molecular feature was matched pairwise "
                 f"against a targeted spectral library constructed from relevant "
@@ -329,9 +489,21 @@ class SummaryWriter(BaseModel):
                 f"'{self.params.AsKcbCosineMatchingParams.max_precursor_mass_diff}"
                 f"' was not exceeded."
             )
+        elif (
+            self.params.AsKcbCosineMatchingParams.activate_module
+            and not self.params.AsKcbCosineMatchingParams.module_passed
+        ):
+            self.summary.append(
+                f"During annotation using the antiSMASH KnownClusterBlast results, "
+                f"an error occurred in the modified cosine-based matching, and the "
+                f"module terminated prematurely. For more information, see the logs."
+            )
 
     def summarize_askcbdeepscorematchingparams(self: Self):
-        if self.params.AsKcbDeepscoreMatchingParams.activate_module:
+        if (
+            self.params.AsKcbDeepscoreMatchingParams.activate_module
+            and self.params.AsKcbDeepscoreMatchingParams.module_passed
+        ):
             self.summary.append(
                 f"The MS/MS spectrum of each molecular feature was matched pairwise "
                 f"against a targeted spectral library constructed from relevant "
@@ -343,6 +515,15 @@ class SummaryWriter(BaseModel):
                 f"and the maximum precursor m/z difference of "
                 f"'{self.params.AsKcbDeepscoreMatchingParams.max_precursor_mass_diff}"
                 f"' was not exceeded."
+            )
+        elif (
+            self.params.AsKcbDeepscoreMatchingParams.activate_module
+            and not self.params.AsKcbDeepscoreMatchingParams.module_passed
+        ):
+            self.summary.append(
+                f"During annotation using the antiSMASH KnownClusterBlast results, "
+                f"an error occurred in the MS2DeepScore-based matching, and the "
+                f"module terminated prematurely. For more information, see the logs."
             )
 
     def assemble_summary(self: Self):

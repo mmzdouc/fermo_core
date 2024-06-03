@@ -13,6 +13,7 @@ def test_json_export_valid():
         "algorithm": "pearson",
         "p_val_cutoff": 0.05,
         "coeff_cutoff": 0.7,
+        "module_passed": True,
     }
     obj = PhenoQuantPercentAssgnParams(**dict_in)
     dict_out = obj.to_json()

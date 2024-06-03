@@ -59,7 +59,7 @@ def main(params: ParameterManager, starttime: datetime, logger: logging.Logger):
         params=params, stats=stats, features=features, samples=samples
     )
     analysis_manager.analyze()
-    stats, features, samples = analysis_manager.return_attributes()
+    stats, features, samples, params = analysis_manager.return_attributes()
 
     export_manager = ExportManager(
         params=params, stats=stats, features=features, samples=samples

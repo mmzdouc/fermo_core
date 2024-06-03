@@ -34,14 +34,12 @@ class AdductAnnotationParameters(BaseModel):
     Attributes:
         activate_module: bool to indicate if module should be executed.
         mass_dev_ppm: The estimated maximum mass deviation in ppm.
-
-    Raise:
-        ValueError: Mass deviation unreasonably high.
-        pydantic.ValidationError: Pydantic validation failed during instantiation.
+        module_passed: indicates that the module ran without errors
     """
 
     activate_module: bool = True
     mass_dev_ppm: PositiveFloat = 10.0
+    module_passed: bool = False
 
     @model_validator(mode="after")
     def validate_adduct_annotation_parameters(self):
@@ -55,6 +53,7 @@ class AdductAnnotationParameters(BaseModel):
             return {
                 "activate_module": self.activate_module,
                 "mass_dev_ppm": float(self.mass_dev_ppm),
+                "module_passed": self.module_passed,
             }
         else:
             return {"activate_module": self.activate_module}
@@ -67,15 +66,13 @@ class NeutralLossParameters(BaseModel):
         activate_module: bool to indicate if module should be executed.
         mass_dev_ppm: The estimated maximum mass deviation in ppm.
         nonbiological: Switch on comparison against losses in 'generic_other_pos.csv'
-
-    Raise:
-        ValueError: Mass deviation unreasonably high.
-        pydantic.ValidationError: Pydantic validation failed during instantiation.
+        module_passed: indicates that the module ran without errors
     """
 
     activate_module: bool = True
     mass_dev_ppm: PositiveFloat = 10.0
     nonbiological: bool = False
+    module_passed: bool = False
 
     @model_validator(mode="after")
     def validate_adduct_annotation_parameters(self):
@@ -90,6 +87,7 @@ class NeutralLossParameters(BaseModel):
                 "activate_module": self.activate_module,
                 "mass_dev_ppm": float(self.mass_dev_ppm),
                 "nonbiological": self.nonbiological,
+                "module_passed": self.module_passed,
             }
         else:
             return {"activate_module": self.activate_module}
@@ -101,14 +99,12 @@ class FragmentAnnParameters(BaseModel):
     Attributes:
         activate_module: bool to indicate if module should be executed.
         mass_dev_ppm: The estimated maximum mass deviation in ppm.
-
-    Raise:
-        ValueError: Mass deviation unreasonably high.
-        pydantic.ValidationError: Pydantic validation failed during instantiation.
+        module_passed: indicates that the module ran without errors
     """
 
     activate_module: bool = True
     mass_dev_ppm: PositiveFloat = 10.0
+    module_passed: bool = False
 
     @model_validator(mode="after")
     def validate_fragment_annotation_parameters(self):
@@ -122,6 +118,7 @@ class FragmentAnnParameters(BaseModel):
             return {
                 "activate_module": self.activate_module,
                 "mass_dev_ppm": float(self.mass_dev_ppm),
+                "module_passed": self.module_passed,
             }
         else:
             return {"activate_module": self.activate_module}
@@ -138,10 +135,8 @@ class SpecSimNetworkCosineParameters(BaseModel):
         fragment_tol: the tolerance between matched fragments, in m/z units.
         score_cutoff: the minimum similarity score between two spectra.
         max_nr_links: max nr of connections from a node.
-        maximum_runtime: max runtime of module, in seconds; 0 indicates no runtime limit
-
-    Raise:
-        pydantic.ValidationError: Pydantic validation failed during instantiation.
+        maximum_runtime: maximum runtime in seconds ('0' indicates unlimited runtime)
+        module_passed: indicates that the module ran without errors
     """
 
     activate_module: bool = True
@@ -149,7 +144,8 @@ class SpecSimNetworkCosineParameters(BaseModel):
     fragment_tol: PositiveFloat = 0.1
     score_cutoff: PositiveFloat = 0.7
     max_nr_links: PositiveInt = 10
-    maximum_runtime: int = 1200
+    maximum_runtime: int = 0
+    module_passed: bool = False
 
     def to_json(self: Self) -> dict:
         """Convert attributes to json-compatible ones."""
@@ -161,6 +157,7 @@ class SpecSimNetworkCosineParameters(BaseModel):
                 "score_cutoff": float(self.score_cutoff),
                 "max_nr_links": int(self.max_nr_links),
                 "maximum_runtime": int(self.maximum_runtime),
+                "module_passed": self.module_passed,
             }
         else:
             return {"activate_module": self.activate_module}
@@ -176,17 +173,16 @@ class SpecSimNetworkDeepscoreParameters(BaseModel):
         score_cutoff: the minimum similarity score between two spectra.
         max_nr_links: max links to a single spectra.
         msms_min_frag_nr: minimum number of fragments in MS2 to run it in analysis
-        maximum_runtime: max runtime of module, in seconds; 0 indicates no runtime limit
-
-    Raise:
-        pydantic.ValidationError: Pydantic validation failed during instantiation.
+        maximum_runtime: maximum runtime in seconds ('0' indicates unlimited runtime)
+        module_passed: indicates that the module ran without errors
     """
 
     activate_module: bool = True
     score_cutoff: PositiveFloat = 0.8
     max_nr_links: PositiveInt = 10
     msms_min_frag_nr: PositiveInt = 5
-    maximum_runtime: int = 1200
+    maximum_runtime: int = 0
+    module_passed: bool = False
 
     def to_json(self: Self) -> dict:
         """Convert attributes to json-compatible ones."""
@@ -197,6 +193,7 @@ class SpecSimNetworkDeepscoreParameters(BaseModel):
                 "max_nr_links": int(self.max_nr_links),
                 "msms_min_frag_nr": int(self.msms_min_frag_nr),
                 "maximum_runtime": int(self.maximum_runtime),
+                "module_passed": self.module_passed,
             }
         else:
             return {"activate_module": self.activate_module}

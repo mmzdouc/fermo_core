@@ -20,7 +20,7 @@ def test_init_valid(analysis_manager_instance):
 
 
 def test_return_valid(analysis_manager_instance):
-    stats, features, samples = analysis_manager_instance.return_attributes()
+    stats, features, samples, params = analysis_manager_instance.return_attributes()
     assert stats is not None
 
 
