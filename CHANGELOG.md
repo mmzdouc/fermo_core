@@ -10,6 +10,19 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 N/A
 
+## [0.3.0] 03-06-2024
+
+### Changed
+
+- Parameter settings for `additional_modules/feature_filtering` were changed from a list of ranges to a dictionary with explicit values. This is a breaking change and not backward-compatible to previous versions.
+
+## [0.2.2] 27-05-2024
+
+### Changed
+
+- Removed 'phenotypes' as separate Feature attribute: write to Annotation object instead.
+- Implemented sorting of annotation entries in descending order
+
 ## [0.2.1] 27-05-2024
 
 ### Changed

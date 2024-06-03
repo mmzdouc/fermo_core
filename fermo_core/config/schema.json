@@ -351,27 +351,29 @@
                             "title": "Specifies whether this module should be run.",
                             "type": "boolean"
                         },
-                        "filter_rel_int_range": {
-                            "title": "(Optional): restrict data analysis to molecular features that have a relative intensity (intensity relative to the highest feature intensity per sample) that is inside the specified range. If a feature is detected in multiple samples, at least one occurrence must be inside the specified range. Else, the feature is not considered.",
-                            "type": "array",
-                            "minItems": 2,
-                            "maxItems": 2,
-                            "items": {
-                                "type": "number",
-                                "minimum": 0.0,
-                                "maximum": 1.0
-                            }
+                        "filter_rel_int_range_min": {
+                            "title": "(Optional): restrict data analysis to molecular features that have a relative intensity (intensity relative to the highest feature intensity per sample) that greater or equal to the specified value. If a feature is detected in multiple samples, at least one occurrence must be inside the specified range. Else, the feature is not considered.",
+                            "type": "number",
+                            "minimum": 0.0,
+                            "maximum": 1.0
                         },
-                        "filter_rel_area_range": {
-                            "title": "(Optional): restrict data analysis to molecular features that have a relative area (area relative to the highest feature area per sample that is inside the specified range. If a feature is detected in multiple samples, at least one occurrence must be inside the specified range. Else, the feature is not considered.",
-                            "type": "array",
-                            "minItems": 2,
-                            "maxItems": 2,
-                            "items": {
-                                "type": "number",
-                                "minimum": 0.0,
-                                "maximum": 1.0
-                            }
+                        "filter_rel_int_range_max": {
+                            "title": "(Optional): restrict data analysis to molecular features that have a relative intensity (intensity relative to the highest feature intensity per sample) that less or equal to the specified value. If a feature is detected in multiple samples, at least one occurrence must be inside the specified range. Else, the feature is not considered.",
+                            "type": "number",
+                            "minimum": 0.0,
+                            "maximum": 1.0
+                        },
+                        "filter_rel_area_range_min": {
+                            "title": "(Optional): restrict data analysis to molecular features that have a relative area (area relative to the highest feature area per sample) that greater or equal to the specified value. If a feature is detected in multiple samples, at least one occurrence must be inside the specified range. Else, the feature is not considered.",
+                            "type": "number",
+                            "minimum": 0.0,
+                            "maximum": 1.0
+                        },
+                        "filter_rel_area_range_max": {
+                            "title": "(Optional): restrict data analysis to molecular features that have a relative area (area relative to the highest feature area per sample) that less or equal to the specified value. If a feature is detected in multiple samples, at least one occurrence must be inside the specified range. Else, the feature is not considered.",
+                            "type": "number",
+                            "minimum": 0.0,
+                            "maximum": 1.0
                         }
                     }
                 },

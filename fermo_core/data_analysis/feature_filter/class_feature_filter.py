@@ -1,6 +1,6 @@
 """Class to manage methods to filter features for various parameters.
 
-Copyright (c) 2022-2023 Mitja Maximilian Zdouc, PhD
+Copyright (c) 2022 to present Mitja Maximilian Zdouc, PhD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -64,19 +64,12 @@ class FeatureFilter(BaseModel):
         logger.info("'FeatureFilter': started filtering of molecular features.")
 
         modules = (
-            (
-                self.params.FeatureFilteringParameters.filter_rel_int_range,
-                self.filter_rel_int_range,
-            ),
-            (
-                self.params.FeatureFilteringParameters.filter_rel_area_range,
-                self.filter_rel_area_range,
-            ),
+            self.filter_rel_int_range,
+            self.filter_rel_area_range,
         )
 
         for module in modules:
-            if module[0] is not None:
-                module[1]()
+            module()
 
         self.remove_filtered_features()
 
@@ -104,11 +97,22 @@ class FeatureFilter(BaseModel):
         """Retain features inside relative intensity range in at least one sample."""
         logger.info("'FeatureFilter': started filtering for relative intensity.")
 
+        if (
+            self.params.FeatureFilteringParameters.filter_rel_int_range_min == 0.0
+            and self.params.FeatureFilteringParameters.filter_rel_int_range_max == 1.0
+        ):
+            logger.info(
+                "'FeatureFilter': Relative intensity range set to a 'min' of '0.0' and "
+                "a 'max' of '1.0'. No filtering performed - SKIP"
+            )
+            return
+
         inactive = self.filter_features_for_range(
-            self.stats,
-            self.samples,
-            self.params.FeatureFilteringParameters.filter_rel_int_range,
-            "rel_intensity",
+            r_list=[
+                self.params.FeatureFilteringParameters.filter_rel_int_range_min,
+                self.params.FeatureFilteringParameters.filter_rel_int_range_max,
+            ],
+            param="rel_intensity",
         )
 
         self.stats.inactive_features.update(inactive)
@@ -123,11 +127,22 @@ class FeatureFilter(BaseModel):
         """Retain features inside relative area range in at least one sample."""
         logger.info("'FeatureFilter': started filtering for relative area.")
 
+        if (
+            self.params.FeatureFilteringParameters.filter_rel_area_range_min == 0.0
+            and self.params.FeatureFilteringParameters.filter_rel_area_range_max == 1.0
+        ):
+            logger.info(
+                "'FeatureFilter': Relative area range set to a 'min' of '0.0' and a "
+                "'max' of '1.0'. No filtering performed - SKIP"
+            )
+            return
+
         inactive = self.filter_features_for_range(
-            self.stats,
-            self.samples,
-            self.params.FeatureFilteringParameters.filter_rel_area_range,
-            "rel_area",
+            r_list=[
+                self.params.FeatureFilteringParameters.filter_rel_area_range_min,
+                self.params.FeatureFilteringParameters.filter_rel_area_range_max,
+            ],
+            param="rel_area",
         )
 
         self.stats.inactive_features.update(inactive)
@@ -138,15 +153,10 @@ class FeatureFilter(BaseModel):
 
         logger.info("'FeatureFilter': completed filtering for relative area.")
 
-    @staticmethod
-    def filter_features_for_range(
-        stats: Stats, samples: Repository, r_list: list, param: str
-    ) -> set:
+    def filter_features_for_range(self: Self, r_list: list, param: str) -> set:
         """Determine features with values outside of given range
 
         Arguments:
-            stats: a Stats object
-            samples: a repository object
             r_list: a list of two floats indicating the range
             param: the parameter to check against range
 
@@ -157,8 +167,8 @@ class FeatureFilter(BaseModel):
         inside_range = set()
         outside_range = set()
 
-        for sample_id in stats.samples:
-            sample = samples.get(sample_id)
+        for sample_id in self.stats.samples:
+            sample = self.samples.get(sample_id)
             for feature_id in sample.feature_ids:
                 feature = sample.features.get(feature_id)
                 if r_list[0] <= getattr(feature, param) <= r_list[1]:

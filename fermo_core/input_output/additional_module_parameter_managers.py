@@ -1,6 +1,6 @@
 """Organizes classes that hold and validate parameters for additional modules.
 
-Copyright (c) 2022-2023 Mitja Maximilian Zdouc, PhD
+Copyright (c) 2022 to present Mitja Maximilian Zdouc, PhD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -36,53 +36,37 @@ class FeatureFilteringParameters(BaseModel):
 
     Attributes:
         activate_module: bool to indicate if module should be executed.
-        filter_rel_int_range: A range of relative peak intensity to retain features.
-        filter_rel_area_range: A range of relative area to retain features.
-
-    Raise:
-        pydantic.ValidationError: Pydantic validation failed during instantiation.
-        ValueError: raised by 'validate_range_zero_one', malformed range.
+        filter_rel_int_range_min: min value to filter feature for rel int
+        filter_rel_int_range_max: max value to filter feature for rel int
+        filter_rel_area_range_min: min value to filter feature for rel area
+        filter_rel_area_range_max: max value to filter feature for rel area
     """
 
     activate_module: bool = False
-    filter_rel_int_range: Optional[list[float]] = None
-    filter_rel_area_range: Optional[list[float]] = None
+    filter_rel_int_range_min: float = 0.0
+    filter_rel_int_range_max: float = 1.0
+    filter_rel_area_range_min: float = 0.0
+    filter_rel_area_range_max: float = 1.0
 
     @model_validator(mode="after")
     def validate_attrs(self):
-        if self.filter_rel_int_range is not None:
-            self.filter_rel_int_range = self.order_and_validate_range(
-                self.filter_rel_int_range
-            )
-
-        if self.filter_rel_area_range is not None:
-            self.filter_rel_area_range = self.order_and_validate_range(
-                self.filter_rel_area_range
-            )
-
+        ValidationManager.validate_range_zero_one(
+            [self.filter_rel_int_range_min, self.filter_rel_int_range_max]
+        )
+        ValidationManager.validate_range_zero_one(
+            [self.filter_rel_area_range_min, self.filter_rel_area_range_max]
+        )
         return self
-
-    @staticmethod
-    def order_and_validate_range(r_list: list[float]) -> list[float]:
-        """Order the list and validate format.
-
-        Attributes:
-            r_list: a range of two floats
-
-        Returns:
-            The modified list of a range of two floats
-        """
-        r_list = [min(r_list), max(r_list)]
-        ValidationManager.validate_range_zero_one(r_list)
-        return r_list
 
     def to_json(self: Self) -> dict:
         """Convert attributes to json-compatible ones."""
         if self.activate_module:
             return {
                 "activate_module": self.activate_module,
-                "filter_rel_int_range": self.filter_rel_int_range,
-                "filter_rel_area_range": self.filter_rel_area_range,
+                "filter_rel_int_range_min": self.filter_rel_int_range_min,
+                "filter_rel_int_range_max": self.filter_rel_int_range_max,
+                "filter_rel_area_range_min": self.filter_rel_area_range_min,
+                "filter_rel_area_range_max": self.filter_rel_area_range_max,
             }
         else:
             return {"activate_module": self.activate_module}

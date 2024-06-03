@@ -119,26 +119,24 @@ class SummaryWriter(BaseModel):
 
     def summarize_featurefilteringparameters(self: Self):
         if self.params.FeatureFilteringParameters.activate_module:
-            if self.params.FeatureFilteringParameters.filter_rel_int_range is not None:
-                self.summary.append(
-                    f"Molecular features were filtered and only retained if they were "
-                    f"inside the relative intensity(height) range of "
-                    f"'{self.params.FeatureFilteringParameters.filter_rel_int_range[0]}"
-                    f"-"
-                    f"{self.params.FeatureFilteringParameters.filter_rel_int_range[1]}'"
-                    f" in at least one sample (relative to the feature with the "
-                    f"highest intensity(height) in the sample)."
-                )
-            if self.params.FeatureFilteringParameters.filter_rel_area_range is not None:
-                self.summary.append(
-                    f"Molecular features were filtered and only retained if they were "
-                    f"inside the relative area range of "
-                    f"'{self.params.FeatureFilteringParameters.filter_rel_area_range[0]}"
-                    f"-"
-                    f"{self.params.FeatureFilteringParameters.filter_rel_area_range[1]}'"
-                    f" in at least one sample (relative to the feature with the "
-                    f"highest area in the sample)."
-                )
+            self.summary.append(
+                f"Molecular features were filtered and only retained if they were "
+                f"inside the relative intensity(height) range of "
+                f"'{self.params.FeatureFilteringParameters.filter_rel_int_range_min}"
+                f"-"
+                f"{self.params.FeatureFilteringParameters.filter_rel_int_range_max}'"
+                f" in at least one sample (relative to the feature with the "
+                f"highest intensity(height) in the sample)."
+            )
+            self.summary.append(
+                f"Molecular features were filtered and only retained if they were "
+                f"inside the relative area range of "
+                f"'{self.params.FeatureFilteringParameters.filter_rel_area_range_min}"
+                f"-"
+                f"{self.params.FeatureFilteringParameters.filter_rel_area_range_max}'"
+                f" in at least one sample (relative to the feature with the "
+                f"highest area in the sample)."
+            )
 
     def summarize_adductannotationparameters(self: Self):
         if self.params.AdductAnnotationParameters.activate_module:

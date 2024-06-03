@@ -269,8 +269,10 @@ def test_assign_feature_filtering_valid():
     params.assign_feature_filtering(
         {
             "activate_module": True,
-            "filter_rel_int_range": [0.0, 1.0],
-            "filter_rel_area_range": [0.0, 1.0],
+            "filter_rel_int_range_min": 0.0,
+            "filter_rel_int_range_max": 1.0,
+            "filter_rel_area_range_min": 0.0,
+            "filter_rel_area_range_max": 1.0,
         }
     )
     assert isinstance(params.FeatureFilteringParameters, FeatureFilteringParameters)
@@ -279,7 +281,10 @@ def test_assign_feature_filtering_valid():
 def test_assign_feature_filtering_invalid():
     params = ParameterManager()
     params.assign_feature_filtering({"asdfg": "asdfg"})
-    assert params.FeatureFilteringParameters.filter_rel_int_range is None
+    assert params.FeatureFilteringParameters.filter_rel_area_range_min == 0.0
+    assert params.FeatureFilteringParameters.filter_rel_area_range_max == 1.0
+    assert params.FeatureFilteringParameters.filter_rel_int_range_min == 0.0
+    assert params.FeatureFilteringParameters.filter_rel_int_range_max == 1.0
 
 
 def test_assign_blank_assignment_valid():
