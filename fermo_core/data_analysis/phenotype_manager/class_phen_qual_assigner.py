@@ -103,7 +103,7 @@ class PhenQualAssigner(BaseModel):
             feature = self.add_annotation_attribute(feature=feature)
             feature.Annotations.phenotypes.append(
                 Phenotype(
-                    score=0, format="qualitative", descr="only in positive samples"
+                    score=1.0, format="qualitative", descr="only in positive samples"
                 )
             )
             self.features.modify(f_id, feature)
@@ -168,7 +168,11 @@ class PhenQualAssigner(BaseModel):
                     if factor >= self.params.PhenoQualAssgnParams.factor:
                         feature = self.add_annotation_attribute(feature=feature)
                         feature.Annotations.phenotypes.append(
-                            Phenotype(score=factor, format="qualitative")
+                            Phenotype(
+                                score=1.0,
+                                format="qualitative",
+                                descr=f"Fold-difference: '{round(factor, 2)}'",
+                            )
                         )
                         self.stats.phenotypes[0].f_ids_positive.add(f_id)
                 case "mean":
@@ -176,7 +180,11 @@ class PhenQualAssigner(BaseModel):
                     if factor >= self.params.PhenoQualAssgnParams.factor:
                         feature = self.add_annotation_attribute(feature=feature)
                         feature.Annotations.phenotypes.append(
-                            Phenotype(score=factor, format="qualitative")
+                            Phenotype(
+                                score=1.0,
+                                format="qualitative",
+                                descr=f"Fold-difference: '{round(factor, 2)}'",
+                            )
                         )
                         self.stats.phenotypes[0].f_ids_positive.add(f_id)
                 case "median":
@@ -184,7 +192,11 @@ class PhenQualAssigner(BaseModel):
                     if factor >= self.params.PhenoQualAssgnParams.factor:
                         feature = self.add_annotation_attribute(feature=feature)
                         feature.Annotations.phenotypes.append(
-                            Phenotype(score=factor, format="qualitative")
+                            Phenotype(
+                                score=1.0,
+                                format="qualitative",
+                                descr=f"Fold-difference: '{round(factor, 2)}'",
+                            )
                         )
                         self.stats.phenotypes[0].f_ids_positive.add(f_id)
                 case _:

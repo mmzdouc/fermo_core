@@ -14,16 +14,10 @@ N/A
 
 ### Changed
 
-- Parameter settings for `additional_modules/feature_filtering` were changed from a list of ranges to a dictionary with explicit values. This is a breaking change and not backward-compatible to previous versions.
+- [Breaking change] Parameter settings for `additional_modules/feature_filtering` were changed from a list of ranges to a dictionary with explicit values.
+- Reworked score assignment for qualitative phenotype data: phenotype-associated features now always receive a score of 1.0, and non-associated ones a score of 0.0.
 
 ## [0.2.2] 27-05-2024
-
-### Changed
-
-- Removed 'phenotypes' as separate Feature attribute: write to Annotation object instead.
-- Implemented sorting of annotation entries in descending order
-
-## [0.2.1] 27-05-2024
 
 ### Changed
 
@@ -43,7 +37,7 @@ N/A
 - Replaced global logger with logger specific for `main_cli()`. `main()` now needs an argument `logger`
 - Reworked output file naming: all output files now start with `out.fermo.` and a suffix specifying their type
 - Removed output directory selection: the output directory is now always `results` located in the directory in which the peaktable resides.
-- Features now always have default result values (before, some Features could have an empty dictionary)
+- Features now always have default result values (previously, some Features could have an empty dictionary)
 - MS2Query assignment now uses temporary directories for data reading/writing
 
 ### Fixed
@@ -58,4 +52,4 @@ N/A
 
 ## [0.1.0] 19-05-2024
 
-First public release of `fermo_core`
+- First public release of `fermo_core`
