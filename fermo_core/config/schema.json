@@ -520,7 +520,7 @@
                                     ]
                                 },
                                 "p_val_cutoff": {
-                                    "title": "(Optional): Minimum Bonferroni-corrected p-value to consider. A value of zero disables the cutoff filtering (automatically applies to both score and p-value).",
+                                    "title": "(Optional): Maximum Bonferroni-corrected p-value to consider. A value of zero disables the cutoff filtering (automatically applies to both score and p-value).",
                                     "type": "number",
                                     "minimum": 0.0,
                                     "maximum": 1.0
@@ -568,7 +568,7 @@
                                     ]
                                 },
                                 "p_val_cutoff": {
-                                    "title": "(Optional): Minimum Bonferroni-corrected p-value to consider. A value of zero disables the cutoff filtering (automatically applies to both score and p-value).",
+                                    "title": "(Optional): Maximum Bonferroni-corrected p-value to consider. A value of zero disables the cutoff filtering (automatically applies to both score and p-value).",
                                     "type": "number",
                                     "minimum": 0.0,
                                     "maximum": 1.0
