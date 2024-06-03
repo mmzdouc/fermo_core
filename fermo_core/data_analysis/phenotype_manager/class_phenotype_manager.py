@@ -57,13 +57,13 @@ class PhenotypeManager(BaseModel):
     features: Repository
     samples: Repository
 
-    def return_attrs(self: Self) -> tuple[Stats, Repository]:
+    def return_attrs(self: Self) -> tuple[Stats, Repository, ParameterManager]:
         """Returns modified attributes from PhenotypeManager to the calling function
 
         Returns:
             Tuple containing Stats, Feature Repository objects.
         """
-        return self.stats, self.features
+        return self.stats, self.features, self.params
 
     def run_analysis(self: Self):
         """Organizes calling of phenotype annotation steps."""
@@ -103,6 +103,7 @@ class PhenotypeManager(BaseModel):
             )
             qual_assigner.run_analysis()
             self.stats, self.features = qual_assigner.return_values()
+            self.params.PhenoQualAssgnParams.module_passed = True
         except Exception as e:
             logger.error(str(e))
             logger.error(
@@ -138,6 +139,7 @@ class PhenotypeManager(BaseModel):
             )
             quant_p_assigner.run_analysis()
             self.stats, self.features = quant_p_assigner.return_values()
+            self.params.PhenoQuantPercentAssgnParams.module_passed = True
         except Exception as e:
             logger.error(str(e))
             logger.error(
@@ -174,6 +176,7 @@ class PhenotypeManager(BaseModel):
             )
             quant_conc_assigner.run_analysis()
             self.stats, self.features = quant_conc_assigner.return_values()
+            self.params.PhenoQuantConcAssgnParams.module_passed = True
         except Exception as e:
             logger.error(str(e))
             logger.error(

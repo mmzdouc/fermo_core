@@ -67,13 +67,15 @@ class AnalysisManager(BaseModel):
     features: Repository
     samples: Repository
 
-    def return_attributes(self: Self) -> tuple[Stats, Repository, Repository]:
+    def return_attributes(
+        self: Self,
+    ) -> tuple[Stats, Repository, Repository, ParameterManager]:
         """Returns modified attributes to the calling function
 
         Returns:
             Tuple containing Stats, Feature Repository and Sample Repository objects.
         """
-        return self.stats, self.features, self.samples
+        return self.stats, self.features, self.samples, self.params
 
     def analyze(self: Self):
         """Organizes calling of data analysis steps."""
@@ -108,6 +110,7 @@ class AnalysisManager(BaseModel):
             )
             feature_filter.filter()
             self.stats, self.features, self.samples = feature_filter.return_values()
+            self.params.FeatureFilteringParameters.module_passed = True
         except Exception as e:
             logger.warning(str(e))
             return
@@ -138,6 +141,7 @@ class AnalysisManager(BaseModel):
             )
             blank_assigner.run_analysis()
             self.stats, self.features = blank_assigner.return_attrs()
+            self.params.BlankAssignmentParameters.module_passed = True
         except Exception as e:
             logger.warning(str(e))
             return
@@ -181,6 +185,7 @@ class AnalysisManager(BaseModel):
             )
             group_fact_ass.run_analysis()
             self.features = group_fact_ass.return_features()
+            self.params.GroupFactAssignmentParameters.module_passed = True
         except Exception as e:
             logger.warning(str(e))
             return
@@ -211,7 +216,7 @@ class AnalysisManager(BaseModel):
                 samples=self.samples,
             )
             phenotype_manager.run_analysis()
-            self.stats, self.features = phenotype_manager.return_attrs()
+            self.stats, self.features, self.params = phenotype_manager.return_attrs()
         except Exception as e:
             logger.warning(str(e))
             return
@@ -241,11 +246,9 @@ class AnalysisManager(BaseModel):
                 samples=self.samples,
             )
             sim_networks_manager.run_analysis()
-            (
-                self.stats,
-                self.features,
-                self.samples,
-            ) = sim_networks_manager.return_attrs()
+            (self.stats, self.features, self.samples, self.params) = (
+                sim_networks_manager.return_attrs()
+            )
         except Exception as e:
             logger.warning(str(e))
             return
@@ -261,7 +264,9 @@ class AnalysisManager(BaseModel):
                 samples=self.samples,
             )
             annotation_manager.run_analysis()
-            self.stats, self.features, self.samples = annotation_manager.return_attrs()
+            self.stats, self.features, self.samples, self.params = (
+                annotation_manager.return_attrs()
+            )
         except Exception as e:
             logger.warning(str(e))
             return

@@ -11,6 +11,7 @@ def test_json_export_valid():
         "factor": 10,
         "algorithm": "minmax",
         "value": "area",
+        "module_passed": True,
     }
     obj = PhenoQualAssgnParams(**dict_in)
     dict_out = obj.to_json()

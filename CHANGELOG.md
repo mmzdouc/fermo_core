@@ -10,7 +10,16 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 N/A
 
-## [0.2.1] 27-05-2024
+## [0.3.0] 03-06-2024
+
+### Changed
+
+- [Breaking change] Parameter settings for `additional_modules/feature_filtering` were changed from a list of ranges to a dictionary with explicit values.
+- Reworked score assignment for qualitative phenotype data: phenotype-associated features now always receive a score of 1.0, and non-associated ones a score of 0.0.
+- For all modules with runtime restriction, the 'maximum_runtime' parameter was set to a default of '0' (unlimited runtime). Therefore, runtime restriction must now be specified explicitly.
+- Added a 'module_passed' parameter to all modules. This allows a more accurate description via the SummaryWriter (e.g. module was activated but timed out, and lack of e.g. annotation is due to premature ending and not because there were no hits).
+
+## [0.2.2] 27-05-2024
 
 ### Changed
 
@@ -30,7 +39,7 @@ N/A
 - Replaced global logger with logger specific for `main_cli()`. `main()` now needs an argument `logger`
 - Reworked output file naming: all output files now start with `out.fermo.` and a suffix specifying their type
 - Removed output directory selection: the output directory is now always `results` located in the directory in which the peaktable resides.
-- Features now always have default result values (before, some Features could have an empty dictionary)
+- Features now always have default result values (previously, some Features could have an empty dictionary)
 - MS2Query assignment now uses temporary directories for data reading/writing
 
 ### Fixed
@@ -45,4 +54,4 @@ N/A
 
 ## [0.1.0] 19-05-2024
 
-First public release of `fermo_core`
+- First public release of `fermo_core`

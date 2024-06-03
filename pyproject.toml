@@ -1,6 +1,6 @@
 [project]
 name = "fermo_core"
-version = "0.2.2"
+version = "0.3.0"
 description = "Data processing/analysis functionality of metabolomics dashboard FERMO"
 readme = "README.md"
 requires-python = ">=3.11,<3.12"
@@ -192,5 +192,7 @@ ignore = [
     # unnecessary-comprehension-in-call
     "C419",
     # function-uses-loop-variable
-    "B023"
+    "B023",
+    # unnecessary-literal-within-tuple-cal.
+    "C409"
 ]

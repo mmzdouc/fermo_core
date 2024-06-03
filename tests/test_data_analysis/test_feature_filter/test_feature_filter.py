@@ -1,10 +1,10 @@
 import pytest
 
 from fermo_core.data_analysis.feature_filter.class_feature_filter import FeatureFilter
-from fermo_core.data_processing.class_stats import Stats
-from fermo_core.data_processing.class_repository import Repository
-from fermo_core.data_processing.builder_sample.dataclass_sample import Sample
 from fermo_core.data_processing.builder_feature.dataclass_feature import Feature
+from fermo_core.data_processing.builder_sample.dataclass_sample import Sample
+from fermo_core.data_processing.class_repository import Repository
+from fermo_core.data_processing.class_stats import Stats
 from fermo_core.input_output.class_parameter_manager import ParameterManager
 
 
@@ -66,28 +66,38 @@ def test_filter_rel_area_range_valid(feature_filter_instance):
 
 
 def test_filter_rel_int_range_mod_valid(feature_filter_instance):
-    feature_filter_instance.params.FeatureFilteringParameters.filter_rel_int_range = [
-        0.06,
-        1.0,
-    ]
+    feature_filter_instance.params.FeatureFilteringParameters.filter_rel_int_range_min = (
+        0.06
+    )
+    feature_filter_instance.params.FeatureFilteringParameters.filter_rel_int_range_max = (
+        1.0
+    )
     feature_filter_instance.filter_rel_int_range()
     assert len(feature_filter_instance.stats.active_features) == 140
     assert len(feature_filter_instance.stats.inactive_features) == 3
 
 
 def test_filter_rel_area_range_mod_valid(feature_filter_instance):
-    feature_filter_instance.params.FeatureFilteringParameters.filter_rel_area_range = [
-        0.06,
-        1.0,
-    ]
+    feature_filter_instance.params.FeatureFilteringParameters.filter_rel_area_range_min = (
+        0.06
+    )
+    feature_filter_instance.params.FeatureFilteringParameters.filter_rel_area_range_max = (
+        1.0
+    )
     feature_filter_instance.filter_rel_area_range()
     assert len(feature_filter_instance.stats.active_features) == 104
     assert len(feature_filter_instance.stats.inactive_features) == 39
 
 
 def test_filter_features_for_range_valid(dummy_data):
-    filtered = FeatureFilter.filter_features_for_range(
-        dummy_data["stats"], dummy_data["samples"], [0.0, 0.5], "rel_intensity"
+    feature_filter = FeatureFilter(
+        params=ParameterManager(),
+        stats=dummy_data["stats"],
+        features=dummy_data["features"],
+        samples=dummy_data["samples"],
+    )
+    filtered = feature_filter.filter_features_for_range(
+        r_list=[0.0, 0.5], param="rel_intensity"
     )
     assert filtered == {2}
 

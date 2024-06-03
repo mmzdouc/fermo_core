@@ -1,14 +1,13 @@
 import pytest
 
-from fermo_core.data_analysis.sim_networks_manager.class_sim_networks_manager import (
-    SimNetworksManager,
-)
-
 from fermo_core.data_analysis.sim_networks_manager.class_mod_cosine_networker import (
     ModCosineNetworker,
 )
 from fermo_core.data_analysis.sim_networks_manager.class_ms2deepscore_networker import (
     Ms2deepscoreNetworker,
+)
+from fermo_core.data_analysis.sim_networks_manager.class_sim_networks_manager import (
+    SimNetworksManager,
 )
 
 
@@ -39,7 +38,7 @@ def test_log_filtered_feature_nr_fragments_valid(sim_networks_manager_instance):
 
 
 def test_return_valid(sim_networks_manager_instance):
-    stats, features, samples = sim_networks_manager_instance.return_attrs()
+    stats, features, samples, params = sim_networks_manager_instance.return_attrs()
     assert stats is not None
 
 
