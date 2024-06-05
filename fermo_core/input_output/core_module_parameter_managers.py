@@ -65,13 +65,11 @@ class NeutralLossParameters(BaseModel):
     Attributes:
         activate_module: bool to indicate if module should be executed.
         mass_dev_ppm: The estimated maximum mass deviation in ppm.
-        nonbiological: Switch on comparison against losses in 'generic_other_pos.csv'
         module_passed: indicates that the module ran without errors
     """
 
     activate_module: bool = True
     mass_dev_ppm: PositiveFloat = 10.0
-    nonbiological: bool = False
     module_passed: bool = False
 
     @model_validator(mode="after")
@@ -86,7 +84,6 @@ class NeutralLossParameters(BaseModel):
             return {
                 "activate_module": self.activate_module,
                 "mass_dev_ppm": float(self.mass_dev_ppm),
-                "nonbiological": self.nonbiological,
                 "module_passed": self.module_passed,
             }
         else:

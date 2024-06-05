@@ -10,11 +10,14 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 N/A
 
-## [0.3.1] 03-06-2024
+## [0.3.1] 05-06-2024
 
 ### Changed
 
 - Loosened typing restrictions for Feature and Sample object attributes: area and height (intensity) now accept float values.
+
+### Removed
+- [Breaking change] Removed toggle 'nonbiological' from 'FragmentAnnotator' and from parameters file; 'nonbiological' fragment annotation is now performed automatically
 
 ### Security
 

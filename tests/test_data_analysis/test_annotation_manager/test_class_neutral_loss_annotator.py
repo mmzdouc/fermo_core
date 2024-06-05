@@ -1,20 +1,23 @@
-import numpy as np
 from pathlib import Path
+
+import numpy as np
 import pytest
 
 from fermo_core.data_analysis.annotation_manager.class_neutral_loss_annotator import (
     NeutralLossAnnotator,
 )
-from fermo_core.data_processing.class_repository import Repository
 from fermo_core.data_processing.builder_feature.dataclass_feature import (
     Feature,
     NeutralLoss,
 )
+from fermo_core.data_processing.class_repository import Repository
 from fermo_core.data_processing.class_stats import Stats
 from fermo_core.input_output.class_parameter_manager import ParameterManager
-from fermo_core.input_output.input_file_parameter_managers import MsmsParameters
 from fermo_core.input_output.core_module_parameter_managers import NeutralLossParameters
-from fermo_core.input_output.input_file_parameter_managers import PeaktableParameters
+from fermo_core.input_output.input_file_parameter_managers import (
+    MsmsParameters,
+    PeaktableParameters,
+)
 from fermo_core.utils.utility_method_manager import UtilityMethodManager as Utils
 
 
@@ -49,7 +52,6 @@ def annotator_pos():
         format="mzmine3",
         polarity="positive",
     )
-    params.NeutralLossParameters = NeutralLossParameters(nonbiological=True)
     return NeutralLossAnnotator(
         features=features, samples=Repository(), params=params, stats=stats
     )
@@ -86,7 +88,6 @@ def annotator_neg():
         format="mzmine3",
         polarity="negative",
     )
-    params.NeutralLossParameters = NeutralLossParameters(nonbiological=True)
     return NeutralLossAnnotator(
         features=features, samples=Repository(), params=params, stats=stats
     )

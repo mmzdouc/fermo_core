@@ -37,8 +37,7 @@
         },
         "neutral_loss_annotation": {
             "activate_module": true,
-            "mass_dev_ppm": 10.0,
-            "nonbiological": true
+            "mass_dev_ppm": 10.0
         },
         "fragment_annotation": {
             "activate_module": true,

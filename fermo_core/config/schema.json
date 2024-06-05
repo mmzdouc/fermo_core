@@ -224,10 +224,6 @@
                             "type": "number",
                             "minimum": 0.0,
                             "maximum": 100.0
-                        },
-                        "nonbiological": {
-                            "title": "(Optional): Specifies whether neutral losses should be compared to losses originating from synthetic molecules.",
-                            "type": "boolean"
                         }
                     }
                 },
