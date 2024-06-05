@@ -57,13 +57,13 @@ class NeutralLossAnnotator(BaseModel):
     samples: Repository
     mass: NeutralLosses = NeutralLosses()
 
-    def return_features(self: Self) -> Repository:
-        """Returns modified Feature objects in Repository object instance
+    def return_attributes(self: Self) -> tuple[Repository, ParameterManager]:
+        """Returns modified attributes
 
         Returns:
-            Modified Feature Repository object.
+            Modified Feature and Params object
         """
-        return self.features
+        return self.features, self.params
 
     def annotate_feature_neg(self: Self, f_id: int):
         """Annotate neutral losses of feature and store data in General Feature
@@ -325,3 +325,5 @@ class NeutralLossAnnotator(BaseModel):
             )
             for f_id in self.stats.active_features:
                 self.annotate_feature_neg(f_id)
+
+        self.params.NeutralLossParameters.module_passed = True

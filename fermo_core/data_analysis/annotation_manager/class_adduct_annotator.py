@@ -78,7 +78,7 @@ class AdductAnnotator(BaseModel):
             for s_name in self.stats.samples:
                 self.annotate_adducts_pos(s_name)
         else:
-            logger.warning(
+            logger.info(
                 "'AnnotationManager/AdductAnnotator': negative ion mode detected. "
                 "Attempt to annotate for negative ion mode adducts."
             )
