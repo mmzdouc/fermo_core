@@ -23,6 +23,7 @@ SOFTWARE.
 
 import logging
 
+import numpy as np
 import pandas as pd
 from pydantic import BaseModel
 
@@ -102,16 +103,25 @@ class FeatureBuilder(BaseModel):
         )
         return self
 
-    def set_fwhm(self, fwhm: float):
+    def set_fwhm(self, fwhm: float, s_id: str):
         """Set attribute
 
         Arguments:
             fwhm: the feature with at half maximum intensity of the peak
+            s_id: a sample ID
         """
-        self.feature.fwhm = fwhm
+        if np.isnan(np.sum(fwhm)):
+            logger.warning(
+                f"'FeatureBuilder': feature '{self.feature.f_id}' has no valid FWHM "
+                f"in sample '{s_id}'. Set value to '0.0'."
+            )
+            self.feature.fwhm = 0.0
+        else:
+            self.feature.fwhm = float(fwhm)
+
         return self
 
-    def set_intensity(self, intensity: int):
+    def set_intensity(self, intensity: float):
         """Set attribute
 
         Arguments:
@@ -120,7 +130,7 @@ class FeatureBuilder(BaseModel):
         self.feature.intensity = intensity
         return self
 
-    def set_rel_intensity(self, intensity: int, max_intensity: int):
+    def set_rel_intensity(self, intensity: float, max_intensity: float):
         """Calculate and set attribute for relative intensity
 
         Arguments:
@@ -130,7 +140,7 @@ class FeatureBuilder(BaseModel):
         self.feature.rel_intensity = round((intensity / max_intensity), 2)
         return self
 
-    def set_area(self, area: int):
+    def set_area(self, area: float):
         """Set attribute
 
         Arguments:
@@ -139,7 +149,7 @@ class FeatureBuilder(BaseModel):
         self.feature.area = area
         return self
 
-    def set_rel_area(self, area: int, max_area: int):
+    def set_rel_area(self, area: float, max_area: float):
         """Calculate and set attribute for relative area
 
         Arguments:

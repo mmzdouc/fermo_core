@@ -69,7 +69,7 @@ def test_set_rt_range_invalid():
 
 
 def test_set_fwhm_valid():
-    feature1 = FeatureBuilder().set_fwhm(12.34).get_result()
+    feature1 = FeatureBuilder().set_fwhm(12.34, "sample1").get_result()
     assert feature1.fwhm == 12.34
 
 

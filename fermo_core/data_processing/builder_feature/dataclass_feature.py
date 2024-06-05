@@ -282,16 +282,16 @@ class SampleInfo(BaseModel):
 
     Attributes:
         s_id: identifier of sample
-        value: an integer indicating the respective value (area or height)
+        value: indicating the respective value (area or height)
     """
 
     s_id: str
-    value: int
+    value: float
 
     def to_json(self: Self) -> dict:
         return {
             "s_id": str(self.s_id),
-            "value": int(self.value),
+            "value": float(self.value),
         }
 
 
@@ -374,9 +374,9 @@ class Feature(BaseModel):
     trace_rt: Optional[tuple] = None
     trace_int: Optional[tuple] = None
     fwhm: Optional[float] = None
-    intensity: Optional[int] = None
+    intensity: Optional[float] = None
     rel_intensity: Optional[float] = None
-    area: Optional[int] = None
+    area: Optional[float] = None
     rel_area: Optional[float] = None
     Spectrum: Optional[Any] = None
     samples: Optional[set] = None
@@ -405,9 +405,9 @@ class Feature(BaseModel):
             ("trace_rt", self.trace_rt, list),
             ("trace_int", self.trace_int, list),
             ("fwhm", self.fwhm, float),
-            ("intensity", self.intensity, int),
+            ("intensity", self.intensity, float),
             ("rel_intensity", self.rel_intensity, float),
-            ("area", self.area, int),
+            ("area", self.area, float),
             ("rel_area", self.rel_area, float),
             ("samples", self.samples, list),
             ("blank", self.blank, bool),

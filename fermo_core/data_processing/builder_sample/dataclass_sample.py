@@ -71,8 +71,8 @@ class Sample(BaseModel):
     features: Optional[dict] = None
     feature_ids: Optional[set] = None
     networks: Optional[dict] = None
-    max_intensity: Optional[int] = None
-    max_area: Optional[int] = None
+    max_intensity: Optional[float] = None
+    max_area: Optional[float] = None
     Scores: Optional[Scores] = None
 
     def to_json(self: Self) -> dict:
@@ -84,8 +84,8 @@ class Sample(BaseModel):
         attributes = (
             ("s_id", self.s_id, str),
             ("feature_ids", self.feature_ids, list),
-            ("max_intensity", self.max_intensity, int),
-            ("max_area", self.max_area, int),
+            ("max_intensity", self.max_intensity, float),
+            ("max_area", self.max_area, float),
         )
 
         json_dict = {}
