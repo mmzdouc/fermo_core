@@ -1,6 +1,6 @@
 """Organizes classes that handle and validate input file parameter.
 
-Copyright (c) 2022-2023 Mitja Maximilian Zdouc, PhD
+Copyright (c) 2022 to present Mitja Maximilian Zdouc, PhD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -74,7 +74,7 @@ class PeaktableParameters(BaseModel):
     def to_json(self: Self) -> dict:
         """Convert attributes to json-compatible ones."""
         return {
-            "filepath": str(self.filepath.resolve()),
+            "filepath": str(self.filepath.name),
             "format": str(self.format),
             "polarity": str(self.polarity),
         }
@@ -119,7 +119,7 @@ class MsmsParameters(BaseModel):
     def to_json(self: Self) -> dict:
         """Convert attributes to json-compatible ones."""
         return {
-            "filepath": str(self.filepath.resolve()),
+            "filepath": str(self.filepath.name),
             "format": self.format,
             "rel_int_from": self.rel_int_from,
         }
@@ -170,7 +170,7 @@ class PhenotypeParameters(BaseModel):
     def to_json(self: Self) -> dict:
         """Convert attributes to json-compatible ones."""
         return {
-            "filepath": str(self.filepath.resolve()),
+            "filepath": str(self.filepath.name),
             "format": str(self.format),
         }
 
@@ -224,7 +224,7 @@ class GroupMetadataParameters(BaseModel):
     def to_json(self: Self) -> dict:
         """Convert attributes to json-compatible ones."""
         return {
-            "filepath": str(self.filepath.resolve()),
+            "filepath": str(self.filepath.name),
             "format": str(self.format),
         }
 
@@ -261,7 +261,7 @@ class SpecLibParameters(BaseModel):
     def to_json(self: Self) -> dict:
         """Convert attributes to json-compatible ones."""
         return {
-            "filepath": str(self.filepath.resolve()),
+            "filepath": str(self.filepath.name),
             "format": str(self.format),
         }
 
@@ -290,7 +290,7 @@ class MS2QueryResultsParameters(BaseModel):
     def to_json(self: Self) -> dict:
         """Convert attributes to json-compatible ones."""
         return {
-            "filepath": str(self.filepath.resolve()),
+            "filepath": str(self.filepath.name),
             "score_cutoff": self.score_cutoff,
         }
 
@@ -312,6 +312,6 @@ class AsResultsParameters(BaseModel):
     def to_json(self: Self) -> dict:
         """Convert attributes to json-compatible ones."""
         return {
-            "directory_path": str(self.directory_path.resolve()),
+            "directory_path": str(self.directory_path.name),
             "similarity_cutoff": self.similarity_cutoff,
         }

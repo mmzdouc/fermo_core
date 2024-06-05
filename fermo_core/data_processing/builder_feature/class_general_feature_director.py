@@ -46,7 +46,7 @@ class GeneralFeatureDirector:
         return (
             FeatureBuilder()
             .set_f_id(int(row["id"]))
-            .set_area(int(row["area"]))
+            .set_area(float(row["area"]))
             .set_mz(float(row["mz"]))
             .set_rt(float(row["rt"]))
             .set_rt_start(float(row["rt_range:min"]))

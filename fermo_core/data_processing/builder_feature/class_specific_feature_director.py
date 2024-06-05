@@ -55,12 +55,12 @@ class SpecificFeatureDirector:
             FeatureBuilder()
             .set_f_id(int(row["id"]))
             .set_mz(float(row["mz"]))
-            .set_fwhm(float(row[f"datafile:{s_id}:fwhm"]))
-            .set_intensity(int(row[f"datafile:{s_id}:intensity_range:max"]))
+            .set_fwhm(float(row[f"datafile:{s_id}:fwhm"]), s_id)
+            .set_intensity(float(row[f"datafile:{s_id}:intensity_range:max"]))
             .set_rt_start(float(row[f"datafile:{s_id}:rt_range:min"]))
             .set_rt_stop(float(row[f"datafile:{s_id}:rt_range:max"]))
             .set_rt(float(row[f"datafile:{s_id}:rt"]))
-            .set_area(int(row[f"datafile:{s_id}:area"]))
+            .set_area(float(row[f"datafile:{s_id}:area"]))
             .set_rt_range()
             .set_rel_intensity(
                 row[f"datafile:{s_id}:intensity_range:max"], max_intensity

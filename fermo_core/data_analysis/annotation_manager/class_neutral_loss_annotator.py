@@ -145,8 +145,7 @@ class NeutralLossAnnotator(BaseModel):
         feature = self.validate_nonribosomal_losses(feature)
         feature = self.validate_glycoside_losses(feature)
         feature = self.validate_gen_bio_pos_losses(feature)
-        if self.params.NeutralLossParameters.nonbiological is True:
-            feature = self.validate_gen_other_pos_losses(feature)
+        feature = self.validate_gen_other_pos_losses(feature)
 
         self.features.modify(f_id, feature)
 
