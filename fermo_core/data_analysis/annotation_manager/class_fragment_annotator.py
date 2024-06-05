@@ -57,13 +57,13 @@ class FragmentAnnotator(BaseModel):
     samples: Repository
     frags: CharFragments = CharFragments()
 
-    def return_features(self: Self) -> Repository:
-        """Returns modified Feature objects in Repository object instance
+    def return_attributes(self: Self) -> tuple[Repository, ParameterManager]:
+        """Returns modified object instance
 
         Returns:
-            Modified Feature Repository object.
+            Modified Feature Repository and ParameterManager objects.
         """
-        return self.features
+        return self.features, self.params
 
     @staticmethod
     def add_annotation(feature: Feature) -> Feature:
@@ -154,3 +154,5 @@ class FragmentAnnotator(BaseModel):
                 "SKIP"
             )
             return
+
+        self.params.FragmentAnnParameters.module_passed = True

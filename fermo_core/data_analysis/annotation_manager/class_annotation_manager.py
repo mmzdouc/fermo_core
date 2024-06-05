@@ -268,8 +268,7 @@ class AnnotationManager(BaseModel):
                 samples=self.samples,
             )
             neutralloss_annotator.run_analysis()
-            self.features = neutralloss_annotator.return_features()
-            self.params.NeutralLossParameters.module_passed = True
+            self.features, self.params = neutralloss_annotator.return_attributes()
         except Exception as e:
             logger.error(str(e))
             logger.error(
@@ -292,8 +291,7 @@ class AnnotationManager(BaseModel):
                 samples=self.samples,
             )
             fragment_annotator.run_analysis()
-            self.features = fragment_annotator.return_features()
-            self.params.FragmentAnnParameters.module_passed = True
+            self.features, self.params = fragment_annotator.return_attributes()
         except Exception as e:
             logger.error(str(e))
             logger.error(

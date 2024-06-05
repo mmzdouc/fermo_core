@@ -10,6 +10,12 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 N/A
 
+## [0.3.2] 05-06-2024
+
+### Fixed
+
+- Corrected erroneous assignment of 'True' to 'module_passed' for FragmentAnnotator and NeutralLossAnnotator if no MS/MS information was provided
+
 ## [0.3.1] 05-06-2024
 
 ### Changed

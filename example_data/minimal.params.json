@@ -1,0 +1,9 @@
+{
+  "files": {
+    "peaktable": {
+      "filepath": "example_data/case_study_peak_table_quant_full.csv",
+      "format": "mzmine3",
+      "polarity": "positive"
+    }
+  }
+}
