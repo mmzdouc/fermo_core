@@ -74,6 +74,8 @@ class OutputParameters(BaseModel):
     def to_json(self: Self) -> dict:
         """Convert attributes to json-compatible ones."""
         try:
-            return {"directory_path": str(self.directory_path.resolve())}
+            return {
+                "directory_path": f"{self.directory_path.parent.name}/{self.directory_path.name}"
+            }
         except AttributeError:
             return {"directory_path": "not specified"}

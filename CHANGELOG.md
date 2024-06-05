@@ -15,7 +15,10 @@ N/A
 ### Changed
 
 - Loosened typing restrictions for Feature and Sample object attributes: area and height (intensity) now accept float values.
-- 
+
+### Security
+
+- Instead of full file paths, only filenames are now written to the 'out.fermo.session.json' file
 
 ## [0.3.0] 03-06-2024
 
