@@ -96,7 +96,7 @@ class ScoreAssigner(BaseModel):
             RuntimeError: no networks detected
         """
         if self.stats.networks is None or len(self.stats.networks) == 0:
-            RuntimeError(
+            raise RuntimeError(
                 "'ScoreAssigner': no networks detected - cannot assign Sample "
                 "scores - SKIP"
             )
@@ -124,7 +124,15 @@ class ScoreAssigner(BaseModel):
 
     def assign_sample_scores(self: Self):
         """Assign scores to sample objects"""
-        self.collect_sample_spec_networks()
+        try:
+            self.collect_sample_spec_networks()
+        except Exception as e:
+            logger.warning(str(e))
+            logger.warning(
+                "'ScoreAssigner': Could not assign sample score, possibly due "
+                "lack of spectral networking information - SKIP"
+            )
+            return
 
         for s_id in self.stats.samples:
             sample = self.samples.get(s_id)

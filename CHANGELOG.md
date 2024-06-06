@@ -10,6 +10,12 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 N/A
 
+## [0.3.3] 06-06-2024
+
+### Fixed
+
+- Added exception for fail of Sample Scores calculation in case of lack of spectral similarity networking data (e.g. no MS/MS data provided)
+
 ## [0.3.2] 05-06-2024
 
 ### Fixed
