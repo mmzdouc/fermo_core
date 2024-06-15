@@ -446,28 +446,6 @@ class SummaryWriter(BaseModel):
                 f"module terminated prematurely. For more information, see the logs."
             )
 
-    def summarize_ms2queryannotationparameters(self: Self):
-        if (
-            self.params.MS2QueryResultsParameters is None
-            and self.params.Ms2QueryAnnotationParameters.activate_module
-            and self.params.Ms2QueryAnnotationParameters.module_passed
-        ):
-            self.summary.append(
-                f"For each molecular feature, annotation using the algorithm "
-                f"'MS2Query was performed. Matches were only retained if they "
-                f"exceeded the cutoff score of "
-                f"'{self.params.Ms2QueryAnnotationParameters.score_cutoff}'."
-            )
-        elif (
-            self.params.MS2QueryResultsParameters is None
-            and self.params.Ms2QueryAnnotationParameters.activate_module
-            and not self.params.Ms2QueryAnnotationParameters.module_passed
-        ):
-            self.summary.append(
-                f"During MS2Query annotation, an error occurred, and the "
-                f"module terminated prematurely. For more information, see the logs."
-            )
-
     def summarize_askcbcosinematchingparams(self: Self):
         if (
             self.params.AsKcbCosineMatchingParams.activate_module

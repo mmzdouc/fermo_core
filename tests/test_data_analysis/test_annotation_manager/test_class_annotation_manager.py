@@ -74,15 +74,6 @@ def test_run_fragment_annotation_valid(annotation_manager_instance):
     )
 
 
-@pytest.mark.high_cpu
-def test_run_ms2query_annotation_valid(annotation_manager_instance):
-    annotation_manager_instance.params.MS2QueryResultsParameters = None
-    annotation_manager_instance.run_ms2query_annotation()
-    assert isinstance(
-        annotation_manager_instance.features.get(132).Annotations.matches[0], Match
-    )
-
-
 def test_run_ms2query_results_assignment_valid(annotation_manager_instance):
     annotation_manager_instance.params.MS2QueryResultsParameters = (
         MS2QueryResultsParameters(

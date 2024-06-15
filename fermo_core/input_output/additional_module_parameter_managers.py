@@ -444,34 +444,6 @@ class SpectralLibMatchingDeepscoreParameters(BaseModel):
             return {"activate_module": self.activate_module}
 
 
-class Ms2QueryAnnotationParameters(BaseModel):
-    """A Pydantic-based class for repr. and valid. of ms2query annotation params.
-
-    Attributes:
-        activate_module: bool to indicate if module should be executed.
-        score_cutoff: only matches with a score higher or equal to are retained
-        maximum_runtime: maximum runtime in seconds ('0' indicates unlimited runtime)
-        module_passed: indicates that the module ran without errors
-    """
-
-    activate_module: bool = False
-    score_cutoff: PositiveFloat = 0.7
-    maximum_runtime: int = 0
-    module_passed: bool = False
-
-    def to_json(self: Self) -> dict:
-        """Convert attributes to json-compatible ones."""
-        if self.activate_module:
-            return {
-                "activate_module": self.activate_module,
-                "score_cutoff": self.score_cutoff,
-                "maximum_runtime": self.maximum_runtime,
-                "module_passed": self.module_passed,
-            }
-        else:
-            return {"activate_module": self.activate_module}
-
-
 class AsKcbCosineMatchingParams(BaseModel):
     """Pydantic-based class for params of antiSMASH KCB results mod cosine matching.
 

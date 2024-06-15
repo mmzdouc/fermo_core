@@ -6,8 +6,8 @@ import matchms
 import numpy as np
 import pytest
 
-from fermo_core.utils.utility_method_manager import UtilityMethodManager
 from fermo_core.config.class_default_settings import DefaultPaths
+from fermo_core.utils.utility_method_manager import UtilityMethodManager
 
 
 def test_download_file_valid():
@@ -53,22 +53,6 @@ def test_mass_deviation_valid():
 def test_mass_deviation_invalid():
     with pytest.raises(ZeroDivisionError):
         UtilityMethodManager.mass_deviation(100.0, 0, 1)
-
-
-@pytest.mark.slow
-def test_check_ms2query_req_pos():
-    UtilityMethodManager().check_ms2query_req("positive")
-    assert len(list(DefaultPaths().dirpath_ms2query_pos.glob("*"))) == (
-        len(DefaultPaths().url_ms2query_pos) + 1  # accounts for '.placeholder'
-    )
-
-
-@pytest.mark.slow
-def test_check_ms2query_req_neg():
-    UtilityMethodManager().check_ms2query_req("negative")
-    assert len(list(DefaultPaths().dirpath_ms2query_neg.glob("*"))) == (
-        len(DefaultPaths().url_ms2query_neg) + 1  # accounts for '.placeholder'
-    )
 
 
 @pytest.mark.slow

@@ -246,19 +246,6 @@ def test_summarize_spectrallibmatchingdeepscoreparameters_invalid(summary_writer
     assert len(summary_writer.summary) == 0
 
 
-def test_summarize_ms2queryannotationparameters_valid(summary_writer):
-    summary_writer.params.MS2QueryResultsParameters = None
-    summary_writer.params.Ms2QueryAnnotationParameters.activate_module = True
-    summary_writer.summarize_ms2queryannotationparameters()
-    assert len(summary_writer.summary) != 0
-
-
-def test_summarize_ms2queryannotationparameters_invalid(summary_writer):
-    summary_writer.params.Ms2QueryAnnotationParameters.activate_module = False
-    summary_writer.summarize_ms2queryannotationparameters()
-    assert len(summary_writer.summary) == 0
-
-
 def test_summarize_askcbcosinematchingparams_valid(summary_writer):
     summary_writer.params.AsKcbCosineMatchingParams.activate_module = True
     summary_writer.summarize_askcbcosinematchingparams()

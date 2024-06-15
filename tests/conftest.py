@@ -10,21 +10,15 @@ def pytest_addoption(parser):
     parser.addoption(
         "--run_slow", action="store_true", default=False, help="run slow tests"
     )
-    parser.addoption(
-        "--run_high_cpu", action="store_true", default=False, help="run high cpu tests"
-    )
 
 
 def pytest_configure(config):
     config.addinivalue_line("markers", "slow: mark test as slow-running")
-    config.addinivalue_line("markers", "high_cpu: mark test as cpu-demanding")
 
 
 def pytest_runtest_setup(item):
     if "slow" in item.keywords and not item.config.getoption("--run_slow"):
         pytest.skip("test requires --run_slow option to run")
-    if "high_cpu" in item.keywords and not item.config.getoption("--run_high_cpu"):
-        pytest.skip("test requires --run_high_cpu option to run")
 
 
 @pytest.fixture

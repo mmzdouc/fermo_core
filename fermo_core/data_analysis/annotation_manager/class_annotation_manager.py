@@ -114,10 +114,6 @@ class AnnotationManager(BaseModel):
                 self.run_ms2query_results_assignment,
             ),
             (
-                self.params.Ms2QueryAnnotationParameters.activate_module,
-                self.run_ms2query_annotation,
-            ),
-            (
                 _eval_as_results_file(),
                 self.run_as_kcb_cosine_annotation,
             ),
@@ -304,14 +300,6 @@ class AnnotationManager(BaseModel):
 
     def run_ms2query_results_assignment(self: Self):
         """Annotate Features from existing MS2Query results"""
-        if self.params.Ms2QueryAnnotationParameters.activate_module is True:
-            logger.warning(
-                f"'AnnotationManager': both an MS2Query result file and instructions "
-                f"for running the MS2Query algorithm were provided. In this case, "
-                f"the existing MS2Query results file "
-                f"'{self.params.MS2QueryResultsParameters.filepath.name}' takes "
-                f"precedence. "
-            )
 
         logger.info(
             "'AnnotationManager': started annotation from existing MS2Query results."
@@ -339,40 +327,6 @@ class AnnotationManager(BaseModel):
         logger.info(
             "'AnnotationManager': completed annotation from existing MS2Query results."
         )
-
-    def run_ms2query_annotation(self: Self):
-        """Perform annotation of feature MS2 using ms2query - run algorithm"""
-        if self.params.MS2QueryResultsParameters is not None:
-            logger.warning(
-                f"'AnnotationManager': both an MS2Query result file and instructions "
-                f"for running the MS2Query algorithm were provided. In this case, "
-                f"the existing MS2Query results file "
-                f"'{self.params.MS2QueryResultsParameters.filepath.name}' takes "
-                f"precedence. "
-            )
-            logger.warning("'AnnotationManager': MS2QueryAnnotator - SKIP ")
-            return
-
-        logger.info("'AnnotationManager': started annotation using MS2Query")
-
-        try:
-            ms2query_annotator = MS2QueryAnnotator(
-                params=self.params,
-                features=self.features,
-                active_features=self.stats.active_features,
-                cutoff=self.params.Ms2QueryAnnotationParameters.score_cutoff,
-            )
-            ms2query_annotator.run_ms2query()
-            self.features = ms2query_annotator.return_features()
-            self.params.Ms2QueryAnnotationParameters.module_passed = True
-        except Exception as e:
-            logger.error(str(e))
-            logger.error(
-                "'AnnotationManager': Error during running of MS2QueryAnnotator - SKIP"
-            )
-            return
-
-        logger.info("'AnnotationManager': completed annotation using MS2Query")
 
     def run_as_kcb_cosine_annotation(self: Self):
         """Match features against a antiSMASH knownclusterblast-derived library.

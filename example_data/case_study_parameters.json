@@ -121,11 +121,6 @@
                 "maximum_runtime": 200
             }
         },
-        "ms2query_annotation": {
-            "activate_module": true,
-            "score_cutoff": 0.7,
-            "maximum_runtime": 600
-        },
         "as_kcb_matching": {
             "modified_cosine": {
                 "activate_module": true,

@@ -297,10 +297,7 @@ class CsvExporter(BaseModel):
             or self.params.SpectralLibMatchingCosineParameters.activate_module
         ):
             modules.append("user_library_annotation")
-        if (
-            self.params.MS2QueryResultsParameters is not None
-            or self.params.Ms2QueryAnnotationParameters.activate_module
-        ):
+        if self.params.MS2QueryResultsParameters is not None:
             modules.append("ms2query_annotation")
         if self.params.AsResultsParameters is not None:
             modules.append("antismash_kcb_annotation")

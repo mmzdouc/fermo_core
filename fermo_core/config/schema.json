@@ -655,31 +655,6 @@
                         }
                     }
                 },
-                "ms2query_annotation": {
-                    "title": "(Optional): settings for MS2Query annotation module. For non-specified parameters, default parameters will be used.",
-                    "additionalProperties": false,
-                    "type": "object",
-                    "required": [
-                        "activate_module"
-                    ],
-                    "properties": {
-                        "activate_module": {
-                            "title": "Specifies whether this module should be run.",
-                            "type": "boolean"
-                        },
-                        "maximum_runtime": {
-                            "title": "(Optional): maximum running time of module, in seconds. A value of 0 (zero) indicates unlimited running time.",
-                            "type": "integer",
-                            "minimum": 0
-                        },
-                        "score_cutoff": {
-                            "title": "(Optional): minimum score that must be reached to consider two MS/MS fragmentation spectra to be related.",
-                            "type": "number",
-                            "minimum": 0.1,
-                            "maximum": 1.0
-                        }
-                    }
-                },
                 "as_kcb_matching": {
                     "title": "(Optional): settings for antiSMASH KnownClusterBlast results matching. Will be only executed if a 'as_results' directory was provided.",
                     "additionalProperties": false,

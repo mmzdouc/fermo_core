@@ -24,7 +24,7 @@ def test_return_valid(analysis_manager_instance):
     assert stats is not None
 
 
-@pytest.mark.high_cpu
+@pytest.mark.slow
 def test_analyze_valid(analysis_manager_instance):
     analysis_manager_instance.analyze()
     value = (
