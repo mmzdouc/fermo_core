@@ -530,7 +530,6 @@ class SummaryWriter(BaseModel):
             self.summarize_phenoquantconcassgnparams()
             self.summarize_spectrallibmatchingcosineparameters()
             self.summarize_spectrallibmatchingdeepscoreparameters()
-            self.summarize_ms2queryannotationparameters()
             self.summarize_askcbcosinematchingparams()
             self.summarize_askcbdeepscorematchingparams()
             logger.debug("'SummaryWriter': Completed summary: analysis modules")
