@@ -1,7 +1,7 @@
 # Local files
 results/
 data_working/
-!fermo_core/data_analysis/annotation_manager/class_ms2query_annotator.py
+.idea/
 
 # ms2query files
 fermo_core/libraries/ms2query/results

@@ -10,6 +10,11 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 N/A
 
+## [0.4.2] 16-06-2024
+
+### Fixed
+- Fixed bug in SummaryWriter: a nonexisting function was referenced, leading to premature exit of module.
+
 ## [0.4.1] 16-06-2024
 
 ### Fixed
