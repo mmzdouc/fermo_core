@@ -8,7 +8,6 @@ from fermo_core.input_output.additional_module_parameter_managers import (
     AsKcbDeepscoreMatchingParams,
     BlankAssignmentParameters,
     FeatureFilteringParameters,
-    Ms2QueryAnnotationParameters,
     PhenoQualAssgnParams,
     PhenoQuantConcAssgnParams,
     PhenoQuantPercentAssgnParams,
@@ -33,7 +32,6 @@ from fermo_core.input_output.input_file_parameter_managers import (
     PhenotypeParameters,
     SpecLibParameters,
 )
-from fermo_core.input_output.output_file_parameter_managers import OutputParameters
 
 
 def test_init_parameter_manager_valid():
@@ -387,25 +385,6 @@ def test_assign_spec_lib_matching_ms2deepscore_invalid():
     params = ParameterManager()
     params.assign_spec_lib_matching_ms2deepscore({"asdfg": "asdfg"})
     assert params.SpectralLibMatchingDeepscoreParameters.score_cutoff == 0.8
-
-
-def test_assign_ms2query_valid():
-    params = ParameterManager()
-    params.assign_ms2query(
-        {
-            "activate_module": True,
-            "exclude_blank": False,
-            "score_cutoff": 0.7,
-            "maximum_runtime": 600,
-        }
-    )
-    assert isinstance(params.Ms2QueryAnnotationParameters, Ms2QueryAnnotationParameters)
-
-
-def test_assign_ms2query_invalid():
-    params = ParameterManager()
-    params.assign_ms2query({"asdfg": "asdfg"})
-    assert params.Ms2QueryAnnotationParameters.activate_module is False
 
 
 def test_assign_as_kcb_matching_cosine_valid():

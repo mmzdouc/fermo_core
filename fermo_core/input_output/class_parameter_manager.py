@@ -34,7 +34,6 @@ from fermo_core.input_output.additional_module_parameter_managers import (
     BlankAssignmentParameters,
     FeatureFilteringParameters,
     GroupFactAssignmentParameters,
-    Ms2QueryAnnotationParameters,
     PhenoQualAssgnParams,
     PhenoQuantConcAssgnParams,
     PhenoQuantPercentAssgnParams,
@@ -96,7 +95,6 @@ class ParameterManager(BaseModel):
             library matching module parameter
         SpectralLibMatchingDeepscoreParameters: class handling ms2deepscore-based
             spectral library matching module parameter
-        Ms2QueryAnnotationParameters: class handling ms2query annotation module params
         AsKcbCosineMatchingParams: class handling antiSMASH KCB cosine module params
         AsKcbDeepscoreMatchingParams: class handling antiSMASH KCB DS module params
     """
@@ -137,9 +135,6 @@ class ParameterManager(BaseModel):
     )
     SpectralLibMatchingDeepscoreParameters: SpectralLibMatchingDeepscoreParameters = (
         SpectralLibMatchingDeepscoreParameters()
-    )
-    Ms2QueryAnnotationParameters: Ms2QueryAnnotationParameters = (
-        Ms2QueryAnnotationParameters()
     )
     AsKcbCosineMatchingParams: AsKcbCosineMatchingParams = AsKcbCosineMatchingParams()
     AsKcbDeepscoreMatchingParams: AsKcbDeepscoreMatchingParams = (
@@ -202,9 +197,6 @@ class ParameterManager(BaseModel):
         )
         json_dict["SpectralLibMatchingDeepscoreParameters"] = (
             self.SpectralLibMatchingDeepscoreParameters.to_json()
-        )
-        json_dict["Ms2QueryAnnotationParameters"] = (
-            self.Ms2QueryAnnotationParameters.to_json()
         )
         json_dict["AsKcbCosineMatchingParams"] = (
             self.AsKcbCosineMatchingParams.to_json()
@@ -382,11 +374,6 @@ class ParameterManager(BaseModel):
                 user_params.get("spectral_library_matching", {}).get("ms2deepscore"),
                 self.assign_spec_lib_matching_ms2deepscore,
                 "spectral_library_matching/ms2deepscore",
-            ),
-            (
-                user_params.get("ms2query_annotation"),
-                self.assign_ms2query,
-                "ms2query_annotation",
             ),
             (
                 user_params.get("as_kcb_matching", {}).get("modified_cosine"),
@@ -826,25 +813,6 @@ class ParameterManager(BaseModel):
             self.SpectralLibMatchingDeepscoreParameters = (
                 SpectralLibMatchingDeepscoreParameters()
             )
-
-    def assign_ms2query(self: Self, user_params: dict):
-        """Assign ms2query parameters to self.Ms2QueryAnnotationParameters.
-
-        Parameters:
-            user_params: user-provided params, read from json file
-        """
-        try:
-            self.Ms2QueryAnnotationParameters = Ms2QueryAnnotationParameters(
-                **user_params
-            )
-            logger.info(
-                "'ParameterManager': validated and assigned parameters "
-                "for 'ms2query'."
-            )
-        except Exception as e:
-            logger.warning(str(e))
-            self.log_malformed_parameters_default("ms2query")
-            self.Ms2QueryAnnotationParameters = Ms2QueryAnnotationParameters()
 
     def assign_as_kcb_matching_cosine(self: Self, user_params: dict):
         """Assign antismash kcb results parameters to self.AsKcbCosineMatchingParams.

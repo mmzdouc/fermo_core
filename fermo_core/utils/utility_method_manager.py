@@ -64,31 +64,6 @@ class UtilityMethodManager(BaseModel):
                 "supports positive ionization mode mass spectrometry data - SKIP"
             )
 
-    def check_ms2query_req(self: Self, polarity: str):
-        """Checks if files required for ms2query functionality are present
-
-        Attributes:
-            polarity: the mass spectrometry data polarity
-        """
-        if polarity == "positive":
-            for url in DefaultPaths().url_ms2query_pos:
-                file = urlparse(url).path.split("/")[-1]
-                if not DefaultPaths().dirpath_ms2query_pos.joinpath(file).exists():
-                    self.download_file(
-                        url=url,
-                        location=DefaultPaths().dirpath_ms2query_pos.joinpath(file),
-                        timeout=600,
-                    )
-        else:
-            for url in DefaultPaths().url_ms2query_neg:
-                file = urlparse(url).path.split("/")[-1]
-                if not DefaultPaths().dirpath_ms2query_neg.joinpath(file).exists():
-                    self.download_file(
-                        url=url,
-                        location=DefaultPaths().dirpath_ms2query_neg.joinpath(file),
-                        timeout=600,
-                    )
-
     @staticmethod
     def download_file(url: str, location: Path, timeout: int):
         """Downloads from given URL into the designated location.

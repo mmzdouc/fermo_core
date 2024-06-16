@@ -1,9 +1,9 @@
 from fermo_core.config.class_default_settings import (
-    DefaultPaths,
-    NeutralLosses,
-    Loss,
     CharFragments,
+    DefaultPaths,
     Fragment,
+    Loss,
+    NeutralLosses,
 )
 
 
@@ -14,13 +14,6 @@ def test_init_class():
 def test_dirpath_ms2deepscore():
     default_settings = DefaultPaths()
     assert default_settings.dirpath_ms2deepscore_pos.exists()
-
-
-def test_dirpath_ms2query():
-    default_settings = DefaultPaths()
-    assert default_settings.dirpath_ms2query_base.exists()
-    assert default_settings.dirpath_ms2query_pos.exists()
-    assert default_settings.dirpath_ms2query_neg.exists()
 
 
 def test_class_loss_valid():

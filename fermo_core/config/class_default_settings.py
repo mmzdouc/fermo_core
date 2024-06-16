@@ -33,11 +33,6 @@ class DefaultPaths(BaseModel):
     Attributes:
         dirpath_ms2deepscore_pos: points towards default ms2deepscore dir
         url_ms2deepscore_pos: the url to download the default ms2deepscore file
-        dirpath_ms2query_base: points towards default ms2query dir
-        dirpath_ms2query_pos: points towards default ms2query dir positive mode
-        dirpath_ms2query_neg: points towards default ms2query dir negative mode
-        url_ms2query_pos: urls to default ms2query files for positive ion mode
-        url_ms2query_neg: urls to default ms2query files for negative ion mode
         dirpath_losses: point towards neutral loss dir
         dirpath_frags: point towards fragment dir
         library_mibig_pos: points towards mibig spectral library for positive ion mode
@@ -49,52 +44,6 @@ class DefaultPaths(BaseModel):
     url_ms2deepscore_pos: str = (
         "https://zenodo.org/records/8274763/files/"
         "ms2deepscore_positive_10k_1000_1000_1000_500.hdf5?download=1"
-    )
-    dirpath_ms2query_base: DirectoryPath = Path(__file__).parent.parent.joinpath(
-        "libraries/ms2query/"
-    )
-    dirpath_ms2query_pos: DirectoryPath = Path(__file__).parent.parent.joinpath(
-        "libraries/ms2query/pos"
-    )
-    dirpath_ms2query_neg: DirectoryPath = Path(__file__).parent.parent.joinpath(
-        "libraries/ms2query/neg"
-    )
-    url_ms2query_pos: tuple = (
-        "https://zenodo.org/records/10527997/files"
-        "/ALL_GNPS_210409_positive_processed_annotated_CF_NPC_classes.txt?download=1",
-        "https://zenodo.org/records/10527997/files"
-        "/library_GNPS_15_12_2021_ms2ds_embeddings.parquet?download=1",
-        "https://zenodo.org/records/10527997/files"
-        "/library_GNPS_15_12_2021_s2v_embeddings.parquet?download=1",
-        "https://zenodo.org/records/10527997/files/ms2ds_model_GNPS_15_12_2021.hdf5"
-        "?download=1",
-        "https://zenodo.org/records/10527997/files/ms2query_library.sqlite?download=1",
-        "https://zenodo.org/records/10527997/files/ms2query_random_forest_model.onnx"
-        "?download=1",
-        "https://zenodo.org/records/10527997/files/spec2vec_model_GNPS_15_12_2021"
-        ".model?download=1",
-        "https://zenodo.org/records/10527997/files/spec2vec_model_GNPS_15_12_2021"
-        ".model.syn1neg.npy?download=1",
-        "https://zenodo.org/records/10527997/files/spec2vec_model_GNPS_15_12_2021"
-        ".model.wv.vectors.npy?download=1",
-    )
-    url_ms2query_neg: tuple = (
-        "https://zenodo.org/records/10528030/files/neg_GNPS_15_12_2021_ms2ds_model"
-        ".hdf5?download=1",
-        "https://zenodo.org/records/10528030/files"
-        "/neg_GNPS_15_12_2021_ms2query_random_forest_model.onnx?download=1",
-        "https://zenodo.org/records/10528030/files"
-        "/neg_mode_GNPS_15_12_2021_ms2ds_embeddings.parquet?download=1",
-        "https://zenodo.org/records/10528030/files"
-        "/neg_mode_GNPS_15_12_2021_s2v_embeddings.parquet?download=1",
-        "https://zenodo.org/records/10528030/files"
-        "/neg_mode_spec2vec_model_GNPS_15_12_2021.model?download=1",
-        "https://zenodo.org/records/10528030/files"
-        "/neg_mode_spec2vec_model_GNPS_15_12_2021.model.syn1neg.npy?download=1",
-        "https://zenodo.org/records/10528030/files"
-        "/neg_mode_spec2vec_model_GNPS_15_12_2021.model.wv.vectors.npy?download=1",
-        "https://zenodo.org/records/10528030/files/negative_mode_15_12_2021.sqlite"
-        "?download=1",
     )
     dirpath_losses: DirectoryPath = Path(__file__).parent.parent.joinpath(
         "libraries/loss_libs/"

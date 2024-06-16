@@ -77,7 +77,6 @@ def csv_exporter():
     csv_exporter.params.SpectralLibMatchingCosineParameters.activate_module = True
     csv_exporter.params.SpectralLibMatchingDeepscoreParameters.activate_module = True
     csv_exporter.params.AsResultsParameters = "dummy"
-    csv_exporter.params.Ms2QueryAnnotationParameters.activate_module = True
     csv_exporter.stats.active_features = {1}
     csv_exporter.stats.networks = {
         "abc": SpecSimNet(
@@ -277,9 +276,6 @@ def test_add_match_info_csv(csv_exporter):
     csv_exporter.add_match_info_csv()
     assert isinstance(
         csv_exporter.df.loc[0, "fermo:annotation:matches:user_library_annotation"], str
-    )
-    assert isinstance(
-        csv_exporter.df.loc[0, "fermo:annotation:matches:ms2query_annotation"], str
     )
     assert isinstance(
         csv_exporter.df.loc[0, "fermo:annotation:matches:antismash_kcb_annotation"], str

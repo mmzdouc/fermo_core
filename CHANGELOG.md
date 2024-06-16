@@ -10,6 +10,11 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 N/A
 
+## [0.4.0] 15-06-2024
+
+### Removed
+- [Breaking change] Removed MS2Query de novo annotation after observation of process instability (unforeseen process termination by system with SIGKILL (9))
+
 ## [0.3.3] 06-06-2024
 
 ### Fixed
