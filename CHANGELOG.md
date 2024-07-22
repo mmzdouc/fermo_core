@@ -8,10 +8,13 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## Unreleased
 
+## [0.4.3] 22-07-2024
+
 ### Fixed:
 
-- PhenotypeManager: prevent Pearson calculation on constant or NaN-containing arrays
-- GeneralParser: improve error-handling on malformed input files.
+- PhenotypeManager: prevented Pearson calculation on constant or NaN-containing arrays
+- GeneralParser: fixed error-handling on malformed input files.
+- MS2DeepScoreNetworker: fixed MS2 spectra filtering for ms2deepscore algorithm
 
 ## [0.4.2] 16-06-2024
 
