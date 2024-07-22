@@ -10,7 +10,8 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Fixed:
 
-- Made GeneralParser more permissive in handling errors.
+- PhenotypeManager: prevent Pearson calculation on constant or NaN-containing arrays
+- GeneralParser: improve error-handling on malformed input files.
 
 ## [0.4.2] 16-06-2024
 
