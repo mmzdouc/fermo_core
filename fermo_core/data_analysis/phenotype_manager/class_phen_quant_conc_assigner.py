@@ -162,6 +162,7 @@ class PhenQuantConcAssigner(BaseModel):
                             score=pearson_s,
                             p_value=p_val,
                             p_value_corr=p_val_cor,
+                            descr="Area/phenotype Pearson correlation",
                         )
                     )
                     self.stats.phenotypes[num].f_ids_positive.add(f_id)
@@ -177,6 +178,7 @@ class PhenQuantConcAssigner(BaseModel):
                             score=pearson_s,
                             p_value=p_val,
                             p_value_corr=p_val_cor,
+                            descr="Area/phenotype Pearson correlation",
                         )
                     )
                     self.stats.phenotypes[num].f_ids_positive.add(f_id)
