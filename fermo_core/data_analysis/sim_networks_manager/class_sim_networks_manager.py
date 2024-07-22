@@ -27,6 +27,7 @@ from typing import Self
 
 import func_timeout
 import networkx
+import numpy as np
 from pydantic import BaseModel
 
 from fermo_core.data_analysis.sim_networks_manager.class_mod_cosine_networker import (
@@ -157,9 +158,10 @@ class SimNetworksManager(BaseModel):
         logger.info("'SimNetworksManager/ModCosineNetworker': started calculation")
 
         filtered_features = self.filter_input_spectra(
-            tuple(self.stats.active_features),
-            self.features,
-            self.params.SpecSimNetworkCosineParameters.msms_min_frag_nr,
+            features=tuple(self.stats.active_features),
+            feature_repo=self.features,
+            msms_min_frag_nr=self.params.SpecSimNetworkCosineParameters.msms_min_frag_nr,
+            algorithm="modified_cosine",
         )
 
         try:
@@ -205,9 +207,10 @@ class SimNetworksManager(BaseModel):
             return
 
         filtered_features = self.filter_input_spectra(
-            tuple(self.stats.active_features),
-            self.features,
-            self.params.SpecSimNetworkDeepscoreParameters.msms_min_frag_nr,
+            features=tuple(self.stats.active_features),
+            feature_repo=self.features,
+            msms_min_frag_nr=self.params.SpecSimNetworkDeepscoreParameters.msms_min_frag_nr,
+            algorithm="ms2deepscore",
         )
 
         try:
@@ -246,11 +249,29 @@ class SimNetworksManager(BaseModel):
         self.params.SpecSimNetworkDeepscoreParameters.module_passed = True
         logger.info("'SimNetworksManager/Ms2deepscoreNetworker': completed calculation")
 
+    @staticmethod
+    def filter_for_ms2deepscore(mz_array: np.ndarray) -> bool:
+        """Filters features that have no peaks between 10 and 1000.
+
+        MS2DeepScore v0.5.0 has a function 'bin_number_array_fixed()' in file
+        'spectrum_binning_fixed.py' that raises an AssertionError if all peaks are
+        below 10 and over 1000 m/z
+
+        Arguments:
+            mz_array: Numpy array of peak m/z positions
+        """
+        new_array = mz_array[(mz_array >= 10.0) & (mz_array <= 1000.0)]
+        if len(new_array) == 0:
+            return True
+        else:
+            return False
+
     def filter_input_spectra(
         self: Self,
         features: tuple,
         feature_repo: Repository,
         msms_min_frag_nr: int,
+        algorithm: str,
     ) -> dict[str, set]:
         """Filter features for spectral similarity analysis based on given restrictions.
 
@@ -258,6 +279,7 @@ class SimNetworksManager(BaseModel):
             features: a tuple of feature IDs
             feature_repo: containing GeneralFeature objects with feature info
             msms_min_frag_nr: minimum number of fragments per spectrum to be considered
+            algorithm: a flag indicating the calling algorithm
 
         Returns:
             A dictionary containing included and excluded feature ints in sets.
@@ -275,6 +297,11 @@ class SimNetworksManager(BaseModel):
                 self.log_filtered_feature_nr_fragments(
                     f_id, len(feature.Spectrum.peaks.mz), msms_min_frag_nr
                 )
+            elif algorithm == "ms2deepscore":
+                if self.filter_for_ms2deepscore(feature.Spectrum.peaks.mz):
+                    excluded.add(f_id)
+                else:
+                    included.add(f_id)
             else:
                 included.add(f_id)
 
