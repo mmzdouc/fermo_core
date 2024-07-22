@@ -129,7 +129,7 @@ class ScoreAssigner(BaseModel):
         except Exception as e:
             logger.warning(str(e))
             logger.warning(
-                "'ScoreAssigner': Could not assign sample score, possibly due "
+                "'ScoreAssigner': Could not assign sample score, possibly due to "
                 "lack of spectral networking information - SKIP"
             )
             return

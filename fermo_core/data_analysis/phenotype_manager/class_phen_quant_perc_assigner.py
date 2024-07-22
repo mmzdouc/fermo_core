@@ -24,6 +24,7 @@ SOFTWARE.
 import logging
 from typing import Self
 
+import numpy as np
 from pydantic import BaseModel
 from scipy.stats import pearsonr, zscore
 
@@ -89,7 +90,7 @@ class PhenQuantPercAssigner(BaseModel):
             else:
                 logger.debug(
                     f"'PhenQuantPercAssigner': feature id '{f_id}' only detected in "
-                    f"'{len(feature.samples)}' samples: exclude from correlation "
+                    f"'{len(feature.samples)}' samples: excluded from correlation "
                     f"analysis."
                 )
 
@@ -101,8 +102,8 @@ class PhenQuantPercAssigner(BaseModel):
         """
         if len(self.relevant_f_ids) == 0:
             raise RuntimeError(
-                "'PhenQuantPercAssigner': No relevant features (detected in >3 "
-                "samples) detected - SKIP."
+                "'PhenQuantPercAssigner': No relevant features detected "
+                "(i.e. found in >3 samples) - SKIP."
             )
 
         for f_id in self.relevant_f_ids:
@@ -127,6 +128,19 @@ class PhenQuantPercAssigner(BaseModel):
 
                 areas_scaled = zscore(areas)
                 activs_scaled = zscore(activs)
+
+                if np.isnan(areas_scaled).any():
+                    logger.debug(
+                        f"'PhenQuantPercAssigner': feature id '{f_id}' has constant "
+                        f"area values ('{areas[0]}'). Cannot calculate Pearson correlation - SKIP."
+                    )
+                    continue
+                elif np.isnan(activs_scaled).any():
+                    logger.debug(
+                        f"'PhenQuantPercAssigner': feature id '{f_id}' has constant "
+                        f"phenotype values ('{activs[0]}'). Cannot calculate Pearson correlation - SKIP."
+                    )
+                    continue
 
                 pearson_s, p_val = pearsonr(areas_scaled, activs_scaled)
 
