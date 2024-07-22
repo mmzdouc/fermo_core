@@ -112,7 +112,10 @@ class AnalysisManager(BaseModel):
             self.stats, self.features, self.samples = feature_filter.return_values()
             self.params.FeatureFilteringParameters.module_passed = True
         except Exception as e:
-            logger.warning(str(e))
+            logger.error(str(e))
+            logger.error(
+                "FeatureFilter: an error occurred and the module terminated prematurely - SKIP"
+            )
             return
 
     def run_blank_assignment(self: Self):
@@ -143,7 +146,10 @@ class AnalysisManager(BaseModel):
             self.stats, self.features = blank_assigner.return_attrs()
             self.params.BlankAssignmentParameters.module_passed = True
         except Exception as e:
-            logger.warning(str(e))
+            logger.error(str(e))
+            logger.error(
+                "BlankAssigner: an error occurred and the module terminated prematurely - SKIP"
+            )
             return
 
     def run_group_assignment(self: Self):
@@ -160,7 +166,10 @@ class AnalysisManager(BaseModel):
             group_assigner.run_analysis()
             self.stats, self.features = group_assigner.return_attrs()
         except Exception as e:
-            logger.warning(str(e))
+            logger.error(str(e))
+            logger.error(
+                "GroupAssigner: an error occurred and the module terminated prematurely - SKIP"
+            )
             return
 
     def run_group_factor_assignment(self: Self):
@@ -187,7 +196,10 @@ class AnalysisManager(BaseModel):
             self.features = group_fact_ass.return_features()
             self.params.GroupFactAssignmentParameters.module_passed = True
         except Exception as e:
-            logger.warning(str(e))
+            logger.error(str(e))
+            logger.error(
+                "GroupFactorAssigner: an error occurred and the module terminated prematurely - SKIP"
+            )
             return
 
     def run_phenotype_manager(self: Self):
@@ -218,7 +230,10 @@ class AnalysisManager(BaseModel):
             phenotype_manager.run_analysis()
             self.stats, self.features, self.params = phenotype_manager.return_attrs()
         except Exception as e:
-            logger.warning(str(e))
+            logger.error(str(e))
+            logger.error(
+                "PhenotypeManager: an error occurred and the module terminated prematurely - SKIP"
+            )
             return
 
     def run_sim_networks_manager(self: Self):
@@ -250,7 +265,10 @@ class AnalysisManager(BaseModel):
                 sim_networks_manager.return_attrs()
             )
         except Exception as e:
-            logger.warning(str(e))
+            logger.error(str(e))
+            logger.error(
+                "SimNetworksManager: an error occurred and the module terminated prematurely - SKIP"
+            )
             return
 
     def run_annotation_manager(self: Self):
@@ -268,7 +286,10 @@ class AnalysisManager(BaseModel):
                 annotation_manager.return_attrs()
             )
         except Exception as e:
-            logger.warning(str(e))
+            logger.error(str(e))
+            logger.error(
+                "AnnotationManager: an error occurred and the module terminated prematurely - SKIP"
+            )
             return
 
     def run_score_assignment(self: Self):
@@ -283,7 +304,10 @@ class AnalysisManager(BaseModel):
             score_assigner.run_analysis()
             self.features, self.samples = score_assigner.return_attributes()
         except Exception as e:
-            logger.warning(str(e))
+            logger.error(str(e))
+            logger.error(
+                "ScoreAssigner: an error occurred and the module terminated prematurely - SKIP"
+            )
             return
 
     def run_chrom_trace_calculator(self: Self):
@@ -293,5 +317,8 @@ class AnalysisManager(BaseModel):
                 self.samples, self.stats
             )
         except Exception as e:
-            logger.warning(str(e))
+            logger.error(str(e))
+            logger.error(
+                "ChromTraceCalculator: an error occurred and the module terminated prematurely - SKIP"
+            )
             return

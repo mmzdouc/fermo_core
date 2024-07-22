@@ -1,3 +1,4 @@
+import numpy as np
 import pytest
 
 from fermo_core.data_analysis.sim_networks_manager.class_mod_cosine_networker import (
@@ -42,6 +43,21 @@ def test_return_valid(sim_networks_manager_instance):
     assert stats is not None
 
 
+def test_filter_for_ms2deepscore_valid(sim_networks_manager_instance):
+    assert sim_networks_manager_instance.filter_for_ms2deepscore(
+        np.array([1010.5485, 1095.2932, 1114.1085])
+    )
+
+
+def test_filter_for_ms2deepscore_invalid(sim_networks_manager_instance):
+    assert (
+        sim_networks_manager_instance.filter_for_ms2deepscore(
+            np.array([999.9999, 1010.5485, 1095.2932, 1114.1085])
+        )
+        is False
+    )
+
+
 @pytest.mark.slow
 def test_run_analysis_valid(sim_networks_manager_instance):
     sim_networks_manager_instance.run_analysis()
@@ -67,7 +83,10 @@ def test_filter_input_spectra_valid(sim_networks_manager_instance, feature_insta
     features = (12, 13)
     assert (
         sim_networks_manager_instance.filter_input_spectra(
-            features=features, feature_repo=feature_instance, msms_min_frag_nr=5
+            features=features,
+            feature_repo=feature_instance,
+            msms_min_frag_nr=5,
+            algorithm="modified_cosine",
         )
         is not None
     )
@@ -77,7 +96,10 @@ def test_filter_input_spectra_invalid(sim_networks_manager_instance, feature_ins
     features = (12, 13)
     assert (
         sim_networks_manager_instance.filter_input_spectra(
-            features=features, feature_repo=feature_instance, msms_min_frag_nr=10000
+            features=features,
+            feature_repo=feature_instance,
+            msms_min_frag_nr=10000,
+            algorithm="modified_cosine",
         )["included"]
         == set()
     )

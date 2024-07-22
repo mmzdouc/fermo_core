@@ -1,6 +1,6 @@
 """Runs the ms2deepscore library annotation module.
 
-Copyright (c) 2024 Mitja Maximilian Zdouc, PhD
+Copyright (c) 2024 to present Mitja Maximilian Zdouc, PhD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -154,7 +154,7 @@ class Ms2deepscoreAnnotator(BaseModel):
             except func_timeout.FunctionTimedOut as e:
                 logger.warning(
                     f"'AnnotationManager/Ms2deepscoreAnnotator': timeout of "
-                    f"MS2dDeepScore-based "
+                    f"MS2DeepScore-based "
                     f"calculation: more than specified '{self.max_time}' seconds."
                     f"For unlimited runtime, set 'maximum_runtime' to 0 - SKIP"
                 )

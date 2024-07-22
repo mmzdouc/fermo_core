@@ -24,6 +24,7 @@ SOFTWARE.
 import logging
 from typing import Self
 
+import numpy as np
 from pydantic import BaseModel
 from scipy.stats import pearsonr, zscore
 
@@ -89,7 +90,7 @@ class PhenQuantConcAssigner(BaseModel):
             else:
                 logger.debug(
                     f"'PhenQuantConcAssigner': feature id '{f_id}' only detected in "
-                    f"'{len(feature.samples)}' samples: exclude from correlation "
+                    f"'{len(feature.samples)}' samples: excluded from correlation "
                     f"analysis."
                 )
 
@@ -101,8 +102,8 @@ class PhenQuantConcAssigner(BaseModel):
         """
         if len(self.relevant_f_ids) == 0:
             raise RuntimeError(
-                "'PhenQuantConcAssigner': No relevant features (detected in >3 "
-                "samples) detected - SKIP."
+                "'PhenQuantConcAssigner': No relevant features detected"
+                "(i.e. found in >3 samples) - SKIP."
             )
 
         for f_id in self.relevant_f_ids:
@@ -130,6 +131,19 @@ class PhenQuantConcAssigner(BaseModel):
                 areas_scaled = zscore(areas)
                 activs_scaled = zscore(activs_reciprocal)
 
+                if np.isnan(areas_scaled).any():
+                    logger.debug(
+                        f"'PhenQuantConcAssigner': feature id '{f_id}' has constant "
+                        f"area values ('{areas[0]}'). Cannot calculate Pearson correlation - SKIP."
+                    )
+                    continue
+                elif np.isnan(activs_scaled).any():
+                    logger.debug(
+                        f"'PhenQuantConcAssigner': feature id '{f_id}' has constant "
+                        f"phenotype values ('{activs[0]}'). Cannot calculate Pearson correlation - SKIP."
+                    )
+                    continue
+
                 pearson_s, p_val = pearsonr(areas_scaled, activs_scaled)
 
                 p_val_cor = p_val * len(self.relevant_f_ids)
@@ -148,6 +162,7 @@ class PhenQuantConcAssigner(BaseModel):
                             score=pearson_s,
                             p_value=p_val,
                             p_value_corr=p_val_cor,
+                            descr="Area/phenotype Pearson correlation",
                         )
                     )
                     self.stats.phenotypes[num].f_ids_positive.add(f_id)
@@ -163,6 +178,7 @@ class PhenQuantConcAssigner(BaseModel):
                             score=pearson_s,
                             p_value=p_val,
                             p_value_corr=p_val_cor,
+                            descr="Area/phenotype Pearson correlation",
                         )
                     )
                     self.stats.phenotypes[num].f_ids_positive.add(f_id)
