@@ -8,21 +8,26 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## Unreleased
 
-N/A
+### Fixed:
+
+- Made GeneralParser more permissive in handling errors.
 
 ## [0.4.2] 16-06-2024
 
 ### Fixed
+
 - Fixed bug in SummaryWriter: a nonexisting function was referenced, leading to premature exit of module.
 
 ## [0.4.1] 16-06-2024
 
 ### Fixed
+
 - Versioning
 
 ## [0.4.0] 15-06-2024
 
 ### Removed
+
 - [Breaking change] Removed MS2Query de novo annotation after observation of process instability (unforeseen process termination by system with SIGKILL (9))
 
 ## [0.3.3] 06-06-2024
@@ -44,6 +49,7 @@ N/A
 - Loosened typing restrictions for Feature and Sample object attributes: area and height (intensity) now accept float values.
 
 ### Removed
+
 - [Breaking change] Removed toggle 'nonbiological' from 'FragmentAnnotator' and from parameters file; 'nonbiological' fragment annotation is now performed automatically
 
 ### Security
