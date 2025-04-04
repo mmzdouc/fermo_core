@@ -6,7 +6,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
-## Unreleased
+## Unreleased [0.5.0]
+
+## Added
+
+- Implemented compatibility with mzmine4 output
+
+## Changed
+
+- QuantPhenotype: reimplemented, allowing for flexible FDR 
+- SpecLibMgfParser: implemented lazy loading to better deal with large libraries, filter out invalid spectra
+
+## Fixed 
+
+- Fixed bug in mzmine parser hanging on "NaN to integer"
+
 
 ## [0.4.3] 22-07-2024
 
