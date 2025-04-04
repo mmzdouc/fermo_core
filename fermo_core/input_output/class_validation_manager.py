@@ -152,7 +152,6 @@ class ValidationManager:
         df = pd.read_csv(ms2query_results, sep=",")
 
         for arg in [
-            ("^id$", "id"),
             ("^analog_compound_name", "analog_compound_name"),
             ("^ms2query_model_prediction", "ms2query_model_prediction"),
             ("^precursor_mz_difference", "precursor_mz_difference"),
@@ -166,6 +165,12 @@ class ValidationManager:
                     f"Column '{arg[1]}' is missing in MS2Query results file "
                     f"'{ms2query_results.name}'."
                 )
+
+        if "feature_id" not in df.columns and "id" not in df.columns:
+            raise KeyError(
+                f"No column 'id' or 'feature_id' was found in MS2Query results file "
+                f"'{ms2query_results.name}'."
+            )
 
     @staticmethod
     def validate_csv_has_rows(csv_path: Path):

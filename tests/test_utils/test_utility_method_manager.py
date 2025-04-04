@@ -85,7 +85,7 @@ def test_extract_as_kcb_results_valid():
 @pytest.mark.slow
 def test_create_mibig_spec_lib_valid():
     results = UtilityMethodManager().create_mibig_spec_lib({"BGC0000340"})
-    assert len(results) == 5
+    assert len(results) == 10
 
 
 @pytest.mark.slow

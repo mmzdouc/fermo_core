@@ -29,12 +29,7 @@ from pydantic import BaseModel
 from fermo_core.data_analysis.phenotype_manager.class_phen_qual_assigner import (
     PhenQualAssigner,
 )
-from fermo_core.data_analysis.phenotype_manager.class_phen_quant_conc_assigner import (
-    PhenQuantConcAssigner,
-)
-from fermo_core.data_analysis.phenotype_manager.class_phen_quant_perc_assigner import (
-    PhenQuantPercAssigner,
-)
+from fermo_core.data_analysis.phenotype_manager.class_phen_quant_ass import PhenQuantAss
 from fermo_core.data_processing.class_repository import Repository
 from fermo_core.data_processing.class_stats import Stats
 from fermo_core.input_output.class_parameter_manager import ParameterManager
@@ -131,8 +126,11 @@ class PhenotypeManager(BaseModel):
             return
 
         try:
-            quant_p_assigner = PhenQuantPercAssigner(
-                params=self.params,
+            quant_p_assigner = PhenQuantAss(
+                coeff_cutoff=self.params.PhenoQuantPercentAssgnParams.coeff_cutoff,
+                p_val_cutoff=self.params.PhenoQuantPercentAssgnParams.p_val_cutoff,
+                fdr_corr=self.params.PhenoQuantPercentAssgnParams.fdr_corr,
+                mode="percentage",
                 features=self.features,
                 stats=self.stats,
                 samples=self.samples,
@@ -168,8 +166,11 @@ class PhenotypeManager(BaseModel):
             return
 
         try:
-            quant_conc_assigner = PhenQuantConcAssigner(
-                params=self.params,
+            quant_conc_assigner = PhenQuantAss(
+                coeff_cutoff=self.params.PhenoQuantConcAssgnParams.coeff_cutoff,
+                p_val_cutoff=self.params.PhenoQuantConcAssgnParams.p_val_cutoff,
+                fdr_corr=self.params.PhenoQuantConcAssgnParams.fdr_corr,
+                mode="percentage",
                 features=self.features,
                 stats=self.stats,
                 samples=self.samples,

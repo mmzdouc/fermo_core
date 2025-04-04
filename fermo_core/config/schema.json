@@ -515,6 +515,22 @@
                                         "pearson"
                                     ]
                                 },
+                                "fdr_corr": {
+                                    "title": "(Optional): Specifies the statistical algorithm to use. See https://www.statsmodels.org/dev/generated/statsmodels.stats.multitest.multipletests.html",
+                                    "type": "string",
+                                    "enum": [
+                                        "bonferroni",
+                                        "sidak",
+                                        "holm-sidak",
+                                        "holm",
+                                        "simes-hochberg",
+                                        "hommel",
+                                        "fdr_bh",
+                                        "fdr_by",
+                                        "fdr_tsbh",
+                                        "fdr_tsbky"
+                                    ]
+                                },
                                 "p_val_cutoff": {
                                     "title": "(Optional): Maximum Bonferroni-corrected p-value to consider. A value of zero disables the cutoff filtering (automatically applies to both score and p-value).",
                                     "type": "number",
@@ -561,6 +577,22 @@
                                     "type": "string",
                                     "enum": [
                                         "pearson"
+                                    ]
+                                },
+                                "fdr_corr": {
+                                    "title": "(Optional): Specifies the statistical algorithm to use. See https://www.statsmodels.org/dev/generated/statsmodels.stats.multitest.multipletests.html",
+                                    "type": "string",
+                                    "enum": [
+                                        "bonferroni",
+                                        "sidak",
+                                        "holm-sidak",
+                                        "holm",
+                                        "simes-hochberg",
+                                        "hommel",
+                                        "fdr_bh",
+                                        "fdr_by",
+                                        "fdr_tsbh",
+                                        "fdr_tsbky"
                                     ]
                                 },
                                 "p_val_cutoff": {

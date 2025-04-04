@@ -11,6 +11,7 @@ def test_json_export_valid():
         "sample_avg": "mean",
         "value": "area",
         "algorithm": "pearson",
+        "fdr_corr": "bonferroni",
         "p_val_cutoff": 0.05,
         "coeff_cutoff": 0.7,
         "module_passed": True,

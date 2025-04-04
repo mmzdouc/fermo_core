@@ -69,6 +69,8 @@ class MS2QueryAnnotator(BaseModel):
         """
         df = pd.read_csv(results_path)
         df.fillna("unknown", inplace=True)
+        if "feature_id" in df.columns:
+            df.rename(columns={"feature_id": "id"}, inplace=True)
 
         for _, row in df.iterrows():
             if int(row["id"]) not in self.active_features:

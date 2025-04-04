@@ -168,7 +168,7 @@ class FeatureBuilder(BaseModel):
         samples = []
         for sample in row.filter(regex=":feature_state").index:
             sample_id = sample.split(":")[1]
-            if row[f"datafile:{sample_id}:feature_state"] == "DETECTED":
+            if row[f"datafile:{sample_id}:feature_state"] != "UNKNOWN":
                 samples.append(sample_id)
 
         self.feature.samples = set(samples)
