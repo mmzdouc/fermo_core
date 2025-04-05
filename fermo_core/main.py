@@ -51,22 +51,25 @@ def main(params: ParameterManager, starttime: datetime, logger: logging.Logger):
         starttime: start time
         logger: the 'fermo_core' logger
     """
-    general_parser = GeneralParser()
-    general_parser.parse_parameters(params)
-    stats, features, samples = general_parser.return_attributes()
+    try:
+        general_parser = GeneralParser()
+        general_parser.parse_parameters(params)
+        stats, features, samples = general_parser.return_attributes()
 
-    analysis_manager = AnalysisManager(
-        params=params, stats=stats, features=features, samples=samples
-    )
-    analysis_manager.analyze()
-    stats, features, samples, params = analysis_manager.return_attributes()
+        analysis_manager = AnalysisManager(
+            params=params, stats=stats, features=features, samples=samples
+        )
+        analysis_manager.analyze()
+        stats, features, samples, params = analysis_manager.return_attributes()
 
-    export_manager = ExportManager(
-        params=params, stats=stats, features=features, samples=samples
-    )
-    export_manager.run(metadata.version("fermo_core"), starttime)
-
-    logger.info("'main': completed all steps - DONE")
+        export_manager = ExportManager(
+            params=params, stats=stats, features=features, samples=samples
+        )
+        export_manager.run(metadata.version("fermo_core"), starttime)
+        logger.info("'main': completed all steps - DONE")
+    except Exception as e:
+        logger.fatal(f"FERMO job failed: {e!s}")
+        raise e
 
 
 def configure_logger_results(args: Namespace) -> logging.Logger:

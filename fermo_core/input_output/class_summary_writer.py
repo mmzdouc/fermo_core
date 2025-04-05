@@ -342,7 +342,7 @@ class SummaryWriter(BaseModel):
             and self.params.PhenoQuantPercentAssgnParams.module_passed
         ):
             self.summary.append(
-                f"For each molecular feature detected in more than two "
+                f"For each molecular feature detected in more than three "
                 f"phenotype-associated samples, the "
                 f"'{self.params.PhenoQuantPercentAssgnParams.sample_avg}' "
                 f"'{self.params.PhenoQuantPercentAssgnParams.value}' was correlated "
@@ -351,7 +351,7 @@ class SummaryWriter(BaseModel):
                 f"and the feature was only considered phenotype-associated if its "
                 f"coefficient was greater than "
                 f"'{self.params.PhenoQuantPercentAssgnParams.coeff_cutoff}' and its "
-                f"Bonferroni-corrected p-value less than "
+                f"{self.params.PhenoQuantPercentAssgnParams.fdr_corr}-corrected p-value less than "
                 f"'{self.params.PhenoQuantPercentAssgnParams.p_val_cutoff}'"
                 f"."
             )
@@ -370,7 +370,7 @@ class SummaryWriter(BaseModel):
             and self.params.PhenoQuantConcAssgnParams.module_passed
         ):
             self.summary.append(
-                f"For each molecular feature detected in more than two "
+                f"For each molecular feature detected in more than three "
                 f"phenotype-associated samples, the "
                 f"'{self.params.PhenoQuantConcAssgnParams.sample_avg}' "
                 f"'{self.params.PhenoQuantConcAssgnParams.value}' was correlated "
@@ -379,7 +379,7 @@ class SummaryWriter(BaseModel):
                 f"and the feature was only considered phenotype-associated if its "
                 f"coefficient was greater than "
                 f"'{self.params.PhenoQuantConcAssgnParams.coeff_cutoff}' and its "
-                f"Bonferroni-corrected p-value less than "
+                f"{self.params.PhenoQuantConcAssgnParams.fdr_corr}-corrected p-value less than "
                 f"'{self.params.PhenoQuantConcAssgnParams.p_val_cutoff}'"
                 f"."
             )

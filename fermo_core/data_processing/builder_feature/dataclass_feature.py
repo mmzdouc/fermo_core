@@ -457,13 +457,6 @@ class Feature(BaseModel):
         else:
             json_dict["networks"] = {}
 
-        if self.Spectrum is not None:
-            json_dict["spectrum"] = {
-                "mz": list(self.Spectrum.mz),
-                "int": [round(i, 3) for i in self.Spectrum.intensities],
-                "metadata": self.Spectrum.metadata,
-            }
-        else:
-            json_dict["spectrum"] = {}
+        json_dict["spectrum"] = {}
 
         return json_dict

@@ -49,4 +49,4 @@ def test_modify_stats(stats, params):
     parser = SpecLibMgfParser(stats=stats, params=params)
     parser.modify_stats()
     stats = parser.return_stats()
-    assert stats.spectral_library is not None
+    assert len(stats.spectral_library) == 17

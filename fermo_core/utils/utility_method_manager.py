@@ -270,11 +270,37 @@ class UtilityMethodManager(BaseModel):
         Raises:
             RuntimeError: empty spectral library
         """
-        spectra = list(
-            matchms.importing.load_from_mgf(DefaultPaths().library_mibig_pos)
-        )
-        spectra = [matchms.filtering.add_precursor_mz(i) for i in spectra]
-        spectra = [matchms.filtering.normalize_intensities(i) for i in spectra]
+        mgf_gen = matchms.importing.load_from_mgf(DefaultPaths().library_mibig_pos)
+        spectra = []
+        for spectrum in mgf_gen:
+            try:
+                if len(spectrum.peaks.mz) == 0:
+                    logger.warning(
+                        f"SpecLibMgfParser: spectrum {spectrum.metadata.get('compound_name')} has no ions - SKIP"
+                    )
+                elif all(x <= 0 for x in spectrum.peaks.intensities):
+                    logger.warning(
+                        f"SpecLibMgfParser: all fragment ions of spectrum {spectrum.metadata.get('compound_name')} are <= 0 - SKIP"
+                    )
+                elif not spectrum.metadata.get("precursor_mz"):
+                    logger.warning(
+                        f"SpecLibMgfParser: spectrum {spectrum.metadata.get('compound_name')} has no pepmass/precursor m/z - SKIP"
+                    )
+                elif (
+                    spectrum.metadata.get("precursor_mz") == 0.0
+                    or spectrum.metadata.get("precursor_mz") == 1.0
+                ):
+                    logger.warning(
+                        f"SpecLibMgfParser: pepmass/precursor m/z of spectrum {spectrum.metadata.get('compound_name')} are <= 1 - SKIP"
+                    )
+                else:
+                    spectra.append(
+                        matchms.filtering.add_precursor_mz(
+                            matchms.filtering.normalize_intensities(spectrum)
+                        )
+                    )
+            except Exception as e:
+                logger.warning(f"SpecLibMgfParser: {e}")
 
         filtered_spectra = []
         for spectrum in spectra:

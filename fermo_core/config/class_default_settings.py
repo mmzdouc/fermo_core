@@ -52,7 +52,7 @@ class DefaultPaths(BaseModel):
         "libraries/frag_libs/"
     )
     library_mibig_pos: FilePath = Path(__file__).parent.parent.joinpath(
-        "libraries/mibig/pos/mibig_in_silico_spectral_library_3_1.mgf"
+        "libraries/mibig/pos/mibig_spectral_library_3_1.mgf"
     )
 
 

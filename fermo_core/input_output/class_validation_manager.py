@@ -108,16 +108,16 @@ class ValidationManager:
             raise e
 
     @staticmethod
-    def validate_peaktable_mzmine3(mzmine_file: Path):
-        """Validate that input file is a mzmine3-style peaktable
+    def validate_peaktable_mzmine(path: Path):
+        """Validate that input file is a mzmine3/4-style peaktable
 
         Args:
-           mzmine_file: A pathlib Path object
+           path: A pathlib Path object
 
         Raises:
             ValueError: unexpected values
         """
-        df = pd.read_csv(mzmine_file, sep=",")
+        df = pd.read_csv(path, sep=",")
         for arg in [
             ("^id$", "id"),
             ("^mz$", "mz"),
@@ -132,8 +132,8 @@ class ValidationManager:
         ]:
             if df.filter(regex=arg[0]).columns.empty:
                 raise KeyError(
-                    f"Column '{arg[1]}' is missing in MZmine3-style peaktable "
-                    f"'{mzmine_file.name}'."
+                    f"Column '{arg[1]}' is missing in MZmine-style peaktable "
+                    f"'{path.name}'."
                 )
 
     @staticmethod
@@ -152,7 +152,6 @@ class ValidationManager:
         df = pd.read_csv(ms2query_results, sep=",")
 
         for arg in [
-            ("^id$", "id"),
             ("^analog_compound_name", "analog_compound_name"),
             ("^ms2query_model_prediction", "ms2query_model_prediction"),
             ("^precursor_mz_difference", "precursor_mz_difference"),
@@ -166,6 +165,12 @@ class ValidationManager:
                     f"Column '{arg[1]}' is missing in MS2Query results file "
                     f"'{ms2query_results.name}'."
                 )
+
+        if "feature_id" not in df.columns and "id" not in df.columns:
+            raise KeyError(
+                f"No column 'id' or 'feature_id' was found in MS2Query results file "
+                f"'{ms2query_results.name}'."
+            )
 
     @staticmethod
     def validate_csv_has_rows(csv_path: Path):

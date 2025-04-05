@@ -61,9 +61,15 @@ class SampleBuilder(BaseModel):
             s_id: a sample identifier string
             df: a MZmine3 style peaktable as Pandas DataFrame
         """
-        self.sample.max_intensity = int(
-            df.loc[:, f"datafile:{s_id}:intensity_range:max"].max()
-        )
+        try:
+            max_intensity = int(df.loc[:, f"datafile:{s_id}:intensity_range:max"].max())
+        except ValueError:
+            logger.warning(
+                f"SampleBuilder: sample '{s_id}' is empty - set max intensity to 0."
+            )
+            max_intensity = 0
+
+        self.sample.max_intensity = max_intensity
         return self
 
     def set_max_area_mzmine3(self: Self, s_id: str, df: pd.DataFrame):
@@ -73,7 +79,15 @@ class SampleBuilder(BaseModel):
             s_id: a sample identifier string
             df: a MZmine3 style peaktable as Pandas DataFrame
         """
-        self.sample.max_area = int(df.loc[:, f"datafile:{s_id}:area"].max())
+        try:
+            max_area = int(df.loc[:, f"datafile:{s_id}:area"].max())
+        except ValueError:
+            logger.warning(
+                f"SampleBuilder: sample '{s_id}' is empty - set max area to 0."
+            )
+            max_area = 0
+
+        self.sample.max_area = max_area
         return self
 
     def set_features_mzmine3(self: Self, s_id: str, df: pd.DataFrame):
@@ -100,7 +114,7 @@ class SampleBuilder(BaseModel):
 
         self.sample.features = {}
         for _, row in df.iterrows():
-            if row[f"datafile:{s_id}:feature_state"] == "DETECTED":
+            if row[f"datafile:{s_id}:feature_state"] != "UNKNOWN":
                 self.sample.features[row["id"]] = (
                     SpecificFeatureDirector.construct_mzmine3(
                         row, s_id, self.sample.max_intensity, self.sample.max_area

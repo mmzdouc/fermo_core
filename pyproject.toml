@@ -1,6 +1,6 @@
 [project]
 name = "fermo_core"
-version = "0.4.3"
+version = "0.5.0"
 description = "Data processing/analysis functionality of metabolomics dashboard FERMO"
 readme = "README.md"
 requires-python = ">=3.11,<3.12"
@@ -31,7 +31,8 @@ dependencies = [
     "ms2deepscore==0.5.0",
     "pandas==2.0.3",
     "pydantic==2.5.2",
-    "pyteomics==4.6.3"
+    "pyteomics==4.6.3",
+    "statsmodels~=0.14"
 ]
 
 [project.optional-dependencies]
@@ -47,8 +48,8 @@ dev = [
 
 [project.urls]
 "Website" = "https://fermo.bioinformatics.nl/"
-"Repository" = "https://github.com/mmzdouc/fermo_core"
-Documentation = "https://mmzdouc.github.io/fermo_docs/"
+"Repository" = "https://github.com/fermo-metabolomics/fermo_core"
+Documentation = "https://fermo-metabolomics.github.io/fermo_docs/"
 
 
 [project.scripts]
@@ -193,5 +194,9 @@ ignore = [
     # function-uses-loop-variable
     "B023",
     # unnecessary-literal-within-tuple-cal.
-    "C409"
+    "C409",
+    # unnecessary dict kwargs
+    "PIE804",
+    # `zip()` without an explicit `strict=` parameter
+    "B905"
 ]

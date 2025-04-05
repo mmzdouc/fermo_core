@@ -218,7 +218,8 @@ class PhenoQuantPercentAssgnParams(BaseModel):
         sample_avg: algorithm to summarize mult measurements per sample for single assay
         value: the type of value to use for determination
         algorithm: the statistical algorithm to calculate correlation
-        p_val_cutoff: minimum Bonferroni-corrected p-value to consider in assignment
+        fdr_corr: false-discovery rate correction algorithm (one of statsmodels.stats.multitest.multipletests)
+        p_val_cutoff: minimum FDR-corrected p-value to consider in assignment
         coeff_cutoff: minimum correlation coefficient cutoff to consider in assignment
         module_passed: indicates that the module ran without errors
     """
@@ -227,6 +228,7 @@ class PhenoQuantPercentAssgnParams(BaseModel):
     sample_avg: str = "mean"
     value: str = "area"
     algorithm: str = "pearson"
+    fdr_corr: str = "bonferroni"
     p_val_cutoff: float = 0.05
     coeff_cutoff: float = 0.7
     module_passed: bool = False
@@ -257,6 +259,24 @@ class PhenoQuantPercentAssgnParams(BaseModel):
                 "Set to default value 'pearson'."
             )
             self.algorithm = "pearson"
+
+        if self.fdr_corr not in [
+            "bonferroni",
+            "sidak",
+            "holm-sidak",
+            "holm",
+            "simes-hochberg",
+            "hommel",
+            "fdr_bh",
+            "fdr_by",
+            "fdr_tsbh",
+            "fdr_tsbky",
+        ]:
+            logger.warning(
+                f"Unsupported 'value' format: '{self.fdr_corr}'. "
+                "Set to default value 'bonferroni'."
+            )
+            self.fdr_corr = "bonferroni"
 
         return self
 
@@ -284,6 +304,7 @@ class PhenoQuantPercentAssgnParams(BaseModel):
                 "value": self.value,
                 "algorithm": self.algorithm,
                 "p_val_cutoff": self.p_val_cutoff,
+                "fdr_corr": self.fdr_corr,
                 "coeff_cutoff": self.coeff_cutoff,
                 "module_passed": self.module_passed,
             }
@@ -299,7 +320,8 @@ class PhenoQuantConcAssgnParams(BaseModel):
         sample_avg: algorithm to summarize mult measurements per sample for single assay
         value: the type of value to use for determination
         algorithm: the statistical algorithm to calculate correlation
-        p_val_cutoff: minimum Bonferroni-corrected p-value to consider in assignment
+        fdr_corr: false-discovery rate correction algorithm (one of statsmodels.stats.multitest.multipletests)
+        p_val_cutoff: minimum FDR-corrected p-value to consider in assignment
         coeff_cutoff: minimum correlation coefficient cutoff to consider in assignment
         module_passed: indicates that the module ran without errors
     """
@@ -308,6 +330,7 @@ class PhenoQuantConcAssgnParams(BaseModel):
     sample_avg: str = "mean"
     value: str = "area"
     algorithm: str = "pearson"
+    fdr_corr: str = "bonferroni"
     p_val_cutoff: float = 0.05
     coeff_cutoff: float = 0.7
     module_passed: bool = False
@@ -339,6 +362,24 @@ class PhenoQuantConcAssgnParams(BaseModel):
             )
             self.algorithm = "pearson"
 
+        if self.fdr_corr not in [
+            "bonferroni",
+            "sidak",
+            "holm-sidak",
+            "holm",
+            "simes-hochberg",
+            "hommel",
+            "fdr_bh",
+            "fdr_by",
+            "fdr_tsbh",
+            "fdr_tsbky",
+        ]:
+            logger.warning(
+                f"Unsupported 'value' format: '{self.fdr_corr}'. "
+                "Set to default value 'bonferroni'."
+            )
+            self.fdr_corr = "bonferroni"
+
         return self
 
     @model_validator(mode="after")
@@ -364,6 +405,7 @@ class PhenoQuantConcAssgnParams(BaseModel):
                 "sample_avg": self.sample_avg,
                 "value": self.value,
                 "algorithm": self.algorithm,
+                "fdr_corr": self.fdr_corr,
                 "p_val_cutoff": self.p_val_cutoff,
                 "coeff_cutoff": self.coeff_cutoff,
                 "module_passed": self.module_passed,
