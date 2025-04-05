@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## [0.5.1] 05-04-2025
+
+## Fixed
+
+- Fixed publishing to PyPI
+
 ## [0.5.0] 05-04-2025
 
 ## Added

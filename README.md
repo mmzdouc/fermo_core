@@ -62,7 +62,7 @@ All parameters and input data are specified in a `parameters.json` file.
 This file must be formatted according to the JSON Schema specified in `fermo_core/config/schema.json`. 
 See the example in `example_data/case_study_parameters.json`.
 
-For more information on input and output files, their format, and their purpose, consult the [Documentation](https://mmzdouc.github.io/fermo_docs/home/input_output/).
+For more information on input and output files, their format, and their purpose, consult the [Documentation](https://fermo-metabolomics.github.io/fermo_docs/home/input_output/).
 
 ## Attribution
 
