@@ -31,7 +31,8 @@
                             "title": "Specifies the format of the file. Must be one of the allowed formats in 'enum'.",
                             "type": "string",
                             "enum": [
-                                "mzmine3"
+                                "mzmine3",
+                                "mzmine4"
                             ]
                         },
                         "polarity": {

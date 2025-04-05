@@ -19,7 +19,7 @@ repos:
       types: [ file, python ]
     - id: pytest
       name: pytest
-      entry: hatch run test:pytest --run_slow tests/
+      entry: hatch run dev:pytest --run_slow tests/
       language: system
       types: [ file, python ]
 - repo: https://github.com/pre-commit/pre-commit-hooks

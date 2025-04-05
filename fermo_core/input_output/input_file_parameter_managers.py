@@ -47,19 +47,17 @@ class PeaktableParameters(BaseModel):
 
     @model_validator(mode="after")
     def validate_peaktable_format(self):
-        path_peaktable = self.filepath
-        format_peaktable = self.format
-        match format_peaktable:
-            case "mzmine3":
-                ValidationManager.validate_file_extension(path_peaktable, ".csv")
-                ValidationManager.validate_csv_file(path_peaktable)
-                ValidationManager.validate_csv_has_rows(path_peaktable)
-                ValidationManager.validate_peaktable_mzmine3(path_peaktable)
-                ValidationManager.validate_no_duplicate_entries_csv_column(
-                    path_peaktable, "id"
-                )
-            case _:
-                raise ValueError(f"Unsupported peaktable format: '{format_peaktable}'.")
+        if self.format == "mzmine3" or self.format == "mzmine4":
+            ValidationManager.validate_file_extension(self.filepath, ".csv")
+            ValidationManager.validate_csv_file(self.filepath)
+            ValidationManager.validate_csv_has_rows(self.filepath)
+            ValidationManager.validate_peaktable_mzmine(self.filepath)
+            ValidationManager.validate_no_duplicate_entries_csv_column(
+                self.filepath, "id"
+            )
+        else:
+            raise ValueError(f"Unsupported peaktable format: '{self.format}'.")
+
         return self
 
     @model_validator(mode="after")

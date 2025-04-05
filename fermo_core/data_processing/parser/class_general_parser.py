@@ -98,6 +98,10 @@ class GeneralParser(BaseModel):
                 self.stats, self.features, self.samples = PeakMzmine3Parser().parse(
                     params
                 )
+            case "mzmine4":
+                self.stats, self.features, self.samples = PeakMzmine3Parser().parse(
+                    params
+                )
             case _:
                 raise RuntimeError(
                     f"'GeneralParser': detected unsupported format "

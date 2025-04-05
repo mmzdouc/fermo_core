@@ -1,7 +1,7 @@
 import json
-import jsonschema
 from pathlib import Path
 
+import jsonschema
 import pandas as pd
 import pytest
 
@@ -82,9 +82,9 @@ def test_validate_csv_file_invalid():
         )
 
 
-def test_validate_peaktable_mzmine3_valid():
+def test_validate_peaktable_mzmine_valid():
     assert (
-        ValidationManager.validate_peaktable_mzmine3(
+        ValidationManager.validate_peaktable_mzmine(
             Path(
                 "tests/test_input_output/test_validation_manager/"
                 "example_peaktable_mzmine3.csv"
@@ -94,9 +94,9 @@ def test_validate_peaktable_mzmine3_valid():
     )
 
 
-def test_validate_peaktable_mzmine3_invalid():
+def test_validate_peaktable_mzmine_invalid():
     with pytest.raises(KeyError):
-        ValidationManager.validate_peaktable_mzmine3(
+        ValidationManager.validate_peaktable_mzmine(
             Path(
                 "tests/test_input_output/test_validation_manager/"
                 "example_group_fermo.csv"

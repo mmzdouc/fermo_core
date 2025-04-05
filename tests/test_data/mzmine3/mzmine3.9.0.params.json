@@ -1,0 +1,33 @@
+{
+    "files": {
+        "peaktable": {
+            "filepath": "tests/test_data/mzmine3/mzmine3.9.0.csv",
+            "format": "mzmine3",
+            "polarity": "positive"
+        },
+        "msms": {
+            "filepath": "tests/test_data/mzmine3/mzmine3.9.0.mgf",
+            "format": "mgf",
+            "rel_int_from": 0.01
+        }
+    },
+    "core_modules": {
+        "adduct_annotation": {
+            "activate_module": false
+        },
+        "neutral_loss_annotation": {
+            "activate_module": false
+        },
+        "fragment_annotation": {
+            "activate_module": false
+        },
+        "spec_sim_networking": {
+            "modified_cosine": {
+                "activate_module": false
+            },
+            "ms2deepscore": {
+                "activate_module": false
+            }
+        }
+    }
+}
