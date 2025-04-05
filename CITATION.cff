@@ -1,0 +1,39 @@
+# This CITATION.cff file was generated with cffinit.
+# Visit https://bit.ly/cffinit to generate yours today!
+
+cff-version: 1.2.0
+title: fermo_core
+message: >-
+  If you use this software, please cite it using the
+  metadata from this file.
+type: software
+authors:
+  - given-names: 'Mitja M.'
+    family-names: Zdouc
+    email: zdoucmm@gmail.com
+    orcid: 'https://orcid.org/0000-0001-6534-6609'
+    affiliation: Wageningen University and Research
+repository-code: 'https://github.com/fermo-metabolomics/fermo_core'
+url: 'https://fermo.bioinformatics.nl'
+repository: 'https://doi.org/10.1101/2022.12.21.521422'
+abstract: >-
+  fermo_core is the processing backend of the FERMO
+  metabolomics dashboard. FERMO is designed to facilitate
+  hypothesis-driven prioritization of molecules and samples,
+  and integrates LC-MS metabolomics data with phenotype
+  information, sample grouping, and genomic data. fermo_core
+  is a modular processing pipeline integrating all steps
+  from data parsing to organization, annotation, and score
+  calculation. It is free open source and written in Python.
+keywords:
+  - Python3
+  - Metabolomics
+  - LC-MS
+  - liquid chromatography mass spectrometry
+  - prioritization
+  - bioactivity
+  - phenotype
+  - genomics
+  - mzmine
+  - antismash
+license: MIT
