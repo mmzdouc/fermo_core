@@ -15,7 +15,6 @@ authors:
     affiliation: Wageningen University and Research
 repository-code: 'https://github.com/fermo-metabolomics/fermo_core'
 url: 'https://fermo.bioinformatics.nl'
-repository: 'https://doi.org/10.1101/2022.12.21.521422'
 abstract: >-
   fermo_core is the processing backend of the FERMO
   metabolomics dashboard. FERMO is designed to facilitate
@@ -37,3 +36,50 @@ keywords:
   - mzmine
   - antismash
 license: MIT
+preferred-citation:
+  type: preprint
+  authors:
+    - address: 'Droevendaalsesteeg 1, 6708 PB Wageningen, the Netherlands'
+      affiliation: 'Wageningen University and Research'
+      family-names: Zdouc
+      given-names: Mitja M.
+      orcid: 'https://orcid.org/0000-0001-6534-6609'
+    - address: 'Sylviusweg 72, 2333 BE Leiden, The Netherlands'
+      affiliation: 'Institute of Biology, Leiden University'
+      family-names: Bayona Maldonado
+      given-names: Lina M.
+    - address: 'Sylviusweg 72, 2333 BE Leiden, The Netherlands'
+      affiliation: 'Institute of Biology, Leiden University'
+      family-names: Augustijn
+      given-names: Hannah E.
+    - address: 'Old Aberdeen, AB24 3DT, Scotland, United Kingdom'
+      affiliation: 'Marine Biodiscovery Centre, Department of Chemistry, University of Aberdeen'
+      family-names: Soldatou
+      given-names: Sylvia
+    - address: 'Droevendaalsesteeg 1, 6708 PB Wageningen, the Netherlands'
+      affiliation: 'Wageningen University and Research'
+      family-names: De Jonge
+      given-names: Niek
+    - address: 'Old Aberdeen, AB24 3DT, Scotland, United Kingdom'
+      affiliation: 'Marine Biodiscovery Centre, Department of Chemistry, University of Aberdeen'
+      family-names: Jaspars
+      given-names: Marcel
+    - address: 'Sylviusweg 72, 2333 BE Leiden, The Netherlands'
+      affiliation: 'Institute of Biology, Leiden University'
+      family-names: van Wezel
+      given-names: Gilles P.
+    - address: 'Droevendaalsesteeg 1, 6708 PB Wageningen, the Netherlands'
+      affiliation: 'Wageningen University and Research'
+      family-names: Medema
+      given-names: Marnix H.
+      orcid: 'https://orcid.org/0000-0002-2191-2821'
+    - address: 'Droevendaalsesteeg 1, 6708 PB Wageningen, the Netherlands'
+      affiliation: 'Wageningen University and Research'
+      family-names: Hooft
+      name-particle: van der
+      given-names: Justin J. J.
+      orcid: 'https://orcid.org/0000-0002-9340-5511'
+  title: FERMO: a Dashboard for Streamlined Rationalized Prioritization of Molecular Features from Mass Spectrometry Data.
+  journal: BioRxiv
+  year: 2022
+  doi: 10.1101/2022.12.21.521422
