@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
-## Unreleased [0.5.0]
+## [0.5.0] 05-04-2025
 
 ## Added
 
@@ -14,7 +14,7 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## Changed
 
-- QuantPhenotype: reimplemented, allowing for flexible FDR 
+- QuantPhenotype: reimplemented, allowing for flexible FDR
 - SpecLibMgfParser: implemented lazy loading to better deal with large libraries, filter out invalid spectra
 
 ## Fixed 
