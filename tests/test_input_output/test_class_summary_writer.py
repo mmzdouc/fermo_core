@@ -11,7 +11,7 @@ from fermo_core.input_output.class_validation_manager import ValidationManager
 def summary_writer(parameter_instance):
     return SummaryWriter(
         params=parameter_instance,
-        destination=Path("tests/test_input_output/test_summary_writer/summary.txt"),
+        destination=Path("tests/test_data/summary.txt"),
     )
 
 

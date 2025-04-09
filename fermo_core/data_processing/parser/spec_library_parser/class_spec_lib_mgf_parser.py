@@ -22,6 +22,7 @@ SOFTWARE.
 """
 
 import logging
+from pathlib import Path
 from typing import Self
 
 import matchms
@@ -52,12 +53,13 @@ class SpecLibMgfParser(BaseModel):
         """
         return self.stats
 
-    def modify_stats(self: Self):
+    def modify_stats(self: Self, f: Path):
         """Adds spectral library entries to Stats object."""
-        mgf_gen = matchms.importing.load_from_mgf(
-            self.params.SpecLibParameters.filepath
-        )
-        self.stats.spectral_library = []
+        mgf_gen = matchms.importing.load_from_mgf(str(f))
+
+        if not self.stats.spectral_library:
+            self.stats.spectral_library = []
+
         for spectrum in mgf_gen:
             try:
                 if len(spectrum.peaks.mz) == 0:
@@ -95,12 +97,15 @@ class SpecLibMgfParser(BaseModel):
             A (modified) Stats object
         """
         logger.info(
-            f"'SpecLibMgfParser': started parsing of spectral library file "
-            f"'{self.params.SpecLibParameters.filepath.name}'"
+            f"'SpecLibMgfParser': started parsing of spectral library files "
+            f"'{self.params.SpecLibParameters.dirpath.name}'"
         )
-        self.modify_stats()
+
+        for f in self.params.SpecLibParameters.dirpath.iterdir():
+            if f.suffix == ".mgf":
+                self.modify_stats(f)
 
         logger.info(
-            f"'SpecLibMgfParser': completed parsing of spectral library file "
-            f"'{self.params.SpecLibParameters.filepath.name}'"
+            f"'SpecLibMgfParser': completed parsing of spectral library files "
+            f"'{self.params.SpecLibParameters.dirpath.name}'"
         )

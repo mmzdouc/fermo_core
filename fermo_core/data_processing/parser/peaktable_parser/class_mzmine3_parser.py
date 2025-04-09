@@ -25,6 +25,7 @@ import logging
 from typing import Self
 
 import pandas as pd
+from pydantic import BaseModel
 
 from fermo_core.data_processing.builder_feature.class_general_feature_director import (
     GeneralFeatureDirector,
@@ -34,15 +35,13 @@ from fermo_core.data_processing.builder_sample.class_samples_director import (
 )
 from fermo_core.data_processing.class_repository import Repository
 from fermo_core.data_processing.class_stats import Stats
-from fermo_core.data_processing.parser.peaktable_parser.abc_peaktable_parser import (
-    PeaktableParser,
-)
+
 from fermo_core.input_output.class_parameter_manager import ParameterManager
 
 logger = logging.getLogger("fermo_core")
 
 
-class PeakMzmine3Parser(PeaktableParser):
+class PeakMzmine3Parser(BaseModel):
     """Interface to parse MZmine3 style peaktable."""
 
     def parse(

@@ -1,6 +1,6 @@
 [project]
 name = "fermo_core"
-version = "0.5.1"
+version = "0.6.0"
 description = "Data processing/analysis functionality of metabolomics dashboard FERMO"
 readme = "README.md"
 requires-python = ">=3.11,<3.12"
@@ -122,17 +122,6 @@ ignore_errors = true
 directory = "coverage_html_report"
 
 
-[tool.black]
-line-length = 88
-target-version = ["py311"]
-exclude = '''
-/(
-    \.git
-  | \.lib
-)/
-'''
-
-
 [tool.isort]
 profile = "black"
 multi_line_output = 3
@@ -143,7 +132,6 @@ reverse_relative = true
 
 [tool.ruff]
 line-length = 88
-
 
 [tool.ruff.lint]
 select = [
