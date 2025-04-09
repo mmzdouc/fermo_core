@@ -6,29 +6,29 @@ from pydantic import ValidationError
 from fermo_core.input_output.class_file_manager import FileManager
 from fermo_core.input_output.class_parameter_manager import ParameterManager
 from fermo_core.input_output.param_handlers import (
+    AdductAnnotationParameters,
+    AsKcbCosineMatchingParams,
+    AsKcbDeepscoreMatchingParams,
     AsResultsParameters,
+    BlankAssignmentParameters,
+    FeatureFilteringParameters,
+    FragmentAnnParameters,
+    GroupFactAssignmentParameters,
     GroupMetadataParameters,
     MS2QueryResultsParameters,
     MsmsParameters,
+    NeutralLossParameters,
+    OutputParameters,
     PeaktableParameters,
-    PhenotypeParameters,
-    SpecLibParameters,
-    AsKcbCosineMatchingParams,
-    AsKcbDeepscoreMatchingParams,
-    BlankAssignmentParameters,
-    FeatureFilteringParameters,
-    GroupFactAssignmentParameters,
     PhenoQualAssgnParams,
     PhenoQuantConcAssgnParams,
     PhenoQuantPercentAssgnParams,
-    SpectralLibMatchingCosineParameters,
-    SpectralLibMatchingDeepscoreParameters,
-    AdductAnnotationParameters,
-    FragmentAnnParameters,
-    NeutralLossParameters,
+    PhenotypeParameters,
+    SpecLibParameters,
     SpecSimNetworkCosineParameters,
     SpecSimNetworkDeepscoreParameters,
-    OutputParameters
+    SpectralLibMatchingCosineParameters,
+    SpectralLibMatchingDeepscoreParameters,
 )
 
 
@@ -156,9 +156,7 @@ def test_assign_ms2query_results_valid():
 def test_assign_ms2query_results_invalid():
     params = ParameterManager()
     params.assign_ms2query_results(
-        {
-            "filepath": "tests/test_data/test.ms2query_results.csv"
-        }
+        {"filepath": "tests/test_data/test.ms2query_results.csv"}
     )
     assert params.MS2QueryResultsParameters is None
 
@@ -168,7 +166,7 @@ def test_assign_as_results_valid():
     params.assign_as_results(
         {
             "directory_path": "tests/test_data/JABTEZ000000000.1/",
-            "similarity_cutoff": "0.7"
+            "similarity_cutoff": "0.7",
         }
     )
     assert isinstance(params.AsResultsParameters, AsResultsParameters)
@@ -282,18 +280,13 @@ def test_assign_feature_filtering_valid():
 def test_assign_feature_filtering_invalid():
     params = ParameterManager()
     params.assign_feature_filtering({"asdfg": "asdfg"})
-    assert params.FeatureFilteringParameters  is None
+    assert params.FeatureFilteringParameters is None
 
 
 def test_assign_blank_assignment_valid():
     params = ParameterManager()
     params.assign_blank_assignment(
-        {
-            "activate_module": True,
-            "factor": 10,
-            "algorithm": "mean",
-            "value": "area"
-        }
+        {"activate_module": True, "factor": 10, "algorithm": "mean", "value": "area"}
     )
     assert isinstance(params.BlankAssignmentParameters, BlankAssignmentParameters)
 
@@ -307,11 +300,7 @@ def test_assign_blank_assignment_invalid():
 def test_assign_group_factor_assignment_valid():
     params = ParameterManager()
     params.assign_group_factor_assignment(
-        {
-            "activate_module": True,
-            "algorithm": "mean",
-            "value": "area"
-        }
+        {"activate_module": True, "algorithm": "mean", "value": "area"}
     )
     assert params.GroupFactAssignmentParameters.activate_module is True
 
@@ -325,12 +314,7 @@ def test_assign_group_factor_assignment_invalid():
 def test_assign_phenotype_qualitative_valid():
     params = ParameterManager()
     params.assign_phenotype_qualitative(
-        {
-            "activate_module": True,
-            "factor": 5,
-            "algorithm": "minmax",
-            "value": "area"
-        }
+        {"activate_module": True, "factor": 5, "algorithm": "minmax", "value": "area"}
     )
     assert isinstance(params.PhenoQualAssgnParams, PhenoQualAssgnParams)
 
@@ -351,7 +335,7 @@ def test_assign_phenotype_quant_percent_valid():
             "algorithm": "pearson",
             "fdr_corr": "bonferroni",
             "p_val_cutoff": 0.05,
-            "coeff_cutoff": 0.7
+            "coeff_cutoff": 0.7,
         }
     )
     assert isinstance(params.PhenoQuantPercentAssgnParams, PhenoQuantPercentAssgnParams)
@@ -373,7 +357,7 @@ def test_assign_phenotype_quant_concentration_valid():
             "fdr_corr": "bonferroni",
             "algorithm": "pearson",
             "p_val_cutoff": 0.05,
-            "coeff_cutoff": 0.7
+            "coeff_cutoff": 0.7,
         }
     )
     assert isinstance(params.PhenoQuantConcAssgnParams, PhenoQuantConcAssgnParams)
@@ -393,7 +377,7 @@ def test_assign_spec_lib_matching_cosine_valid():
             "fragment_tol": 0.1,
             "min_nr_matched_peaks": 5,
             "score_cutoff": 0.7,
-            "max_precursor_mass_diff": 600
+            "max_precursor_mass_diff": 600,
         }
     )
     assert isinstance(
@@ -404,17 +388,13 @@ def test_assign_spec_lib_matching_cosine_valid():
 def test_assign_spec_lib_matching_cosine_invalid():
     params = ParameterManager()
     params.assign_spec_lib_matching_cosine({"asdfg": "asdfg"})
-    assert params.SpectralLibMatchingCosineParameters  is None
+    assert params.SpectralLibMatchingCosineParameters is None
 
 
 def test_assign_spec_lib_matching_ms2deepscore_valid():
     params = ParameterManager()
     params.assign_spec_lib_matching_ms2deepscore(
-        {
-            "activate_module": True,
-            "score_cutoff": 0.8,
-            "max_precursor_mass_diff": 600
-        }
+        {"activate_module": True, "score_cutoff": 0.8, "max_precursor_mass_diff": 600}
     )
     assert isinstance(
         params.SpectralLibMatchingDeepscoreParameters,
@@ -436,7 +416,7 @@ def test_assign_as_kcb_matching_cosine_valid():
             "fragment_tol": 0.1,
             "min_nr_matched_peaks": 5,
             "score_cutoff": 0.5,
-            "max_precursor_mass_diff": 600
+            "max_precursor_mass_diff": 600,
         }
     )
     assert isinstance(params.AsKcbCosineMatchingParams, AsKcbCosineMatchingParams)
@@ -451,11 +431,7 @@ def test_assign_as_kcb_matching_cosine_invalid():
 def test_assign_as_kcb_matching_deepscore_valid():
     params = ParameterManager()
     params.assign_as_kcb_matching_deepscore(
-        {
-            "activate_module": True,
-            "score_cutoff": 0.7,
-            "max_precursor_mass_diff": 600
-        }
+        {"activate_module": True, "score_cutoff": 0.7, "max_precursor_mass_diff": 600}
     )
     assert isinstance(params.AsKcbDeepscoreMatchingParams, AsKcbDeepscoreMatchingParams)
 
@@ -493,4 +469,6 @@ def test_to_json_files_valid():
 def test_to_json_output():
     params = ParameterManager()
     json_dict = params.to_json()
-    assert json_dict["OutputParameters"] == "No parameters provided or assignment failed"
+    assert (
+        json_dict["OutputParameters"] == "No parameters provided or assignment failed"
+    )

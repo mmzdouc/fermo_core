@@ -312,7 +312,9 @@ def test_validate_file_vs_jsonschema_valid():
 
 def test_validate_file_vs_jsonschema_invalid():
     with pytest.raises(jsonschema.exceptions.ValidationError):
-        ValidationManager.validate_file_vs_jsonschema({"key": "value"}, "name")
+        ValidationManager.validate_file_vs_jsonschema(
+            {"AsKcbDeepscoreMatchingParams": {"score_cutoff": -1}}, "name"
+        )
 
 
 def test_validate_output_created_valid():

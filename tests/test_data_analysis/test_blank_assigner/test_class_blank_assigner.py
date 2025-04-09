@@ -1,13 +1,17 @@
 import pytest
 
 from fermo_core.data_analysis.blank_assigner.class_blank_assigner import BlankAssigner
-from fermo_core.data_processing.class_stats import Stats
-from fermo_core.data_processing.class_repository import Repository
 from fermo_core.data_processing.builder_feature.dataclass_feature import (
     Feature,
     SampleInfo,
 )
+from fermo_core.data_processing.class_repository import Repository
+from fermo_core.data_processing.class_stats import Stats
 from fermo_core.input_output.class_parameter_manager import ParameterManager
+from fermo_core.input_output.param_handlers import (
+    BlankAssignmentParameters,
+    GroupMetadataParameters,
+)
 
 
 @pytest.fixture
@@ -27,6 +31,12 @@ def blank_assigner():
             SampleInfo(s_id="s2", value=20),
             SampleInfo(s_id="s3", value=10),
         ],
+    )
+    blank_assigner.params.BlankAssignmentParameters = BlankAssignmentParameters(
+        **{"activate_module": True, "factor": 10, "algorithm": "mean", "value": "area"}
+    )
+    blank_assigner.params.GroupMetadataParameters = GroupMetadataParameters(
+        **{"filepath": "tests/test_data/test.group_metadata.csv", "format": "fermo"},
     )
     blank_assigner.features.add(1, f1)
     blank_assigner.stats.active_features = {1}

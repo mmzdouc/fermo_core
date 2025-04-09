@@ -24,7 +24,6 @@ SOFTWARE.
 import logging
 from urllib.parse import urlparse
 
-import func_timeout
 import matchms
 import networkx
 from ms2deepscore import MS2DeepScore
@@ -32,9 +31,7 @@ from ms2deepscore.models import load_model
 
 from fermo_core.config.class_default_settings import DefaultPaths
 from fermo_core.data_processing.class_repository import Repository
-from fermo_core.input_output.core_module_parameter_managers import (
-    SpecSimNetworkDeepscoreParameters,
-)
+from fermo_core.input_output.param_handlers import SpecSimNetworkDeepscoreParameters
 
 logger = logging.getLogger("fermo_core")
 
@@ -77,24 +74,12 @@ class Ms2deepscoreNetworker:
 
         sim_algorithm = MS2DeepScore(model=model, progress_bar=False)
 
-        if settings.maximum_runtime != 0:
-            return func_timeout.func_timeout(
-                timeout=settings.maximum_runtime,
-                func=matchms.calculate_scores,
-                kwargs={
-                    "references": spectra,
-                    "queries": spectra,
-                    "similarity_function": sim_algorithm,
-                    "is_symmetric": True,
-                },
-            )
-        else:
-            return matchms.calculate_scores(
-                references=spectra,
-                queries=spectra,
-                similarity_function=sim_algorithm,
-                is_symmetric=True,
-            )
+        return matchms.calculate_scores(
+            references=spectra,
+            queries=spectra,
+            similarity_function=sim_algorithm,
+            is_symmetric=True,
+        )
 
     @staticmethod
     def create_network(

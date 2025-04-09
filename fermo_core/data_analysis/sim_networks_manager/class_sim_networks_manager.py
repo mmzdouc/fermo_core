@@ -90,38 +90,6 @@ class SimNetworksManager(BaseModel):
             f"by parameter 'msms_min_frag_nr' ('{frags}' < '{min_frags}')."
         )
 
-    @staticmethod
-    def log_timeout_mod_cosine(max_time: str):
-        """Logs timeout due to long-running modified cosine network calculation
-
-        Arguments:
-            max_time: the set maximum calculation time
-        """
-        logger.warning(
-            f"'SimNetworksManager/ModCosineNetworker': timeout of modified "
-            f"cosine spectral similarity network calculation. Calculation "
-            f"took longer than '{max_time}' seconds. Increase the "
-            f"'spec_sim_networking/modified_cosine/maximum_runtime' parameter "
-            f"or set it to 0 (zero) for unlimited runtime. Alternatively, "
-            f"filter out low-intensity/area peaks with 'feature_filtering' - SKIP."
-        )
-
-    @staticmethod
-    def log_timeout_ms2deepscore(max_time: str):
-        """Logs timeout due to long-running ms2deepscore network calculation
-
-        Arguments:
-            max_time: the set maximum calculation time
-        """
-        logger.warning(
-            f"'SimNetworksManager/Ms2deepscoreNetworker': timeout of "
-            f"ms2deepscore similarity network calculation. Calculation "
-            f"took longer than '{max_time}' seconds. Increase the "
-            f"'spec_sim_networking/ms2deepscore/maximum_runtime' parameter "
-            f"or set it to 0 (zero) for unlimited runtime. Alternatively, "
-            f"filter out low-intensity/area peaks with 'feature_filtering' - SKIP"
-        )
-
     def return_attrs(
         self: Self,
     ) -> tuple[Stats, Repository, Repository, ParameterManager]:
@@ -138,17 +106,17 @@ class SimNetworksManager(BaseModel):
 
         modules = (
             (
-                self.params.SpecSimNetworkCosineParameters.activate_module,
+                self.params.SpecSimNetworkCosineParameters,
                 self.run_modified_cosine_alg,
             ),
             (
-                self.params.SpecSimNetworkDeepscoreParameters.activate_module,
+                self.params.SpecSimNetworkDeepscoreParameters,
                 self.run_ms2deepscore_alg,
             ),
         )
 
         for module in modules:
-            if module[0]:
+            if getattr(module[0], "activate_module", False):
                 module[1]()
 
         logger.info("'SimNetworksManager': completed analysis steps.")
@@ -164,18 +132,12 @@ class SimNetworksManager(BaseModel):
             algorithm="modified_cosine",
         )
 
-        try:
-            mod_cosine_networker = ModCosineNetworker()
-            scores = mod_cosine_networker.spec_sim_networking(
-                tuple(filtered_features["included"]),
-                self.features,
-                self.params.SpecSimNetworkCosineParameters,
-            )
-        except func_timeout.FunctionTimedOut:
-            self.log_timeout_mod_cosine(
-                str(self.params.SpecSimNetworkCosineParameters.maximum_runtime)
-            )
-            return
+        mod_cosine_networker = ModCosineNetworker()
+        scores = mod_cosine_networker.spec_sim_networking(
+            tuple(filtered_features["included"]),
+            self.features,
+            self.params.SpecSimNetworkCosineParameters,
+        )
 
         network = mod_cosine_networker.create_network(
             scores, self.params.SpecSimNetworkCosineParameters
@@ -220,11 +182,6 @@ class SimNetworksManager(BaseModel):
                 self.features,
                 self.params.SpecSimNetworkDeepscoreParameters,
             )
-        except func_timeout.FunctionTimedOut:
-            self.log_timeout_ms2deepscore(
-                str(self.params.SpecSimNetworkDeepscoreParameters.maximum_runtime)
-            )
-            return
         except FileNotFoundError:
             logger.warning(
                 "'SimNetworksManager/Ms2deepscoreNetworker': no embedding file - SKIP"

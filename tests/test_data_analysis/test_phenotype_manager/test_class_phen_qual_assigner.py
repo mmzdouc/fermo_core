@@ -3,14 +3,18 @@ import pytest
 from fermo_core.data_analysis.phenotype_manager.class_phen_qual_assigner import (
     PhenQualAssigner,
 )
-from fermo_core.data_processing.class_stats import Stats, PhenoData, SamplePhenotype
-from fermo_core.data_processing.class_repository import Repository
 from fermo_core.data_processing.builder_feature.dataclass_feature import (
     Feature,
     SampleInfo,
 )
 from fermo_core.data_processing.builder_sample.dataclass_sample import Sample
+from fermo_core.data_processing.class_repository import Repository
+from fermo_core.data_processing.class_stats import PhenoData, SamplePhenotype, Stats
 from fermo_core.input_output.class_parameter_manager import ParameterManager
+from fermo_core.input_output.param_handlers import (
+    PhenoQualAssgnParams,
+    PhenotypeParameters,
+)
 
 
 @pytest.fixture
@@ -76,6 +80,15 @@ def phen_qual():
             s_phen_data=[SamplePhenotype(s_id="s1")],
         )
     ]
+    phen_qual.params.PhenoQualAssgnParams = PhenoQualAssgnParams(
+        **{"activate_module": True, "factor": 5, "algorithm": "minmax", "value": "area"}
+    )
+    phen_qual.params.PhenotypeParameters = PhenotypeParameters(
+        **{
+            "filepath": "tests/test_data/test.bioactivity.qualitative.csv",
+            "format": "qualitative",
+        }
+    )
     return phen_qual
 
 

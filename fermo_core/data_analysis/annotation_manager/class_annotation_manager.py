@@ -83,32 +83,39 @@ class AnnotationManager(BaseModel):
         logger.info("'AnnotationManager': started analysis steps.")
 
         def _eval_ms2query_results_file() -> bool:
-            return True if self.params.MS2QueryResultsParameters is not None else False
+            return True if self.params.MS2QueryResultsParameters else False
 
         def _eval_as_results_file() -> bool:
-            return True if self.params.AsResultsParameters is not None else False
+            return True if self.params.AsResultsParameters else False
 
         modules = (
             (
-                self.params.SpectralLibMatchingCosineParameters.activate_module,
+                self.params.SpectralLibMatchingCosineParameters,
                 self.run_user_lib_mod_cosine_matching,
             ),
             (
-                self.params.SpectralLibMatchingDeepscoreParameters.activate_module,
+                self.params.SpectralLibMatchingDeepscoreParameters,
                 self.run_user_lib_ms2deepscore_matching,
             ),
             (
-                self.params.AdductAnnotationParameters.activate_module,
+                self.params.AdductAnnotationParameters,
                 self.run_feature_adduct_annotation,
             ),
             (
-                self.params.NeutralLossParameters.activate_module,
+                self.params.NeutralLossParameters,
                 self.run_neutral_loss_annotation,
             ),
             (
-                self.params.FragmentAnnParameters.activate_module,
+                self.params.FragmentAnnParameters,
                 self.run_fragment_annotation,
             ),
+        )
+
+        for module in modules:
+            if getattr(module[0], "activate_module", False):
+                module[1]()
+
+        modules = (
             (
                 _eval_ms2query_results_file(),
                 self.run_ms2query_results_assignment,
@@ -122,7 +129,6 @@ class AnnotationManager(BaseModel):
                 self.run_as_kcb_deepscore_annotation,
             ),
         )
-
         for module in modules:
             if module[0]:
                 module[1]()
@@ -166,8 +172,7 @@ class AnnotationManager(BaseModel):
                 features=self.features,
                 active_features=self.stats.active_features,
                 library=self.stats.spectral_library,
-                library_name=self.params.SpecLibParameters.filepath.name,
-                max_time=self.params.SpectralLibMatchingCosineParameters.maximum_runtime,
+                library_name=self.params.SpecLibParameters.dirpath.name,
                 fragment_tol=self.params.SpectralLibMatchingCosineParameters.fragment_tol,
                 score_cutoff=self.params.SpectralLibMatchingCosineParameters.score_cutoff,
                 min_nr_matched_peaks=self.params.SpectralLibMatchingCosineParameters.min_nr_matched_peaks,
@@ -206,8 +211,7 @@ class AnnotationManager(BaseModel):
                 active_features=self.stats.active_features,
                 polarity=self.params.PeaktableParameters.polarity,
                 library=self.stats.spectral_library,
-                library_name=self.params.SpecLibParameters.filepath.name,
-                max_time=self.params.SpectralLibMatchingDeepscoreParameters.maximum_runtime,
+                library_name=self.params.SpecLibParameters.dirpath.name,
                 score_cutoff=self.params.SpectralLibMatchingDeepscoreParameters.score_cutoff,
                 max_precursor_mass_diff=self.params.SpectralLibMatchingDeepscoreParameters.max_precursor_mass_diff,
             )
@@ -366,7 +370,6 @@ class AnnotationManager(BaseModel):
                 active_features=self.stats.active_features,
                 library=spec_library,
                 library_name=DefaultPaths().library_mibig_pos.name,
-                max_time=self.params.AsKcbCosineMatchingParams.maximum_runtime,
                 fragment_tol=self.params.AsKcbCosineMatchingParams.fragment_tol,
                 score_cutoff=self.params.AsKcbCosineMatchingParams.score_cutoff,
                 min_nr_matched_peaks=self.params.AsKcbCosineMatchingParams.min_nr_matched_peaks,
@@ -430,7 +433,6 @@ class AnnotationManager(BaseModel):
                 polarity=self.params.PeaktableParameters.polarity,
                 library=spec_library,
                 library_name=DefaultPaths().library_mibig_pos.name,
-                max_time=self.params.AsKcbDeepscoreMatchingParams.maximum_runtime,
                 score_cutoff=self.params.AsKcbDeepscoreMatchingParams.score_cutoff,
                 max_precursor_mass_diff=self.params.AsKcbDeepscoreMatchingParams.max_precursor_mass_diff,
             )

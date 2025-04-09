@@ -10,4 +10,3 @@ def test_schema_valid():
     with open("tests/test_data/test.parameters.json") as infile:
         params = json.load(infile)
     assert jsonschema.validate(instance=params, schema=schema) is None
-

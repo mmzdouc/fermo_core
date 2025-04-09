@@ -94,7 +94,7 @@ class SummaryWriter(BaseModel):
         if self.params.SpecLibParameters is not None:
             self.summary.append(
                 f"A user-specified spectral library was parsed from the file "
-                f"'{self.params.SpecLibParameters.filepath.name}' "
+                f"'{self.params.SpecLibParameters.dirpath.name}' "
                 f"in the format '{self.params.SpecLibParameters.format}'."
             )
 
@@ -118,7 +118,10 @@ class SummaryWriter(BaseModel):
             )
 
     def summarize_featurefilteringparameters(self: Self):
-        if not self.params.FeatureFilteringParameters:
+        if not (
+            self.params.FeatureFilteringParameters
+            and self.params.FeatureFilteringParameters.activate_module
+        ):
             return
 
         if (
@@ -150,7 +153,10 @@ class SummaryWriter(BaseModel):
             )
 
     def summarize_adductannotationparameters(self: Self):
-        if not self.params.AdductAnnotationParameters:
+        if not (
+            self.params.AdductAnnotationParameters
+            and self.params.AdductAnnotationParameters.activate_module
+        ):
             return
 
         if (
@@ -169,7 +175,10 @@ class SummaryWriter(BaseModel):
             )
 
     def summarize_neutrallossparameters(self: Self):
-        if not self.params.NeutralLossParameters:
+        if not (
+            self.params.NeutralLossParameters
+            and self.params.NeutralLossParameters.activate_module
+        ):
             return
 
         if (
@@ -190,7 +199,10 @@ class SummaryWriter(BaseModel):
             )
 
     def summarize_fragmentannparameters(self: Self):
-        if not self.params.FragmentAnnParameters:
+        if not (
+            self.params.FragmentAnnParameters
+            and self.params.FragmentAnnParameters.activate_module
+        ):
             return
 
         if (
@@ -209,7 +221,10 @@ class SummaryWriter(BaseModel):
             )
 
     def summarize_specsimnetworkcosineparameters(self: Self):
-        if not self.params.SpecSimNetworkCosineParameters:
+        if not (
+            self.params.SpecSimNetworkCosineParameters
+            and self.params.SpecSimNetworkCosineParameters.activate_module
+        ):
             return
 
         if (
@@ -240,7 +255,10 @@ class SummaryWriter(BaseModel):
             )
 
     def summarize_specsimnetworkdeepscoreparameters(self: Self):
-        if not self.params.SpecSimNetworkDeepscoreParameters:
+        if not (
+            self.params.SpecSimNetworkDeepscoreParameters
+            and self.params.SpecSimNetworkDeepscoreParameters.activate_module
+        ):
             return
 
         if (
@@ -269,7 +287,10 @@ class SummaryWriter(BaseModel):
             )
 
     def summarize_blankassignmentparameters(self: Self):
-        if not self.params.BlankAssignmentParameters:
+        if not (
+            self.params.BlankAssignmentParameters
+            and self.params.BlankAssignmentParameters.activate_module
+        ):
             return
 
         if (
@@ -291,7 +312,10 @@ class SummaryWriter(BaseModel):
             )
 
     def summarize_groupfactassignmentparameters(self: Self):
-        if not self.params.GroupFactAssignmentParameters:
+        if not (
+            self.params.GroupFactAssignmentParameters
+            and self.params.GroupFactAssignmentParameters.activate_module
+        ):
             return
 
         if (
@@ -313,7 +337,10 @@ class SummaryWriter(BaseModel):
             )
 
     def summarize_phenoqualassgnparams(self: Self):
-        if not self.params.PhenoQualAssgnParams:
+        if not (
+            self.params.PhenoQualAssgnParams
+            and self.params.PhenoQualAssgnParams.activate_module
+        ):
             return
 
         if (
@@ -337,7 +364,10 @@ class SummaryWriter(BaseModel):
             )
 
     def summarize_phenoquantpercentassgnparams(self: Self):
-        if not self.params.PhenoQuantPercentAssgnParams:
+        if not (
+            self.params.PhenoQuantPercentAssgnParams
+            and self.params.PhenoQuantPercentAssgnParams.activate_module
+        ):
             return
 
         if (
@@ -365,7 +395,10 @@ class SummaryWriter(BaseModel):
             )
 
     def summarize_phenoquantconcassgnparams(self: Self):
-        if not self.params.PhenoQuantConcAssgnParams:
+        if not (
+            self.params.PhenoQuantConcAssgnParams
+            and self.params.PhenoQuantConcAssgnParams.activate_module
+        ):
             return
 
         if (
@@ -393,7 +426,10 @@ class SummaryWriter(BaseModel):
             )
 
     def summarize_spectrallibmatchingcosineparameters(self: Self):
-        if not self.params.SpectralLibMatchingCosineParameters:
+        if not (
+            self.params.SpectralLibMatchingCosineParameters
+            and self.params.SpectralLibMatchingCosineParameters.activate_module
+        ):
             return
 
         if (
@@ -422,7 +458,10 @@ class SummaryWriter(BaseModel):
             )
 
     def summarize_spectrallibmatchingdeepscoreparameters(self: Self):
-        if not self.params.SpectralLibMatchingDeepscoreParameters:
+        if not (
+            self.params.SpectralLibMatchingDeepscoreParameters
+            and self.params.SpectralLibMatchingDeepscoreParameters.activate_module
+        ):
             return
 
         if (
@@ -447,7 +486,10 @@ class SummaryWriter(BaseModel):
             )
 
     def summarize_askcbcosinematchingparams(self: Self):
-        if not self.params.AsKcbCosineMatchingParams:
+        if not (
+            self.params.AsKcbCosineMatchingParams
+            and self.params.AsKcbCosineMatchingParams.activate_module
+        ):
             return
 
         if (
@@ -478,7 +520,10 @@ class SummaryWriter(BaseModel):
             )
 
     def summarize_askcbdeepscorematchingparams(self: Self):
-        if not self.params.AsKcbDeepscoreMatchingParams:
+        if not (
+            self.params.AsKcbDeepscoreMatchingParams
+            and self.params.AsKcbDeepscoreMatchingParams.activate_module
+        ):
             return
 
         if (

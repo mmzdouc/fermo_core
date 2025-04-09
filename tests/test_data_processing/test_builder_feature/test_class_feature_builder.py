@@ -9,22 +9,19 @@ from fermo_core.data_processing.builder_feature.dataclass_feature import Feature
 
 def test_set_attributes_valid():
     feature = FeatureBuilder().set_f_id(10).get_result()
-    assert feature.f_id == 10, "Builder could not set value when building object."
+    assert feature.f_id == 10
 
 
 def test_re_set_attributes_valid():
     feature = FeatureBuilder().set_f_id(10).get_result()
     feature.f_id = 5
-    assert feature.f_id == 5, "Could not assign new value to Feature."
+    assert feature.f_id == 5
 
 
 def test_multiple_init_valid():
     feature1 = FeatureBuilder().set_f_id(1).get_result()
     feature2 = FeatureBuilder().set_f_id(2).get_result()
-    assert feature1.f_id is not feature2.f_id, (
-        "Could not build multiple instances with different attributes using the same "
-        "builder."
-    )
+    assert feature1.f_id is not feature2.f_id
 
 
 def test_set_f_id_valid():

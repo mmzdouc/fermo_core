@@ -57,7 +57,6 @@ class ValidationManager:
         else:
             raise ValueError(f"'{f}' not between 0.0 and 1.0.")
 
-
     @staticmethod
     def validate_allowed(s: str, allowed: list) -> None:
         """Check if str one of allowed strings
@@ -71,7 +70,6 @@ class ValidationManager:
         """
         if s not in allowed:
             raise ValueError(f"'{s}' is not one of '{allowed}'")
-
 
     @staticmethod
     def validate_mass_deviation_ppm(ppm: int):

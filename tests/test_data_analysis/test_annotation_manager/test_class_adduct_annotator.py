@@ -3,13 +3,11 @@ import pytest
 from fermo_core.data_analysis.annotation_manager.class_adduct_annotator import (
     AdductAnnotator,
 )
-from fermo_core.data_processing.builder_feature.dataclass_feature import Feature, Adduct
+from fermo_core.data_processing.builder_feature.dataclass_feature import Adduct, Feature
 from fermo_core.data_processing.class_repository import Repository
 from fermo_core.data_processing.class_stats import Stats
 from fermo_core.input_output.class_parameter_manager import ParameterManager
-from fermo_core.input_output.core_module_parameter_managers import (
-    AdductAnnotationParameters,
-)
+from fermo_core.input_output.param_handlers import AdductAnnotationParameters
 
 
 @pytest.fixture
@@ -26,7 +24,11 @@ def adduct_annotator(
 
 @pytest.fixture
 def adduct_annotator_min():
-    params = ParameterManager(AdductAnnotationParameters=AdductAnnotationParameters())
+    params = ParameterManager(
+        AdductAnnotationParameters=AdductAnnotationParameters(
+            **{"activate_module": True, "mass_dev_ppm": 10.0}
+        )
+    )
     features = Repository()
     feature1 = Feature(f_id=1, mz=100.0)
     features.add(1, feature1)

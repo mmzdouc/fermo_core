@@ -1,13 +1,9 @@
-from func_timeout import FunctionTimedOut
-
 import pytest
 
 from fermo_core.data_analysis.sim_networks_manager.class_ms2deepscore_networker import (
     Ms2deepscoreNetworker,
 )
-from fermo_core.input_output.core_module_parameter_managers import (
-    SpecSimNetworkDeepscoreParameters,
-)
+from fermo_core.input_output.param_handlers import SpecSimNetworkDeepscoreParameters
 
 
 def test_init_valid():
@@ -16,7 +12,14 @@ def test_init_valid():
 
 def test_spec_sim_networking_valid(feature_instance):
     features = (12, 13)
-    settings = SpecSimNetworkDeepscoreParameters()
+    settings = SpecSimNetworkDeepscoreParameters(
+        **{
+            "activate_module": True,
+            "score_cutoff": 0.8,
+            "max_nr_links": 10,
+            "msms_min_frag_nr": 5,
+        }
+    )
     assert (
         Ms2deepscoreNetworker().spec_sim_networking(
             features, feature_instance, settings
@@ -25,19 +28,16 @@ def test_spec_sim_networking_valid(feature_instance):
     )
 
 
-def test_spec_sim_networking_timeout_invalid(feature_instance):
-    features = (12, 13)
-    settings = SpecSimNetworkDeepscoreParameters()
-    settings.maximum_runtime = 0.1
-    with pytest.raises(FunctionTimedOut):
-        Ms2deepscoreNetworker().spec_sim_networking(
-            features, feature_instance, settings
-        )
-
-
 def test_create_network_valid(feature_instance):
     features = (12, 13)
-    settings = SpecSimNetworkDeepscoreParameters()
+    settings = SpecSimNetworkDeepscoreParameters(
+        **{
+            "activate_module": True,
+            "score_cutoff": 0.8,
+            "max_nr_links": 10,
+            "msms_min_frag_nr": 5,
+        }
+    )
     scores = Ms2deepscoreNetworker().spec_sim_networking(
         features, feature_instance, settings
     )

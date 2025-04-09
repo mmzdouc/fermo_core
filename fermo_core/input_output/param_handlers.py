@@ -22,14 +22,21 @@ SOFTWARE.
 """
 
 import logging
-from pathlib import Path
-from typing import Optional, Self
+from typing import Self
 
-from pydantic import BaseModel, DirectoryPath, FilePath, PositiveFloat, PositiveInt, model_validator
+from pydantic import (
+    BaseModel,
+    DirectoryPath,
+    FilePath,
+    PositiveFloat,
+    PositiveInt,
+    model_validator,
+)
 
 from fermo_core.input_output.class_validation_manager import ValidationManager
 
 logger = logging.getLogger("fermo_core")
+
 
 class PeaktableParameters(BaseModel):
     """A Pydantic-based class for representing and validating peaktable parameters.
@@ -62,7 +69,6 @@ class PeaktableParameters(BaseModel):
             raise ValueError(f"Unsupported peaktable format: '{self.format}'.")
         ValidationManager.validate_allowed(self.polarity, ["positive", "negative"])
         return self
-
 
     def to_json(self: Self) -> dict:
         """Convert attributes to json-compatible ones."""
@@ -232,9 +238,7 @@ class SpecLibParameters(BaseModel):
                     ValidationManager.validate_file_extension(f, ".mgf")
                     ValidationManager.validate_mgf_file(f)
             case _:
-                raise ValueError(
-                    f"Unsupported library format '{self.format}'."
-                )
+                raise ValueError(f"Unsupported library format '{self.format}'.")
         return self
 
     def to_json(self: Self) -> dict:
@@ -301,6 +305,7 @@ class AsResultsParameters(BaseModel):
             "similarity_cutoff": self.similarity_cutoff,
         }
 
+
 class OutputParameters(BaseModel):
     """A Pydantic-based class for representing and validating output parameters.
 
@@ -324,6 +329,7 @@ class OutputParameters(BaseModel):
             }
         except AttributeError:
             return {"directory_path": "not specified"}
+
 
 class AdductAnnotationParameters(BaseModel):
     """A Pydantic-based class for repr. and valid. of adduct annotation parameters.
@@ -493,6 +499,7 @@ class SpecSimNetworkDeepscoreParameters(BaseModel):
         else:
             return {"activate_module": self.activate_module}
 
+
 class FeatureFilteringParameters(BaseModel):
     """A Pydantic-based class for repr. and valid. of feature filtering parameters.
 
@@ -556,7 +563,9 @@ class BlankAssignmentParameters(BaseModel):
 
     @model_validator(mode="after")
     def val(self):
-        ValidationManager.validate_allowed(self.algorithm, ["mean", "median", "maximum"])
+        ValidationManager.validate_allowed(
+            self.algorithm, ["mean", "median", "maximum"]
+        )
         ValidationManager.validate_allowed(self.value, ["height", "area"])
         return self
 
@@ -590,7 +599,9 @@ class GroupFactAssignmentParameters(BaseModel):
 
     @model_validator(mode="after")
     def val(self):
-        ValidationManager.validate_allowed(self.algorithm, ["mean", "median", "maximum"])
+        ValidationManager.validate_allowed(
+            self.algorithm, ["mean", "median", "maximum"]
+        )
         ValidationManager.validate_allowed(self.value, ["height", "area"])
         return self
 
@@ -670,7 +681,21 @@ class PhenoQuantPercentAssgnParams(BaseModel):
         ValidationManager.validate_allowed(self.sample_avg, ["mean", "median"])
         ValidationManager.validate_allowed(self.value, ["area"])
         ValidationManager.validate_allowed(self.algorithm, ["pearson"])
-        ValidationManager.validate_allowed(self.fdr_corr, ["bonferroni", "sidak", "holm-sidak", "holm","simes-hochberg", "hommel", "fdr_bh", "fdr_by", "fdr_tsbh", "fdr_tsbky"])
+        ValidationManager.validate_allowed(
+            self.fdr_corr,
+            [
+                "bonferroni",
+                "sidak",
+                "holm-sidak",
+                "holm",
+                "simes-hochberg",
+                "hommel",
+                "fdr_bh",
+                "fdr_by",
+                "fdr_tsbh",
+                "fdr_tsbky",
+            ],
+        )
         ValidationManager.validate_float_zero_one(self.p_val_cutoff)
         ValidationManager.validate_float_zero_one(self.coeff_cutoff)
         return self
@@ -719,9 +744,21 @@ class PhenoQuantConcAssgnParams(BaseModel):
         ValidationManager.validate_allowed(self.sample_avg, ["mean", "median"])
         ValidationManager.validate_allowed(self.value, ["area"])
         ValidationManager.validate_allowed(self.algorithm, ["pearson"])
-        ValidationManager.validate_allowed(self.fdr_corr,
-                                           ["bonferroni", "sidak", "holm-sidak", "holm", "simes-hochberg", "hommel",
-                                            "fdr_bh", "fdr_by", "fdr_tsbh", "fdr_tsbky"])
+        ValidationManager.validate_allowed(
+            self.fdr_corr,
+            [
+                "bonferroni",
+                "sidak",
+                "holm-sidak",
+                "holm",
+                "simes-hochberg",
+                "hommel",
+                "fdr_bh",
+                "fdr_by",
+                "fdr_tsbh",
+                "fdr_tsbky",
+            ],
+        )
         ValidationManager.validate_float_zero_one(self.p_val_cutoff)
         ValidationManager.validate_float_zero_one(self.coeff_cutoff)
         return self

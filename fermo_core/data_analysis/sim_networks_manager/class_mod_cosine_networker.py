@@ -23,14 +23,11 @@ SOFTWARE.
 
 import logging
 
-import func_timeout
 import matchms
 import networkx
 
 from fermo_core.data_processing.class_repository import Repository
-from fermo_core.input_output.core_module_parameter_managers import (
-    SpecSimNetworkCosineParameters,
-)
+from fermo_core.input_output.param_handlers import SpecSimNetworkCosineParameters
 
 logger = logging.getLogger("fermo_core")
 
@@ -71,24 +68,12 @@ class ModCosineNetworker:
             tolerance=settings.fragment_tol
         )
 
-        if settings.maximum_runtime != 0:
-            return func_timeout.func_timeout(
-                timeout=settings.maximum_runtime,
-                func=matchms.calculate_scores,
-                kwargs={
-                    "references": spectra,
-                    "queries": spectra,
-                    "similarity_function": sim_algorithm,
-                    "is_symmetric": True,
-                },
-            )
-        else:
-            return matchms.calculate_scores(
-                references=spectra,
-                queries=spectra,
-                similarity_function=sim_algorithm,
-                is_symmetric=True,
-            )
+        return matchms.calculate_scores(
+            references=spectra,
+            queries=spectra,
+            similarity_function=sim_algorithm,
+            is_symmetric=True,
+        )
 
     @staticmethod
     def create_network(

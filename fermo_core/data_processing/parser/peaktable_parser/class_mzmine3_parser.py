@@ -35,7 +35,6 @@ from fermo_core.data_processing.builder_sample.class_samples_director import (
 )
 from fermo_core.data_processing.class_repository import Repository
 from fermo_core.data_processing.class_stats import Stats
-
 from fermo_core.input_output.class_parameter_manager import ParameterManager
 
 logger = logging.getLogger("fermo_core")
@@ -61,11 +60,11 @@ class PeakMzmine3Parser(BaseModel):
             f"'{params.PeaktableParameters.filepath.name}'"
         )
 
-        stats = self.extract_stats(params)
+        stats = self._extract_stats(params)
 
-        feature_repo = self.extract_features(params)
+        feature_repo = self._extract_features(params)
 
-        sample_repo = self.extract_samples(stats, params)
+        sample_repo = self._extract_samples(stats, params)
 
         logger.info(
             f"'PeakMzmine3Parser': completed parsing MZmine3-style peaktable file "
@@ -75,7 +74,7 @@ class PeakMzmine3Parser(BaseModel):
         return stats, feature_repo, sample_repo
 
     @staticmethod
-    def extract_stats(params: ParameterManager) -> Stats:
+    def _extract_stats(params: ParameterManager) -> Stats:
         """Extract stats from MZmine3-style peaktable.
 
         Arguments:
@@ -89,7 +88,7 @@ class PeakMzmine3Parser(BaseModel):
         return stats
 
     @staticmethod
-    def extract_features(params: ParameterManager) -> Repository:
+    def _extract_features(params: ParameterManager) -> Repository:
         """Extract features from MZmine3-style peaktable.
 
         Arguments:
@@ -104,7 +103,7 @@ class PeakMzmine3Parser(BaseModel):
         return feature_repo
 
     @staticmethod
-    def extract_samples(stats: Stats, params: ParameterManager) -> Repository:
+    def _extract_samples(stats: Stats, params: ParameterManager) -> Repository:
         """Extract samples from MZmine3-style peaktable.
 
         Arguments:

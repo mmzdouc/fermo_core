@@ -1,13 +1,9 @@
-import func_timeout
 import pytest
 
 from fermo_core.data_analysis.sim_networks_manager.class_mod_cosine_networker import (
     ModCosineNetworker,
 )
-
-from fermo_core.input_output.core_module_parameter_managers import (
-    SpecSimNetworkCosineParameters,
-)
+from fermo_core.input_output.param_handlers import SpecSimNetworkCosineParameters
 
 
 def test_init_mod_cosine_networker_valid():
@@ -17,25 +13,33 @@ def test_init_mod_cosine_networker_valid():
 @pytest.mark.slow
 def test_spec_sim_networking_valid(feature_instance):
     features = (12, 13)
-    settings = SpecSimNetworkCosineParameters()
+    settings = SpecSimNetworkCosineParameters(
+        **{
+            "activate_module": True,
+            "msms_min_frag_nr": 5,
+            "fragment_tol": 0.1,
+            "score_cutoff": 0.7,
+            "max_nr_links": 10,
+        }
+    )
     assert (
         ModCosineNetworker().spec_sim_networking(features, feature_instance, settings)
         is not None
     )
 
 
-def test_spec_sim_networking_runtime_invalid(feature_instance):
-    features = (12, 13)
-    settings = SpecSimNetworkCosineParameters()
-    settings.maximum_runtime = 0.0000001
-    with pytest.raises(func_timeout.FunctionTimedOut):
-        ModCosineNetworker().spec_sim_networking(features, feature_instance, settings)
-
-
 @pytest.mark.slow
 def test_create_network_valid(feature_instance):
     features = (12, 13)
-    settings = SpecSimNetworkCosineParameters()
+    settings = settings = SpecSimNetworkCosineParameters(
+        **{
+            "activate_module": True,
+            "msms_min_frag_nr": 5,
+            "fragment_tol": 0.1,
+            "score_cutoff": 0.7,
+            "max_nr_links": 10,
+        }
+    )
     scores = ModCosineNetworker().spec_sim_networking(
         features, feature_instance, settings
     )

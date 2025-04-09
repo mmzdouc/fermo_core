@@ -25,7 +25,6 @@ import logging
 from typing import Any, Optional, Self
 from urllib.parse import urlparse
 
-import func_timeout
 import matchms
 from ms2deepscore import MS2DeepScore
 from ms2deepscore.models import load_model
@@ -53,7 +52,6 @@ class Ms2deepscoreAnnotator(BaseModel):
         library_name: the name of the library that is matched against
         queries: a list of Spectra for which to perform matching
         scores: a matchms.Scores object storing the raw results of the matching
-        max_time: maximum allowed calculation time of individual steps
         score_cutoff: minimum score for a match
         max_precursor_mass_diff: maximum precursor mass difference
     """
@@ -65,7 +63,6 @@ class Ms2deepscoreAnnotator(BaseModel):
     library_name: str
     queries: Optional[list] = None
     scores: Optional[Any] = None
-    max_time: int
     score_cutoff: float
     max_precursor_mass_diff: float
 
@@ -125,40 +122,15 @@ class Ms2deepscoreAnnotator(BaseModel):
 
         sim_algorithm = MS2DeepScore(model=model, progress_bar=False)
 
-        if self.max_time == 0:
-            logger.info(
-                "'AnnotationManager/Ms2deepscoreAnnotator': Started ms2deepscore "
-                "library matching "
-                "algorithm with no timeout set."
-            )
-            self.scores = matchms.calculate_scores(
-                references=self.library,
-                queries=self.queries,
-                similarity_function=sim_algorithm,
-            )
-        else:
-            try:
-                logger.info(
-                    f"'AnnotationManager/Ms2deepscoreAnnotator': Started ms2deepscore library matching"
-                    f" algorithm with a timeout of '{self.max_time}' seconds."
-                )
-                self.scores = func_timeout.func_timeout(
-                    timeout=self.max_time,
-                    func=matchms.calculate_scores,
-                    kwargs={
-                        "references": self.library,
-                        "queries": self.queries,
-                        "similarity_function": sim_algorithm,
-                    },
-                )
-            except func_timeout.FunctionTimedOut as e:
-                logger.warning(
-                    f"'AnnotationManager/Ms2deepscoreAnnotator': timeout of "
-                    f"MS2DeepScore-based "
-                    f"calculation: more than specified '{self.max_time}' seconds."
-                    f"For unlimited runtime, set 'maximum_runtime' to 0 - SKIP"
-                )
-                raise e
+        logger.info(
+            "'AnnotationManager/Ms2deepscoreAnnotator': Started ms2deepscore "
+            "library matching "
+        )
+        self.scores = matchms.calculate_scores(
+            references=self.library,
+            queries=self.queries,
+            similarity_function=sim_algorithm,
+        )
 
     def filter_match(self: Self, match: tuple, f_mz: float) -> bool:
         """Filter ms2deepscore-derived matches for user-specified params

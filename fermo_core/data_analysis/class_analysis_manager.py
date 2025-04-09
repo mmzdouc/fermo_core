@@ -82,9 +82,7 @@ class AnalysisManager(BaseModel):
         logger.info("'AnalysisManager': started analysis steps.")
 
         self.run_feature_filter()
-        self.run_blank_assignment()
-        self.run_group_assignment()
-        self.run_group_factor_assignment()
+        self.run_sample_group_analysis()
         self.run_phenotype_manager()
         self.run_sim_networks_manager()
         self.run_annotation_manager()
@@ -95,10 +93,11 @@ class AnalysisManager(BaseModel):
 
     def run_feature_filter(self: Self):
         """Run optional FeatureFilter analysis step"""
-        if self.params.FeatureFilteringParameters.activate_module is False:
-            logger.info(
-                "'FeatureFilter': module 'feature_filtering' not activated - SKIP."
-            )
+        if not (
+            self.params.FeatureFilteringParameters
+            and self.params.FeatureFilteringParameters.activate_module
+        ):
+            logger.info("'FeatureFilter': not activated - SKIP.")
             return
 
         try:
@@ -112,16 +111,27 @@ class AnalysisManager(BaseModel):
             self.stats, self.features, self.samples = feature_filter.return_values()
             self.params.FeatureFilteringParameters.module_passed = True
         except Exception as e:
-            logger.error(str(e))
-            logger.error(
-                "FeatureFilter: an error occurred and the module terminated prematurely - SKIP"
-            )
+            logger.error(f"FeatureFilter failed: {e}")
+            logger.error("FeatureFilter terminated prematurely - SKIP")
             return
+
+    def run_sample_group_analysis(self):
+        """Orchestrates functions"""
+        self.run_blank_assignment()
+        self.run_group_assignment()
+        self.run_group_factor_assignment()
 
     def run_blank_assignment(self: Self):
         """Run optional blank_assignment analysis step"""
-        if self.params.GroupMetadataParameters is None:
+        if not self.params.GroupMetadataParameters:
             logger.info("'BlankAssigner': no group metadata file provided - SKIP")
+            return
+
+        if not (
+            self.params.BlankAssignmentParameters
+            and self.params.BlankAssignmentParameters.activate_module
+        ):
+            logger.info("'BlankAssigner': not activated - SKIP.")
             return
 
         if len(self.stats.GroupMData.blank_s_ids) == 0:
@@ -132,12 +142,6 @@ class AnalysisManager(BaseModel):
             logger.info("'BlankAssigner': all sample marked as 'BLANK' - SKIP")
             return
 
-        if self.params.BlankAssignmentParameters.activate_module is False:
-            logger.info(
-                "'BlankAssigner': 'blank_assignment/activate_module' disabled - SKIP"
-            )
-            return
-
         try:
             blank_assigner = BlankAssigner(
                 params=self.params, features=self.features, stats=self.stats
@@ -146,10 +150,8 @@ class AnalysisManager(BaseModel):
             self.stats, self.features = blank_assigner.return_attrs()
             self.params.BlankAssignmentParameters.module_passed = True
         except Exception as e:
-            logger.error(str(e))
-            logger.error(
-                "BlankAssigner: an error occurred and the module terminated prematurely - SKIP"
-            )
+            logger.error(f"BlankAssigner failed: {e}")
+            logger.error("BlankAssigner terminated prematurely - SKIP")
             return
 
     def run_group_assignment(self: Self):
@@ -157,7 +159,7 @@ class AnalysisManager(BaseModel):
 
         Notes: must be called after BlankAssigner
         """
-        if self.params.GroupMetadataParameters is None:
+        if not self.params.GroupMetadataParameters:
             logger.info("'GroupAssigner': no group metadata file provided - SKIP")
             return
 
@@ -166,10 +168,8 @@ class AnalysisManager(BaseModel):
             group_assigner.run_analysis()
             self.stats, self.features = group_assigner.return_attrs()
         except Exception as e:
-            logger.error(str(e))
-            logger.error(
-                "GroupAssigner: an error occurred and the module terminated prematurely - SKIP"
-            )
+            logger.error(f"GroupAssigner failed: {e}")
+            logger.error("GroupAssigner terminated prematurely - SKIP")
             return
 
     def run_group_factor_assignment(self: Self):
@@ -178,10 +178,14 @@ class AnalysisManager(BaseModel):
         Notes: must be called after BlankAssigner and GroupAssigner
         """
 
-        if self.params.GroupMetadataParameters is None:
+        if not self.params.GroupMetadataParameters:
             logger.info("'GroupFactorAssigner': no group metadata file provided - SKIP")
             return
-        if self.params.GroupFactAssignmentParameters.activate_module is False:
+
+        if not (
+            self.params.GroupFactAssignmentParameters
+            and self.params.GroupFactAssignmentParameters.activate_module
+        ):
             logger.info(
                 "'GroupFactorAssigner': "
                 "'group_factor_assignment/activate_module' disabled - SKIP"
@@ -196,27 +200,26 @@ class AnalysisManager(BaseModel):
             self.features = group_fact_ass.return_features()
             self.params.GroupFactAssignmentParameters.module_passed = True
         except Exception as e:
-            logger.error(str(e))
-            logger.error(
-                "GroupFactorAssigner: an error occurred and the module terminated prematurely - SKIP"
-            )
+            logger.error(f"GroupFactorAssigner failed: {e}")
+            logger.error("GroupFactorAssigner terminated prematurely - SKIP")
             return
 
     def run_phenotype_manager(self: Self):
         """Run optional PhenotypeManager analysis step"""
-        if self.params.PhenotypeParameters is None:
+        if not self.params.PhenotypeParameters:
             logger.info("'PhenotypeManager': no phenotype data provided - SKIP.")
             return
-        elif not any(
-            [
-                self.params.PhenoQualAssgnParams.activate_module,
-                self.params.PhenoQuantPercentAssgnParams.activate_module,
-                self.params.PhenoQuantConcAssgnParams.activate_module,
+
+        if not any(
+            getattr(p, "activate_module", False)
+            for p in [
+                self.params.PhenoQualAssgnParams,
+                self.params.PhenoQuantPercentAssgnParams,
+                self.params.PhenoQuantConcAssgnParams,
             ]
         ):
             logger.info(
-                "'PhenotypeManager': no modules in 'phenotype_assignment' activated - "
-                "SKIP."
+                "'PhenotypeManager': no modules in 'phenotype_assignment' activated - SKIP."
             )
             return
 
@@ -230,26 +233,25 @@ class AnalysisManager(BaseModel):
             phenotype_manager.run_analysis()
             self.stats, self.features, self.params = phenotype_manager.return_attrs()
         except Exception as e:
-            logger.error(str(e))
-            logger.error(
-                "PhenotypeManager: an error occurred and the module terminated prematurely - SKIP"
-            )
+            logger.error(f"PhenotypeManager failed: {e}")
+            logger.error("PhenotypeManager terminated prematurely - SKIP")
             return
 
     def run_sim_networks_manager(self: Self):
         """Run optional SimNetworksManager analysis step"""
-        if self.params.MsmsParameters is None:
+        if not self.params.MsmsParameters:
             logger.info("'SimNetworksManager': no MS/MS data provided - SKIP.")
             return
-        elif not any(
-            [
-                self.params.SpecSimNetworkCosineParameters.activate_module,
-                self.params.SpecSimNetworkDeepscoreParameters.activate_module,
+
+        if not any(
+            getattr(p, "activate_module", False)
+            for p in [
+                self.params.SpecSimNetworkCosineParameters,
+                self.params.SpecSimNetworkDeepscoreParameters,
             ]
         ):
             logger.info(
-                "'SimNetworksManager': no modules in 'spec_sim_networking' activated - "
-                "SKIP."
+                "'SimNetworksManager': no modules in 'spec_sim_networking' activated - SKIP."
             )
             return
 
@@ -265,10 +267,8 @@ class AnalysisManager(BaseModel):
                 sim_networks_manager.return_attrs()
             )
         except Exception as e:
-            logger.error(str(e))
-            logger.error(
-                "SimNetworksManager: an error occurred and the module terminated prematurely - SKIP"
-            )
+            logger.error(f"SimNetworksManager failed: {e}")
+            logger.error("SimNetworksManager terminated prematurely - SKIP")
             return
 
     def run_annotation_manager(self: Self):
@@ -286,10 +286,8 @@ class AnalysisManager(BaseModel):
                 annotation_manager.return_attrs()
             )
         except Exception as e:
-            logger.error(str(e))
-            logger.error(
-                "AnnotationManager: an error occurred and the module terminated prematurely - SKIP"
-            )
+            logger.error(f"AnnotationManager failed: {e}")
+            logger.error("AnnotationManager terminated prematurely - SKIP")
             return
 
     def run_score_assignment(self: Self):
@@ -304,10 +302,8 @@ class AnalysisManager(BaseModel):
             score_assigner.run_analysis()
             self.features, self.samples = score_assigner.return_attributes()
         except Exception as e:
-            logger.error(str(e))
-            logger.error(
-                "ScoreAssigner: an error occurred and the module terminated prematurely - SKIP"
-            )
+            logger.error(f"ScoreAssigner failed: {e}")
+            logger.error("ScoreAssigner terminated prematurely - SKIP")
             return
 
     def run_chrom_trace_calculator(self: Self):
@@ -317,8 +313,6 @@ class AnalysisManager(BaseModel):
                 self.samples, self.stats
             )
         except Exception as e:
-            logger.error(str(e))
-            logger.error(
-                "ChromTraceCalculator: an error occurred and the module terminated prematurely - SKIP"
-            )
+            logger.error(f"ChromTraceCalculator failed: {e}")
+            logger.error("ChromTraceCalculator terminated prematurely - SKIP")
             return
