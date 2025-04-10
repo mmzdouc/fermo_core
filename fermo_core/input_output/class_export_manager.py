@@ -237,7 +237,10 @@ class CsvExporter(BaseModel):
                     return None
             return None
 
-        if self.params.AdductAnnotationParameters.activate_module is False:
+        if not (
+            self.params.AdductAnnotationParameters
+            and self.params.AdductAnnotationParameters.activate_module
+        ):
             return
 
         self.df["fermo:annotation:adducts"] = self.df["id"].map(
@@ -263,7 +266,10 @@ class CsvExporter(BaseModel):
                     return None
             return None
 
-        if self.params.NeutralLossParameters.activate_module is False:
+        if not (
+            self.params.NeutralLossParameters
+            and self.params.NeutralLossParameters.activate_module
+        ):
             return
 
         self.df["fermo:annotation:neutral_losses"] = self.df["id"].map(
@@ -291,16 +297,21 @@ class CsvExporter(BaseModel):
                     return None
             return None
 
-        modules = []
+        modules = set()
         if (
-            self.params.SpectralLibMatchingDeepscoreParameters.activate_module
-            or self.params.SpectralLibMatchingCosineParameters.activate_module
+            self.params.SpectralLibMatchingDeepscoreParameters
+            and self.params.SpectralLibMatchingDeepscoreParameters.activate_module
         ):
-            modules.append("user_library_annotation")
-        if self.params.MS2QueryResultsParameters is not None:
-            modules.append("ms2query_annotation")
-        if self.params.AsResultsParameters is not None:
-            modules.append("antismash_kcb_annotation")
+            modules.add("user_library_annotation")
+        if (
+            self.params.SpectralLibMatchingCosineParameters
+            and self.params.SpectralLibMatchingCosineParameters.activate_module
+        ):
+            modules.add("user_library_annotation")
+        if self.params.MS2QueryResultsParameters:
+            modules.add("ms2query_annotation")
+        if self.params.AsResultsParameters:
+            modules.add("antismash_kcb_annotation")
 
         for module in modules:
             self.df[f"fermo:annotation:matches:{module}"] = self.df["id"].map(
@@ -326,7 +337,10 @@ class CsvExporter(BaseModel):
                     return None
             return None
 
-        if self.params.FragmentAnnParameters.activate_module is False:
+        if not (
+            self.params.FragmentAnnParameters
+            and self.params.FragmentAnnParameters.activate_module
+        ):
             return
 
         self.df["fermo:annotation:fragments"] = self.df["id"].map(

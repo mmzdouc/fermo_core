@@ -1,770 +1,343 @@
 {
-    "$schema": "http://json-schema.org/draft-04/schema#",
-    "$schema_version": "1.1.0",
-    "type": "object",
-    "title": "fermo_core input parameter validation form",
-    "additionalProperties": false,
-    "properties": {
-        "files": {
-            "title": "Organizes parameters on input data files.",
-            "additionalProperties": false,
-            "type": "object",
-            "required": [
-                "peaktable"
-            ],
-            "properties": {
-                "peaktable": {
-                    "title": "File containing information of peaks (=molecular features)",
-                    "additionalProperties": false,
-                    "type": "object",
-                    "required": [
-                        "filepath",
-                        "format",
-                        "polarity"
-                    ],
-                    "properties": {
-                        "filepath": {
-                            "title": "Specifies the filepath. Absolute paths are preferred.",
-                            "type": "string"
-                        },
-                        "format": {
-                            "title": "Specifies the format of the file. Must be one of the allowed formats in 'enum'.",
-                            "type": "string",
-                            "enum": [
-                                "mzmine3",
-                                "mzmine4"
-                            ]
-                        },
-                        "polarity": {
-                            "title": "Specifies the polarity of the peaktable file. Must be one of the allowed formats in 'enum'.",
-                            "type": "string",
-                            "enum": [
-                                "positive",
-                                "negative"
-                            ]
-                        }
-                    }
-                },
-                "msms": {
-                    "title": "(Optional): file containing information of MS/MS spectra of molecular features in peaktable.",
-                    "additionalProperties": false,
-                    "type": "object",
-                    "required": [
-                        "filepath",
-                        "format"
-                    ],
-                    "properties": {
-                        "filepath": {
-                            "title": "Specifies the filepath. Absolute paths are preferred.",
-                            "type": "string"
-                        },
-                        "format": {
-                            "title": "Specifies the format of the file. Must be one of the allowed formats in 'enum'.",
-                            "type": "string",
-                            "enum": [
-                                "mgf"
-                            ]
-                        },
-                        "rel_int_from": {
-                            "title": "(Optional): Specifies minimal relative intensity of fragments to be retained. Must be a value between (and including) 0 and 1.0.",
-                            "type": "number",
-                            "minimum": 0.0,
-                            "maximum": 1.0
-                        }
-                    }
-                },
-                "phenotype": {
-                    "title": "(Optional): file containing phenotype information. 'Format' requires respective 'phenotype_assignment' settings below.",
-                    "additionalProperties": false,
-                    "type": "object",
-                    "required": [
-                        "filepath",
-                        "format"
-                    ],
-                    "properties": {
-                        "filepath": {
-                            "title": "Specifies the filepath. Absolute paths are preferred.",
-                            "type": "string"
-                        },
-                        "format": {
-                            "title": "Specifies the format of the file. Must be one of the allowed formats in 'enum'.",
-                            "type": "string",
-                            "enum": [
-                                "qualitative",
-                                "quantitative-percentage",
-                                "quantitative-concentration"
-                            ]
-                        }
-                    }
-                },
-                "group_metadata": {
-                    "title": "(Optional): file containing information on group metadata information.",
-                    "additionalProperties": false,
-                    "type": "object",
-                    "required": [
-                        "filepath",
-                        "format"
-                    ],
-                    "properties": {
-                        "filepath": {
-                            "title": "Specifies the filepath. Absolute paths are preferred.",
-                            "type": "string"
-                        },
-                        "format": {
-                            "title": "Specifies the format of the file. Must be one of the allowed formats in 'enum'.",
-                            "type": "string",
-                            "enum": [
-                                "fermo"
-                            ]
-                        }
-                    }
-                },
-                "spectral_library": {
-                    "title": "(Optional): file containing a custom spectral library for spectra similarity matching.",
-                    "additionalProperties": false,
-                    "type": "object",
-                    "required": [
-                        "filepath",
-                        "format"
-                    ],
-                    "properties": {
-                        "filepath": {
-                            "title": "Specifies the filepath. Absolute paths are preferred.",
-                            "type": "string"
-                        },
-                        "format": {
-                            "title": "Specifies the format of the file. Must be one of the allowed formats in 'enum'.",
-                            "type": "string",
-                            "enum": [
-                                "mgf"
-                            ]
-                        }
-                    }
-                },
-                "ms2query_results": {
-                    "title": "(Optional): file containing MS2Query results. Must contain a column 'id' that matches feature IDs from peaktable. If present, MS2Query algorithm does not run.",
-                    "additionalProperties": false,
-                    "type": "object",
-                    "required": [
-                        "filepath"
-                    ],
-                    "properties": {
-                        "filepath": {
-                            "title": "Specifies the filepath. Absolute paths are preferred.",
-                            "type": "string"
-                        },
-                        "score_cutoff": {
-                            "title": "(Optional): minimum score to consider feature annotation.",
-                            "type": "number",
-                            "minimum": 0.1,
-                            "maximum": 1.0
-                        }
-                    }
-                },
-                "as_results": {
-                    "title": "(Optional): antiSMASH results directory (single genome only).",
-                    "additionalProperties": false,
-                    "type": "object",
-                    "required": [
-                        "directory_path"
-                    ],
-                    "properties": {
-                        "directory_path": {
-                            "title": "Specifies the directory path. Absolute paths are preferred.",
-                            "type": "string"
-                        },
-                        "similarity_cutoff": {
-                            "title": "(Optional): minimum gene cluster similarity to MIBiG matches to consider in analysis, as fraction. A value of 0.7 indicates that 70% or more genes of a MIBiG entry must be shared by the query to consider a KnownClusterBlast match.",
-                            "type": "number",
-                            "minimum": 0.1,
-                            "maximum": 1.0
-                        }
-                    }
-                }
-            }
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "$schema_version": "1.1.0",
+  "type": "object",
+  "properties": {
+    "PeaktableParams": {
+      "type": "object",
+      "properties": {
+        "filepath": {
+          "type": "string"
         },
-        "core_modules": {
-            "title": "Modules that are executed by default. If not desired, they need to be deactivated explicitly, else they will run with default settings.",
-            "additionalProperties": false,
-            "type": "object",
-            "properties": {
-                "adduct_annotation": {
-                    "title": "(Optional): settings for adduct annotation of molecular features.",
-                    "additionalProperties": false,
-                    "type": "object",
-                    "required": [
-                        "activate_module"
-                    ],
-                    "properties": {
-                        "activate_module": {
-                            "title": "Specifies whether this module should be run.",
-                            "type": "boolean"
-                        },
-                        "mass_dev_ppm": {
-                            "title": "(Optional): expected mass deviation tolerance in parts per million.",
-                            "type": "number",
-                            "minimum": 0.0,
-                            "maximum": 100.0
-                        }
-                    }
-                },
-                "neutral_loss_annotation": {
-                    "title": "(Optional): settings for neutral loss annotation of MS/MS fragments.",
-                    "additionalProperties": false,
-                    "type": "object",
-                    "required": [
-                        "activate_module"
-                    ],
-                    "properties": {
-                        "activate_module": {
-                            "title": "Specifies whether this module should be run.",
-                            "type": "boolean"
-                        },
-                        "mass_dev_ppm": {
-                            "title": "(Optional): expected mass deviation tolerance in parts per million.",
-                            "type": "number",
-                            "minimum": 0.0,
-                            "maximum": 100.0
-                        }
-                    }
-                },
-                "fragment_annotation": {
-                    "title": "(Optional): settings for fragment annotation of MS/MS fragments.",
-                    "additionalProperties": false,
-                    "type": "object",
-                    "required": [
-                        "activate_module"
-                    ],
-                    "properties": {
-                        "activate_module": {
-                            "title": "Specifies whether this module should be run.",
-                            "type": "boolean"
-                        },
-                        "mass_dev_ppm": {
-                            "title": "(Optional): expected mass deviation tolerance in parts per million.",
-                            "type": "number",
-                            "minimum": 0.0,
-                            "maximum": 100.0
-                        }
-                    }
-                },
-                "spec_sim_networking": {
-                    "title": "(Optional): settings for spectral similarity networking (='molecular networking') with one or more algorithms.",
-                    "additionalProperties": false,
-                    "type": "object",
-                    "properties": {
-                        "modified_cosine": {
-                            "title": "(Optional): modified cosine algorithm. Most commonly used, quantifies the similarity between two spectra based on their dot-product. See 'https://matchms.readthedocs.io/en/latest/api/matchms.similarity.ModifiedCosine.html' for details.",
-                            "additionalProperties": false,
-                            "type": "object",
-                            "required": [
-                                "activate_module"
-                            ],
-                            "properties": {
-                                "activate_module": {
-                                    "title": "Specifies whether this module should be run.",
-                                    "type": "boolean"
-                                },
-                                "msms_min_frag_nr": {
-                                    "title": "(Optional): minimum number of fragments a MS/MS fragmentation spectrum must have to be considered in spectral similarity networking. Spectra with a low number of fragments may lead to unspecific matching and so-called 'hairball clusters'.",
-                                    "type": "integer",
-                                    "minimum": 1
-                                },
-                                "fragment_tol": {
-                                    "title": "(Optional): tolerance for matching two MS/MS fragments, in m/z units.",
-                                    "type": "number"
-                                },
-                                "score_cutoff": {
-                                    "title": "(Optional): minimum modified cosine score that must be reached to consider two MS/MS fragmentation spectra to be related.",
-                                    "type": "number",
-                                    "minimum": 0.1,
-                                    "maximum": 1.0
-                                },
-                                "max_nr_links": {
-                                    "title": "(Optional): max. number of links to other molecular features any molecular feature is allowed to have.",
-                                    "type": "integer",
-                                    "minimum": 1
-                                },
-                                "maximum_runtime": {
-                                    "title": "(Optional): maximum running time of module, in seconds. A value of 0 (zero) indicates unlimited running time.",
-                                    "type": "integer",
-                                    "minimum": 0
-                                }
-                            }
-                        },
-                        "ms2deepscore": {
-                            "title": "(Optional): MS2Deepscore algorithm. Quantifies the similarity between two spectra based on a spectral embedding (deep learning). Only works fot positive ion mode data. See 'https://github.com/matchms/ms2deepscore' for details.",
-                            "additionalProperties": false,
-                            "type": "object",
-                            "required": [
-                                "activate_module"
-                            ],
-                            "properties": {
-                                "activate_module": {
-                                    "title": "Specifies whether this module should be run.",
-                                    "type": "boolean"
-                                },
-                                "score_cutoff": {
-                                    "title": "(Optional): minimum score that must be reached to consider two MS/MS fragmentation spectra to be related.",
-                                    "type": "number",
-                                    "minimum": 0.1,
-                                    "maximum": 1.0
-                                },
-                                "max_nr_links": {
-                                    "title": "(Optional): max. number of links to other molecular features any molecular feature is allowed to have.",
-                                    "type": "integer",
-                                    "minimum": 1
-                                },
-                                "msms_min_frag_nr": {
-                                    "title": "(Optional): minimum number of fragments a MS/MS fragmentation spectrum must have to be considered in spectral similarity networking. Spectra with a low number of fragments may lead to unspecific matching and so-called 'hairball clusters'.",
-                                    "type": "integer",
-                                    "minimum": 1
-                                },
-                                "maximum_runtime": {
-                                    "title": "(Optional): maximum running time of module, in seconds. A value of 0 (zero) indicates unlimited running time.",
-                                    "type": "integer",
-                                    "minimum": 0
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+        "format": {
+          "type": "string",
+          "enum": [
+            "mzmine3",
+            "mzmine4"
+          ]
         },
-        "additional_modules": {
-            "title": "(Optional): modules that are not executed by default and need to be activated explicitly. If not specified, the modules will be skipped.",
-            "additionalProperties": false,
-            "type": "object",
-            "properties": {
-                "feature_filtering": {
-                    "title": "(Optional): molecular feature filtering. If not specified, this module will be skipped.",
-                    "additionalProperties": false,
-                    "type": "object",
-                    "required": [
-                        "activate_module"
-                    ],
-                    "properties": {
-                        "activate_module": {
-                            "title": "Specifies whether this module should be run.",
-                            "type": "boolean"
-                        },
-                        "filter_rel_int_range_min": {
-                            "title": "(Optional): restrict data analysis to molecular features that have a relative intensity (intensity relative to the highest feature intensity per sample) that greater or equal to the specified value. If a feature is detected in multiple samples, at least one occurrence must be inside the specified range. Else, the feature is not considered.",
-                            "type": "number",
-                            "minimum": 0.0,
-                            "maximum": 1.0
-                        },
-                        "filter_rel_int_range_max": {
-                            "title": "(Optional): restrict data analysis to molecular features that have a relative intensity (intensity relative to the highest feature intensity per sample) that less or equal to the specified value. If a feature is detected in multiple samples, at least one occurrence must be inside the specified range. Else, the feature is not considered.",
-                            "type": "number",
-                            "minimum": 0.0,
-                            "maximum": 1.0
-                        },
-                        "filter_rel_area_range_min": {
-                            "title": "(Optional): restrict data analysis to molecular features that have a relative area (area relative to the highest feature area per sample) that greater or equal to the specified value. If a feature is detected in multiple samples, at least one occurrence must be inside the specified range. Else, the feature is not considered.",
-                            "type": "number",
-                            "minimum": 0.0,
-                            "maximum": 1.0
-                        },
-                        "filter_rel_area_range_max": {
-                            "title": "(Optional): restrict data analysis to molecular features that have a relative area (area relative to the highest feature area per sample) that less or equal to the specified value. If a feature is detected in multiple samples, at least one occurrence must be inside the specified range. Else, the feature is not considered.",
-                            "type": "number",
-                            "minimum": 0.0,
-                            "maximum": 1.0
-                        }
-                    }
-                },
-                "blank_assignment": {
-                    "title": "(Optional): settings for sample blank determination (subtraction). Is only executed if a 'group_metadata' file is provided and sample BLANKS are declared.",
-                    "additionalProperties": false,
-                    "type": "object",
-                    "required": [
-                        "activate_module"
-                    ],
-                    "properties": {
-                        "activate_module": {
-                            "title": "Specifies whether this module should be run.",
-                            "type": "boolean"
-                        },
-                        "factor": {
-                            "title": "(Optional): factor to determine subtraction of features detected in both blank and non-blank samples. Feature value (height or area) be n-times higher across samples than across blanks (determined by 'algorithm') to not be considered blank.",
-                            "type": "integer",
-                            "minimum": 1
-                        },
-                        "algorithm": {
-                            "title": "(Optional): Algorithm to summarize value over samples/blanks.",
-                            "type": "string",
-                            "enum": [
-                                "mean",
-                                "median",
-                                "maximum"
-                            ]
-                        },
-                        "value": {
-                            "title": "(Optional): Specifies which value type should be considered.",
-                            "type": "string",
-                            "enum": [
-                                "height",
-                                "area"
-                            ]
-                        }
-                    }
-                },
-                "group_factor_assignment": {
-                    "title": "(Optional): settings for group factor assignment (fold change between groups). Is only executed if a 'group_metadata' file is provided.",
-                    "additionalProperties": false,
-                    "type": "object",
-                    "required": [
-                        "activate_module"
-                    ],
-                    "properties": {
-                        "activate_module": {
-                            "title": "Specifies whether this module should be run.",
-                            "type": "boolean"
-                        },
-                        "algorithm": {
-                            "title": "(Optional): Algorithm to summarize value over samples/blanks.",
-                            "type": "string",
-                            "enum": [
-                                "mean",
-                                "median",
-                                "maximum"
-                            ]
-                        },
-                        "value": {
-                            "title": "(Optional): Specifies which value type should be considered.",
-                            "type": "string",
-                            "enum": [
-                                "height",
-                                "area"
-                            ]
-                        }
-                    }
-                },
-                "phenotype_assignment": {
-                    "title": "(Optional): settings for determination of phenotype-associated molecular features. Is only executed if a 'phenotype' file is provided.",
-                    "additionalProperties": false,
-                    "type": "object",
-                    "properties": {
-                        "qualitative": {
-                            "title": "Fold-difference algorithm. Molecular features are binned into activity-associated and -non-associated based on factor (fold difference) between active/inactive samples.",
-                            "additionalProperties": false,
-                            "type": "object",
-                            "required": [
-                                "activate_module"
-                            ],
-                            "properties": {
-                                "activate_module": {
-                                    "title": "Specifies whether this module should be run.",
-                                    "type": "boolean"
-                                },
-                                "factor": {
-                                    "title": "(Optional): factor difference to be used for molecular feature differentiation.",
-                                    "type": "integer",
-                                    "minimum": 1
-                                },
-                                "algorithm": {
-                                    "title": "(Optional): Algorithm to summarize value over active/inactive samples.",
-                                    "type": "string",
-                                    "enum": [
-                                        "minmax",
-                                        "mean",
-                                        "median"
-                                    ]
-                                },
-                                "value": {
-                                    "title": "(Optional): Specifies which value type should be considered.",
-                                    "type": "string",
-                                    "enum": [
-                                        "height",
-                                        "area"
-                                    ]
-                                }
-                            }
-                        },
-                        "quantitative-percentage": {
-                            "title": "Pearson correlation of percentage activity per sample with molecular feature area per sample.",
-                            "additionalProperties": false,
-                            "type": "object",
-                            "required": [
-                                "activate_module"
-                            ],
-                            "properties": {
-                                "activate_module": {
-                                    "title": "Specifies whether this module should be run.",
-                                    "type": "boolean"
-                                },
-                                "sample_avg": {
-                                    "title": "(Optional): Specifies algorithm to summarize multiple measurements per sample for same assay.",
-                                    "type": "string",
-                                    "enum": [
-                                        "mean",
-                                        "median"
-                                    ]
-                                },
-                                "value": {
-                                    "title": "(Optional): Specifies which value type should be considered.",
-                                    "type": "string",
-                                    "enum": [
-                                        "area"
-                                    ]
-                                },
-                                "algorithm": {
-                                    "title": "(Optional): Specifies the statistical algorithm to use.",
-                                    "type": "string",
-                                    "enum": [
-                                        "pearson"
-                                    ]
-                                },
-                                "fdr_corr": {
-                                    "title": "(Optional): Specifies the statistical algorithm to use. See https://www.statsmodels.org/dev/generated/statsmodels.stats.multitest.multipletests.html",
-                                    "type": "string",
-                                    "enum": [
-                                        "bonferroni",
-                                        "sidak",
-                                        "holm-sidak",
-                                        "holm",
-                                        "simes-hochberg",
-                                        "hommel",
-                                        "fdr_bh",
-                                        "fdr_by",
-                                        "fdr_tsbh",
-                                        "fdr_tsbky"
-                                    ]
-                                },
-                                "p_val_cutoff": {
-                                    "title": "(Optional): Maximum Bonferroni-corrected p-value to consider. A value of zero disables the cutoff filtering (automatically applies to both score and p-value).",
-                                    "type": "number",
-                                    "minimum": 0.0,
-                                    "maximum": 1.0
-                                },
-                                "coeff_cutoff": {
-                                    "title": "(Optional): Minimum correlation coefficient to consider. A value of zero disables the cutoff filtering (automatically applies to both score and p-value).",
-                                    "type": "number",
-                                    "minimum": 0.0,
-                                    "maximum": 1.0
-                                }
-                            }
-                        },
-                        "quantitative-concentration": {
-                            "title": "Pearson correlation of minimum active concentration per sample with molecular feature area per sample.",
-                            "additionalProperties": false,
-                            "type": "object",
-                            "required": [
-                                "activate_module"
-                            ],
-                            "properties": {
-                                "activate_module": {
-                                    "title": "Specifies whether this module should be run.",
-                                    "type": "boolean"
-                                },
-                                "sample_avg": {
-                                    "title": "(Optional): Specifies algorithm to summarize multiple measurrments per sample for same assay.",
-                                    "type": "string",
-                                    "enum": [
-                                        "mean",
-                                        "median"
-                                    ]
-                                },
-                                "value": {
-                                    "title": "(Optional): Specifies which value type should be considered.",
-                                    "type": "string",
-                                    "enum": [
-                                        "area"
-                                    ]
-                                },
-                                "algorithm": {
-                                    "title": "(Optional): Specifies the statistical algorithm to use.",
-                                    "type": "string",
-                                    "enum": [
-                                        "pearson"
-                                    ]
-                                },
-                                "fdr_corr": {
-                                    "title": "(Optional): Specifies the statistical algorithm to use. See https://www.statsmodels.org/dev/generated/statsmodels.stats.multitest.multipletests.html",
-                                    "type": "string",
-                                    "enum": [
-                                        "bonferroni",
-                                        "sidak",
-                                        "holm-sidak",
-                                        "holm",
-                                        "simes-hochberg",
-                                        "hommel",
-                                        "fdr_bh",
-                                        "fdr_by",
-                                        "fdr_tsbh",
-                                        "fdr_tsbky"
-                                    ]
-                                },
-                                "p_val_cutoff": {
-                                    "title": "(Optional): Maximum Bonferroni-corrected p-value to consider. A value of zero disables the cutoff filtering (automatically applies to both score and p-value).",
-                                    "type": "number",
-                                    "minimum": 0.0,
-                                    "maximum": 1.0
-                                },
-                                "coeff_cutoff": {
-                                    "title": "(Optional): Minimum correlation coefficient to consider. A value of zero disables the cutoff filtering (automatically applies to both score and p-value).",
-                                    "type": "number",
-                                    "minimum": 0.0,
-                                    "maximum": 1.0
-                                }
-                            }
-                        }
-                    }
-                },
-                "spectral_library_matching": {
-                    "title": "(Optional): settings for spectral library matching. Will be only executed if a 'spectral_library' file was provided.",
-                    "additionalProperties": false,
-                    "type": "object",
-                    "properties": {
-                        "modified_cosine": {
-                            "title": "(Optional): modified cosine algorithm. Most commonly used, quantifies the similarity between two spectra based on their dot-product. See 'https://matchms.readthedocs.io/en/latest/api/matchms.similarity.ModifiedCosine.html' for details.",
-                            "additionalProperties": false,
-                            "type": "object",
-                            "required": [
-                                "activate_module"
-                            ],
-                            "properties": {
-                                "activate_module": {
-                                    "title": "Specifies whether this module should be run.",
-                                    "type": "boolean"
-                                },
-                                "fragment_tol": {
-                                    "title": "(Optional): tolerance for matching two MS/MS fragments, in m/z units.",
-                                    "type": "number"
-                                },
-                                "min_nr_matched_peaks": {
-                                    "title": "(Optional): minimum number of fragments that must be matched between two MS/MS fragmentation spectra to consider two spectra related.",
-                                    "type": "integer",
-                                    "minimum": 1
-                                },
-                                "score_cutoff": {
-                                    "title": "(Optional): minimum modified cosine score that must be reached to consider two MS/MS fragmentation spectra to be related.",
-                                    "type": "number",
-                                    "minimum": 0.1,
-                                    "maximum": 1.0
-                                },
-                                "max_precursor_mass_diff": {
-                                    "title": "(Optional): maximum difference between the precursor masses of two MS/MS spectra, in m/z units. A high number may lead to serendipitous matching between unrelated spectra, while a low number may exclude possible analogues.",
-                                    "type": "integer",
-                                    "minimum": 1
-                                },
-                                "maximum_runtime": {
-                                    "title": "(Optional): maximum running time of module, in seconds. A value of 0 (zero) indicates unlimited running time.",
-                                    "type": "integer",
-                                    "minimum": 0
-                                }
-                            }
-                        },
-                        "ms2deepscore": {
-                            "title": "(Optional): MS2Deepscore algorithm. Quantifies the similarity between two spectra based on a spectral embedding (deep learning). See 'https://github.com/matchms/ms2deepscore' for details.",
-                            "additionalProperties": false,
-                            "type": "object",
-                            "required": [
-                                "activate_module"
-                            ],
-                            "properties": {
-                                "activate_module": {
-                                    "title": "Specifies whether this module should be run.",
-                                    "type": "boolean"
-                                },
-                                "score_cutoff": {
-                                    "title": "(Optional): minimum score that must be reached to consider two MS/MS fragmentation spectra to be related.",
-                                    "type": "number",
-                                    "minimum": 0.1,
-                                    "maximum": 1.0
-                                },
-                                "max_precursor_mass_diff": {
-                                    "title": "(Optional): maximum difference between the precursor masses of two MS/MS spectra, in m/z units. A high number may lead to serendipitous matching between unrelated spectra, while a low number may exclude possible analogues.",
-                                    "type": "integer",
-                                    "minimum": 1
-                                },
-                                "maximum_runtime": {
-                                    "title": "(Optional): maximum running time of module, in seconds. A value of 0 (zero) indicates unlimited running time.",
-                                    "type": "integer",
-                                    "minimum": 0
-                                }
-                            }
-                        }
-                    }
-                },
-                "as_kcb_matching": {
-                    "title": "(Optional): settings for antiSMASH KnownClusterBlast results matching. Will be only executed if a 'as_results' directory was provided.",
-                    "additionalProperties": false,
-                    "type": "object",
-                    "properties": {
-                        "modified_cosine": {
-                            "title": "(Optional): modified cosine algorithm. Most commonly used, quantifies the similarity between two spectra based on their dot-product. See 'https://matchms.readthedocs.io/en/latest/api/matchms.similarity.ModifiedCosine.html' for details.",
-                            "additionalProperties": false,
-                            "type": "object",
-                            "required": [
-                                "activate_module"
-                            ],
-                            "properties": {
-                                "activate_module": {
-                                    "title": "Specifies whether this module should be run.",
-                                    "type": "boolean"
-                                },
-                                "fragment_tol": {
-                                    "title": "(Optional): tolerance for matching two MS/MS fragments, in m/z units.",
-                                    "type": "number"
-                                },
-                                "min_nr_matched_peaks": {
-                                    "title": "(Optional): minimum number of fragments that must be matched between two MS/MS fragmentation spectra to consider two spectra related.",
-                                    "type": "integer",
-                                    "minimum": 1
-                                },
-                                "score_cutoff": {
-                                    "title": "(Optional): minimum modified cosine score that must be reached to consider two MS/MS fragmentation spectra to be related.",
-                                    "type": "number",
-                                    "minimum": 0.1,
-                                    "maximum": 1.0
-                                },
-                                "max_precursor_mass_diff": {
-                                    "title": "(Optional): maximum difference between the precursor masses of two MS/MS spectra, in m/z units. A high number may lead to serendipitous matching between unrelated spectra, while a low number may exclude possible analogues.",
-                                    "type": "integer",
-                                    "minimum": 1
-                                },
-                                "maximum_runtime": {
-                                    "title": "(Optional): maximum running time of module, in seconds. A value of 0 (zero) indicates unlimited running time.",
-                                    "type": "integer",
-                                    "minimum": 0
-                                }
-                            }
-                        },
-                        "ms2deepscore": {
-                            "title": "(Optional): MS2Deepscore algorithm. Quantifies the similarity between two spectra based on a spectral embedding (deep learning). See 'https://github.com/matchms/ms2deepscore' for details.",
-                            "additionalProperties": false,
-                            "type": "object",
-                            "required": [
-                                "activate_module"
-                            ],
-                            "properties": {
-                                "activate_module": {
-                                    "title": "Specifies whether this module should be run.",
-                                    "type": "boolean"
-                                },
-                                "score_cutoff": {
-                                    "title": "(Optional): minimum score that must be reached to consider two MS/MS fragmentation spectra to be related.",
-                                    "type": "number",
-                                    "minimum": 0.1,
-                                    "maximum": 1.0
-                                },
-                                "max_precursor_mass_diff": {
-                                    "title": "(Optional): maximum difference between the precursor masses of two MS/MS spectra, in m/z units. A high number may lead to serendipitous matching between unrelated spectra, while a low number may exclude possible analogues.",
-                                    "type": "integer",
-                                    "minimum": 1
-                                },
-                                "maximum_runtime": {
-                                    "title": "(Optional): maximum running time of module, in seconds. A value of 0 (zero) indicates unlimited running time.",
-                                    "type": "integer",
-                                    "minimum": 0
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+        "polarity": {
+          "type": "string",
+          "enum": [
+            "positive",
+            "negative"
+          ]
         }
+      }
+    },
+    "MsmsParams": {
+      "type": "object",
+      "properties": {
+        "filepath": {
+          "type": "string"
+        },
+        "format": {
+          "type": "string",
+          "enum": [
+            "mgf"
+          ]
+        },
+        "rel_int_from": {
+          "$ref": "#/$defs/r_perc"
+        }
+      }
+    },
+    "PhenotypeParams": {
+      "type": "object",
+      "properties": {
+        "filepath": {
+          "type": "string"
+        },
+        "format": {
+          "type": "string",
+          "enum": [
+            "qualitative",
+            "quantitative-percentage",
+            "quantitative-concentration"
+          ]
+        }
+      }
+    },
+    "GroupMetadataParams": {
+      "type": "object",
+      "properties": {
+        "filepath": {
+          "type": "string"
+        },
+        "format": {
+          "type": "string",
+          "enum": [
+            "fermo"
+          ]
+        }
+      }
+    },
+    "SpecLibParams": {
+      "type": "object",
+      "properties": {
+        "dirpath": {
+          "type": "string"
+        },
+        "format": {
+          "type": "string",
+          "enum": [
+            "mgf"
+          ]
+        }
+      }
+    },
+    "MS2QueryResultsParams": {
+      "type": "object",
+      "properties": {
+        "filepath": {
+          "type": "string"
+        },
+        "score_cutoff": {
+          "$ref": "#/$defs/r_perc"
+        }
+      }
+    },
+    "AsResultsParams": {
+      "type": "object",
+      "properties": {
+        "directory_path": {
+          "type": "string"
+        },
+        "similarity_cutoff": {
+          "$ref": "#/$defs/r_perc"
+        }
+      }
+    },
+    "AdductAnnotationParams": {
+      "type": "object",
+      "properties": {
+        "activate_module": { "type": "boolean" },
+        "mass_dev_ppm": {
+          "$ref": "#/$defs/pos_float"
+        }
+      }
+    },
+    "NeutralLossParams": {
+      "type": "object",
+      "properties": {
+        "activate_module": { "type": "boolean" },
+        "mass_dev_ppm": {
+          "$ref": "#/$defs/pos_float"
+        }
+      }
+    },
+    "FragmentAnnParams": {
+      "type": "object",
+      "properties": {
+        "activate_module": { "type": "boolean" },
+        "mass_dev_ppm": {
+          "$ref": "#/$defs/pos_float"
+        }
+      }
+    },
+    "SpecSimNetworkCosineParams": {
+      "type": "object",
+      "properties": {
+        "activate_module": { "type": "boolean" },
+        "msms_min_frag_nr": {
+          "$ref": "#/$defs/pos_int"
+        },
+        "fragment_tol": {
+          "$ref": "#/$defs/pos_float"
+        },
+        "score_cutoff": {
+          "$ref": "#/$defs/r_perc"
+        },
+        "max_nr_links": {
+          "$ref": "#/$defs/pos_int"
+        }
+      }
+    },
+    "SpecSimNetworkDeepscoreParams": {
+      "type": "object",
+      "properties": {
+        "activate_module": { "type": "boolean" },
+        "msms_min_frag_nr": {
+          "$ref": "#/$defs/pos_int"
+        },
+        "fragment_tol": {
+          "$ref": "#/$defs/pos_float"
+        },
+        "score_cutoff": {
+          "$ref": "#/$defs/r_perc"
+        },
+        "max_nr_links": {
+          "$ref": "#/$defs/pos_int"
+        }
+      }
+    },
+    "FeatureFilteringParams": {
+      "type": "object",
+      "properties": {
+        "activate_module": { "type": "boolean" },
+        "filter_rel_int_range_min": {
+          "$ref": "#/$defs/r_perc"
+        },
+        "filter_rel_int_range_max": {
+          "$ref": "#/$defs/r_perc"
+        },
+        "filter_rel_area_range_min": {
+          "$ref": "#/$defs/r_perc"
+        },
+        "filter_rel_area_range_max": {
+          "$ref": "#/$defs/r_perc"
+        }
+      }
+    },
+    "BlankAssignmentParams": {
+      "type": "object",
+      "properties": {
+        "activate_module": { "type": "boolean" },
+        "factor": {
+          "$ref": "#/$defs/pos_int"
+        },
+        "algorithm": {
+          "type": "string",
+          "enum": [
+            "mean",
+            "median",
+            "maximum"
+          ]
+        },
+        "value": {
+          "type": "string",
+          "enum": [
+            "height",
+            "area"
+          ]
+        }
+      }
+    },
+    "GroupFactAssignmentParams": {
+      "type": "object",
+      "properties": {
+        "activate_module": { "type": "boolean" },
+        "algorithm": {
+          "type": "string",
+          "enum": [
+            "mean",
+            "median",
+            "maximum"
+          ]
+        },
+        "value": {
+          "type": "string",
+          "enum": [
+            "height",
+            "area"
+          ]
+        }
+      }
+    },
+    "PhenoQualAssgnParams": {
+      "type": "object",
+      "properties": {
+        "activate_module": { "type": "boolean" },
+        "factor": { "$ref": "#/$defs/pos_int" },
+        "algorithm": {
+          "type": "string",
+          "enum": [
+            "minmax",
+            "mean",
+            "median"
+          ]
+        },
+        "value": {
+          "type": "string",
+          "enum": [
+            "height",
+            "area"
+          ]
+        }
+      }
+    },
+    "PhenoQuantPercentAssgnParams": {
+      "$ref": "#/$defs/quant_phen"
+    },
+    "PhenoQuantConcAssgnParams": {
+      "$ref": "#/$defs/quant_phen"
+    },
+    "SpectralLibMatchingCosineParams": {
+      "$ref": "#/$defs/cosine_match"
+    },
+    "SpectralLibMatchingDeepscoreParams": {
+      "$ref": "#/$defs/deepscore_match"
+    },
+    "AsKcbCosineMatchingParams": {
+      "$ref": "#/$defs/cosine_match"
+    },
+    "AsKcbDeepscoreMatchingParams": {
+      "$ref": "#/$defs/deepscore_match"
     }
+  },
+  "$defs": {
+    "quant_phen": {
+      "type": "object",
+      "properties": {
+        "activate_module": { "type": "boolean" },
+        "sample_avg": {
+          "type": "string",
+          "enum": ["mean", "median"]
+        },
+        "value": {
+          "type": "string",
+          "enum": ["area"]
+        },
+        "algorithm": {
+          "type": "string",
+          "enum": ["pearson"]
+        },
+        "fdr_corr": {
+          "type": "string",
+          "enum": [
+            "bonferroni", "sidak", "holm-sidak", "holm",
+            "simes-hochberg", "hommel", "fdr_bh", "fdr_by",
+            "fdr_tsbh", "fdr_tsbky"
+          ]
+        },
+        "p_val_cutoff": {
+          "$ref": "#/$defs/r_perc"
+        },
+        "coeff_cutoff": {
+          "$ref": "#/$defs/r_perc"
+        }
+      }
+    },
+    "cosine_match": {
+      "type": "object",
+      "properties": {
+        "activate_module": { "type": "boolean" },
+        "fragment_tol": { "$ref": "#/$defs/pos_float" },
+        "min_nr_matched_peaks": { "$ref": "#/$defs/pos_int" },
+        "score_cutoff": { "$ref": "#/$defs/r_perc" },
+        "max_precursor_mass_diff": { "$ref": "#/$defs/pos_int" }
+      }
+    },
+    "deepscore_match": {
+      "type": "object",
+      "properties": {
+        "activate_module": { "type": "boolean" },
+        "score_cutoff": { "$ref": "#/$defs/r_perc" },
+        "max_precursor_mass_diff": { "$ref": "#/$defs/pos_int" }
+      }
+    },
+    "r_perc": {
+      "type": "number",
+      "minimum": 0.0,
+      "maximum": 1.0
+    },
+    "pos_int": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "pos_float": {
+      "type": "number",
+      "minimum": 0
+    }
+  }
 }

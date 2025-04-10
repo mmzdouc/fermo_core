@@ -66,24 +66,16 @@ def test_filter_rel_area_range_valid(feature_filter_instance):
 
 
 def test_filter_rel_int_range_mod_valid(feature_filter_instance):
-    feature_filter_instance.params.FeatureFilteringParameters.filter_rel_int_range_min = (
-        0.06
-    )
-    feature_filter_instance.params.FeatureFilteringParameters.filter_rel_int_range_max = (
-        1.0
-    )
+    feature_filter_instance.params.FeatureFilteringParameters.filter_rel_int_range_min = 0.06
+    feature_filter_instance.params.FeatureFilteringParameters.filter_rel_int_range_max = 1.0
     feature_filter_instance.filter_rel_int_range()
     assert len(feature_filter_instance.stats.active_features) == 140
     assert len(feature_filter_instance.stats.inactive_features) == 3
 
 
 def test_filter_rel_area_range_mod_valid(feature_filter_instance):
-    feature_filter_instance.params.FeatureFilteringParameters.filter_rel_area_range_min = (
-        0.06
-    )
-    feature_filter_instance.params.FeatureFilteringParameters.filter_rel_area_range_max = (
-        1.0
-    )
+    feature_filter_instance.params.FeatureFilteringParameters.filter_rel_area_range_min = 0.06
+    feature_filter_instance.params.FeatureFilteringParameters.filter_rel_area_range_max = 1.0
     feature_filter_instance.filter_rel_area_range()
     assert len(feature_filter_instance.stats.active_features) == 104
     assert len(feature_filter_instance.stats.inactive_features) == 39

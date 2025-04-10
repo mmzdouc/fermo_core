@@ -24,7 +24,6 @@ SOFTWARE.
 import logging
 from typing import Any, Optional, Self
 
-import func_timeout
 import matchms
 from pydantic import BaseModel
 
@@ -47,7 +46,6 @@ class ModCosAnnotator(BaseModel):
         library_name: the name of the library
         queries: a list of Spectra for which to perform matching
         scores: a matchms.Scores object storing the raw results of the matching
-        max_time: maximum allowed calculation time of individual steps
         fragment_tol: fragment tolerance for modified cosine algorithm
         score_cutoff: minimum score for a match
         min_nr_matched_peaks: minimum number of matched peaks
@@ -60,7 +58,6 @@ class ModCosAnnotator(BaseModel):
     library_name: str
     queries: Optional[list] = None
     scores: Optional[Any] = None
-    max_time: float
     fragment_tol: float
     score_cutoff: float
     min_nr_matched_peaks: int
@@ -106,7 +103,6 @@ class ModCosAnnotator(BaseModel):
 
         Raises:
             RuntimeError: queries attribute is empty
-            func_timeout.FunctionTimedOut: mod cosine calc takes too long.
         """
         if self.queries is None:
             raise RuntimeError(
@@ -116,40 +112,14 @@ class ModCosAnnotator(BaseModel):
 
         sim_algorithm = matchms.similarity.ModifiedCosine(tolerance=self.fragment_tol)
 
-        if self.max_time == 0:
-            logger.info(
-                "'AnnotationManager/ModCosAnnotator': Started modified cosine library matching algorithm "
-                "with no timeout set."
-            )
-            self.scores = matchms.calculate_scores(
-                references=self.library,
-                queries=self.queries,
-                similarity_function=sim_algorithm,
-            )
-        else:
-            try:
-                logger.info(
-                    f"'AnnotationManager/ModCosAnnotator': Started modified cosine "
-                    f"library matching "
-                    f"algorithm with a timeout of '{self.max_time}' seconds."
-                )
-                self.scores = func_timeout.func_timeout(
-                    timeout=self.max_time,
-                    func=matchms.calculate_scores,
-                    kwargs={
-                        "references": self.library,
-                        "queries": self.queries,
-                        "similarity_function": sim_algorithm,
-                    },
-                )
-            except func_timeout.FunctionTimedOut as e:
-                logger.error(
-                    f"'AnnotationManager/ModCosAnnotator': timeout of modified "
-                    f"cosine-based "
-                    f"calculation: more than specified '{self.max_time}' seconds."
-                    f"For unlimited runtime, set 'maximum_runtime' to 0 - SKIP"
-                )
-                raise e
+        logger.info(
+            "'AnnotationManager/ModCosAnnotator': Started modified cosine library matching algorithm "
+        )
+        self.scores = matchms.calculate_scores(
+            references=self.library,
+            queries=self.queries,
+            similarity_function=sim_algorithm,
+        )
 
     def filter_match(self: Self, match: tuple, f_mz: float) -> bool:
         """Filter modified cosine-derived matches for user-specified params

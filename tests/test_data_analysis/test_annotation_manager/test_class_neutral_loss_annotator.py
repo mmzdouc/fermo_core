@@ -13,9 +13,9 @@ from fermo_core.data_processing.builder_feature.dataclass_feature import (
 from fermo_core.data_processing.class_repository import Repository
 from fermo_core.data_processing.class_stats import Stats
 from fermo_core.input_output.class_parameter_manager import ParameterManager
-from fermo_core.input_output.core_module_parameter_managers import NeutralLossParameters
-from fermo_core.input_output.input_file_parameter_managers import (
+from fermo_core.input_output.param_handlers import (
     MsmsParameters,
+    NeutralLossParameters,
     PeaktableParameters,
 )
 from fermo_core.utils.utility_method_manager import UtilityMethodManager as Utils
@@ -52,6 +52,9 @@ def annotator_pos():
         format="mzmine3",
         polarity="positive",
     )
+    params.NeutralLossParameters = NeutralLossParameters(
+        **{"activate_module": True, "mass_dev_ppm": 10.0}
+    )
     return NeutralLossAnnotator(
         features=features, samples=Repository(), params=params, stats=stats
     )
@@ -87,6 +90,9 @@ def annotator_neg():
         filepath=Path("example_data/case_study_peak_table_quant_full.csv"),
         format="mzmine3",
         polarity="negative",
+    )
+    params.NeutralLossParameters = NeutralLossParameters(
+        **{"activate_module": True, "mass_dev_ppm": 10.0}
     )
     return NeutralLossAnnotator(
         features=features, samples=Repository(), params=params, stats=stats

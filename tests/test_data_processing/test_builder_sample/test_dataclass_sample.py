@@ -3,9 +3,7 @@ from fermo_core.data_processing.builder_sample.dataclass_sample import Sample, S
 
 
 def test_init_sample_valid():
-    assert isinstance(Sample(), Sample), (
-        "Could not initialize instance of object " "Sample"
-    )
+    assert isinstance(Sample(), Sample)
 
 
 def test_multiple_instances_valid():

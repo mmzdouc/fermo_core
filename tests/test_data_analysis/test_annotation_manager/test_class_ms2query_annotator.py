@@ -3,16 +3,13 @@ from pathlib import Path
 import numpy as np
 import pytest
 
-from fermo_core.config.class_default_settings import DefaultPaths
 from fermo_core.data_analysis.annotation_manager.class_ms2query_annotator import (
     MS2QueryAnnotator,
 )
 from fermo_core.data_processing.builder_feature.dataclass_feature import Feature
 from fermo_core.data_processing.class_repository import Repository
-from fermo_core.input_output.class_parameter_manager import (
-    ParameterManager,
-    PeaktableParameters,
-)
+from fermo_core.input_output.class_parameter_manager import ParameterManager
+from fermo_core.input_output.param_handlers import OutputParameters, PeaktableParameters
 from fermo_core.utils.utility_method_manager import UtilityMethodManager as Utils
 
 
@@ -43,7 +40,7 @@ def ms2query_annotator():
     )
     params = ParameterManager()
     params.PeaktableParameters = peaktable_p
-    params.OutputParameters.validate_output_dir(peaktable_dir=Path("tests/test_data/"))
+    params.OutputParameters = OutputParameters(directory_path=Path("tests/test_data/"))
     return MS2QueryAnnotator(
         features=features, params=params, active_features={20}, cutoff=0.7
     )

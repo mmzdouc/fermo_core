@@ -177,7 +177,6 @@ class PhenQuantAss(BaseModel):
             f_areas = {val.s_id: val.value for val in feature.area_per_sample}
 
             for assay in self.stats.phenotypes:
-
                 areas = []
                 activs = []
                 for s_id in feature.samples:
@@ -235,7 +234,6 @@ class PhenQuantAss(BaseModel):
             feature = self.add_annotation_attribute(feature=feature)
 
             for num, assay in enumerate(self.assays):
-
                 try:
                     data = self.assays[assay][f_id]
                     if _check_permitted(data["corr"], data["adjusted_p"]):

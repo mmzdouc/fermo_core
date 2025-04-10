@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.6.0] 10-04-2025
+
+## Changed
+
+- Flattened parameter .json format
+- Module logic: all modules must be specified explicitly, no module runs by default
+- Removed all default values from data models to omit redundancy
+- Spectral library now accepts a dir of files (e.g. multiple mgf files), not a single file
+- Removed automatic timeout of long-running functions
 
 ## [0.5.1] 05-04-2025
 

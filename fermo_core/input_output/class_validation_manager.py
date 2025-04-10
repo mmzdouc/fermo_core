@@ -43,6 +43,35 @@ class ValidationManager:
     """
 
     @staticmethod
+    def validate_float_zero_one(f: float) -> None:
+        """Positive float between zero and one
+
+        Args:
+            f: a float
+
+        Raises:
+            ValueError: Not a float between zero and one
+        """
+        if 0.0 <= f <= 1.0:
+            return
+        else:
+            raise ValueError(f"'{f}' not between 0.0 and 1.0.")
+
+    @staticmethod
+    def validate_allowed(s: str, allowed: list) -> None:
+        """Check if str one of allowed strings
+
+        Args:
+            s: string
+            allowed: a list of allowed strings
+
+        Raises:
+            ValueError: Not one of allowed strings
+        """
+        if s not in allowed:
+            raise ValueError(f"'{s}' is not one of '{allowed}'")
+
+    @staticmethod
     def validate_mass_deviation_ppm(ppm: int):
         """Validate if mass deviation is in reasonable range.
 

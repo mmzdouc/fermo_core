@@ -3,13 +3,17 @@ import pytest
 from fermo_core.data_analysis.group_factor_assigner.class_group_factor_assigner import (
     GroupFactorAssigner,
 )
-from fermo_core.data_processing.class_stats import Stats, Group
-from fermo_core.data_processing.class_repository import Repository
 from fermo_core.data_processing.builder_feature.dataclass_feature import (
     Feature,
     SampleInfo,
 )
+from fermo_core.data_processing.class_repository import Repository
+from fermo_core.data_processing.class_stats import Group, Stats
 from fermo_core.input_output.class_parameter_manager import ParameterManager
+from fermo_core.input_output.param_handlers import (
+    GroupFactAssignmentParameters,
+    GroupMetadataParameters,
+)
 
 
 @pytest.fixture
@@ -42,6 +46,12 @@ def gfact_assigner():
             ),
         }
     }
+    gfact_assigner.params.GroupMetadataParameters = GroupMetadataParameters(
+        **{"filepath": "tests/test_data/test.group_metadata.csv", "format": "fermo"}
+    )
+    gfact_assigner.params.GroupFactAssignmentParameters = GroupFactAssignmentParameters(
+        **{"activate_module": True, "algorithm": "mean", "value": "area"}
+    )
     gfact_assigner.features.add(1, f1)
     gfact_assigner.stats.active_features = {1}
     return gfact_assigner

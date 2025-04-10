@@ -1,141 +1,123 @@
 {
-    "files": {
-        "peaktable": {
-            "filepath": "example_data/case_study_peak_table_quant_full.csv",
-            "format": "mzmine3",
-            "polarity": "positive"
-        },
-        "msms": {
-            "filepath": "example_data/case_study_MSMS.mgf",
-            "format": "mgf",
-            "rel_int_from": 0.01
-        },
-        "phenotype": {
-            "filepath": "example_data/case_study_bioactivity_qualitative.csv",
-            "format": "qualitative"
-        },
-        "group_metadata": {
-            "filepath": "example_data/case_study_group_metadata.csv",
-            "format": "fermo"
-        },
-        "spectral_library": {
-            "filepath": "example_data/case_study_spectral_library.mgf",
-            "format": "mgf"
-        },
-        "ms2query_results": {
-            "filepath": "example_data/case_study.ms2query_results.csv",
-            "score_cutoff": 0.7
-        },
-        "as_results": {
-            "directory_path": "example_data/JABTEZ000000000.1/",
-            "similarity_cutoff": 0.7
-        }
+    "PeaktableParams": {
+        "filepath": "example_data/case_study_peak_table_quant_full.csv",
+        "format": "mzmine3",
+        "polarity": "positive"
     },
-    "core_modules": {
-        "adduct_annotation": {
-            "activate_module": true,
-            "mass_dev_ppm": 10.0
-        },
-        "neutral_loss_annotation": {
-            "activate_module": true,
-            "mass_dev_ppm": 10.0
-        },
-        "fragment_annotation": {
-            "activate_module": true,
-            "mass_dev_ppm": 10.0
-        },
-        "spec_sim_networking": {
-            "modified_cosine": {
-                "activate_module": true,
-                "msms_min_frag_nr": 5,
-                "fragment_tol": 0.1,
-                "score_cutoff": 0.7,
-                "max_nr_links": 10,
-                "maximum_runtime": 200
-            },
-            "ms2deepscore": {
-                "activate_module": true,
-                "score_cutoff": 0.8,
-                "max_nr_links": 10,
-                "msms_min_frag_nr": 5,
-                "maximum_runtime": 200
-            }
-        }
+    "MsmsParams": {
+        "filepath": "example_data/case_study_MSMS.mgf",
+        "format": "mgf",
+        "rel_int_from": 0.01
     },
-    "additional_modules": {
-        "feature_filtering": {
-            "activate_module": true,
-            "filter_rel_int_range_min": 0.1,
-            "filter_rel_int_range_max": 1.0,
-            "filter_rel_area_range_min": 0.1,
-            "filter_rel_area_range_max": 1.0
-        },
-        "blank_assignment": {
-            "activate_module": true,
-            "factor": 10,
-            "algorithm": "mean",
-            "value": "area"
-        },
-        "group_factor_assignment": {
-            "activate_module": true,
-            "algorithm": "mean",
-            "value": "area"
-        },
-        "phenotype_assignment": {
-            "qualitative": {
-                "activate_module": true,
-                "factor": 5,
-                "algorithm": "minmax",
-                "value": "area"
-            },
-            "quantitative-percentage": {
-                "activate_module": false,
-                "sample_avg": "mean",
-                "value": "area",
-                "algorithm": "pearson",
-                "p_val_cutoff": 0.05,
-                "coeff_cutoff": 0.7
-            },
-            "quantitative-concentration": {
-                "activate_module": false,
-                "sample_avg": "mean",
-                "value": "area",
-                "algorithm": "pearson",
-                "p_val_cutoff": 0.05,
-                "coeff_cutoff": 0.7
-            }
-        },
-        "spectral_library_matching": {
-            "modified_cosine": {
-                "activate_module": true,
-                "fragment_tol": 0.1,
-                "min_nr_matched_peaks": 5,
-                "score_cutoff": 0.7,
-                "max_precursor_mass_diff": 600,
-                "maximum_runtime": 200
-            },
-            "ms2deepscore": {
-                "activate_module": true,
-                "score_cutoff": 0.8,
-                "max_precursor_mass_diff": 600,
-                "maximum_runtime": 200
-            }
-        },
-        "as_kcb_matching": {
-            "modified_cosine": {
-                "activate_module": true,
-                "fragment_tol": 0.1,
-                "min_nr_matched_peaks": 5,
-                "score_cutoff": 0.5,
-                "max_precursor_mass_diff": 600,
-                "maximum_runtime": 200
-            },
-            "ms2deepscore": {
-                "activate_module": true,
-                "score_cutoff": 0.7,
-                "max_precursor_mass_diff": 600,
-                "maximum_runtime": 200
-            }
-        }
+    "PhenotypeParams": {
+        "filepath": "example_data/case_study_bioactivity_qualitative.csv",
+        "format": "qualitative"
+    },
+    "GroupMetadataParams": {
+        "filepath": "example_data/case_study_group_metadata.csv",
+        "format": "fermo"
+    },
+    "SpecLibParams": {
+        "dirpath": "example_data/spec_lib/",
+        "format": "mgf"
+    },
+    "MS2QueryResultsParams": {
+        "filepath": "example_data/case_study.ms2query_results.csv",
+        "score_cutoff": 0.7
+    },
+    "AsResultsParams": {
+        "directory_path": "example_data/JABTEZ000000000.1/",
+        "similarity_cutoff": 0.7
+    },
+    "AdductAnnotationParams": {
+        "activate_module": true,
+        "mass_dev_ppm": 10.0
+    },
+    "NeutralLossParams": {
+        "activate_module": true,
+        "mass_dev_ppm": 10.0
+    },
+    "FragmentAnnParams": {
+        "activate_module": true,
+        "mass_dev_ppm": 10.0
+    },
+    "SpecSimNetworkCosineParams": {
+        "activate_module": true,
+        "msms_min_frag_nr": 5,
+        "fragment_tol": 0.1,
+        "score_cutoff": 0.7,
+        "max_nr_links": 10
+    },
+    "SpecSimNetworkDeepscoreParams": {
+        "activate_module": true,
+        "score_cutoff": 0.8,
+        "max_nr_links": 10,
+        "msms_min_frag_nr": 5
+    },
+    "FeatureFilteringParams": {
+        "activate_module": true,
+        "filter_rel_int_range_min": 0.1,
+        "filter_rel_int_range_max": 1.0,
+        "filter_rel_area_range_min": 0.1,
+        "filter_rel_area_range_max": 1.0
+    },
+    "BlankAssignmentParams": {
+        "activate_module": true,
+        "factor": 10,
+        "algorithm": "mean",
+        "value": "area"
+    },
+    "GroupFactAssignmentParams": {
+        "activate_module": true,
+        "algorithm": "mean",
+        "value": "area"
+    },
+    "PhenoQualAssgnParams": {
+        "activate_module": true,
+        "factor": 5,
+        "algorithm": "minmax",
+        "value": "area"
+    },
+    "PhenoQuantPercentAssgnParams": {
+        "activate_module": false,
+        "sample_avg": "mean",
+        "value": "area",
+        "fdr_corr": "bonferroni",
+        "algorithm": "pearson",
+        "p_val_cutoff": 0.05,
+        "coeff_cutoff": 0.7
+    },
+    "PhenoQuantConcAssgnParams": {
+        "activate_module": false,
+        "sample_avg": "mean",
+        "value": "area",
+        "fdr_corr": "bonferroni",
+        "algorithm": "pearson",
+        "p_val_cutoff": 0.05,
+        "coeff_cutoff": 0.7
+    },
+    "SpectralLibMatchingCosineParams": {
+        "activate_module": true,
+        "fragment_tol": 0.1,
+        "min_nr_matched_peaks": 5,
+        "score_cutoff": 0.7,
+        "max_precursor_mass_diff": 600
+    },
+    "SpectralLibMatchingDeepscoreParams": {
+        "activate_module": true,
+        "score_cutoff": 0.8,
+        "max_precursor_mass_diff": 600
+    },
+    "AsKcbCosineMatchingParams": {
+        "activate_module": true,
+        "fragment_tol": 0.1,
+        "min_nr_matched_peaks": 5,
+        "score_cutoff": 0.5,
+        "max_precursor_mass_diff": 600
+    },
+    "AsKcbDeepscoreMatchingParams": {
+        "activate_module": true,
+        "score_cutoff": 0.7,
+        "max_precursor_mass_diff": 600
     }
 }

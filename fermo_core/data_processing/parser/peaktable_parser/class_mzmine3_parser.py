@@ -25,6 +25,7 @@ import logging
 from typing import Self
 
 import pandas as pd
+from pydantic import BaseModel
 
 from fermo_core.data_processing.builder_feature.class_general_feature_director import (
     GeneralFeatureDirector,
@@ -34,15 +35,12 @@ from fermo_core.data_processing.builder_sample.class_samples_director import (
 )
 from fermo_core.data_processing.class_repository import Repository
 from fermo_core.data_processing.class_stats import Stats
-from fermo_core.data_processing.parser.peaktable_parser.abc_peaktable_parser import (
-    PeaktableParser,
-)
 from fermo_core.input_output.class_parameter_manager import ParameterManager
 
 logger = logging.getLogger("fermo_core")
 
 
-class PeakMzmine3Parser(PeaktableParser):
+class PeakMzmine3Parser(BaseModel):
     """Interface to parse MZmine3 style peaktable."""
 
     def parse(
@@ -62,11 +60,11 @@ class PeakMzmine3Parser(PeaktableParser):
             f"'{params.PeaktableParameters.filepath.name}'"
         )
 
-        stats = self.extract_stats(params)
+        stats = self._extract_stats(params)
 
-        feature_repo = self.extract_features(params)
+        feature_repo = self._extract_features(params)
 
-        sample_repo = self.extract_samples(stats, params)
+        sample_repo = self._extract_samples(stats, params)
 
         logger.info(
             f"'PeakMzmine3Parser': completed parsing MZmine3-style peaktable file "
@@ -76,7 +74,7 @@ class PeakMzmine3Parser(PeaktableParser):
         return stats, feature_repo, sample_repo
 
     @staticmethod
-    def extract_stats(params: ParameterManager) -> Stats:
+    def _extract_stats(params: ParameterManager) -> Stats:
         """Extract stats from MZmine3-style peaktable.
 
         Arguments:
@@ -90,7 +88,7 @@ class PeakMzmine3Parser(PeaktableParser):
         return stats
 
     @staticmethod
-    def extract_features(params: ParameterManager) -> Repository:
+    def _extract_features(params: ParameterManager) -> Repository:
         """Extract features from MZmine3-style peaktable.
 
         Arguments:
@@ -105,7 +103,7 @@ class PeakMzmine3Parser(PeaktableParser):
         return feature_repo
 
     @staticmethod
-    def extract_samples(stats: Stats, params: ParameterManager) -> Repository:
+    def _extract_samples(stats: Stats, params: ParameterManager) -> Repository:
         """Extract samples from MZmine3-style peaktable.
 
         Arguments:

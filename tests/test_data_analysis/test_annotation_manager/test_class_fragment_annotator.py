@@ -1,19 +1,20 @@
-import numpy as np
 from pathlib import Path
+
+import numpy as np
 import pytest
 
 from fermo_core.data_analysis.annotation_manager.class_fragment_annotator import (
     FragmentAnnotator,
 )
+from fermo_core.data_processing.builder_feature.dataclass_feature import Feature
 from fermo_core.data_processing.class_repository import Repository
-from fermo_core.data_processing.builder_feature.dataclass_feature import (
-    Feature,
-)
 from fermo_core.data_processing.class_stats import Stats
 from fermo_core.input_output.class_parameter_manager import ParameterManager
-from fermo_core.input_output.input_file_parameter_managers import MsmsParameters
-from fermo_core.input_output.core_module_parameter_managers import FragmentAnnParameters
-from fermo_core.input_output.input_file_parameter_managers import PeaktableParameters
+from fermo_core.input_output.param_handlers import (
+    FragmentAnnParameters,
+    MsmsParameters,
+    PeaktableParameters,
+)
 from fermo_core.utils.utility_method_manager import UtilityMethodManager as Utils
 
 
@@ -46,7 +47,9 @@ def frag_annotator_pos():
         format="mzmine3",
         polarity="positive",
     )
-    params.FragmentAnnParameters = FragmentAnnParameters()
+    params.FragmentAnnParameters = FragmentAnnParameters(
+        **{"activate_module": True, "mass_dev_ppm": 10.0}
+    )
     return FragmentAnnotator(
         features=features, samples=Repository(), params=params, stats=stats
     )

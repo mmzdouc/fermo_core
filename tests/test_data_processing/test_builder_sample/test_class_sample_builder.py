@@ -5,29 +5,24 @@ from fermo_core.data_processing.builder_sample.dataclass_sample import Sample
 
 
 def test_init_valid():
-    assert isinstance(
-        SampleBuilder().get_result(), Sample
-    ), "Could not initialize the object Sample."
+    assert isinstance(SampleBuilder().get_result(), Sample)
 
 
 def test_set_attributes_valid():
     sample = SampleBuilder().set_s_id("sample1").get_result()
-    assert sample.s_id == "sample1", "Builder could not set value when building object."
+    assert sample.s_id == "sample1"
 
 
 def test_re_set_attributes_valid():
     sample = SampleBuilder().set_s_id("sample1").get_result()
     sample.s_id = "sample2"
-    assert sample.s_id == "sample2", "Could not assign new value to Sample."
+    assert sample.s_id == "sample2"
 
 
 def test_multiple_inits_valid():
     sample1 = SampleBuilder().set_s_id("sample1").get_result()
     sample2 = SampleBuilder().set_s_id("sample2").get_result()
-    assert sample1.s_id != sample2.s_id, (
-        "Could not build multiple instances with different attributes using the same "
-        "builder."
-    )
+    assert sample1.s_id != sample2.s_id
 
 
 def test_get_result_valid():

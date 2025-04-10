@@ -11,7 +11,7 @@ from fermo_core.data_processing.builder_feature.dataclass_feature import (
     Match,
     NeutralLoss,
 )
-from fermo_core.input_output.input_file_parameter_managers import (
+from fermo_core.input_output.param_handlers import (
     AsResultsParameters,
     MS2QueryResultsParameters,
 )

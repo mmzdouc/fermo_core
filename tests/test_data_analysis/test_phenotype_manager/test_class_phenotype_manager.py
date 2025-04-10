@@ -3,17 +3,17 @@ import pytest
 from fermo_core.data_analysis.phenotype_manager.class_phenotype_manager import (
     PhenotypeManager,
 )
-from fermo_core.data_processing.class_stats import Stats, PhenoData, SamplePhenotype
-from fermo_core.data_processing.class_repository import Repository
 from fermo_core.data_processing.builder_feature.dataclass_feature import (
     Feature,
     SampleInfo,
 )
 from fermo_core.data_processing.builder_sample.dataclass_sample import Sample
+from fermo_core.data_processing.class_repository import Repository
+from fermo_core.data_processing.class_stats import PhenoData, SamplePhenotype, Stats
 from fermo_core.input_output.class_parameter_manager import ParameterManager
-from fermo_core.input_output.input_file_parameter_managers import PhenotypeParameters
-from fermo_core.input_output.additional_module_parameter_managers import (
+from fermo_core.input_output.param_handlers import (
     PhenoQualAssgnParams,
+    PhenotypeParameters,
 )
 
 
@@ -30,7 +30,7 @@ def phen_manag_qual():
         format="qualitative",
     )
     phen_manag_qual.params.PhenoQualAssgnParams = PhenoQualAssgnParams(
-        activate_module=True
+        **{"activate_module": True, "factor": 5, "algorithm": "minmax", "value": "area"}
     )
     f1 = Feature(
         f_id=1,

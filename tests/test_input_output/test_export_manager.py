@@ -7,10 +7,6 @@ import networkx as nx
 import pandas as pd
 import pytest
 
-from fermo_core.config.class_default_settings import DefaultPaths
-from fermo_core.data_analysis.annotation_manager.class_ms2query_annotator import (
-    MS2QueryAnnotator,
-)
 from fermo_core.data_processing.builder_feature.dataclass_feature import (
     Adduct,
     Annotations,
@@ -29,6 +25,15 @@ from fermo_core.input_output.class_export_manager import (
     JsonExporter,
 )
 from fermo_core.input_output.class_parameter_manager import ParameterManager
+from fermo_core.input_output.param_handlers import (
+    AdductAnnotationParameters,
+    AsKcbCosineMatchingParams,
+    AsKcbDeepscoreMatchingParams,
+    FragmentAnnParameters,
+    NeutralLossParameters,
+    SpectralLibMatchingCosineParameters,
+    SpectralLibMatchingDeepscoreParameters,
+)
 
 
 @pytest.fixture
@@ -42,7 +47,7 @@ def real_data_export(
         samples=sample_instance,
     )
     real_data_export.params.OutputParameters.directory_path = Path(
-        "tests/test_input_output/test_export_manager/"
+        "tests/test_input_output/"
     )
     return real_data_export
 
@@ -74,8 +79,47 @@ def csv_exporter():
         samples=Repository(),
         df=df,
     )
-    csv_exporter.params.SpectralLibMatchingCosineParameters.activate_module = True
-    csv_exporter.params.SpectralLibMatchingDeepscoreParameters.activate_module = True
+    csv_exporter.params.SpectralLibMatchingCosineParameters = (
+        SpectralLibMatchingCosineParameters(
+            **{
+                "activate_module": True,
+                "fragment_tol": 0.1,
+                "min_nr_matched_peaks": 5,
+                "score_cutoff": 0.7,
+                "max_precursor_mass_diff": 600,
+            }
+        )
+    )
+    csv_exporter.params.SpectralLibMatchingDeepscoreParameters = (
+        SpectralLibMatchingDeepscoreParameters(
+            **{
+                "activate_module": True,
+                "score_cutoff": 0.8,
+                "max_precursor_mass_diff": 600,
+            }
+        )
+    )
+    csv_exporter.params.AdductAnnotationParameters = AdductAnnotationParameters(
+        **{"activate_module": True, "mass_dev_ppm": 10.0}
+    )
+    csv_exporter.params.NeutralLossParameters = NeutralLossParameters(
+        **{"activate_module": True, "mass_dev_ppm": 10.0}
+    )
+    csv_exporter.params.FragmentAnnParameters = FragmentAnnParameters(
+        **{"activate_module": True, "mass_dev_ppm": 10.0}
+    )
+    csv_exporter.params.AsKcbCosineMatchingParams = AsKcbCosineMatchingParams(
+        **{
+            "activate_module": True,
+            "fragment_tol": 0.1,
+            "min_nr_matched_peaks": 5,
+            "score_cutoff": 0.5,
+            "max_precursor_mass_diff": 600,
+        }
+    )
+    csv_exporter.params.AsKcbDeepscoreMatchingParams = AsKcbDeepscoreMatchingParams(
+        **{"activate_module": True, "score_cutoff": 0.7, "max_precursor_mass_diff": 600}
+    )
     csv_exporter.params.AsResultsParameters = "dummy"
     csv_exporter.stats.active_features = {1}
     csv_exporter.stats.networks = {
@@ -170,7 +214,7 @@ def csv_exporter():
 @pytest.mark.slow
 def test_run_valid(real_data_export):
     assert real_data_export.run("0.1.0", datetime.now()) is None
-    for filename in glob.glob("tests/test_input_output/test_export_manager/out.fermo*"):
+    for filename in glob.glob("tests/test_input_output/out.fermo*"):
         os.remove(filename)
 
 
@@ -185,25 +229,25 @@ def test_write_cytoscape_output_valid(real_data_export):
         )
     }
     assert real_data_export.write_cytoscape_output() is None
-    os.remove("tests/test_input_output/test_export_manager/out.fermo.xyz.graphml")
+    os.remove("tests/test_input_output/out.fermo.xyz.graphml")
 
 
 @pytest.mark.slow
 def test_write_csv_output_valid(real_data_export):
     assert real_data_export.write_csv_output() is None
-    for filename in glob.glob("tests/test_input_output/test_export_manager/out.*"):
+    for filename in glob.glob("tests/test_input_output/out.*"):
         os.remove(filename)
 
 
 @pytest.mark.slow
 def test_write_fermo_json(real_data_export):
     assert real_data_export.write_fermo_json("0.1.0", datetime.now()) is None
-    os.remove("tests/test_input_output/test_export_manager/out.fermo.session.json")
+    os.remove("tests/test_input_output/out.fermo.session.json")
 
 
 def test_write_summary_output(real_data_export):
     assert real_data_export.write_summary_output() is None
-    os.remove("tests/test_input_output/test_export_manager/out.fermo.summary.txt")
+    os.remove("tests/test_input_output/out.fermo.summary.txt")
 
 
 def test_export_metadata_json(json_exporter):
