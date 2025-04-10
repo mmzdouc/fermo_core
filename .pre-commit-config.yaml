@@ -12,11 +12,6 @@ repos:
     - id: ruff-format
 - repo: local
   hooks:
-    - id: isort
-      name: isort
-      entry: hatch run dev:isort
-      language: system
-      types: [file, python]
     - id: pytest
       name: pytest
       entry: hatch run dev:pytest tests/

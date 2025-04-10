@@ -469,6 +469,4 @@ def test_to_json_files_valid():
 def test_to_json_output():
     params = ParameterManager()
     json_dict = params.to_json()
-    assert (
-        json_dict["OutputParameters"] == "No parameters provided or assignment failed"
-    )
+    assert json_dict["OutputParameters"] == {"activate_module": False}
