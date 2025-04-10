@@ -56,8 +56,6 @@ class Ms2deepscoreNetworker:
             A matchms Scores object
 
         Raises:
-            func_timeout.FunctionTimedOut: function took longer than a user-specified
-             number of seconds
             FileNotFoundError: could not open model file
 
         Notes:

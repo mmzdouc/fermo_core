@@ -51,12 +51,7 @@ class ModCosineNetworker:
         Returns:
             A matchms Scores object
 
-        Raises:
-            func_timeout.FunctionTimedOut: function took longer than a user-specified
-             number of seconds
 
-        Notes:
-            Timeout can be disabled by user by setting settings.maximum_runtime to 0.
         """
         spectra = []
 

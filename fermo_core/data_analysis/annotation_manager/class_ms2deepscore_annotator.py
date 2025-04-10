@@ -106,7 +106,6 @@ class Ms2deepscoreAnnotator(BaseModel):
 
         Raises:
             RuntimeError: fatal error preventing successful execution of module - abort
-            func_timeout.FunctionTimedOut: ms2deepscore calc takes too long.
         """
         UtilityMethodManager().check_ms2deepscore_req(self.polarity)
 

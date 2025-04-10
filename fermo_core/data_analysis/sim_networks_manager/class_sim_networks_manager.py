@@ -25,7 +25,6 @@ import logging
 import urllib.error
 from typing import Self
 
-import func_timeout
 import networkx
 import numpy as np
 from pydantic import BaseModel

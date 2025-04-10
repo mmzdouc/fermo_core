@@ -103,7 +103,6 @@ class ModCosAnnotator(BaseModel):
 
         Raises:
             RuntimeError: queries attribute is empty
-            func_timeout.FunctionTimedOut: mod cosine calc takes too long.
         """
         if self.queries is None:
             raise RuntimeError(
