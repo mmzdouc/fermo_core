@@ -35,3 +35,14 @@ def test_mzmine4_integration():
     param_manager = ParameterManager()
     param_manager.assign_parameters_cli(user_input)
     main(params=param_manager, starttime=datetime.now(), logger=logger)
+
+
+@pytest.mark.slow
+def test_mzmine4_annot_integration():
+    user_input = FileManager.load_json_file("tests/test_data/mzmine4_annot/params.json")
+    ValidationManager().validate_file_vs_jsonschema(
+        user_input, "tests/test_data/mzmine4_annot/params.json"
+    )
+    param_manager = ParameterManager()
+    param_manager.assign_parameters_cli(user_input)
+    main(params=param_manager, starttime=datetime.now(), logger=logger)

@@ -130,7 +130,7 @@ class ParameterManager(BaseModel):
             if file[0] is not None:
                 json_dict[file[1]] = file[0].to_json()
             else:
-                json_dict[file[1]] = "No parameters provided or assignment failed"
+                json_dict[file[1]] = {"activate_module": False}
 
         return json_dict
 

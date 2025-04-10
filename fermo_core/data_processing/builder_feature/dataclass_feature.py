@@ -46,7 +46,7 @@ class Adduct(BaseModel):
     partner_adduct: str
     partner_id: int
     partner_mz: float
-    diff_ppm: float
+    diff_ppm: float | str
     sample: Optional[str] = None
     sample_set: Optional[set] = None
 
@@ -56,7 +56,9 @@ class Adduct(BaseModel):
             "partner_adduct": self.partner_adduct,
             "partner_id": self.partner_id,
             "partner_mz": self.partner_mz,
-            "diff_ppm": round(self.diff_ppm, 2),
+            "diff_ppm": round(self.diff_ppm, 2)
+            if isinstance(self.diff_ppm, float)
+            else self.diff_ppm,
             "samples": list(self.sample_set) if self.sample_set is not None else [],
         }
 

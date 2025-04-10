@@ -22,6 +22,7 @@ SOFTWARE.
 """
 
 import logging
+from pyexpat import features
 from typing import Self
 
 from pydantic import BaseModel
@@ -41,6 +42,9 @@ from fermo_core.data_analysis.annotation_manager.class_ms2deepscore_annotator im
 )
 from fermo_core.data_analysis.annotation_manager.class_ms2query_annotator import (
     MS2QueryAnnotator,
+)
+from fermo_core.data_analysis.annotation_manager.class_mzmine_ann_parser import (
+    MzmineAnnParser,
 )
 from fermo_core.data_analysis.annotation_manager.class_neutral_loss_annotator import (
     NeutralLossAnnotator,
@@ -82,6 +86,13 @@ class AnnotationManager(BaseModel):
         """Organizes calling of data analysis steps."""
         logger.info("'AnnotationManager': started analysis steps.")
 
+        def _eval_mzmine_file() -> bool:
+            return (
+                True
+                if self.params.PeaktableParameters.format in ["mzmine3", "mzmine4"]
+                else False
+            )
+
         def _eval_ms2query_results_file() -> bool:
             return True if self.params.MS2QueryResultsParameters else False
 
@@ -116,6 +127,10 @@ class AnnotationManager(BaseModel):
                 module[1]()
 
         modules = (
+            (
+                _eval_mzmine_file(),
+                self.run_mzmine_assignment,
+            ),
             (
                 _eval_ms2query_results_file(),
                 self.run_ms2query_results_assignment,
@@ -301,6 +316,27 @@ class AnnotationManager(BaseModel):
             return
 
         logger.info("'AnnotationManager': completed feature fragment annotation.")
+
+    def run_mzmine_assignment(self) -> None:
+        """Annotate Features from optional mzmine file fields"""
+        logger.info(
+            "'AnnotationManager': started annotation from existing Mzmine peaktable."
+        )
+
+        try:
+            mzmine_ann = MzmineAnnParser(params=self.params, features=self.features)
+            mzmine_ann.run()
+            self.features = mzmine_ann.return_attributes()
+        except Exception as e:
+            logger.error(str(e))
+            logger.error(
+                "'AnnotationManager': Error during Mzmine peaktable annotation assignment - SKIP"
+            )
+            return
+
+        logger.info(
+            "'AnnotationManager': completed annotation from existing Mzmine peaktable."
+        )
 
     def run_ms2query_results_assignment(self: Self):
         """Annotate Features from existing MS2Query results"""
