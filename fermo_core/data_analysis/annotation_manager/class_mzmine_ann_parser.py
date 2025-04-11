@@ -33,8 +33,8 @@ from fermo_core.data_processing.builder_feature.dataclass_feature import (
     Match,
 )
 from fermo_core.data_processing.class_repository import Repository
+from fermo_core.data_processing.class_stats import Stats
 from fermo_core.input_output.class_parameter_manager import ParameterManager
-from fermo_core.utils.utility_method_manager import UtilityMethodManager
 
 logger = logging.getLogger("fermo_core")
 
@@ -44,11 +44,13 @@ class MzmineAnnParser(BaseModel):
 
     Attributes:
         params: ParameterManager object, holds user-provided parameters
+        stats: Stats object, holds info on currently active features (not filtered out)
         features: Repository object, holds "General Feature" objects
         accepted: parsed columns
     """
 
     params: ParameterManager
+    stats: Stats
     features: Repository
     f: Feature = Feature()
     accepted: tuple = (
@@ -82,6 +84,12 @@ class MzmineAnnParser(BaseModel):
 
         for _, row in df.iterrows():
             if not self.contains_values(row):
+                continue
+
+            if not int(row["id"]) in self.stats.active_features:
+                logger.warning(
+                    f"'MzmineAnnParser': {int(row['id'])} not found in 'active_features' - SKIP"
+                )
                 continue
 
             self.f = self.features.get(int(row["id"]))

@@ -35,7 +35,7 @@ def gp_mzmine_annot(params_mzmine_annot):
 @pytest.fixture
 def mzmine_ann_p_inst(params_mzmine_annot, gp_mzmine_annot):
     stats, features, samples = gp_mzmine_annot.return_attributes()
-    return MzmineAnnParser(params=params_mzmine_annot, features=features)
+    return MzmineAnnParser(params=params_mzmine_annot, stats=stats, features=features)
 
 
 def test_init(mzmine_ann_p_inst):
