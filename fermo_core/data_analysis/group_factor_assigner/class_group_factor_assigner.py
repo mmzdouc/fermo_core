@@ -79,7 +79,7 @@ class GroupFactorAssigner(BaseModel):
                 "'GroupFactorAssigner': unexpected algorithm found - SKIP."
             )
 
-    def get_value(self: Self, f_id: int, sample_ids: set) -> float:
+    def get_value(self: Self, f_id: int, sample_ids: set) -> list:
         """Retrieve values for sample ids from feature and calculate repres. value
 
         Arguments:
@@ -87,7 +87,7 @@ class GroupFactorAssigner(BaseModel):
             sample_ids: the sample Ids to retrieve
 
         Returns:
-            The determined representative value
+            The collected values
 
         Raises:
             RuntimeError: unexpected value
@@ -104,7 +104,7 @@ class GroupFactorAssigner(BaseModel):
                 if entry.s_id in sample_ids:
                     values_s_ids.append(entry.value)
 
-        return self.calc_rprsnt(values_s_ids)
+        return values_s_ids
 
     def assign_group_factors(self: Self):
         """Calculate group factors and assign to Features and Stats instances"""
@@ -114,6 +114,7 @@ class GroupFactorAssigner(BaseModel):
 
             feature = self.features.get(f_id)
             feature.group_factors = {}
+
             for categ, vals in feature.groups.items():
                 if len(vals) < 2:
                     continue
@@ -125,8 +126,8 @@ class GroupFactorAssigner(BaseModel):
                     group2_s_ids = feature.samples.intersection(
                         self.stats.GroupMData.ctgrs[categ][comb[1]].s_ids
                     )
-                    gr1_val = self.get_value(f_id, group1_s_ids)
-                    gr2_val = self.get_value(f_id, group2_s_ids)
+                    gr1_val = self.calc_rprsnt(self.get_value(f_id, group1_s_ids))
+                    gr2_val = self.calc_rprsnt(self.get_value(f_id, group2_s_ids))
 
                     facts = [(gr1_val / gr2_val), (gr2_val / gr1_val)]
                     facts.sort(reverse=True)

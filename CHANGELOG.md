@@ -5,11 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.6.2] UNRELEASED
+## [0.6.2] 12-04-2025
 
-## Changed
+## Fixed
 
-- Added statistical evaluation to group factor assignment
+- Fixed sorting error when fermo and mzmine ion adduct annotations are mixed
 
 ## [0.6.1] 10-04-2025
 

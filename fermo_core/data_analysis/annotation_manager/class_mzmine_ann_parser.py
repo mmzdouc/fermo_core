@@ -137,7 +137,7 @@ class MzmineAnnParser(BaseModel):
                         partner_id=p_id,
                         partner_adduct=f"{df.loc[df['id'] == p_id, 'ion_identities:ion_identities'].values[0]}(mzmine)",
                         partner_mz=df.loc[df["id"] == p_id, "mz"].values[0],
-                        diff_ppm="N/A",
+                        diff_ppm="0",
                     )
                 )
             except IndexError:
