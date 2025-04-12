@@ -324,7 +324,9 @@ class AnnotationManager(BaseModel):
         )
 
         try:
-            mzmine_ann = MzmineAnnParser(params=self.params, features=self.features)
+            mzmine_ann = MzmineAnnParser(
+                params=self.params, stats=self.stats, features=self.features
+            )
             mzmine_ann.run()
             self.features = mzmine_ann.return_attributes()
         except Exception as e:

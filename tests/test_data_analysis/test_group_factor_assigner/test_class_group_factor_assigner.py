@@ -78,29 +78,15 @@ def test_calc_rprsnt_invalid(gfact_assigner):
         gfact_assigner.calc_rprsnt([10, 20, 50])
 
 
-def test_get_value_mean(gfact_assigner):
-    gfact_assigner.params.GroupFactAssignmentParameters.algorithm = "mean"
+def test_get_value(gfact_assigner):
     value = gfact_assigner.get_value(1, {"s1", "s2", "s3"})
-    assert value == 20
+    assert value == [10, 20, 30]
 
 
-def test_get_value_median(gfact_assigner):
-    gfact_assigner.params.GroupFactAssignmentParameters.algorithm = "median"
-    value = gfact_assigner.get_value(1, {"s1", "s2", "s3"})
-    assert value == 20
-
-
-def test_get_value_maximum(gfact_assigner):
-    gfact_assigner.params.GroupFactAssignmentParameters.algorithm = "maximum"
-    value = gfact_assigner.get_value(1, {"s1", "s2", "s3"})
-    assert value == 30
-
-
-def test_get_value_mean_height(gfact_assigner):
-    gfact_assigner.params.GroupFactAssignmentParameters.algorithm = "mean"
+def test_get_value_height(gfact_assigner):
     gfact_assigner.params.GroupFactAssignmentParameters.value = "height"
     value = gfact_assigner.get_value(1, {"s1", "s2", "s3"})
-    assert value == 40
+    assert value == [10, 10, 100]
 
 
 def test_assign_group_factors_valid(gfact_assigner):
