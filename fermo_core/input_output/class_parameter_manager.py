@@ -110,9 +110,9 @@ class ParameterManager(BaseModel):
             (self.FeatureFilteringParameters, "FeatureFilteringParameters"),
             (self.BlankAssignmentParameters, "BlankAssignmentParameters"),
             (self.GroupFactAssignmentParameters, "GroupFactAssignmentParameters"),
-            (self.PhenoQualAssgnParams, "PhenoQualAssgnParams"),
-            (self.PhenoQuantPercentAssgnParams, "PhenoQuantPercentAssgnParams"),
-            (self.PhenoQuantConcAssgnParams, "PhenoQuantConcAssgnParams"),
+            (self.PhenoQualAssgnParams, "PhenoQualAssgnParameters"),
+            (self.PhenoQuantPercentAssgnParams, "PhenoQuantPercentAssgnParameters"),
+            (self.PhenoQuantConcAssgnParams, "PhenoQuantConcAssgnParameters"),
             (
                 self.SpectralLibMatchingCosineParameters,
                 "SpectralLibMatchingCosineParameters",
@@ -121,8 +121,8 @@ class ParameterManager(BaseModel):
                 self.SpectralLibMatchingDeepscoreParameters,
                 "SpectralLibMatchingDeepscoreParameters",
             ),
-            (self.AsKcbCosineMatchingParams, "AsKcbCosineMatchingParams"),
-            (self.AsKcbDeepscoreMatchingParams, "AsKcbDeepscoreMatchingParams"),
+            (self.AsKcbCosineMatchingParams, "AsKcbCosineMatchingParameters"),
+            (self.AsKcbDeepscoreMatchingParams, "AsKcbDeepscoreMatchingParameters"),
         )
 
         json_dict = {}
@@ -188,117 +188,117 @@ class ParameterManager(BaseModel):
             KeyError: could not find "peaktable" parameters in user input.
         """
         try:
-            user_params["PeaktableParams"]
+            user_params["PeaktableParameters"]
         except KeyError as e:
-            logger.fatal("ParameterManager: did not find 'PeaktableParams' - ABORT")
+            logger.fatal("ParameterManager: did not find 'PeaktableParameters' - ABORT")
             raise e
 
         modules = (
             (
-                user_params.get("PeaktableParams"),
+                user_params.get("PeaktableParameters"),
                 self.assign_peaktable,
                 "PeaktableParams",
             ),
-            (user_params.get("MsmsParams"), self.assign_msms, "MsmsParams"),
+            (user_params.get("MsmsParameters"), self.assign_msms, "MsmsParameters"),
             (
-                user_params.get("PhenotypeParams"),
+                user_params.get("PhenotypeParameters"),
                 self.assign_phenotype,
-                "PhenotypeParams",
+                "PhenotypeParameters",
             ),
             (
-                user_params.get("GroupMetadataParams"),
+                user_params.get("GroupMetadataParameters"),
                 self.assign_group_metadata,
-                "GroupMetadataParams",
+                "GroupMetadataParameters",
             ),
             (
-                user_params.get("SpecLibParams"),
+                user_params.get("SpecLibParameters"),
                 self.assign_spectral_library,
-                "SpecLibParams",
+                "SpecLibParameters",
             ),
             (
-                user_params.get("MS2QueryResultsParams"),
+                user_params.get("MS2QueryResultsParameters"),
                 self.assign_ms2query_results,
-                "MS2QueryResultsParams",
+                "MS2QueryResultsParameters",
             ),
             (
-                user_params.get("AsResultsParams"),
+                user_params.get("AsResultsParameters"),
                 self.assign_as_results,
-                "AsResultsParams",
+                "AsResultsParameters",
             ),
             (
-                user_params.get("AdductAnnotationParams"),
+                user_params.get("AdductAnnotationParameters"),
                 self.assign_adduct_annotation,
-                "AdductAnnotationParams",
+                "AdductAnnotationParameters",
             ),
             (
-                user_params.get("NeutralLossParams"),
+                user_params.get("NeutralLossParameters"),
                 self.assign_neutral_loss_annotation,
-                "NeutralLossParams",
+                "NeutralLossParameters",
             ),
             (
-                user_params.get("FragmentAnnParams"),
+                user_params.get("FragmentAnnParameters"),
                 self.assign_fragment_annotation,
-                "FragmentAnnParams",
+                "FragmentAnnParameters",
             ),
             (
-                user_params.get("SpecSimNetworkCosineParams"),
+                user_params.get("SpecSimNetworkCosineParameters"),
                 self.assign_spec_sim_networking_cosine,
-                "SpecSimNetworkCosineParams",
+                "SpecSimNetworkCosineParameters",
             ),
             (
-                user_params.get("SpecSimNetworkDeepscoreParams"),
+                user_params.get("SpecSimNetworkDeepscoreParameters"),
                 self.assign_spec_sim_networking_ms2deepscore,
-                "SpecSimNetworkDeepscoreParams",
+                "SpecSimNetworkDeepscoreParameters",
             ),
             (
-                user_params.get("FeatureFilteringParams"),
+                user_params.get("FeatureFilteringParameters"),
                 self.assign_feature_filtering,
-                "FeatureFilteringParams",
+                "FeatureFilteringParameters",
             ),
             (
-                user_params.get("BlankAssignmentParams"),
+                user_params.get("BlankAssignmentParameters"),
                 self.assign_blank_assignment,
-                "BlankAssignmentParams",
+                "BlankAssignmentParameters",
             ),
             (
-                user_params.get("GroupFactAssignmentParams"),
+                user_params.get("GroupFactAssignmentParameters"),
                 self.assign_group_factor_assignment,
-                "GroupFactAssignmentParams",
+                "GroupFactAssignmentParameters",
             ),
             (
-                user_params.get("PhenoQualAssgnParams"),
+                user_params.get("PhenoQualAssgnParameters"),
                 self.assign_phenotype_qualitative,
-                "PhenoQualAssgnParams",
+                "PhenoQualAssgnParameters",
             ),
             (
-                user_params.get("PhenoQuantPercentAssgnParams"),
+                user_params.get("PhenoQuantPercentAssgnParameters"),
                 self.assign_phenotype_quant_percent,
-                "PhenoQuantPercentAssgnParams",
+                "PhenoQuantPercentAssgnParameters",
             ),
             (
-                user_params.get("PhenoQuantConcAssgnParams"),
+                user_params.get("PhenoQuantConcAssgnParameters"),
                 self.assign_phenotype_quant_concentration,
-                "PhenoQuantConcAssgnParams",
+                "PhenoQuantConcAssgnParameters",
             ),
             (
-                user_params.get("SpectralLibMatchingCosineParams"),
+                user_params.get("SpectralLibMatchingCosineParameters"),
                 self.assign_spec_lib_matching_cosine,
-                "SpectralLibMatchingCosineParams",
+                "SpectralLibMatchingCosineParameters",
             ),
             (
-                user_params.get("SpectralLibMatchingDeepscoreParams"),
+                user_params.get("SpectralLibMatchingDeepscoreParameters"),
                 self.assign_spec_lib_matching_ms2deepscore,
-                "SpectralLibMatchingDeepscoreParams",
+                "SpectralLibMatchingDeepscoreParameters",
             ),
             (
-                user_params.get("AsKcbCosineMatchingParams"),
+                user_params.get("AsKcbCosineMatchingParameters"),
                 self.assign_as_kcb_matching_cosine,
-                "AsKcbCosineMatchingParams",
+                "AsKcbCosineMatchingParameters",
             ),
             (
-                user_params.get("AsKcbDeepscoreMatchingParams"),
+                user_params.get("AsKcbDeepscoreMatchingParameters"),
                 self.assign_as_kcb_matching_deepscore,
-                "AsKcbDeepscoreMatchingParams",
+                "AsKcbDeepscoreMatchingParameters",
             ),
         )
 
@@ -310,7 +310,7 @@ class ParameterManager(BaseModel):
 
         self.OutputParameters = OutputParameters(
             directory_path=Path(
-                user_params.get("PeaktableParams").get("filepath")
+                user_params.get("PeaktableParameters").get("filepath")
             ).parent
         )
 
@@ -544,10 +544,10 @@ class ParameterManager(BaseModel):
         """
         try:
             self.PhenoQualAssgnParams = PhenoQualAssgnParams(**user_params)
-            self.log_passed_modules("PhenoQualAssgnParams")
+            self.log_passed_modules("PhenoQualAssgnParameters")
         except Exception as e:
             logger.warning(str(e))
-            self.log_malformed_parameters_skip("PhenoQualAssgnParams")
+            self.log_malformed_parameters_skip("PhenoQualAssgnParameters")
             self.PhenoQualAssgnParams = None
 
     def assign_phenotype_quant_percent(self: Self, user_params: dict):
@@ -561,10 +561,10 @@ class ParameterManager(BaseModel):
             self.PhenoQuantPercentAssgnParams = PhenoQuantPercentAssgnParams(
                 **user_params
             )
-            self.log_passed_modules("PhenoQuantPercentAssgnParams")
+            self.log_passed_modules("PhenoQuantPercentAssgnParameters")
         except Exception as e:
             logger.warning(str(e))
-            self.log_malformed_parameters_skip("PhenoQuantPercentAssgnParams")
+            self.log_malformed_parameters_skip("PhenoQuantPercentAssgnParameters")
             self.PhenoQuantPercentAssgnParams = None
 
     def assign_phenotype_quant_concentration(self: Self, user_params: dict):
@@ -576,10 +576,10 @@ class ParameterManager(BaseModel):
         """
         try:
             self.PhenoQuantConcAssgnParams = PhenoQuantConcAssgnParams(**user_params)
-            self.log_passed_modules("PhenoQuantConcAssgnParams")
+            self.log_passed_modules("PhenoQuantConcAssgnParameters")
         except Exception as e:
             logger.warning(str(e))
-            self.log_malformed_parameters_skip("PhenoQuantConcAssgnParams")
+            self.log_malformed_parameters_skip("PhenoQuantConcAssgnParameters")
             self.PhenoQuantConcAssgnParams = None
 
     def assign_spec_lib_matching_cosine(self: Self, user_params: dict):
@@ -626,10 +626,10 @@ class ParameterManager(BaseModel):
         """
         try:
             self.AsKcbCosineMatchingParams = AsKcbCosineMatchingParams(**user_params)
-            self.log_passed_modules("AsKcbCosineMatchingParams")
+            self.log_passed_modules("AsKcbCosineMatchingParameters")
         except Exception as e:
             logger.warning(str(e))
-            self.log_malformed_parameters_skip("AsKcbCosineMatchingParams")
+            self.log_malformed_parameters_skip("AsKcbCosineMatchingParameters")
             self.AsKcbCosineMatchingParams = None
 
     def assign_as_kcb_matching_deepscore(self: Self, user_params: dict):
@@ -644,8 +644,8 @@ class ParameterManager(BaseModel):
             self.AsKcbDeepscoreMatchingParams = AsKcbDeepscoreMatchingParams(
                 **user_params
             )
-            self.log_passed_modules("AsKcbDeepscoreMatchingParams")
+            self.log_passed_modules("AsKcbDeepscoreMatchingParameters")
         except Exception as e:
             logger.warning(str(e))
-            self.log_malformed_parameters_skip("AsKcbDeepscoreMatchingParams")
+            self.log_malformed_parameters_skip("AsKcbDeepscoreMatchingParameters")
             self.AsKcbDeepscoreMatchingParams = None

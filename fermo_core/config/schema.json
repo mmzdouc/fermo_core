@@ -3,7 +3,7 @@
   "$schema_version": "1.1.0",
   "type": "object",
   "properties": {
-    "PeaktableParams": {
+    "PeaktableParameters": {
       "type": "object",
       "properties": {
         "filepath": {
@@ -25,7 +25,7 @@
         }
       }
     },
-    "MsmsParams": {
+    "MsmsParameters": {
       "type": "object",
       "properties": {
         "filepath": {
@@ -42,7 +42,7 @@
         }
       }
     },
-    "PhenotypeParams": {
+    "PhenotypeParameters": {
       "type": "object",
       "properties": {
         "filepath": {
@@ -58,7 +58,7 @@
         }
       }
     },
-    "GroupMetadataParams": {
+    "GroupMetadataParameters": {
       "type": "object",
       "properties": {
         "filepath": {
@@ -72,7 +72,7 @@
         }
       }
     },
-    "SpecLibParams": {
+    "SpecLibParameters": {
       "type": "object",
       "properties": {
         "dirpath": {
@@ -86,7 +86,7 @@
         }
       }
     },
-    "MS2QueryResultsParams": {
+    "MS2QueryResultsParameters": {
       "type": "object",
       "properties": {
         "filepath": {
@@ -97,7 +97,7 @@
         }
       }
     },
-    "AsResultsParams": {
+    "AsResultsParameters": {
       "type": "object",
       "properties": {
         "directory_path": {
@@ -108,7 +108,7 @@
         }
       }
     },
-    "AdductAnnotationParams": {
+    "AdductAnnotationParameters": {
       "type": "object",
       "properties": {
         "activate_module": { "type": "boolean" },
@@ -117,7 +117,7 @@
         }
       }
     },
-    "NeutralLossParams": {
+    "NeutralLossParameters": {
       "type": "object",
       "properties": {
         "activate_module": { "type": "boolean" },
@@ -126,7 +126,7 @@
         }
       }
     },
-    "FragmentAnnParams": {
+    "FragmentAnnParameters": {
       "type": "object",
       "properties": {
         "activate_module": { "type": "boolean" },
@@ -135,7 +135,7 @@
         }
       }
     },
-    "SpecSimNetworkCosineParams": {
+    "SpecSimNetworkCosineParameters": {
       "type": "object",
       "properties": {
         "activate_module": { "type": "boolean" },
@@ -153,7 +153,7 @@
         }
       }
     },
-    "SpecSimNetworkDeepscoreParams": {
+    "SpecSimNetworkDeepscoreParameters": {
       "type": "object",
       "properties": {
         "activate_module": { "type": "boolean" },
@@ -171,7 +171,7 @@
         }
       }
     },
-    "FeatureFilteringParams": {
+    "FeatureFilteringParameters": {
       "type": "object",
       "properties": {
         "activate_module": { "type": "boolean" },
@@ -189,7 +189,7 @@
         }
       }
     },
-    "BlankAssignmentParams": {
+    "BlankAssignmentParameters": {
       "type": "object",
       "properties": {
         "activate_module": { "type": "boolean" },
@@ -213,7 +213,7 @@
         }
       }
     },
-    "GroupFactAssignmentParams": {
+    "GroupFactAssignmentParameters": {
       "type": "object",
       "properties": {
         "activate_module": { "type": "boolean" },
@@ -234,7 +234,7 @@
         }
       }
     },
-    "PhenoQualAssgnParams": {
+    "PhenoQualAssgnParameters": {
       "type": "object",
       "properties": {
         "activate_module": { "type": "boolean" },
@@ -256,22 +256,22 @@
         }
       }
     },
-    "PhenoQuantPercentAssgnParams": {
+    "PhenoQuantPercentAssgnParameters": {
       "$ref": "#/$defs/quant_phen"
     },
-    "PhenoQuantConcAssgnParams": {
+    "PhenoQuantConcAssgnParameters": {
       "$ref": "#/$defs/quant_phen"
     },
-    "SpectralLibMatchingCosineParams": {
+    "SpectralLibMatchingCosineParameters": {
       "$ref": "#/$defs/cosine_match"
     },
-    "SpectralLibMatchingDeepscoreParams": {
+    "SpectralLibMatchingDeepscoreParameters": {
       "$ref": "#/$defs/deepscore_match"
     },
-    "AsKcbCosineMatchingParams": {
+    "AsKcbCosineMatchingParameters": {
       "$ref": "#/$defs/cosine_match"
     },
-    "AsKcbDeepscoreMatchingParams": {
+    "AsKcbDeepscoreMatchingParameters": {
       "$ref": "#/$defs/deepscore_match"
     }
   },
