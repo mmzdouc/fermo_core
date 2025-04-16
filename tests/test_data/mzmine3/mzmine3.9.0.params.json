@@ -1,10 +1,10 @@
 {
-    "PeaktableParams": {
+    "PeaktableParameters": {
         "filepath": "tests/test_data/mzmine3/mzmine3.9.0.csv",
         "format": "mzmine3",
         "polarity": "positive"
     },
-    "MsmsParams": {
+    "MsmsParameters": {
         "filepath": "tests/test_data/mzmine3/mzmine3.9.0.mgf",
         "format": "mgf",
         "rel_int_from": 0.01

@@ -1,5 +1,5 @@
 {
-    "PeaktableParams": {
+    "PeaktableParameters": {
         "filepath": "tests/test_data/mzmine4_annot/mzmine4_ann.csv",
         "format": "mzmine4",
         "polarity": "positive"

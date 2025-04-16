@@ -84,10 +84,10 @@ def configure_logger_results(args: Namespace) -> logging.Logger:
     """
     with open(Path(args.parameters)) as infile:
         json_dict = json.load(infile)
-        file_dir = json_dict.get("PeaktableParams", {}).get("filepath")
+        file_dir = json_dict.get("PeaktableParameters", {}).get("filepath")
 
     if file_dir is None:
-        raise KeyError("'fermo_core': could not find 'peaktable' in parameters file.")
+        raise KeyError("'fermo_core': could not find 'PeaktableParameters' in parameters file.")
     else:
         Path(file_dir).parent.joinpath("results").mkdir(exist_ok=True)
 
